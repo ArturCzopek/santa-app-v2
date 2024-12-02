@@ -1,0 +1,55 @@
+{
+  "name": "santa-app-v2",
+  "version": "1.0.0",
+  "main": "main.tsx",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
+    "@firebase/auth": "^1.8.1",
+    "@firebase/firestore": "^4.7.5",
+    "@mui/icons-material": "^5.10.1",
+    "@mui/material": "^5.10.1",
+    "firebase": "^11.0.2",
+    "i18next": "^24.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^15.1.3",
+    "react-query": "^3.39.0",
+    "react-router-dom": "^6.4.3",
+    "react-scripts": "^5.0.0",
+    "react-snowfall": "^1.0.0",
+    "typescript": "^4.7.4",
+    "vite": "^6.0.2"
+  },
+  "devDependencies": {
+    "@types/firebase": "^3.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.16.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.4.1",
+    "vite-plugin-eslint": "^1.8.1"
+  },
+  "author": "Artur Czopek",
+  "license": "MIT",
+  "description": "A Christmas-themed draw and messaging app using React, Firebase, Material UI, and Firebase Authentication.",
+  "keywords": [
+    "react",
+    "firebase",
+    "material-ui",
+    "christmas",
+    "draw",
+    "app"
+  ]
+}
