@@ -4,17 +4,21 @@ import {initReactI18next} from 'react-i18next'
 const resources = {
     en: {
         translation: {
-            greeting: 'Hello',
-            login: 'Login',
-            // Add other translations here
-        },
+            'loginPage': {
+                'title': 'Santa App',
+                'loginWithGoogle': 'Login with Google'
+            }
+        }
+
     },
     pl: {
         translation: {
-            greeting: 'Cześć',
-            login: 'Zaloguj się',
-            // Add other translations here
-        },
+            'loginPage': {
+                'title': 'Santa App',
+                'loginWithGoogle': 'Zaloguj przez Google'
+            }
+        }
+
     },
 }
 
@@ -22,7 +26,7 @@ i18n
     .use(initReactI18next)
     .init({
         resources,
-        lng: 'en', // Default language
+        lng: 'pl', // Default language
         interpolation: {
             escapeValue: false,
         },

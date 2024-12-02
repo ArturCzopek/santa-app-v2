@@ -1,31 +1,24 @@
-import React from 'react';
-import Snowfall from 'react-snowfall';
-import { useAuth } from './hooks/useAuth';
-import {Button} from '@mui/material'
+import React from 'react'
+import {I18nextProvider} from 'react-i18next'
+import './styles/global.css' // Global styles
+import {ThemeProvider} from '@mui/material/styles' // For theme context
+import theme from './styles/theme'
+import AppRoutes from './routes'
+import i18n from './i18n'
+import Snowfall from 'react-snowfall' // Snowfall effect
 
 const App: React.FC = () => {
-    const { user, signInWithGoogle } = useAuth();
 
     return (
-        <div>
-            <Snowfall />
-            <div style={{ textAlign: 'center', marginTop: '50px' }}>
-                <h1>Welcome to Santa App V2!</h1>
-                <div>
-                    {!user ? (
-                        <Button variant="contained" color="primary" onClick={signInWithGoogle}>
-                            Login with Google
-                        </Button>
-                    ) : (
-                        <div>
-                            <p>Welcome, {user.displayName}!</p>
-                            <img src={user.photoURL} alt={user.displayName} style={{ width: '50px', borderRadius: '50%' }} />
-                        </div>
-                    )}
+        <I18nextProvider i18n={i18n}>
+            <ThemeProvider theme={theme}>
+                <div style={{position: 'relative', height: '100vh'}}>
+                    <Snowfall/>
+                    <AppRoutes/>
                 </div>
-            </div>
-        </div>
-    );
-};
+            </ThemeProvider>
+        </I18nextProvider>
+    )
+}
 
-export default App;
+export default App

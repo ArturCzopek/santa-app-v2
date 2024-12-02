@@ -12,7 +12,6 @@ export const useAuth = () => {
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-            // Save user info here if needed
             setUser(user);
         } catch (error) {
             console.error('Error signing in with Google: ', error);
@@ -22,11 +21,7 @@ export const useAuth = () => {
     // Listen for changes in user authentication state
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            if (currentUser) {
-                setUser(currentUser);
-            } else {
-                setUser(null);
-            }
+            setUser(currentUser || null);
         });
 
         return () => unsubscribe();
