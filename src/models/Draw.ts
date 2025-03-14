@@ -3,7 +3,7 @@ export type Participant = {
   userUuid: string;
   userPhotoUrl: string;
   entryDate: Date;
-  wish: string;
+  wish?: string;
 };
 
 export type Pair = {
@@ -21,8 +21,6 @@ export type Draw = {
   description: string;
   participants: Participant[];
   pairs: Pair[];
-  password: string;
   status: 'WAITING_FOR_DRAW' | 'DRAWED';
   drawDate?: Date | null;
-  public: boolean;
 };

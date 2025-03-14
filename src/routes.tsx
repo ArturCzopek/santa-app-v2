@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import DrawsPage from './pages/DrawsPage';
 import JoinToDrawPage from './pages/JoinToDrawPage';
 import { useAuth } from './hooks/useAuth';
+import CreatePage from './pages/CreatePage';
 
 const AppRoutes = () => {
   const { user } = useAuth(); // Get user state from the hook
@@ -26,6 +27,10 @@ const AppRoutes = () => {
         <Route
           path="/draws"
           element={user ? <DrawsPage /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/create"
+          element={user ? <CreatePage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/join/:uuid"

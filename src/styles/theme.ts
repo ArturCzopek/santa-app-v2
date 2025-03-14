@@ -3,9 +3,9 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: { main: '#D32F2F' }, // Christmas red
-    secondary: { main: '#004702' }, // Blue for winter/ice theme
+    secondary: { main: '#004702' }, // Green for winter/ice theme
     background: {
-      default: '#004702', // Blue background
+      default: '#004702', // Green background
       paper: '#FFFFFF', // White for cards and paper elements
     },
     text: {
@@ -16,7 +16,7 @@ const theme = createTheme({
     success: { main: '#4CAF50' },
   },
   typography: {
-    fontFamily: 'Roboto, Arial, sans-serif',
+    fontFamily: '"Nunito", "Lato", "Arial", sans-serif',
     h1: {
       fontWeight: 700,
       fontSize: '2.5rem',

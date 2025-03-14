@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Button, CardContent, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { Google } from '@mui/icons-material';
 import YouTubeEmbed from '../components/YouTubeEmbed';
 import { useTranslation } from 'react-i18next';
@@ -34,14 +34,6 @@ const LoginPage = () => {
 
       <YouTubeEmbed videoId="z59gAXZ0ksQ" />
 
-      <CardContent
-        sx={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
         <Button
           variant="contained"
           color="error"
@@ -55,7 +47,6 @@ const LoginPage = () => {
         >
           {t('loginPage.loginWithGoogle')}
         </Button>
-      </CardContent>
     </AuthPageLayout>
   );
 };
