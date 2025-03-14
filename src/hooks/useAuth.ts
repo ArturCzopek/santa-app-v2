@@ -10,14 +10,17 @@ import {
 // Custom hook to manage Firebase authentication
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Sign in with Google
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
+      setLoading(true);
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       setUser(user);
+      setLoading(false);
     } catch (error) {
       console.error('Error signing in with Google: ', error);
     }
@@ -27,6 +30,7 @@ export const useAuth = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser || null);
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -34,6 +38,7 @@ export const useAuth = () => {
 
   return {
     user,
+    loading,
     signInWithGoogle,
   };
 };
