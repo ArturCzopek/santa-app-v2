@@ -27,7 +27,7 @@ const DrawsPage = () => {
       try {
         setLoading(true);
         // Fetch user's draws
-        const userDraws = await drawService.getUserDraws(user.uid);
+        const userDraws = await drawService.getDrawPreviews(user.uid);
         setDraws(userDraws);
 
         // Fetch total draws count and add 100 to make it appear like there are more users

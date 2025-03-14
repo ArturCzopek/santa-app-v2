@@ -54,7 +54,7 @@ const resources = {
         waitingStatus: 'Waiting for Draw',
         drawedStatus: 'Drawn',
         participants: 'Participants: {{count}}',
-        noWish: 'You haven\'t provided your wish yet. Go to draw to add it.',
+        noWish: 'You haven\'t provided your wish yet! Go to draw to add it.',
         checkResults: 'The draw has been completed. Go to draw to check your results!',
         viewDetails: 'View details'
       }
@@ -112,7 +112,7 @@ const resources = {
         waitingStatus: 'Oczekuje na losowanie',
         drawedStatus: 'Rozlosowane',
         participants: 'Uczestnicy: {{count}}',
-        noWish: 'Nie podałeś jeszcze swojego życzenia. Przejdź do losowania, aby je dodać.',
+        noWish: 'Nie podałeś jeszcze swojego życzenia! Przejdź do losowania, aby je dodać.',
         checkResults: 'Losowanie zostało zakończone. Przejdź do losowania, aby sprawdzić swój wynik!',
         viewDetails: 'Zobacz szczegóły'
       }

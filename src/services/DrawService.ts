@@ -1,9 +1,11 @@
-import { collection, addDoc, getDocs, query, where, getCountFromServer } from 'firebase/firestore';
-import { db } from '../services/firebaseConfig';
-import { Draw, Participant } from '../models/Draw';
+import { collection, addDoc, getDocs, getDoc, doc, query, where, getCountFromServer } from 'firebase/firestore';
+import { db } from '../services/FirebaseConfig';
+import { Draw, DrawPreview, Participant } from '../models/Draw';
 import { User } from 'firebase/auth';
 
 class DrawService {
+  private drawsCollection = collection(db, 'draws');
+
   async createDraw(
     formData: { drawName: string; description: string; budget: number; currency: string },
     currentUser: User
@@ -44,30 +46,46 @@ class DrawService {
     }
   }
 
-  async getUserDraws(userId: string): Promise<Draw[]> {
+  async getDrawPreviews(userId: string): Promise<DrawPreview[]> {
     try {
-      const drawsCollection = collection(db, 'draws');
       const q = query(
-        drawsCollection,
+        this.drawsCollection,
         where('participantUuids', 'array-contains', userId)
       );
 
       const querySnapshot = await getDocs(q);
-      const draws: Draw[] = [];
 
-      querySnapshot.forEach((doc) => {
-        const data = doc.data() as Draw;
-        // Convert Firestore timestamps to JavaScript Date objects
-        const draw: Draw = {
-          ...data,
-          id: doc.id, // Make sure to include the document ID
-        };
-        draws.push(draw);
-      });
-
-      return draws;
+      // Map the documents to DrawPreview type
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        drawName: doc.data().drawName,
+        description: doc.data().description,
+        status: doc.data().status,
+        participantsCount: doc.data().participants?.length || 0,
+        userWishProvided: doc.data().participants?.find(p => p.userUuid === userId).wish
+      } as DrawPreview));
     } catch (error) {
-      console.error('Error getting user draws:', error);
+      console.error('Error fetching user draws:', error);
+      throw error;
+    }
+  }
+
+
+  async getDrawDetails(drawId: string): Promise<Draw> {
+    try {
+      const drawRef = doc(this.drawsCollection, drawId);
+      const drawSnapshot = await getDoc(drawRef);
+
+      if (!drawSnapshot.exists()) {
+        throw new Error('Draw not found');
+      }
+
+      return {
+        id: drawSnapshot.id,
+        ...drawSnapshot.data()
+      } as Draw;
+    } catch (error) {
+      console.error('Error fetching draw details:', error);
       throw error;
     }
   }

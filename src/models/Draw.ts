@@ -26,3 +26,13 @@ export type Draw = {
   status: 'WAITING_FOR_DRAW' | 'DRAWED';
   drawDate?: Date | null;
 };
+
+export type DrawPreview = Pick<Draw,
+  'id' |
+  'drawName' |
+  'description' |
+  'status'
+> & {
+  participantsCount: number;
+  userWishProvided: boolean;
+};

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { auth } from '../services/firebaseConfig';
+import { auth } from '../services/FirebaseConfig';
 import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
   User,
-  signOut
+  signOut,
 } from 'firebase/auth';
 
 // Custom hook to manage Firebase authentication
@@ -34,7 +34,7 @@ export const useAuth = () => {
     } catch (error) {
       console.error('Error signing out: ', error);
     }
-  }
+  };
 
   // Listen for changes in user authentication state
   useEffect(() => {
@@ -50,6 +50,6 @@ export const useAuth = () => {
     user,
     loading,
     signInWithGoogle,
-    logOut
+    logOut,
   };
 };

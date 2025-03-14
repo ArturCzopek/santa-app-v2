@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import ContentCard from './ContentCard';
-import { Draw } from '../models/Draw';
+import { DrawPreview } from '../models/Draw';
 
 interface DrawPreviewCardProps {
-  draw: Draw;
+  draw: DrawPreview;
 }
 
 const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ draw }) => {
@@ -19,8 +19,7 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ draw }) => {
   const isUserWishEmpty = () => {
     if (draw.status === 'WAITING_FOR_DRAW' && user) {
       // Find current user's participant entry and check if wish is empty
-      const userParticipant = draw.participants.find(p => p.userUuid === user.uid);
-      return userParticipant && !userParticipant.wish;
+      return !draw.userWishProvided;
     }
     return false;
   };
@@ -34,7 +33,7 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ draw }) => {
           sx={{
             fontWeight: 'bold',
             backgroundColor: '#FF9800',
-            color: 'white'
+            color: 'white',
           }}
         />
       );
@@ -46,7 +45,7 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ draw }) => {
           sx={{
             fontWeight: 'bold',
             backgroundColor: '#4CAF50',
-            color: 'white'
+            color: 'white',
           }}
         />
       );
@@ -55,36 +54,41 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ draw }) => {
 
   return (
     <ContentCard sx={{ mb: 2, p: 3, backgroundColor: 'rgba(0, 43, 0, 0.7)' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+        }}
+      >
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'white', mb: 0.5 }}>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: 'bold', color: 'white', mb: 0.5 }}
+          >
             {draw.drawName}
           </Typography>
         </Box>
-        <Box>
-          {getStatusChip()}
-        </Box>
+        <Box>{getStatusChip()}</Box>
       </Box>
       <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
         {draw.description}
       </Typography>
-      <Typography sx={{ color: 'rgba(255, 255, 255, 0.9)'}}>
-        {t('drawCard.participants', { count: draw.participants.length })}
+      <Typography sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+        {t('drawCard.participants', { count: draw.participantsCount })}
       </Typography>
 
-      <Box sx={{ minHeight: '40px' }}>
-        {draw.status === 'WAITING_FOR_DRAW' && isUserWishEmpty() && (
-          <Typography sx={{ color: '#FFD54F', fontWeight: 'medium'}}>
-            {t('drawCard.noWish')}
-          </Typography>
-        )}
+      {draw.status === 'WAITING_FOR_DRAW' && isUserWishEmpty() && (
+        <Typography sx={{ color: '#FFD54F', fontWeight: 'medium' }}>
+          {t('drawCard.noWish')}
+        </Typography>
+      )}
 
-        {draw.status === 'DRAWED' && (
-          <Typography sx={{ color: '#81C784', fontWeight: 'medium'}}>
-            {t('drawCard.checkResults')}
-          </Typography>
-        )}
-      </Box>
+      {draw.status === 'DRAWED' && (
+        <Typography sx={{ color: '#81C784', fontWeight: 'medium' }}>
+          {t('drawCard.checkResults')}
+        </Typography>
+      )}
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 0 }}>
         <Button
@@ -95,8 +99,8 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ draw }) => {
             backgroundColor: '#FFC107', // Amber color
             color: 'rgba(0, 0, 0, 0.87)', // Dark text for contrast
             '&:hover': {
-              backgroundColor: '#FFD54F' // Lighter amber on hover
-            }
+              backgroundColor: '#FFD54F', // Lighter amber on hover
+            },
           }}
         >
           {t('drawCard.viewDetails')}
