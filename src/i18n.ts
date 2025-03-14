@@ -9,6 +9,15 @@ const resources = {
         loginWithGoogle: 'Login with Google',
         by: 'by Artur Czopek',
       },
+      navbar: {
+        title: 'Santa App',
+        checkApp: 'Check the app',
+        showSanta: 'Show Santa!',
+        leaveMessage: 'Leave a message!'
+      },
+      drawsPage: {
+        title: 'All Draws'
+      }
     },
   },
   pl: {
@@ -18,6 +27,15 @@ const resources = {
         loginWithGoogle: 'Zaloguj przez Google',
         by: 'stworzona przez Artur Czopek',
       },
+      navbar: {
+        title: 'Santa App',
+        checkApp: 'Sprawdź aplikację',
+        showSanta: 'Pokaż Mikołaja!',
+        leaveMessage: 'Zostaw wiadomość!'
+      },
+      drawsPage: {
+        title: 'Wszystkie Losowania'
+      }
     },
   },
 };

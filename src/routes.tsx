@@ -6,8 +6,7 @@ import {
   Navigate,
 } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-import MyDrawsPage from './pages/MyDrawsPage';
-import AllDrawsPage from './pages/AllDrawsPage';
+import DrawsPage from './pages/DrawsPage';
 import JoinToDrawPage from './pages/JoinToDrawPage';
 import { useAuth } from './hooks/useAuth';
 
@@ -20,27 +19,23 @@ const AppRoutes = () => {
         {/* Redirect `/` based on login state */}
         <Route
           path="/"
-          element={user ? <Navigate to="/all-draws" replace /> : <LoginPage />}
+          element={user ? <Navigate to="/draws" replace /> : <LoginPage />}
         />
 
         {/* Protected Routes */}
         <Route
-          path="/my-draws"
-          element={user ? <MyDrawsPage /> : <Navigate to="/" replace />}
+          path="/draws"
+          element={user ? <DrawsPage /> : <Navigate to="/" replace />}
         />
         <Route
-          path="/all-draws"
-          element={user ? <AllDrawsPage /> : <Navigate to="/" replace />}
-        />
-        <Route
-          path="/join-to-draw/:uuid"
+          path="/join/:uuid"
           element={user ? <JoinToDrawPage /> : <Navigate to="/" replace />}
         />
 
         {/* Catch-all for unmatched routes */}
         <Route
           path="*"
-          element={<Navigate to={user ? '/all-draws' : '/'} replace />}
+          element={<Navigate to={user ? '/draws' : '/'} replace />}
         />
       </Routes>
     </Router>
