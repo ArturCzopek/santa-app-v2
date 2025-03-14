@@ -16,6 +16,7 @@ const resources = {
         budget: 'Budget',
         currency: 'Currency',
         createButton: 'Create Draw',
+        joinButton: 'Join to Draw',
         validation: {
           drawNameRequired: 'Draw name is required',
           drawNameTooLong: 'Draw name must be less than 200 characters',
@@ -31,7 +32,6 @@ const resources = {
       loginPage: {
         title: 'Santa App 2.0',
         loginWithGoogle: 'Login with Google',
-        by: 'by Artur Czopek',
       },
       navbar: {
         title: 'Santa App',
@@ -50,6 +50,14 @@ const resources = {
           fetchFailed: 'Failed to fetch draws. Please try again.',
         },
       },
+      drawCard: {
+        waitingStatus: 'Waiting for Draw',
+        drawedStatus: 'Drawn',
+        participants: 'Participants: {{count}}',
+        noWish: 'You haven\'t provided your wish yet. Go to draw to add it.',
+        checkResults: 'The draw has been completed. Go to draw to check your results!',
+        viewDetails: 'View details'
+      }
     },
   },
   pl: {
@@ -81,7 +89,6 @@ const resources = {
       loginPage: {
         title: 'Santa App 2.0',
         loginWithGoogle: 'Zaloguj przez Google',
-        by: 'stworzona przez Artur Czopek',
       },
       navbar: {
         title: 'Santa App',
@@ -95,11 +102,20 @@ const resources = {
           'Obecnie nie uczestniczysz w żadnym losowaniu. Poproś znajomego o udostępnienie losowania lub',
         createOwn: 'stwórz własne',
         totalDrawsPrompt: 'i bądź uczestnikiem jednego z {{count}} losowań istniejących już w aplikacji.',
-        createButton: 'Stwórz Nowe Losowanie',
+        createButton: 'Stwórz nowe losowanie',
+        joinButton: 'Dołącz do losowania',
         errors: {
           fetchFailed: 'Nie udało się pobrać losowań. Spróbuj ponownie.',
         },
       },
+      drawCard: {
+        waitingStatus: 'Oczekuje na losowanie',
+        drawedStatus: 'Rozlosowane',
+        participants: 'Uczestnicy: {{count}}',
+        noWish: 'Nie podałeś jeszcze swojego życzenia. Przejdź do losowania, aby je dodać.',
+        checkResults: 'Losowanie zostało zakończone. Przejdź do losowania, aby sprawdzić swój wynik!',
+        viewDetails: 'Zobacz szczegóły'
+      }
     },
   },
 };

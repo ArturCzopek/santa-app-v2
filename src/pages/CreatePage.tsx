@@ -132,7 +132,7 @@ const CreatePage = () => {
             rules={{
               required: t('createPage.validation.drawNameRequired'),
               maxLength: {
-                value: 200,
+                value: 80,
                 message: t('createPage.validation.drawNameTooLong')
               }
             }}

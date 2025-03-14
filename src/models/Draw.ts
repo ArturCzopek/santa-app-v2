@@ -12,6 +12,7 @@ export type Pair = {
 };
 
 export type Draw = {
+  id?: string; // nullable, only needed for read as a doc id
   createdDate: Date;
   ownerUuid: string;
   ownerName: string;
@@ -20,6 +21,7 @@ export type Draw = {
   drawName: string;
   description: string;
   participants: Participant[];
+  participantUuids: string[];
   pairs: Pair[];
   status: 'WAITING_FOR_DRAW' | 'DRAWED';
   drawDate?: Date | null;

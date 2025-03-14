@@ -17,19 +17,11 @@ const LoginPage = () => {
   return (
     <AuthPageLayout>
       <Typography
-        variant="h2"
+        variant="h1"
         gutterBottom
         sx={{ color: '#212121' }}
       >
         {t('loginPage.title')}
-      </Typography>
-
-      <Typography
-        variant="h6"
-        gutterBottom
-        sx={{ color: '#424242' }}
-      >
-        {t('loginPage.by')}
       </Typography>
 
       <YouTubeEmbed videoId="z59gAXZ0ksQ" />

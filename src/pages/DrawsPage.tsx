@@ -1,13 +1,14 @@
 // pages/DrawsPage.tsx
 import React, { useEffect, useState } from 'react';
-import { Typography, Box, Link, CircularProgress, Button } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Box, Button, CircularProgress, Link, Typography } from '@mui/material';
+import { Add, GroupAdd } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { drawService } from '../services/DrawService';
 import { Draw } from '../models/Draw';
+import DrawPreviewCard from '../components/DrawPreviewCard';
 
 const DrawsPage = () => {
   const { t } = useTranslation();
@@ -70,7 +71,7 @@ const DrawsPage = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          mt: 6 // More space from the top
+          mt: 6, // More space from the top
         }}
       >
         {draws.length === 0 ? (
@@ -81,14 +82,14 @@ const DrawsPage = () => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: 4
+              gap: 4,
             }}
           >
             <Typography
               sx={{
                 color: 'rgba(255, 255, 255, 0.9)',
                 fontSize: '1.1rem',
-                lineHeight: 1.6
+                lineHeight: 1.6,
               }}
             >
               {t('drawsPage.noDraws')}{' '}
@@ -101,41 +102,56 @@ const DrawsPage = () => {
                   cursor: 'pointer',
                   textDecoration: 'underline',
                   '&:hover': {
-                    color: '#FFC107'
-                  }
+                    color: '#FFC107',
+                  },
                 }}
               >
                 {t('drawsPage.createOwn')}
-              </Link>
-              {' '}{t('drawsPage.totalDrawsPrompt', { count: totalDrawsCount })}
+              </Link>{' '}
+              {t('drawsPage.totalDrawsPrompt', { count: totalDrawsCount })}
             </Typography>
-
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<Add />}
-              size="large"
-              onClick={() => navigate('/create')}
-              sx={{
-                minWidth: '220px',
-                py: 1.5,
-                fontWeight: 'bold',
-                backgroundColor: '#D32F2F',
-                '&:hover': {
-                  backgroundColor: '#B71C1C'
-                },
-                boxShadow: '0 4px 8px rgba(0,0,0,0.3)'
-              }}
-            >
-              {t('drawsPage.createButton')}
-            </Button>
           </Box>
         ) : (
-          // This will be your future draws list when implemented
-          <Box>
-            {/* Draws list goes here */}
-          </Box>
+          draws.map((draw) => <DrawPreviewCard key={draw.id} draw={draw} />)
         )}
+        <Box sx={{ mt: 5, display: 'flex', gap: 2 }}>
+          <Button
+            variant="contained"
+            startIcon={<GroupAdd />}
+            size="large"
+            sx={{
+              minWidth: '220px',
+              py: 1.5,
+              fontWeight: 'bold',
+              backgroundColor: '#4CAF50', // Green color
+              '&:hover': {
+                backgroundColor: '#388E3C',
+              },
+              boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+            }}
+          >
+            {t('drawsPage.joinButton')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<Add />}
+            size="large"
+            onClick={() => navigate('/create')}
+            sx={{
+              minWidth: '220px',
+              py: 1.5,
+              fontWeight: 'bold',
+              backgroundColor: '#D32F2F',
+              '&:hover': {
+                backgroundColor: '#B71C1C',
+              },
+              boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+            }}
+          >
+            {t('drawsPage.createButton')}
+          </Button>
+        </Box>
       </Box>
     </MainLayout>
   );

@@ -29,6 +29,7 @@ class DrawService {
       drawName: formData.drawName,
       description: formData.description,
       participants: [participant], // Owner is the first participant
+      participantUuids: [participant.userUuid], // Owner is the first participant
       pairs: [], // Empty initially
       status: 'WAITING_FOR_DRAW',
       drawDate: null
@@ -48,7 +49,7 @@ class DrawService {
       const drawsCollection = collection(db, 'draws');
       const q = query(
         drawsCollection,
-        where('participants', 'array-contains', { userUuid: userId })
+        where('participantUuids', 'array-contains', userId)
       );
 
       const querySnapshot = await getDocs(q);
@@ -59,12 +60,7 @@ class DrawService {
         // Convert Firestore timestamps to JavaScript Date objects
         const draw: Draw = {
           ...data,
-          createdDate: data.createdDate instanceof Date ? data.createdDate : new Date(data.createdDate.seconds * 1000),
-          drawDate: data.drawDate ? new Date(data.drawDate.seconds * 1000) : null,
-          participants: data.participants.map(p => ({
-            ...p,
-            entryDate: p.entryDate instanceof Date ? p.entryDate : new Date(p.entryDate.seconds * 1000)
-          }))
+          id: doc.id, // Make sure to include the document ID
         };
         draws.push(draw);
       });
