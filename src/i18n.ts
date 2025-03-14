@@ -4,7 +4,12 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   en: {
     translation: {
+      common: {
+        cancel: 'Cancel',
+        submitting: 'Submitting...',
+      },
       createPage: {
+        success: 'Created new draw. Do not forget about your wish for Santa!',
         title: 'Create New Draw',
         drawName: 'Draw Name',
         description: 'Description',
@@ -39,12 +44,22 @@ const resources = {
         noDraws:
           'You are not participating in any draws at the moment. Ask a friend to share a draw with you or',
         createOwn: 'create your own',
+        createButton: 'Create New Draw',
+        totalDrawsPrompt: 'and be a participant in one of {{count}} draws that already exist in the app.',
+        errors: {
+          fetchFailed: 'Failed to fetch draws. Please try again.',
+        },
       },
     },
   },
   pl: {
     translation: {
+      common: {
+        cancel: 'Anuluj',
+        submitting: 'Wysyłanie...',
+      },
       createPage: {
+        success: 'Stworzono losowanie. Nie zapomnij o wpisaniu życzenia dla mikołaja!',
         title: 'Stwórz Nowe Losowanie',
         drawName: 'Nazwa Losowania',
         description: 'Opis',
@@ -79,6 +94,11 @@ const resources = {
         noDraws:
           'Obecnie nie uczestniczysz w żadnym losowaniu. Poproś znajomego o udostępnienie losowania lub',
         createOwn: 'stwórz własne',
+        totalDrawsPrompt: 'i bądź uczestnikiem jednego z {{count}} losowań istniejących już w aplikacji.',
+        createButton: 'Stwórz Nowe Losowanie',
+        errors: {
+          fetchFailed: 'Nie udało się pobrać losowań. Spróbuj ponownie.',
+        },
       },
     },
   },

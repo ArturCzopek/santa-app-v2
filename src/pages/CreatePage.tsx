@@ -1,5 +1,4 @@
-// pages/CreatePage.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Typography,
@@ -11,11 +10,14 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  Alert
 } from '@mui/material';
 import MainLayout from '../components/layout/MainLayout';
 import ContentCard from '../components/ContentCard';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { drawService } from '../services/DrawService';
+import { useAuth } from '../hooks/useAuth';
 
 type FormData = {
   drawName: string;
@@ -27,6 +29,9 @@ type FormData = {
 const CreatePage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
     defaultValues: {
@@ -37,11 +42,28 @@ const CreatePage = () => {
     }
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-    // Here you would normally save the data to Firebase
-    alert('Draw created successfully!');
-    navigate('/draws');
+  const onSubmit = async (data: FormData) => {
+    if (!user) {
+      alert(t('createPage.errors.notAuthenticated'));
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const newDrawUid = await drawService.createDraw(data, user);
+      setSuccess(true);
+
+      // Log the created entity after 3 seconds
+      setTimeout(() => {
+        console.log('Created draw:', newDrawUid);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Error creating draw:', error);
+      alert(t('createPage.errors.createFailed'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const currencies = ['PLN', 'EUR', 'USD', 'GBP'];
@@ -88,6 +110,22 @@ const CreatePage = () => {
           onSubmit={handleSubmit(onSubmit)}
           sx={{ background: 'rgba(0, 43, 0, 0.7)' }}
         >
+          {/* Display success message if creation was successful */}
+          {success && (
+            <Alert
+              severity="success"
+              sx={{
+                backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                color: '#C8E6C9',
+                '.MuiAlert-icon': {
+                  color: '#4CAF50'
+                }
+              }}
+            >
+              {t('createPage.success')}
+            </Alert>
+          )}
+
           <Controller
             name="drawName"
             control={control}
@@ -205,7 +243,7 @@ const CreatePage = () => {
               rules={{
                 required: t('createPage.validation.currencyRequired'),
                 maxLength: {
-                  value: 30,
+                  value: 3,
                   message: t('createPage.validation.currencyTooLong')
                 }
               }}
@@ -288,12 +326,32 @@ const CreatePage = () => {
             />
           </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, gap: 2 }}>
+            <Button
+              variant="outlined"
+              size="large"
+              onClick={() => navigate('/draws')}
+              sx={{
+                minWidth: '120px',
+                fontWeight: 'bold',
+                fontSize: '1.1rem',
+                color: '#9E9E9E', // Gray text
+                borderColor: '#9E9E9E', // Gray border
+                '&:hover': {
+                  borderColor: '#BDBDBD',
+                  color: '#BDBDBD'
+                }
+              }}
+            >
+              {t('common.cancel')}
+            </Button>
+
             <Button
               type="submit"
               variant="contained"
               color="primary"
               size="large"
+              disabled={isSubmitting || success}
               sx={{
                 minWidth: '200px',
                 fontWeight: 'bold',
@@ -304,7 +362,7 @@ const CreatePage = () => {
                 }
               }}
             >
-              {t('createPage.createButton')}
+              {isSubmitting ? t('common.submitting') : t('createPage.createButton')}
             </Button>
           </Box>
         </ContentCard>

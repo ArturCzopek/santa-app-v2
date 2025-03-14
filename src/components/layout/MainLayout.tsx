@@ -46,6 +46,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, title }) => {
             marginBottom: theme.spacing(3),
             color: 'rgba(255, 255, 255, 0.95)',
             fontWeight: 'bold',
+            textAlign: 'center',
+            mt: 2,
+            mb: 6
           }}
         >
           {title}
