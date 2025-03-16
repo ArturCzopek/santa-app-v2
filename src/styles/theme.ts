@@ -1,5 +1,15 @@
 import { createTheme } from '@mui/material/styles';
 
+const customColors = {
+  gold: '#FFC107',
+  lightGold: '#FFD54F',
+  darkRed: '#B71C1C',
+  darkGreen: 'rgba(0, 43, 0, 0.7)',
+  grayText: '#9E9E9E',
+  lightGray: '#BDBDBD',
+  darkGray: '#1E1E1E',
+};
+
 const theme = createTheme({
   palette: {
     primary: { main: '#D32F2F' }, // Christmas red
@@ -69,7 +79,7 @@ const theme = createTheme({
         },
         containedPrimary: {
           '&:hover': {
-            backgroundColor: '#B71C1C',
+            backgroundColor: customColors.darkRed,
           },
         },
       },
@@ -85,4 +95,20 @@ const theme = createTheme({
   },
 });
 
-export default theme;
+// Add the custom colors to the theme
+const themeWithCustomColors = {
+  ...theme,
+  customColors,
+};
+
+// Type for the customColors
+declare module '@mui/material/styles' {
+  interface Theme {
+    customColors: typeof customColors;
+  }
+  interface ThemeOptions {
+    customColors?: typeof customColors;
+  }
+}
+
+export default themeWithCustomColors as typeof theme;

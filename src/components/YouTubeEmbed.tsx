@@ -5,9 +5,9 @@ const YouTubeEmbed: React.FC<{ videoId: string }> = ({ videoId }) => (
     width="100%"
     height="315"
     style={{
-      border: 0, // Remove any default border
-      margin: 0, // Remove margins
-      padding: 0, // Remove padding
+      border: 0,
+      margin: 0,
+      padding: 0,
     }}
     src={`https://www.youtube.com/embed/${videoId}`}
     title="YouTube video player"

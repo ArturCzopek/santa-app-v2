@@ -25,6 +25,7 @@ export type Draw = {
   pairs: Pair[];
   status: 'WAITING_FOR_DRAW' | 'DRAWED';
   drawDate?: Date | null;
+  password: string;
 };
 
 export type DrawPreview = Pick<Draw,

@@ -1,45 +1,57 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
-  Typography,
   Box,
-  TextField,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  Alert,
+  useTheme,
+  IconButton,
+  InputAdornment,
   FormHelperText,
-  Alert
+  TextField,
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import ContentCard from '../components/ContentCard';
+import FormTextField from '../components/form/FormTextField';
+import FormSelect from '../components/form/FormSelect';
+import FormActions from '../components/form/FormActions';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { drawService } from '../services/DrawService';
 import { useAuth } from '../hooks/useAuth';
+import {
+  alertStyles,
+  darkGreenBackground,
+  inputStyles,
+  inputLabelStyles,
+  errorStyles,
+} from '../styles/formStyles';
 
 type FormData = {
   drawName: string;
   description: string;
   budget: number;
   currency: string;
+  password: string;
 };
 
 const CreatePage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const theme = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { control, handleSubmit } = useForm<FormData>({
     defaultValues: {
       drawName: '',
       description: '',
       budget: 50,
       currency: 'PLN',
-    }
+      password: '',
+    },
   });
 
   const onSubmit = async (data: FormData) => {
@@ -57,7 +69,6 @@ const CreatePage = () => {
       setTimeout(() => {
         console.log('Created draw:', newDrawUid);
       }, 3000);
-
     } catch (error) {
       console.error('Error creating draw:', error);
       alert(t('createPage.errors.createFailed'));
@@ -66,34 +77,15 @@ const CreatePage = () => {
     }
   };
 
-  const currencies = ['PLN', 'EUR', 'USD', 'GBP'];
+  const currencyOptions = [
+    { value: 'PLN', label: 'PLN' },
+    { value: 'EUR', label: 'EUR' },
+    { value: 'USD', label: 'USD' },
+    { value: 'GBP', label: 'GBP' },
+  ];
 
-  const inputStyles = {
-    color: 'rgba(255, 255, 255, 0.95)',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgba(255, 255, 255, 0.6)',
-      borderWidth: '2px'
-    },
-    '&:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgba(255, 255, 255, 0.8)',
-    },
-    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#FFC107',
-      borderWidth: '2px'
-    }
-  };
-
-  const errorStyles = {
-    '& .MuiFormHelperText-root': {
-      color: '#FFD54F',
-      fontSize: '0.85rem',
-      fontWeight: 'bold',
-      marginTop: '6px'
-    },
-    '& .Mui-error .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#FFD54F',
-      borderWidth: '2px'
-    }
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -103,268 +95,153 @@ const CreatePage = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          mt: 4
+          mt: 4,
         }}
       >
         <ContentCard
           onSubmit={handleSubmit(onSubmit)}
-          sx={{ background: 'rgba(0, 43, 0, 0.7)' }}
+          sx={darkGreenBackground(theme)}
         >
           {/* Display success message if creation was successful */}
           {success && (
-            <Alert
-              severity="success"
-              sx={{
-                backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                color: '#C8E6C9',
-                '.MuiAlert-icon': {
-                  color: '#4CAF50'
-                }
-              }}
-            >
+            <Alert severity="success" sx={alertStyles(theme)}>
               {t('createPage.success')}
             </Alert>
           )}
 
-          <Controller
+          <FormTextField
             name="drawName"
             control={control}
+            label={t('createPage.drawName')}
+            variant="outlined"
+            fullWidth
             rules={{
               required: t('createPage.validation.drawNameRequired'),
               maxLength: {
                 value: 80,
-                message: t('createPage.validation.drawNameTooLong')
-              }
+                message: t('createPage.validation.drawNameTooLong'),
+              },
             }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label={t('createPage.drawName')}
-                variant="outlined"
-                fullWidth
-                error={!!errors.drawName}
-                helperText={errors.drawName?.message}
-                InputProps={{ sx: inputStyles }}
-                InputLabelProps={{
-                  sx: {
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    '&.Mui-focused': {
-                      color: '#FFC107'
-                    },
-                    '&.Mui-error': {
-                      color: '#FFD54F'
-                    }
-                  }
-                }}
-                sx={errorStyles}
-              />
-            )}
           />
 
-          <Controller
+          <FormTextField
             name="description"
             control={control}
+            label={t('createPage.description')}
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={4}
             rules={{
               required: t('createPage.validation.descriptionRequired'),
               maxLength: {
                 value: 1000,
-                message: t('createPage.validation.descriptionTooLong')
-              }
+                message: t('createPage.validation.descriptionTooLong'),
+              },
             }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label={t('createPage.description')}
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={4}
-                error={!!errors.description}
-                helperText={errors.description?.message}
-                InputProps={{ sx: inputStyles }}
-                InputLabelProps={{
-                  sx: {
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    '&.Mui-focused': {
-                      color: '#FFC107'
-                    },
-                    '&.Mui-error': {
-                      color: '#FFD54F'
-                    }
-                  }
-                }}
-                sx={errorStyles}
-              />
-            )}
           />
 
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <Controller
+            <FormTextField
               name="budget"
               control={control}
+              label={t('createPage.budget')}
+              variant="outlined"
+              fullWidth
+              type="number"
               rules={{
                 required: t('createPage.validation.budgetRequired'),
                 validate: {
                   positive: (value) =>
                     value > 0 || t('createPage.validation.budgetPositive'),
                   isNumber: (value) =>
-                    !isNaN(Number(value)) || t('createPage.validation.budgetMustBeNumber'),
-                }
+                    !isNaN(Number(value)) ||
+                    t('createPage.validation.budgetMustBeNumber'),
+                },
               }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label={t('createPage.budget')}
-                  variant="outlined"
-                  fullWidth
-                  type="number"
-                  error={!!errors.budget}
-                  helperText={errors.budget?.message}
-                  InputProps={{ sx: inputStyles }}
-                  InputLabelProps={{
-                    sx: {
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      '&.Mui-focused': {
-                        color: '#FFC107'
-                      },
-                      '&.Mui-error': {
-                        color: '#FFD54F'
-                      }
-                    }
-                  }}
-                  sx={errorStyles}
-                />
-              )}
             />
 
-            <Controller
+            <FormSelect
               name="currency"
               control={control}
+              label={t('createPage.currency')}
+              options={currencyOptions}
               rules={{
                 required: t('createPage.validation.currencyRequired'),
                 maxLength: {
                   value: 3,
-                  message: t('createPage.validation.currencyTooLong')
-                }
+                  message: t('createPage.validation.currencyTooLong'),
+                },
               }}
-              render={({ field }) => (
-                <FormControl
-                  fullWidth
-                  error={!!errors.currency}
-                  sx={{
-                    ...errorStyles,
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'rgba(255, 255, 255, 0.6)',
-                      borderWidth: '2px'
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'rgba(255, 255, 255, 0.8)',
-                    },
-                    '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#FFC107',
-                      borderWidth: '2px'
-                    }
-                  }}
-                >
-                  <InputLabel
-                    id="currency-label"
-                    sx={{
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      '&.Mui-focused': {
-                        color: '#FFC107'
-                      },
-                      '&.Mui-error': {
-                        color: '#FFD54F'
-                      }
-                    }}
-                  >
-                    {t('createPage.currency')}
-                  </InputLabel>
-                  <Select
-                    {...field}
-                    labelId="currency-label"
-                    label={t('createPage.currency')}
-                    sx={{
-                      color: 'rgba(255, 255, 255, 0.95)',
-                      '& .MuiSelect-icon': {
-                        color: 'rgba(255, 255, 255, 0.8)'
-                      }
-                    }}
-                    MenuProps={{
-                      PaperProps: {
-                        sx: {
-                          bgcolor: '#1e1e1e',
-                          '& .MuiMenuItem-root': {
-                            color: 'white',
-                            '&:hover': {
-                              bgcolor: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            '&.Mui-selected': {
-                              bgcolor: 'rgba(255, 255, 255, 0.2)',
-                              '&:hover': {
-                                bgcolor: 'rgba(255, 255, 255, 0.3)'
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    {currencies.map((currency) => (
-                      <MenuItem key={currency} value={currency}>
-                        {currency}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {errors.currency && (
-                    <FormHelperText>
-                      {errors.currency.message}
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              )}
             />
           </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, gap: 2 }}>
-            <Button
-              variant="outlined"
-              size="large"
-              onClick={() => navigate('/draws')}
-              sx={{
-                minWidth: '120px',
-                fontWeight: 'bold',
-                fontSize: '1.1rem',
-                color: '#9E9E9E', // Gray text
-                borderColor: '#9E9E9E', // Gray border
-                '&:hover': {
-                  borderColor: '#BDBDBD',
-                  color: '#BDBDBD'
-                }
-              }}
-            >
-              {t('common.cancel')}
-            </Button>
+          {/* Password field with visibility toggle */}
+          <Controller
+            name="password"
+            control={control}
+            rules={{
+              required: t('createPage.validation.passwordRequired'),
+              minLength: {
+                value: 4,
+                message: t('createPage.validation.passwordTooShort'),
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <Box sx={{ width: '100%' }}>
+                <TextField
+                  {...field}
+                  label={t('createPage.password')}
+                  variant="outlined"
+                  fullWidth
+                  type={showPassword ? 'text' : 'password'}
+                  error={!!error}
+                  helperText={error?.message}
+                  InputProps={{
+                    sx: inputStyles(theme),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleTogglePasswordVisibility}
+                          edge="end"
+                          sx={{ color: theme.palette.text.primary }}
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  InputLabelProps={{
+                    sx: inputLabelStyles(theme),
+                  }}
+                  sx={errorStyles(theme)}
+                />
 
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="large"
-              disabled={isSubmitting || success}
-              sx={{
-                minWidth: '200px',
-                fontWeight: 'bold',
-                fontSize: '1.1rem',
-                backgroundColor: '#D32F2F',
-                '&:hover': {
-                  backgroundColor: '#B71C1C'
-                }
-              }}
-            >
-              {isSubmitting ? t('common.submitting') : t('createPage.createButton')}
-            </Button>
-          </Box>
+                {/* Password hint text in amber color */}
+                <FormHelperText
+                  sx={{
+                    color: theme.customColors.lightGold,
+                    mt: 0.5,
+                    mb: 2,
+                    opacity: 0.9,
+                    fontSize: '0.9rem',
+                    fontStyle: 'italic',
+                  }}
+                >
+                  {t('createPage.passwordHint')}
+                </FormHelperText>
+              </Box>
+            )}
+          />
+
+          <FormActions
+            primaryLabel={t('createPage.createButton')}
+            secondaryLabel={t('common.cancel')}
+            onSecondaryClick={() => navigate('/draws')}
+            isSubmitting={isSubmitting}
+            isDisabled={success}
+          />
         </ContentCard>
       </Box>
     </MainLayout>

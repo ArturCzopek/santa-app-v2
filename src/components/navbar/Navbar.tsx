@@ -1,56 +1,65 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Box, Divider } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Box,
+  Divider,
+  useTheme,
+} from '@mui/material';
 import { ExitToApp, Message, GitHub } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import NavbarItem from './NavbarItem';
 import { useTranslation } from 'react-i18next';
+import {
+  appBarStyles,
+  titleStyles,
+  navItemContainerStyles,
+  dividerStyles,
+  userNameStyles,
+  logoutButtonStyles,
+} from '../../styles/navbarStyles';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, logOut } = useAuth();
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
-    <AppBar
-      position="sticky"
-      sx={{
-        backgroundColor: '#D32F2F',
-        boxShadow: 'none'
-      }}
-    >
+    <AppBar position="sticky" sx={appBarStyles(theme)}>
       <Toolbar>
         <Typography
           variant="h3"
           component="div"
-          sx={{
-            flexGrow: 1,
-            color: '#FFFFFF',
-            fontWeight: 'bold',
-            cursor: 'pointer'
-          }}
+          sx={titleStyles(theme)}
           onClick={() => navigate('/draws')}
         >
           {t('navbar.title')}
         </Typography>
 
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={navItemContainerStyles}>
           <NavbarItem
             icon={<GitHub />}
-            onClick={() => window.open('https://github.com/ArturCzopek/santa-app-v2', '_blank')}
+            onClick={() =>
+              window.open(
+                'https://github.com/ArturCzopek/santa-app-v2',
+                '_blank',
+              )
+            }
           >
             {t('navbar.checkApp')}
           </NavbarItem>
 
-          <Divider orientation="vertical" flexItem sx={{ mx: 1, backgroundColor: 'rgba(255, 255, 255, 0.3)' }} />
+          <Divider orientation="vertical" flexItem sx={dividerStyles} />
 
-          <NavbarItem
-            onClick={() => alert('Show Santa feature coming soon!')}
-          >
+          <NavbarItem onClick={() => alert('Show Santa feature coming soon!')}>
             {t('navbar.showSanta')}
           </NavbarItem>
 
-          <Divider orientation="vertical" flexItem sx={{ mx: 1, backgroundColor: 'rgba(255, 255, 255, 0.3)' }} />
+          <Divider orientation="vertical" flexItem sx={dividerStyles} />
 
           <NavbarItem
             icon={<Message />}
@@ -61,9 +70,9 @@ const Navbar = () => {
 
           {user && (
             <>
-              <Divider orientation="vertical" flexItem sx={{ mx: 1, backgroundColor: 'rgba(255, 255, 255, 0.3)' }} />
+              <Divider orientation="vertical" flexItem sx={dividerStyles} />
 
-              <Typography sx={{ mx: 2, color: '#FFFFFF' }}>
+              <Typography sx={userNameStyles(theme)}>
                 {user.displayName}
               </Typography>
 
@@ -71,12 +80,7 @@ const Navbar = () => {
                 aria-label="logout"
                 onClick={logOut}
                 size="small"
-                sx={{
-                  color: '#FFFFFF',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                  }
-                }}
+                sx={logoutButtonStyles(theme)}
               >
                 <ExitToApp />
               </IconButton>

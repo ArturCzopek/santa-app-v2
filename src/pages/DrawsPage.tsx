@@ -1,6 +1,11 @@
-// pages/DrawsPage.tsx
 import React, { useEffect, useState } from 'react';
-import { Box, Button, CircularProgress, Link, Typography } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Link,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { Add, GroupAdd } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import { useTranslation } from 'react-i18next';
@@ -9,11 +14,24 @@ import { useAuth } from '../hooks/useAuth';
 import { drawService } from '../services/DrawService';
 import { Draw } from '../models/Draw';
 import DrawPreviewCard from '../components/DrawPreviewCard';
+import ActionButtons from '../components/common/ActionButtons';
+import {
+  pageContainerStyles,
+  loadingContainerStyles,
+  errorMessageStyles,
+  emptyStateContainerStyles,
+  emptyStateTextStyles,
+  createLinkStyles,
+  actionButtonsContainerStyles,
+  joinButtonStyles,
+  createButtonStyles,
+} from '../styles/drawsPageStyles';
 
 const DrawsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const theme = useTheme();
 
   const [draws, setDraws] = useState<Draw[]>([]);
   const [totalDrawsCount, setTotalDrawsCount] = useState<number>(0);
@@ -47,7 +65,7 @@ const DrawsPage = () => {
   if (loading) {
     return (
       <MainLayout title={t('drawsPage.title')}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
+        <Box sx={loadingContainerStyles}>
           <CircularProgress color="inherit" />
         </Box>
       </MainLayout>
@@ -57,54 +75,41 @@ const DrawsPage = () => {
   if (error) {
     return (
       <MainLayout title={t('drawsPage.title')}>
-        <Typography color="error" sx={{ textAlign: 'center', mt: 8 }}>
+        <Typography color="error" sx={errorMessageStyles}>
           {error}
         </Typography>
       </MainLayout>
     );
   }
 
+  // Define action buttons for reuse
+  const actionButtons = [
+    {
+      icon: <GroupAdd />,
+      label: t('drawsPage.joinButton'),
+      color: 'success' as const,
+      customStyles: joinButtonStyles(theme),
+    },
+    {
+      icon: <Add />,
+      label: t('drawsPage.createButton'),
+      onClick: () => navigate('/create'),
+      color: 'primary' as const,
+      customStyles: createButtonStyles(theme),
+    },
+  ];
+
   return (
     <MainLayout title={t('drawsPage.title')}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          mt: 6, // More space from the top
-        }}
-      >
+      <Box sx={pageContainerStyles}>
         {draws.length === 0 ? (
-          <Box
-            sx={{
-              textAlign: 'center',
-              maxWidth: '600px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            <Typography
-              sx={{
-                color: 'rgba(255, 255, 255, 0.9)',
-                fontSize: '1.1rem',
-                lineHeight: 1.6,
-              }}
-            >
+          <Box sx={emptyStateContainerStyles}>
+            <Typography sx={emptyStateTextStyles(theme)}>
               {t('drawsPage.noDraws')}{' '}
               <Link
                 component="span"
                 onClick={() => navigate('/create')}
-                sx={{
-                  color: '#FFFFFF',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  textDecoration: 'underline',
-                  '&:hover': {
-                    color: '#FFC107',
-                  },
-                }}
+                sx={createLinkStyles(theme)}
               >
                 {t('drawsPage.createOwn')}
               </Link>{' '}
@@ -114,44 +119,11 @@ const DrawsPage = () => {
         ) : (
           draws.map((draw) => <DrawPreviewCard key={draw.id} draw={draw} />)
         )}
-        <Box sx={{ mt: 5, display: 'flex', gap: 2 }}>
-          <Button
-            variant="contained"
-            startIcon={<GroupAdd />}
-            size="large"
-            sx={{
-              minWidth: '220px',
-              py: 1.5,
-              fontWeight: 'bold',
-              backgroundColor: '#4CAF50', // Green color
-              '&:hover': {
-                backgroundColor: '#388E3C',
-              },
-              boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-            }}
-          >
-            {t('drawsPage.joinButton')}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<Add />}
-            size="large"
-            onClick={() => navigate('/create')}
-            sx={{
-              minWidth: '220px',
-              py: 1.5,
-              fontWeight: 'bold',
-              backgroundColor: '#D32F2F',
-              '&:hover': {
-                backgroundColor: '#B71C1C',
-              },
-              boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-            }}
-          >
-            {t('drawsPage.createButton')}
-          </Button>
-        </Box>
+
+        <ActionButtons
+          buttons={actionButtons}
+          containerStyles={actionButtonsContainerStyles}
+        />
       </Box>
     </MainLayout>
   );
