@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
-import ContentCard from '../components/ContentCard';
+import ContentCard from '../components/common/ContentCard';
 import FormTextField from '../components/form/FormTextField';
 import FormSelect from '../components/form/FormSelect';
 import FormActions from '../components/form/FormActions';

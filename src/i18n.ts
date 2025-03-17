@@ -5,8 +5,10 @@ const resources = {
   en: {
     translation: {
       common: {
+        backToDraws: 'Back to Draws',
         cancel: 'Cancel',
         submitting: 'Submitting...',
+        saving: 'Saving...',
       },
       createPage: {
         success: 'Created new draw. Do not forget about your wish for Santa!',
@@ -32,6 +34,24 @@ const resources = {
           currencyTooLong: 'Currency must be less than 30 characters',
           passwordRequired: 'Password is required',
           passwordTooShort: 'Password must be at least 4 characters',
+        },
+      },
+      drawPage: {
+        title: 'Draw',
+        startDrawButton: 'Start Draw',
+        wishSection: {
+          title: 'Your Wish',
+          wishLabel: 'Wish',
+          wishPlaceholder: 'Enter your wish here...',
+          editButton: 'Edit Wish',
+          saveButton: 'Save Wish',
+          saveSuccess: 'Your wish has been saved successfully!',
+          noWishWarning: "You haven't provided your wish yet! Do it before the draw takes place."
+        },
+        errors: {
+          fetchFailed: 'Failed to fetch draw details. Please try again.',
+          drawNotFound: "Draw not found or you don't have access to it.",
+          wishUpdateFailed: 'Failed to update your wish. Please try again.',
         },
       },
       loginPage: {
@@ -71,7 +91,9 @@ const resources = {
     translation: {
       common: {
         cancel: 'Anuluj',
+        backToDraws: 'Powrót do Losowań',
         submitting: 'Wysyłanie...',
+        saving: 'Zapisywanie...',
       },
       createPage: {
         success:
@@ -102,6 +124,28 @@ const resources = {
       loginPage: {
         title: 'Santa App 2.0',
         loginWithGoogle: 'Zaloguj przez Google',
+      },
+      drawPage: {
+        title: 'Losowanie',
+        startDrawButton: 'Rozpocznij Losowanie',
+        wishSection: {
+          title: 'Twoje Życzenie',
+          wishLabel: 'Życzenie',
+          wishPlaceholder: 'Wpisz swoje życzenie tutaj...',
+          editButton: 'Edytuj życzenie',
+          saveButton: 'Zapisz życzenie',
+          saveSuccess: 'Twoje życzenie zostało zapisane pomyślnie!',
+          noWishWarning:
+            'Nie podałeś jeszcze swojego życzenia! Zrób to, zanim losowanie się odbędzie.',
+        },
+        errors: {
+          fetchFailed:
+            'Nie udało się pobrać szczegółów losowania. Spróbuj ponownie.',
+          drawNotFound:
+            'Losowanie nie zostało znalezione lub nie masz do niego dostępu.',
+          wishUpdateFailed:
+            'Nie udało się zaktualizować twojego życzenia. Spróbuj ponownie.',
+        },
       },
       navbar: {
         title: 'Santa App',

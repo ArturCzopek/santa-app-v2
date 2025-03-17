@@ -12,8 +12,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { drawService } from '../services/DrawService';
-import { Draw } from '../models/Draw';
-import DrawPreviewCard from '../components/DrawPreviewCard';
+import { DrawPreview } from '../models/Draw';
+import DrawPreviewCard from '../components/draw/DrawPreviewCard';
 import ActionButtons from '../components/common/ActionButtons';
 import {
   pageContainerStyles,
@@ -33,7 +33,7 @@ const DrawsPage = () => {
   const { user } = useAuth();
   const theme = useTheme();
 
-  const [draws, setDraws] = useState<Draw[]>([]);
+  const [drawPreviews, setDrawPreviews] = useState<DrawPreview[]>([]);
   const [totalDrawsCount, setTotalDrawsCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ const DrawsPage = () => {
         setLoading(true);
         // Fetch user's draws
         const userDraws = await drawService.getDrawPreviews(user.uid);
-        setDraws(userDraws);
+        setDrawPreviews(userDraws);
 
         // Fetch total draws count and add 100 to make it appear like there are more users
         const count = await drawService.getTotalDrawsCount();
@@ -102,7 +102,7 @@ const DrawsPage = () => {
   return (
     <MainLayout title={t('drawsPage.title')}>
       <Box sx={pageContainerStyles}>
-        {draws.length === 0 ? (
+        {drawPreviews.length === 0 ? (
           <Box sx={emptyStateContainerStyles}>
             <Typography sx={emptyStateTextStyles(theme)}>
               {t('drawsPage.noDraws')}{' '}
@@ -117,7 +117,7 @@ const DrawsPage = () => {
             </Typography>
           </Box>
         ) : (
-          draws.map((draw) => <DrawPreviewCard key={draw.id} draw={draw} />)
+          drawPreviews.map((drawPreview) => <DrawPreviewCard key={drawPreview.id} drawPreview={drawPreview} />)
         )}
 
         <ActionButtons

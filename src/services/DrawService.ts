@@ -6,7 +6,7 @@ import {
   doc,
   query,
   where,
-  getCountFromServer,
+  getCountFromServer, setDoc
 } from 'firebase/firestore';
 import { db } from './FirebaseConfig';
 import { Draw, DrawPreview, Participant } from '../models/Draw';
@@ -125,6 +125,20 @@ class DrawService {
       return snapshot.data().count;
     } catch (error) {
       console.error('Error counting draws:', error);
+      throw error;
+    }
+  }
+
+  async updateDraw(draw: Draw): Promise<void> {
+    if (!draw.id) {
+      throw new Error('Draw ID is required for updating');
+    }
+
+    try {
+      const drawRef = doc(this.drawsCollection, draw.id);
+      await setDoc(drawRef, draw);
+    } catch (error) {
+      console.error('Error updating draw:', error);
       throw error;
     }
   }
