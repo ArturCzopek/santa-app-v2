@@ -1,4 +1,3 @@
-// pages/DrawPage.tsx
 import React, { useEffect, useState } from 'react';
 import { Box, CircularProgress, Typography, useTheme, Button } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -6,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowBack, PlayArrow } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import DrawDetailCard from '../components/draw/DrawDetailCard';
+import ParticipantsSection from '../components/draw/ParticipantsSection';
 import { drawService } from '../services/DrawService';
 import { Draw } from '../models/Draw';
 import {
@@ -119,6 +119,7 @@ const DrawPage = () => {
 
         <DrawDetailCard draw={draw} />
         <UserWishSection draw={draw} onDrawUpdated={handleDrawUpdated} />
+        <ParticipantsSection draw={draw} />
       </Box>
     </MainLayout>
   );

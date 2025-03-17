@@ -49,6 +49,13 @@ const resources = {
           noWishWarning:
             "You haven't provided your wish yet! Do it before the draw takes place.",
         },
+        participantsSection: {
+          title: 'Participants',
+          owner: 'Owner',
+          participant: 'Participant',
+          wishProvided: 'Wish Provided',
+          noWish: 'No Wish',
+        },
         errors: {
           fetchFailed: 'Failed to fetch draw details. Please try again.',
           drawNotFound: "Draw not found or you don't have access to it.",
@@ -140,6 +147,13 @@ const resources = {
           saveSuccess: 'Twoje życzenie zostało zapisane pomyślnie!',
           noWishWarning:
             'Nie podałeś jeszcze swojego życzenia! Zrób to, zanim losowanie się odbędzie.',
+        },
+        participantsSection: {
+          title: 'Uczestnicy',
+          owner: 'Założyciel',
+          participant: 'Uczestnik',
+          wishProvided: 'Życzenie dodane',
+          noWish: 'Brak życzeń',
         },
         errors: {
           fetchFailed:
