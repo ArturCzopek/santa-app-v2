@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress, Typography, useTheme, Button } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Typography,
+  useTheme,
+  Button,
+  Snackbar,
+  Alert,
+} from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowBack, PlayArrow } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import DrawDetailCard from '../components/draw/DrawDetailCard';
 import ParticipantsSection from '../components/draw/ParticipantsSection';
+import WinnerSection from '../components/draw/WinnerSection';
+import StartDrawModal from '../components/draw/StartDrawModal';
 import { drawService } from '../services/DrawService';
 import { Draw } from '../models/Draw';
 import {
@@ -15,10 +25,11 @@ import {
   loadingContainerStyles,
   errorMessageStyles,
   actionButtonContainerStyles,
-  drawActionButtonStyles
+  drawActionButtonStyles,
 } from '../styles/drawPageStyles';
 import { useAuth } from '../hooks/useAuth';
 import UserWishSection from '../components/draw/UserWishSection';
+import { drawingService } from '../services/DrawingService';
 
 const DrawPage = () => {
   const { drawId } = useParams<{ drawId: string }>();
@@ -30,6 +41,8 @@ const DrawPage = () => {
   const [draw, setDraw] = useState<Draw | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isStartDrawModalOpen, setIsStartDrawModalOpen] = useState(false);
+  const [drawSuccess, setDrawSuccess] = useState(false);
 
   useEffect(() => {
     const fetchDrawDetails = async () => {
@@ -50,20 +63,44 @@ const DrawPage = () => {
     fetchDrawDetails();
   }, [drawId, t]);
 
-  // Check if current user is the draw owner
-  const isOwner = draw && user && draw.ownerUuid === user.uid;
-  // Check if draw is in waiting for draw status
-  const isWaitingForDraw = draw && draw.status === 'WAITING_FOR_DRAW';
   // Determine if action button should be shown
-  const showActionButton = isOwner && isWaitingForDraw;
+  const showActionButton =
+    draw &&
+    user &&
+    draw.ownerUuid === user.uid &&
+    draw.status === 'WAITING_FOR_DRAW' &&
+    draw.participants.length >= 2;
 
-  // Mock action for the button
-  const handleStartDraw = () => {
-    alert('Draw action will be implemented soon!');
+  const handleStartDraw = async () => {
+    if (!draw || !drawId || !user) return;
+
+    try {
+      // Start the draw process
+      const updatedDraw = await drawingService.startDraw(drawId, user.uid);
+
+      // Update local state
+      setDraw(updatedDraw);
+
+      // Close modal and show success message
+      setIsStartDrawModalOpen(false);
+      setDrawSuccess(true);
+
+      // Automatically hide success message after 2 seconds
+      setTimeout(() => {
+        setDrawSuccess(false);
+      }, 2000);
+    } catch (err) {
+      console.error('Error starting draw:', err);
+      alert(err instanceof Error ? err.message : 'Failed to start draw');
+    }
   };
 
   const handleDrawUpdated = (updatedDraw: Draw) => {
     setDraw(updatedDraw);
+  };
+
+  const handleCloseDrawSuccess = () => {
+    setDrawSuccess(false);
   };
 
   if (loading) {
@@ -108,7 +145,7 @@ const DrawPage = () => {
                 variant="contained"
                 color="error"
                 startIcon={<PlayArrow />}
-                onClick={handleStartDraw}
+                onClick={() => setIsStartDrawModalOpen(true)}
                 sx={drawActionButtonStyles(theme)}
               >
                 {t('drawPage.startDrawButton')}
@@ -118,8 +155,36 @@ const DrawPage = () => {
         </Box>
 
         <DrawDetailCard draw={draw} />
-        <UserWishSection draw={draw} onDrawUpdated={handleDrawUpdated} />
+
+        {draw.status !== 'DRAWED' ? (
+          <UserWishSection draw={draw} onDrawUpdated={handleDrawUpdated} />
+        ) : (
+          <WinnerSection draw={draw} />
+        )}
+
         <ParticipantsSection draw={draw} />
+
+        <StartDrawModal
+          open={isStartDrawModalOpen}
+          onClose={() => setIsStartDrawModalOpen(false)}
+          onConfirm={handleStartDraw}
+          drawPassword={draw.password || ''}
+        />
+
+        <Snackbar
+          open={drawSuccess}
+          autoHideDuration={2000}
+          onClose={handleCloseDrawSuccess}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert
+            onClose={handleCloseDrawSuccess}
+            severity="success"
+            sx={{ width: '100%' }}
+          >
+            {t('drawPage.drawSuccessMessage')}
+          </Alert>
+        </Snackbar>
       </Box>
     </MainLayout>
   );

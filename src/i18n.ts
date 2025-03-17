@@ -39,6 +39,13 @@ const resources = {
       drawPage: {
         title: 'Draw',
         startDrawButton: 'Start Draw',
+        drawSuccessMessage: 'Draw completed successfully!',
+        startDraw: {
+          confirmationText:
+            'Are you sure you want to draw pairs? This action is irreversible.\nTo confirm the draw, enter the password created when the draw was set up.',
+          incorrectPassword: 'Incorrect password',
+          drawButton: 'Draw',
+        },
         wishSection: {
           title: 'Your Wish',
           wishLabel: 'Wish',
@@ -48,6 +55,10 @@ const resources = {
           saveSuccess: 'Your wish has been saved successfully!',
           noWishWarning:
             "You haven't provided your wish yet! Do it before the draw takes place.",
+        },
+        winnerSection: {
+          title: 'Your Gift Recipient',
+          noWishProvided: 'No wish provided',
         },
         participantsSection: {
           title: 'Participants',
@@ -138,6 +149,13 @@ const resources = {
       drawPage: {
         title: 'Losowanie',
         startDrawButton: 'Rozpocznij Losowanie',
+        drawSuccessMessage: 'Losowanie zakończone sukcesem!',
+        startDraw: {
+          confirmationText:
+            'Czy na pewno chcesz wylosować pary? Od tej akcji nie będzie odwrotu.\nAby potwierdzić losowanie, podaj hasło, które zostało utworzone na początku tworzenia losowania.',
+          incorrectPassword: 'Nieprawidłowe hasło',
+          drawButton: 'Losuj',
+        },
         wishSection: {
           title: 'Twoje Życzenie',
           wishLabel: 'Życzenie',
@@ -148,12 +166,16 @@ const resources = {
           noWishWarning:
             'Nie podałeś jeszcze swojego życzenia! Zrób to, zanim losowanie się odbędzie.',
         },
+        winnerSection: {
+          title: 'Twój Los',
+          noWishProvided: 'Brak życzenia',
+        },
         participantsSection: {
           title: 'Uczestnicy',
           owner: 'Założyciel',
           participant: 'Uczestnik',
           wishProvided: 'Życzenie dodane',
-          noWish: 'Brak życzeń',
+          noWish: 'Brak życzenia',
         },
         errors: {
           fetchFailed:

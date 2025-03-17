@@ -67,7 +67,7 @@ const CreatePage = () => {
 
       // Log the created entity after 3 seconds
       setTimeout(() => {
-        console.log('Created draw:', newDrawUid);
+        navigate(`/draw/${newDrawUid}`);
       }, 3000);
     } catch (error) {
       console.error('Error creating draw:', error);

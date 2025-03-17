@@ -6,19 +6,17 @@ import {
   doc,
   query,
   where,
-  getCountFromServer, setDoc
+  getCountFromServer,
+  setDoc,
+  orderBy,
 } from 'firebase/firestore';
 import { db } from './FirebaseConfig';
 import { Draw, DrawPreview, Participant } from '../models/Draw';
 import { User } from 'firebase/auth';
-import CryptoJS from 'crypto-js';
+import { PasswordUtils } from './PasswordUtils';
 
 class DrawService {
   private drawsCollection = collection(db, 'draws');
-
-  private hashPassword(password: string): string {
-    return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
-  }
 
   async createDraw(
     formData: {
@@ -50,7 +48,7 @@ class DrawService {
       currency: formData.currency,
       drawName: formData.drawName,
       description: formData.description,
-      password: this.hashPassword(formData.password),
+      password: PasswordUtils.hashPassword(formData.password),
       participants: [participant], // Owner is the first participant
       participantUuids: [participant.userUuid], // Owner is the first participant
       pairs: [], // Empty initially
@@ -72,6 +70,7 @@ class DrawService {
       const q = query(
         this.drawsCollection,
         where('participantUuids', 'array-contains', userId),
+        orderBy('createdDate', 'desc'),
       );
 
       const querySnapshot = await getDocs(q);
