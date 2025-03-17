@@ -6,6 +6,7 @@ const resources = {
     translation: {
       common: {
         backToDraws: 'Back to Draws',
+        close: 'Close',
         cancel: 'Cancel',
         submitting: 'Submitting...',
         saving: 'Saving...',
@@ -40,6 +41,15 @@ const resources = {
         title: 'Draw',
         startDrawButton: 'Start Draw',
         drawSuccessMessage: 'Draw completed successfully!',
+        inviteButton: 'Invite to Draw',
+        inviteModal: {
+          drawCode: 'Draw Code',
+          descriptionPart1:
+            'To invite someone to the draw, copy and send the link below or provide the draw code which may be provided on the main page:',
+          descriptionPart2:
+            'Remember to also provide the password you set when creating the draw!',
+          linkCopied: 'Link copied to clipboard!',
+        },
         startDraw: {
           confirmationText:
             'Are you sure you want to draw pairs? This action is irreversible.\nTo confirm the draw, enter the password created when the draw was set up.',
@@ -94,6 +104,13 @@ const resources = {
         errors: {
           fetchFailed: 'Failed to fetch draws. Please try again.',
         },
+        joinButton: 'Join Draw',
+        joinModal: {
+          description: 'Enter the draw code shared by the draw creator.',
+          drawCodeLabel: 'Draw Code',
+          codeRequired: 'Draw code is required',
+          proceedButton: 'Proceed to Draw',
+        },
       },
       drawCard: {
         waitingStatus: 'Waiting for Draw',
@@ -112,6 +129,7 @@ const resources = {
     translation: {
       common: {
         cancel: 'Anuluj',
+        close: 'Zamknij',
         backToDraws: 'Powrót do Losowań',
         submitting: 'Wysyłanie...',
         saving: 'Zapisywanie...',
@@ -150,6 +168,15 @@ const resources = {
         title: 'Losowanie',
         startDrawButton: 'Rozpocznij Losowanie',
         drawSuccessMessage: 'Losowanie zakończone sukcesem!',
+        inviteButton: 'Zaproś do losowania',
+        inviteModal: {
+          drawCode: 'Kod losowania',
+          descriptionPart1:
+            'Aby zaprosić osobę do losowania, skopiuj i wyślij link poniżej lub podaj kod losowania, który może być podany na głównej stronie:',
+          descriptionPart2:
+            'Pamiętaj, aby podać również hasło, które ustawiłeś podczas tworzenia losowania!',
+          linkCopied: 'Link skopiowany do schowka!',
+        },
         startDraw: {
           confirmationText:
             'Czy na pewno chcesz wylosować pary? Od tej akcji nie będzie odwrotu.\nAby potwierdzić losowanie, podaj hasło, które zostało utworzone na początku tworzenia losowania.',
@@ -203,6 +230,13 @@ const resources = {
         joinButton: 'Dołącz do losowania',
         errors: {
           fetchFailed: 'Nie udało się pobrać losowań. Spróbuj ponownie.',
+        },
+        joinModal: {
+          description:
+            'Podaj kod losowania udostępniony Ci przez założyciela losowania.',
+          drawCodeLabel: 'Kod losowania',
+          codeRequired: 'Kod losowania jest wymagany',
+          proceedButton: 'Przejdź do losowania',
         },
       },
       drawCard: {

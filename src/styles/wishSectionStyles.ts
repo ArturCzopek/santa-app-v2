@@ -13,7 +13,7 @@ export const wishSectionContainerStyles: SxProps<Theme> = {
 export const wishSectionTitleStyles = (theme: Theme): SxProps<Theme> => ({
   color: theme.palette.text.primary,
   textAlign: 'center',
-  fontWeight: 'medium',
+  fontWeight: 'bold',
   mb: 2
 });
 

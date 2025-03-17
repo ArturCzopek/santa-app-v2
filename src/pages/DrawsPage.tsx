@@ -15,6 +15,7 @@ import { drawService } from '../services/DrawService';
 import { DrawPreview } from '../models/Draw';
 import DrawPreviewCard from '../components/draw/DrawPreviewCard';
 import ActionButtons from '../components/common/ActionButtons';
+import JoinDrawModal from '../components/draw/JoinDrawModal';
 import {
   pageContainerStyles,
   loadingContainerStyles,
@@ -37,6 +38,7 @@ const DrawsPage = () => {
   const [totalDrawsCount, setTotalDrawsCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,6 +91,7 @@ const DrawsPage = () => {
       label: t('drawsPage.joinButton'),
       color: 'success' as const,
       customStyles: joinButtonStyles(theme),
+      onClick: () => setIsJoinModalOpen(true),
     },
     {
       icon: <Add />,
@@ -123,6 +126,11 @@ const DrawsPage = () => {
         <ActionButtons
           buttons={actionButtons}
           containerStyles={actionButtonsContainerStyles}
+        />
+
+        <JoinDrawModal
+          open={isJoinModalOpen}
+          onClose={() => setIsJoinModalOpen(false)}
         />
       </Box>
     </MainLayout>

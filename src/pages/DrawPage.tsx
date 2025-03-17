@@ -10,12 +10,13 @@ import {
 } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowBack, PlayArrow } from '@mui/icons-material';
+import { ArrowBack, PlayArrow, PersonAdd } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import DrawDetailCard from '../components/draw/DrawDetailCard';
 import ParticipantsSection from '../components/draw/ParticipantsSection';
 import WinnerSection from '../components/draw/WinnerSection';
 import StartDrawModal from '../components/draw/StartDrawModal';
+import InviteDrawModal from '../components/draw/InviteDrawModal';
 import { drawService } from '../services/DrawService';
 import { Draw } from '../models/Draw';
 import {
@@ -30,6 +31,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import UserWishSection from '../components/draw/UserWishSection';
 import { drawingService } from '../services/DrawingService';
+import { inviteButtonStyles } from '../styles/inviteModalStyles';
 
 const DrawPage = () => {
   const { drawId } = useParams<{ drawId: string }>();
@@ -42,6 +44,7 @@ const DrawPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isStartDrawModalOpen, setIsStartDrawModalOpen] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [drawSuccess, setDrawSuccess] = useState(false);
 
   useEffect(() => {
@@ -139,7 +142,15 @@ const DrawPage = () => {
               {t('common.backToDraws')}
             </Button>
 
-            {/* Conditional action button */}
+            <Button
+              variant="contained"
+              startIcon={<PersonAdd />}
+              onClick={() => setIsInviteModalOpen(true)}
+              sx={inviteButtonStyles(theme)}
+            >
+              {t('drawPage.inviteButton')}
+            </Button>
+
             {showActionButton && (
               <Button
                 variant="contained"
@@ -164,11 +175,19 @@ const DrawPage = () => {
 
         <ParticipantsSection draw={draw} />
 
-        <StartDrawModal
-          open={isStartDrawModalOpen}
-          onClose={() => setIsStartDrawModalOpen(false)}
-          onConfirm={handleStartDraw}
-          drawPassword={draw.password || ''}
+        {showActionButton && (
+          <StartDrawModal
+            open={isStartDrawModalOpen}
+            onClose={() => setIsStartDrawModalOpen(false)}
+            onConfirm={handleStartDraw}
+            drawPassword={draw.password || ''}
+          />
+        )}
+
+        <InviteDrawModal
+          open={isInviteModalOpen}
+          onClose={() => setIsInviteModalOpen(false)}
+          drawId={draw.id || ''}
         />
 
         <Snackbar
