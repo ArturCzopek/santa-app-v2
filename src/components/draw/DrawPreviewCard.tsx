@@ -45,7 +45,7 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
 
       {drawPreview.status === 'WAITING_FOR_DRAW' && isUserWishEmpty() && (
         <Typography sx={noWishStyles(theme)}>
-          {t('drawCard.noWish')}
+          {t('drawPage.wishSection.noWishWarning')}
         </Typography>
       )}
 

@@ -46,7 +46,8 @@ const resources = {
           editButton: 'Edit Wish',
           saveButton: 'Save Wish',
           saveSuccess: 'Your wish has been saved successfully!',
-          noWishWarning: "You haven't provided your wish yet! Do it before the draw takes place."
+          noWishWarning:
+            "You haven't provided your wish yet! Do it before the draw takes place.",
         },
         errors: {
           fetchFailed: 'Failed to fetch draw details. Please try again.',
@@ -84,6 +85,8 @@ const resources = {
         checkResults:
           'The draw has been completed. Go to draw to check your results!',
         viewDetails: 'View details',
+        budget: 'Budget: {{budget}} {{currency}}',
+        drawDate: 'Draw date: {{drawDate}}',
       },
     },
   },
@@ -175,6 +178,8 @@ const resources = {
         checkResults:
           'Losowanie zostało zakończone. Przejdź do losowania, aby sprawdzić swój wynik!',
         viewDetails: 'Zobacz szczegóły',
+        budget: 'Budżet: {{budget}} {{currency}}',
+        drawDate: 'Data losowania: {{drawDate}}',
       },
     },
   },

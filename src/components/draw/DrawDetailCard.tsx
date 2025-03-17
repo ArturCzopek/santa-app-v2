@@ -16,6 +16,10 @@ const DrawDetailCard: React.FC<DrawDetailCardProps> = ({ draw }) => {
       title={draw.drawName}
       description={draw.description}
       status={draw.status}
+      budget={draw.budget}
+      currency={draw.currency}
+      drawDate={draw.drawDate}
+      showMetadata={true} // Show metadata on detail card
       cardStyles={detailCardStyles(theme)}
     >
       {/* Additional draw details can be added here */}

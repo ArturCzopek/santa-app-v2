@@ -9,7 +9,11 @@ import {
   descriptionStyles,
   waitingChipStyles,
   completedChipStyles,
+  metadataContainerStyles,
+  metadataTextStyles,
 } from '../../styles/drawCardStyles';
+import { format } from 'date-fns';
+import { pl, enUS } from 'date-fns/locale';
 
 interface DrawCardBaseProps {
   title: string;
@@ -17,6 +21,10 @@ interface DrawCardBaseProps {
   status: 'WAITING_FOR_DRAW' | 'DRAWED';
   cardStyles: any;
   children?: ReactNode;
+  budget?: number;
+  currency?: string;
+  drawDate?: Date | null;
+  showMetadata?: boolean;
 }
 
 const DrawCardBase: React.FC<DrawCardBaseProps> = ({
@@ -25,8 +33,12 @@ const DrawCardBase: React.FC<DrawCardBaseProps> = ({
   status,
   cardStyles,
   children,
+  budget,
+  currency,
+  drawDate,
+  showMetadata = false, // Default to false
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
 
   const getStatusChip = () => {
@@ -49,6 +61,12 @@ const DrawCardBase: React.FC<DrawCardBaseProps> = ({
     }
   };
 
+  const formattedDrawDate = drawDate
+    ? format(new Date(drawDate), 'PP', {
+        locale: i18n.language === 'pl' ? pl : enUS,
+      })
+    : '-';
+
   return (
     <ContentCard sx={cardStyles}>
       <Box sx={cardHeaderStyles}>
@@ -59,9 +77,23 @@ const DrawCardBase: React.FC<DrawCardBaseProps> = ({
         </Box>
         <Box>{getStatusChip()}</Box>
       </Box>
+
+      {/* Only show metadata if showMetadata is true and we have budget and currency */}
+      {showMetadata && budget !== undefined && currency && (
+        <Box sx={metadataContainerStyles}>
+          <Typography sx={metadataTextStyles()}>
+            {t('drawCard.budget', { budget, currency })}
+          </Typography>
+          <Typography sx={metadataTextStyles()}>
+            {t('drawCard.drawDate', { drawDate: formattedDrawDate })}
+          </Typography>
+        </Box>
+      )}
+
       <Typography variant="body2" sx={descriptionStyles()}>
         {description}
       </Typography>
+
       {children}
     </ContentCard>
   );
