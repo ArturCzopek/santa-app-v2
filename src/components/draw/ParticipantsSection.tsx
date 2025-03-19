@@ -35,13 +35,12 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
     a.userName.localeCompare(b.userName)
   );
 
-  // Determine if current user is the draw owner
-  const isCurrentUserOwner = user && draw.ownerUuid === user.uid;
-
   const renderParticipantRow = (participant: Participant) => {
     const isCurrentUser = user && participant.userUuid === user.uid;
     const hasProvidedWish = !!participant.wish;
 
+    console.log('===avatar', participant.userUuid, participant.userPhotoUrl)
+    console.log('===display letter?', !participant.userPhotoUrl && participant.userName[0].toUpperCase())
     return (
       <Box
         key={participant.userUuid}
@@ -67,7 +66,6 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
               : t('drawPage.participantsSection.participant')}
           </Typography>
         </Box>
-        {isCurrentUserOwner && (
           <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
             {hasProvidedWish ? (
               <Chip
@@ -91,7 +89,6 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
               />
             )}
           </Box>
-        )}
       </Box>
     );
   };

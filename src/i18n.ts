@@ -10,6 +10,7 @@ const resources = {
         cancel: 'Cancel',
         submitting: 'Submitting...',
         saving: 'Saving...',
+        joining: 'Joining...'
       },
       createPage: {
         success: 'Created new draw. Do not forget about your wish for Santa!',
@@ -36,6 +37,25 @@ const resources = {
           passwordRequired: 'Password is required',
           passwordTooShort: 'Password must be at least 4 characters',
         },
+      },
+      joinPage: {
+        title: 'Join Draw',
+        loginRequired: 'You need to log in to join this draw',
+        alreadyParticipating: 'You are already participating in this draw',
+        viewDraw: 'View Draw',
+        createdBy: 'Created by {{name}}',
+        passwordLabel: 'Provide a password to join to draw',
+        passwordPlaceholder: 'Enter the draw password',
+        joinButton: 'Join Draw',
+        success: 'You have successfully joined the draw! Redirecting to the draw page...',
+        errors: {
+          fetchFailed: 'Failed to fetch draw details. Please try again.',
+          drawNotFound: 'Draw not found or it may have been deleted.',
+          passwordRequired: 'Password is required to join the draw',
+          invalidPassword: 'Invalid password. Please try again.',
+          joinFailed: 'Failed to join the draw. Please try again.',
+          drawAlreadyStarted: 'This draw has already been started and cannot be joined.'
+        }
       },
       drawPage: {
         title: 'Draw',
@@ -100,7 +120,9 @@ const resources = {
         createOwn: 'create your own',
         createButton: 'Create New Draw',
         totalDrawsPrompt:
-          'and be a participant in one of {{count}} draws that already exist in the app.',
+          'and be a participant in one of {{count}} draws that already exist in the app and one of {{winnersCount}} winners!',
+        totalDrawsPromptWithData:
+          'Have fun and be a participant in one of {{count}} draws and one of {{winnersCount}} winners!',
         errors: {
           fetchFailed: 'Failed to fetch draws. Please try again.',
         },
@@ -133,6 +155,7 @@ const resources = {
         backToDraws: 'Powrót do Losowań',
         submitting: 'Wysyłanie...',
         saving: 'Zapisywanie...',
+        joining: 'Dołączanie...'
       },
       createPage: {
         success:
@@ -164,7 +187,25 @@ const resources = {
         title: 'Santa App 2.0',
         loginWithGoogle: 'Zaloguj przez Google',
       },
-      drawPage: {
+      joinPage: {
+        title: 'Dołącz do Losowania',
+        loginRequired: 'Musisz się zalogować, aby dołączyć do tego losowania',
+        alreadyParticipating: 'Już uczestniczysz w tym losowaniu',
+        viewDraw: 'Zobacz Losowanie',
+        createdBy: 'Utworzone przez {{name}}',
+        passwordLabel: 'Podaj hasło, aby dołączyć do losowania',
+        passwordPlaceholder: 'Wprowadź hasło do losowania',
+        joinButton: 'Dołącz do Losowania',
+        success: 'Pomyślnie dołączyłeś do losowania! Przekierowywanie do strony losowania...',
+        errors: {
+          fetchFailed: 'Nie udało się pobrać szczegółów losowania. Spróbuj ponownie.',
+          drawNotFound: 'Losowanie nie zostało znalezione lub mogło zostać usunięte.',
+          passwordRequired: 'Hasło jest wymagane aby dołączyć do losowania',
+          invalidPassword: 'Nieprawidłowe hasło. Spróbuj ponownie.',
+          joinFailed: 'Nie udało się dołączyć do losowania. Spróbuj ponownie.',
+          drawAlreadyStarted: 'To losowanie już się rozpoczęło i nie można do niego dołączyć.'
+        }
+      }, drawPage: {
         title: 'Losowanie',
         startDrawButton: 'Rozpocznij Losowanie',
         drawSuccessMessage: 'Losowanie zakończone sukcesem!',
@@ -225,7 +266,9 @@ const resources = {
           'Obecnie nie uczestniczysz w żadnym losowaniu. Poproś znajomego o udostępnienie losowania lub',
         createOwn: 'stwórz własne',
         totalDrawsPrompt:
-          'i bądź uczestnikiem jednego z {{count}} losowań istniejących już w aplikacji.',
+          'i bądź uczestnikiem jednego z {{count}} losowań istniejących już w aplikacji oraz bądź jednym z {{winnersCount}} rozlosowanych osób!',
+        totalDrawsPromptWithData:
+          'Dołącz do zabawy i bądź uczestnikiem jednego z {{count}} losowań oraz bądź jednym z {{winnersCount}} rozlosowanych osób!',
         createButton: 'Stwórz nowe losowanie',
         joinButton: 'Dołącz do losowania',
         errors: {

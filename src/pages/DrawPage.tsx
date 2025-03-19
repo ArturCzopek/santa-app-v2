@@ -74,6 +74,8 @@ const DrawPage = () => {
     draw.status === 'WAITING_FOR_DRAW' &&
     draw.participants.length >= 2;
 
+  const showInviteButton = draw && draw.status === 'WAITING_FOR_DRAW';
+
   const handleStartDraw = async () => {
     if (!draw || !drawId || !user) return;
 
@@ -129,10 +131,8 @@ const DrawPage = () => {
   return (
     <MainLayout title={t('drawPage.title')}>
       <Box sx={pageContainerStyles}>
-        {/* Back button and action button container */}
         <Box sx={backButtonContainerStyles}>
           <Box sx={actionButtonContainerStyles}>
-            {/* Back button */}
             <Button
               variant="contained"
               startIcon={<ArrowBack />}
@@ -142,14 +142,14 @@ const DrawPage = () => {
               {t('common.backToDraws')}
             </Button>
 
-            <Button
+            {showInviteButton && <Button
               variant="contained"
               startIcon={<PersonAdd />}
               onClick={() => setIsInviteModalOpen(true)}
               sx={inviteButtonStyles(theme)}
             >
               {t('drawPage.inviteButton')}
-            </Button>
+            </Button>}
 
             {showActionButton && (
               <Button

@@ -1,4 +1,3 @@
-// components/draw/DrawCardBase.tsx
 import React, { ReactNode } from 'react';
 import { Typography, Box, Chip, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +13,7 @@ import {
 } from '../../styles/drawCardStyles';
 import { format } from 'date-fns';
 import { pl, enUS } from 'date-fns/locale';
+import { Timestamp } from '@firebase/firestore';
 
 interface DrawCardBaseProps {
   title: string;
@@ -23,7 +23,7 @@ interface DrawCardBaseProps {
   children?: ReactNode;
   budget?: number;
   currency?: string;
-  drawDate?: Date | null;
+  drawDate?: Date | Timestamp | null;
   showMetadata?: boolean;
 }
 
@@ -62,9 +62,13 @@ const DrawCardBase: React.FC<DrawCardBaseProps> = ({
   };
 
   const formattedDrawDate = drawDate
-    ? format(new Date(drawDate), 'PP', {
-        locale: i18n.language === 'pl' ? pl : enUS,
-      })
+    ? format(
+      (drawDate as Timestamp).seconds
+        ? new Date((drawDate as Timestamp).seconds * 1000) // Convert Firestore Timestamp to Date
+        : new Date(drawDate as any), // Handle case where it might already be a Date or date string
+      'PP',
+      { locale: i18n.language === 'pl' ? pl : enUS }
+    )
     : '-';
 
   return (
@@ -78,7 +82,6 @@ const DrawCardBase: React.FC<DrawCardBaseProps> = ({
         <Box>{getStatusChip()}</Box>
       </Box>
 
-      {/* Only show metadata if showMetadata is true and we have budget and currency */}
       {showMetadata && budget !== undefined && currency && (
         <Box sx={metadataContainerStyles}>
           <Typography sx={metadataTextStyles()}>

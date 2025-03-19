@@ -25,8 +25,9 @@ import {
   createLinkStyles,
   actionButtonsContainerStyles,
   joinButtonStyles,
-  createButtonStyles,
+  createButtonStyles, appDataContainerStyles
 } from '../styles/drawsPageStyles';
+import { appDataService } from '../services/AppDataService';
 
 const DrawsPage = () => {
   const { t } = useTranslation();
@@ -36,6 +37,7 @@ const DrawsPage = () => {
 
   const [drawPreviews, setDrawPreviews] = useState<DrawPreview[]>([]);
   const [totalDrawsCount, setTotalDrawsCount] = useState<number>(0);
+  const [totalWinnersCounts, setTotalWinnersCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
@@ -46,13 +48,11 @@ const DrawsPage = () => {
 
       try {
         setLoading(true);
-        // Fetch user's draws
         const userDraws = await drawService.getDrawPreviews(user.uid);
         setDrawPreviews(userDraws);
-
-        // Fetch total draws count and add 100 to make it appear like there are more users
-        const count = await drawService.getTotalDrawsCount();
-        setTotalDrawsCount(count + 100); // Adding 100 to the actual count
+        const appData = await appDataService.getAppData();
+        setTotalDrawsCount(appData.drawsCount + 100);
+        setTotalWinnersCount(appData.winnersCount + 314);
       } catch (err) {
         console.error('Error fetching draws:', err);
         setError(t('drawsPage.errors.fetchFailed'));
@@ -116,11 +116,27 @@ const DrawsPage = () => {
               >
                 {t('drawsPage.createOwn')}
               </Link>{' '}
-              {t('drawsPage.totalDrawsPrompt', { count: totalDrawsCount })}
+              {t('drawsPage.totalDrawsPrompt', {
+                count: totalDrawsCount,
+                winnersCount: totalWinnersCounts,
+              })}
             </Typography>
           </Box>
         ) : (
-          drawPreviews.map((drawPreview) => <DrawPreviewCard key={drawPreview.id} drawPreview={drawPreview} />)
+          <>
+            <Box sx={appDataContainerStyles}>
+              <Typography sx={emptyStateTextStyles(theme)}>
+                {t('drawsPage.totalDrawsPromptWithData', {
+                  count: totalDrawsCount,
+                  winnersCount: totalWinnersCounts,
+                })}
+              </Typography>
+            </Box>
+
+            {drawPreviews.map((drawPreview) => (
+              <DrawPreviewCard key={drawPreview.id} drawPreview={drawPreview} />
+            ))}
+          </>
         )}
 
         <ActionButtons

@@ -78,3 +78,16 @@ export const alertStyles = (theme: Theme): SxProps<Theme> => ({
 export const darkGreenBackground = (theme: Theme): SxProps<Theme> => ({
   background: theme.customColors.darkGreen,
 });
+
+export const passwordSectionStyles: SxProps<Theme> = {
+  mt: 3,
+  mb: 2,
+  width: '100%'
+};
+
+export const passwordLabelStyles = (theme: Theme): SxProps<Theme> => ({
+  mb: 1,
+  color: theme.palette.text.primary,
+  fontWeight: 'medium'
+});
+

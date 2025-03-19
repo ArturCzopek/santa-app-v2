@@ -14,6 +14,7 @@ import { db } from './FirebaseConfig';
 import { Draw, DrawPreview, Participant } from '../models/Draw';
 import { User } from 'firebase/auth';
 import { PasswordUtils } from './PasswordUtils';
+import { appDataService } from './AppDataService';
 
 class DrawService {
   private drawsCollection = collection(db, 'draws');
@@ -58,6 +59,7 @@ class DrawService {
 
     try {
       const docRef = await addDoc(collection(db, 'draws'), newDraw);
+      await appDataService.addDrawsCount(1);
       return docRef.id;
     } catch (error) {
       console.error('Error creating draw:', error);
@@ -138,6 +140,46 @@ class DrawService {
       await setDoc(drawRef, draw);
     } catch (error) {
       console.error('Error updating draw:', error);
+      throw error;
+    }
+  }
+
+  async joinToDraw(
+    drawId: string,
+    user: User,
+    password: string,
+  ): Promise<Draw> {
+    try {
+      const draw = await this.getDrawDetails(drawId);
+
+      if (!PasswordUtils.comparePasswords(password, draw.password)) {
+        throw new Error('Invalid password');
+      }
+
+      if (draw.status !== 'WAITING_FOR_DRAW') {
+        throw new Error('Draw is not in waiting status');
+      }
+
+      if (draw.participantUuids.includes(user.uid)) {
+        throw new Error('User is already a participant in this draw');
+      }
+
+      const newParticipant: Participant = {
+        userName: user.displayName || 'Unknown User',
+        userUuid: user.uid,
+        userPhotoUrl: user.photoURL || '',
+        entryDate: new Date(),
+        wish: '',
+      };
+
+      draw.participants.push(newParticipant);
+      draw.participantUuids.push(user.uid);
+
+      await this.updateDraw(draw);
+
+      return draw;
+    } catch (error) {
+      console.error('Error joining draw:', error);
       throw error;
     }
   }

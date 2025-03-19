@@ -1,3 +1,5 @@
+import { Timestamp } from '@firebase/firestore';
+
 export type Participant = {
   userName: string;
   userUuid: string;
@@ -24,7 +26,7 @@ export type Draw = {
   participantUuids: string[];
   pairs: Pair[];
   status: 'WAITING_FOR_DRAW' | 'DRAWED';
-  drawDate?: Date | null;
+  drawDate?: Date | Timestamp | null;
   password: string;
 };
 

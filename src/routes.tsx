@@ -24,6 +24,10 @@ const AppRoutes = () => {
           element={user ? <Navigate to="/draws" replace /> : <LoginPage />}
         />
 
+        {/*redirection done on page*/}
+        <Route path="/join/:drawId" element={<JoinToDrawPage />} />
+
+
         {/* Protected Routes */}
         <Route
           path="/draws"
@@ -36,10 +40,6 @@ const AppRoutes = () => {
         <Route
           path="/create"
           element={user ? <CreatePage /> : <Navigate to="/" replace />}
-        />
-        <Route
-          path="/join/:uuid"
-          element={user ? <JoinToDrawPage /> : <Navigate to="/" replace />}
         />
 
         {/* Catch-all for unmatched routes */}

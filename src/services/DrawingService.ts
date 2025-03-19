@@ -1,6 +1,7 @@
 import { doc, updateDoc, getDoc, collection } from 'firebase/firestore';
 import { Draw, Pair, Participant } from '../models/Draw';
 import { db } from './FirebaseConfig';
+import { appDataService } from './AppDataService';
 
 export class DrawingService {
   private drawsCollection = collection(db, 'draws');
@@ -100,6 +101,7 @@ export class DrawingService {
 
     // Update Firestore document
     await updateDoc(drawRef, updateData);
+    await appDataService.addWinnersCount(pairs.length);
 
     // Return updated draw
     return {

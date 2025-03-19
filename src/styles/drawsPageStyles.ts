@@ -27,6 +27,16 @@ export const emptyStateContainerStyles: SxProps<Theme> = {
   gap: 4,
 };
 
+export const appDataContainerStyles: SxProps<Theme> = {
+  textAlign: 'center',
+  maxWidth: '600px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 4,
+  mb: 4
+};
+
 export const emptyStateTextStyles = (theme: Theme): SxProps<Theme> => ({
   color: theme.palette.text.primary,
   fontSize: '1.1rem',
