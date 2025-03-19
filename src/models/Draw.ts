@@ -30,11 +30,9 @@ export type Draw = {
   password: string;
 };
 
-export type DrawPreview = Pick<Draw,
-  'id' |
-  'drawName' |
-  'description' |
-  'status'
+export type DrawPreview = Pick<
+  Draw,
+  'id' | 'drawName' | 'description' | 'status'
 > & {
   participantsCount: number;
   userWishProvided: boolean;

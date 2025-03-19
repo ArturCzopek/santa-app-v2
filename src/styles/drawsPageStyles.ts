@@ -4,7 +4,7 @@ export const pageContainerStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  mt: 6, // More space from the top
+  mt: 6,
 };
 
 export const loadingContainerStyles: SxProps<Theme> = {
@@ -34,7 +34,7 @@ export const appDataContainerStyles: SxProps<Theme> = {
   flexDirection: 'column',
   alignItems: 'center',
   gap: 4,
-  mb: 4
+  mb: 4,
 };
 
 export const emptyStateTextStyles = (theme: Theme): SxProps<Theme> => ({
@@ -70,7 +70,7 @@ export const joinButtonStyles = (theme: Theme): SxProps<Theme> => ({
   ...buttonBaseStyles,
   backgroundColor: theme.palette.success.main,
   '&:hover': {
-    backgroundColor: '#388E3C', // Darker green
+    backgroundColor: '#388E3C',
   },
 });
 

@@ -82,12 +82,53 @@ export const darkGreenBackground = (theme: Theme): SxProps<Theme> => ({
 export const passwordSectionStyles: SxProps<Theme> = {
   mt: 3,
   mb: 2,
-  width: '100%'
+  width: '100%',
 };
 
 export const passwordLabelStyles = (theme: Theme): SxProps<Theme> => ({
   mb: 1,
   color: theme.palette.text.primary,
-  fontWeight: 'medium'
+  fontWeight: 'medium',
 });
 
+export const formSelectContainerStyles = (theme: Theme) => ({
+  ...errorStyles(theme),
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    borderWidth: '2px',
+  },
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+  },
+  '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.customColors.gold,
+    borderWidth: '2px',
+  },
+});
+
+export const formSelectStyles = (theme: Theme) => ({
+  color: theme.palette.text.primary,
+  '& .MuiSelect-icon': {
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
+});
+
+export const formSelectMenuProps = (theme: Theme) => ({
+  PaperProps: {
+    sx: {
+      bgcolor: theme.customColors.darkGray,
+      '& .MuiMenuItem-root': {
+        color: 'white',
+        '&:hover': {
+          bgcolor: 'rgba(255, 255, 255, 0.1)',
+        },
+        '&.Mui-selected': {
+          bgcolor: 'rgba(255, 255, 255, 0.2)',
+          '&:hover': {
+            bgcolor: 'rgba(255, 255, 255, 0.3)',
+          },
+        },
+      },
+    },
+  },
+});

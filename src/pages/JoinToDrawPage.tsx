@@ -11,7 +11,7 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  Snackbar
+  Snackbar,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -22,13 +22,12 @@ import DrawCardBase from '../components/draw/DrawCardBase';
 import { drawService } from '../services/DrawService';
 import { useAuth } from '../hooks/useAuth';
 import { Draw } from '../models/Draw';
-import { PasswordUtils } from '../services/PasswordUtils';
 import {
   inputStyles,
   inputLabelStyles,
   errorStyles,
   passwordSectionStyles,
-  passwordLabelStyles
+  passwordLabelStyles,
 } from '../styles/formStyles';
 import {
   pageContainerStyles,
@@ -39,7 +38,7 @@ import {
   ownerSectionTitleStyles,
   ownerAvatarStyles,
   actionContainerStyles,
-  joinButtonStyles
+  joinButtonStyles,
 } from '../styles/joinPageStyles';
 import { cardBaseStyles } from '../styles/drawCardStyles';
 
@@ -61,32 +60,23 @@ const JoinToDrawPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
-  // Check if user is already a participant
-  // const isUserParticipant = user && draw?.participantUuids?.includes(user.uid);
-  const isUserParticipant = false;
+  const isUserParticipant = user && draw?.participantUuids?.includes(user.uid);
+  const canJoinDraw =
+    draw && draw.status === 'WAITING_FOR_DRAW' && !isUserParticipant;
+  const ownerParticipant = draw?.participants.find(
+    (p) => p.userUuid === draw.ownerUuid,
+  );
 
-  // Check if draw is in a valid state to join
-  // const canJoinDraw = draw && draw.status === 'WAITING_FOR_DRAW' && !isUserParticipant;
-  const canJoinDraw = true;
-
-  // Find owner in participants to get their photo
-  const ownerParticipant = draw?.participants.find(p => p.userUuid === draw.ownerUuid);
-
-  // Handle redirect after login
   useEffect(() => {
-    // Store the current URL in sessionStorage when not logged in
     if (!user && drawId) {
       sessionStorage.setItem('redirectAfterLogin', `/join/${drawId}`);
     }
 
-    // Check for redirect path on login
     if (user) {
       const redirectPath = sessionStorage.getItem('redirectAfterLogin');
       if (redirectPath) {
-        // Clear the stored path
         sessionStorage.removeItem('redirectAfterLogin');
 
-        // Only redirect if we're not already on that path
         if (window.location.pathname !== redirectPath) {
           navigate(redirectPath);
         }
@@ -94,7 +84,6 @@ const JoinToDrawPage = () => {
     }
   }, [user, drawId, navigate]);
 
-  // Fetch draw data
   useEffect(() => {
     const fetchDrawDetails = async () => {
       if (!drawId) return;
@@ -123,16 +112,13 @@ const JoinToDrawPage = () => {
   const handleJoinDraw = async () => {
     if (!user || !draw || !canJoinDraw) return;
 
-    // Reset errors
     setPasswordError(null);
 
-    // Validate password is provided
     if (!password.trim()) {
       setPasswordError(t('joinPage.errors.passwordRequired'));
       return;
     }
 
-    // Validate password length (similar to StartDrawModal)
     if (password.length < 4) {
       setPasswordError(t('createPage.validation.passwordTooShort'));
       return;
@@ -140,10 +126,8 @@ const JoinToDrawPage = () => {
 
     setJoining(true);
     try {
-      // Call the joinToDraw method from DrawService with the user object
       await drawService.joinToDraw(draw.id as string, user, password);
 
-      // Show success and redirect
       setJoinSuccess(true);
       setTimeout(() => {
         navigate(`/draw/${draw.id}`);
@@ -151,7 +135,6 @@ const JoinToDrawPage = () => {
     } catch (err: any) {
       console.error('Error joining draw:', err);
 
-      // Handle different errors with snackbar
       if (err.message.includes('Invalid password')) {
         setPasswordError(t('joinPage.errors.invalidPassword'));
       } else {
@@ -167,12 +150,13 @@ const JoinToDrawPage = () => {
     setSnackbarOpen(false);
   };
 
-  // Handle login redirect
   if (!user) {
     return (
       <MainLayout title={t('joinPage.title')}>
         <Box sx={pageContainerStyles}>
-          <ContentCard sx={{ maxWidth: '600px', p: 3, ...cardBaseStyles(theme) }}>
+          <ContentCard
+            sx={{ maxWidth: '600px', p: 3, ...cardBaseStyles(theme) }}
+          >
             <Typography variant="h5" sx={{ mb: 2, textAlign: 'center' }}>
               {t('joinPage.loginRequired')}
             </Typography>
@@ -186,7 +170,7 @@ const JoinToDrawPage = () => {
                   mt: 2,
                   fontWeight: 'bold',
                   px: 4,
-                  py: 1.2
+                  py: 1.2,
                 }}
               >
                 {t('loginPage.loginWithGoogle')}
@@ -228,12 +212,13 @@ const JoinToDrawPage = () => {
     );
   }
 
-  // Handle case when user is already in the draw
   if (isUserParticipant) {
     return (
       <MainLayout title={t('joinPage.title')}>
         <Box sx={pageContainerStyles}>
-          <ContentCard sx={{ maxWidth: '600px', p: 3, ...cardBaseStyles(theme) }}>
+          <ContentCard
+            sx={{ maxWidth: '600px', p: 3, ...cardBaseStyles(theme) }}
+          >
             <Typography variant="h5" sx={{ mb: 2, textAlign: 'center' }}>
               {t('joinPage.alreadyParticipating')}
             </Typography>
@@ -245,7 +230,7 @@ const JoinToDrawPage = () => {
                 onClick={() => navigate(`/draw/${draw.id}`)}
                 sx={{
                   mt: 2,
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
                 }}
               >
                 {t('joinPage.viewDraw')}
@@ -257,12 +242,13 @@ const JoinToDrawPage = () => {
     );
   }
 
-  // Handle case when draw is not in WAITING_FOR_DRAW status
   if (draw.status !== 'WAITING_FOR_DRAW') {
     return (
       <MainLayout title={t('joinPage.title')}>
         <Box sx={pageContainerStyles}>
-          <ContentCard sx={{ maxWidth: '600px', p: 3, ...cardBaseStyles(theme) }}>
+          <ContentCard
+            sx={{ maxWidth: '600px', p: 3, ...cardBaseStyles(theme) }}
+          >
             <Typography variant="h5" sx={{ mb: 2, textAlign: 'center' }}>
               {t('joinPage.errors.drawAlreadyStarted')}
             </Typography>
@@ -281,14 +267,13 @@ const JoinToDrawPage = () => {
             sx={{
               width: '100%',
               maxWidth: '600px',
-              mb: 3
+              mb: 3,
             }}
           >
             {t('joinPage.success')}
           </Alert>
         )}
 
-        {/* Use DrawCardBase for the main content */}
         <DrawCardBase
           title={draw.drawName}
           description={draw.description}
@@ -299,30 +284,31 @@ const JoinToDrawPage = () => {
           showMetadata={true}
           cardStyles={detailCardStyles(theme)}
         >
-          {/* Show owner section similar to WinnerSection */}
           <Box sx={ownerSectionContainerStyles}>
             <Typography variant="h6" sx={ownerSectionTitleStyles(theme)}>
               {t('joinPage.createdBy', { name: draw.ownerName })}
             </Typography>
 
-            <Box sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              width: '100%',
-              my: 2
-            }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                width: '100%',
+                my: 2,
+              }}
+            >
               <Avatar
                 src={ownerParticipant?.userPhotoUrl || undefined}
                 alt={draw.ownerName}
                 sx={ownerAvatarStyles}
               >
-                {!ownerParticipant?.userPhotoUrl && draw.ownerName[0].toUpperCase()}
+                {!ownerParticipant?.userPhotoUrl &&
+                  draw.ownerName[0].toUpperCase()}
               </Avatar>
             </Box>
           </Box>
 
-          {/* Password field - using the same styling as StartDrawModal */}
           <Box sx={passwordSectionStyles}>
             <Typography variant="subtitle1" sx={passwordLabelStyles(theme)}>
               {t('joinPage.passwordLabel')}
@@ -359,7 +345,6 @@ const JoinToDrawPage = () => {
             />
           </Box>
 
-          {/* Join button */}
           <Box sx={actionContainerStyles}>
             <Button
               variant="contained"
@@ -375,7 +360,6 @@ const JoinToDrawPage = () => {
         </DrawCardBase>
       </Box>
 
-      {/* Error Snackbar */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}

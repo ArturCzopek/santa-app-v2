@@ -19,6 +19,15 @@ import {
   errorStyles,
 } from '../../styles/formStyles';
 import { PasswordUtils } from '../../services/PasswordUtils';
+import {
+  startDrawModalDialogStyles,
+  startDrawModalTitleStyles,
+  startDrawModalDescriptionStyles,
+  startDrawModalInputContainerStyles,
+  startDrawModalButtonContainerStyles,
+  startDrawModalCancelButtonStyles,
+  startDrawModalConfirmButtonStyles,
+} from '../../styles/startDrawModalStyles';
 
 interface StartDrawModalProps {
   open: boolean;
@@ -45,7 +54,6 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
   };
 
   const handleConfirm = () => {
-    // Basic validation
     if (!password) {
       setError(t('createPage.validation.passwordRequired'));
       return;
@@ -56,16 +64,12 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
       return;
     }
 
-    // Verify password
     if (!PasswordUtils.comparePasswords(password, drawPassword)) {
       setError(t('drawPage.startDraw.incorrectPassword'));
       return;
     }
 
-    // Clear any previous errors
     setError('');
-
-    // Call the confirm handler
     onConfirm();
   };
 
@@ -84,27 +88,18 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
       maxWidth="xs"
       fullWidth
       PaperProps={{
-        sx: {
-          backgroundColor: 'rgba(0, 43, 0, 0.9)',
-          color: 'white',
-        },
+        sx: startDrawModalDialogStyles,
       }}
     >
-      <DialogTitle sx={{ color: 'white', textAlign: 'center' }}>
+      <DialogTitle sx={startDrawModalTitleStyles}>
         {t('drawPage.startDrawButton')}
       </DialogTitle>
       <DialogContent>
-        <DialogContentText
-          sx={{
-            color: 'rgba(255, 255, 255, 0.7)',
-            textAlign: 'center',
-            mb: 2,
-          }}
-        >
+        <DialogContentText sx={startDrawModalDescriptionStyles}>
           {t('drawPage.startDraw.confirmationText')}
         </DialogContentText>
 
-        <Box sx={{ width: '100%' }}>
+        <Box sx={startDrawModalInputContainerStyles}>
           <TextField
             label={t('createPage.password')}
             variant="outlined"
@@ -136,25 +131,11 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
           />
         </Box>
 
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 2,
-            mt: 2,
-          }}
-        >
+        <Box sx={startDrawModalButtonContainerStyles}>
           <Button
             onClick={handleClose}
             variant="outlined"
-            sx={{
-              color: 'white',
-              borderColor: 'rgba(255, 255, 255, 0.5)',
-              '&:hover': {
-                borderColor: 'white',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              },
-            }}
+            sx={startDrawModalCancelButtonStyles}
           >
             {t('common.cancel')}
           </Button>
@@ -162,12 +143,7 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
             onClick={handleConfirm}
             variant="contained"
             color="error"
-            sx={{
-              backgroundColor: '#D32F2F',
-              '&:hover': {
-                backgroundColor: '#B71C1C',
-              },
-            }}
+            sx={startDrawModalConfirmButtonStyles}
           >
             {t('drawPage.startDraw.drawButton')}
           </Button>

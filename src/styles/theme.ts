@@ -12,15 +12,15 @@ const customColors = {
 
 const theme = createTheme({
   palette: {
-    primary: { main: '#D32F2F' }, // Christmas red
-    secondary: { main: '#004702' }, // Green for winter/ice theme
+    primary: { main: '#D32F2F' },
+    secondary: { main: '#004702' },
     background: {
-      default: '#004702', // Green background
-      paper: '#FFFFFF', // White for cards and paper elements
+      default: '#004702',
+      paper: '#FFFFFF',
     },
     text: {
-      primary: 'rgba(255, 255, 255, 0.95)', // Near-white text for main content
-      secondary: 'rgba(255, 255, 255, 0.85)', // Slightly dimmer white for secondary text
+      primary: 'rgba(255, 255, 255, 0.95)',
+      secondary: 'rgba(255, 255, 255, 0.85)',
     },
     error: { main: '#F44336' },
     success: { main: '#4CAF50' },
@@ -105,9 +105,6 @@ const themeWithCustomColors = {
 declare module '@mui/material/styles' {
   interface Theme {
     customColors: typeof customColors;
-  }
-  interface ThemeOptions {
-    customColors?: typeof customColors;
   }
 }
 

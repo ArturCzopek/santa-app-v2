@@ -63,12 +63,12 @@ const DrawCardBase: React.FC<DrawCardBaseProps> = ({
 
   const formattedDrawDate = drawDate
     ? format(
-      (drawDate as Timestamp).seconds
-        ? new Date((drawDate as Timestamp).seconds * 1000) // Convert Firestore Timestamp to Date
-        : new Date(drawDate as any), // Handle case where it might already be a Date or date string
-      'PP',
-      { locale: i18n.language === 'pl' ? pl : enUS }
-    )
+        (drawDate as Timestamp).seconds
+          ? new Date((drawDate as Timestamp).seconds * 1000) // Convert Firestore Timestamp to Date
+          : new Date(drawDate as any), // Handle case where it might already be a Date or date string
+        'PP',
+        { locale: i18n.language === 'pl' ? pl : enUS },
+      )
     : '-';
 
   return (

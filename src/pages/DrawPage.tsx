@@ -80,17 +80,11 @@ const DrawPage = () => {
     if (!draw || !drawId || !user) return;
 
     try {
-      // Start the draw process
       const updatedDraw = await drawingService.startDraw(drawId, user.uid);
-
-      // Update local state
       setDraw(updatedDraw);
-
-      // Close modal and show success message
       setIsStartDrawModalOpen(false);
       setDrawSuccess(true);
 
-      // Automatically hide success message after 2 seconds
       setTimeout(() => {
         setDrawSuccess(false);
       }, 2000);
@@ -142,14 +136,16 @@ const DrawPage = () => {
               {t('common.backToDraws')}
             </Button>
 
-            {showInviteButton && <Button
-              variant="contained"
-              startIcon={<PersonAdd />}
-              onClick={() => setIsInviteModalOpen(true)}
-              sx={inviteButtonStyles(theme)}
-            >
-              {t('drawPage.inviteButton')}
-            </Button>}
+            {showInviteButton && (
+              <Button
+                variant="contained"
+                startIcon={<PersonAdd />}
+                onClick={() => setIsInviteModalOpen(true)}
+                sx={inviteButtonStyles()}
+              >
+                {t('drawPage.inviteButton')}
+              </Button>
+            )}
 
             {showActionButton && (
               <Button

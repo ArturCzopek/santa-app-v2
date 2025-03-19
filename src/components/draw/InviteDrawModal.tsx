@@ -42,8 +42,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
   const theme = useTheme();
   const [copied, setCopied] = useState(false);
 
-  // Get app URL from environment variable or a constant
-  const APP_URL = import.meta.env.VITE_APP_URL || 'https://yourapp.com';
+  const APP_URL = import.meta.env.VITE_APP_URL;
   const inviteLink = `${APP_URL}/join/${drawId}`;
 
   const handleCopyLink = () => {

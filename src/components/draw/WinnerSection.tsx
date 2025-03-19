@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Avatar,
-  useTheme
-} from '@mui/material';
+import { Box, Typography, Avatar, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { Draw } from '../../models/Draw';
@@ -14,7 +9,7 @@ import {
   winnerSectionTitleStyles,
   winnerAvatarStyles,
   winnerNameStyles,
-  winnerWishStyles
+  winnerWishStyles,
 } from '../../styles/winnerSectionStyles';
 
 interface WinnerSectionProps {
@@ -26,13 +21,13 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
   const theme = useTheme();
   const { user } = useAuth();
 
-  const userPair = draw.pairs.find(pair => pair.fromUuid === user?.uid);
+  const userPair = draw.pairs.find((pair) => pair.fromUuid === user?.uid);
 
   // If no pair found, return null
   if (!userPair) return null;
 
   const winner = draw.participants.find(
-    participant => participant.userUuid === userPair.toUuid
+    (participant) => participant.userUuid === userPair.toUuid,
   );
 
   if (!winner) return null;
@@ -43,13 +38,17 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
         {t('drawPage.winnerSection.title')}
       </Typography>
 
-      <ContentCard sx={{ width: '100%', p: 3, backgroundColor: 'rgba(0, 43, 0, 0.7)' }}>
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          width: '100%'
-        }}>
+      <ContentCard
+        sx={{ width: '100%', p: 3, backgroundColor: 'rgba(0, 43, 0, 0.7)' }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+          }}
+        >
           <Avatar
             src={winner.userPhotoUrl || undefined}
             alt={winner.userName}

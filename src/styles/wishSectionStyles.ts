@@ -7,14 +7,14 @@ export const wishSectionContainerStyles: SxProps<Theme> = {
   mb: 3,
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center'
+  alignItems: 'center',
 };
 
 export const wishSectionTitleStyles = (theme: Theme): SxProps<Theme> => ({
   color: theme.palette.text.primary,
   textAlign: 'center',
   fontWeight: 'bold',
-  mb: 2
+  mb: 2,
 });
 
 export const wishFormContainerStyles = (theme: Theme): SxProps<Theme> => ({
@@ -24,7 +24,7 @@ export const wishFormContainerStyles = (theme: Theme): SxProps<Theme> => ({
   borderRadius: theme.shape.borderRadius,
   display: 'flex',
   flexDirection: 'column',
-  gap: 2
+  gap: 2,
 });
 
 export const editButtonStyles = (theme: Theme): SxProps<Theme> => ({
@@ -33,8 +33,8 @@ export const editButtonStyles = (theme: Theme): SxProps<Theme> => ({
   borderColor: theme.palette.common.white,
   '&:hover': {
     borderColor: theme.customColors.gold,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)'
-  }
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
 });
 
 export const saveButtonStyles = (theme: Theme): SxProps<Theme> => ({
@@ -42,22 +42,22 @@ export const saveButtonStyles = (theme: Theme): SxProps<Theme> => ({
   backgroundColor: theme.customColors.gold,
   color: 'rgba(0, 0, 0, 0.87)',
   '&:hover': {
-    backgroundColor: theme.customColors.lightGold
-  }
+    backgroundColor: theme.customColors.lightGold,
+  },
 });
 
 export const noWishWarningStyles = (theme: Theme): SxProps<Theme> => ({
   color: theme.customColors.lightGold,
   fontWeight: 'medium',
-  mt: 2
+  mt: 2,
 });
 
 export const successMessageStyles = (theme: Theme): SxProps<Theme> => ({
   backgroundColor: 'rgba(76, 175, 80, 0.1)',
   color: '#C8E6C9',
   '.MuiAlert-icon': {
-    color: theme.palette.success.main
-  }
+    color: theme.palette.success.main,
+  },
 });
 
 export const wishTextFieldStyles = (theme: Theme): SxProps<Theme> => ({
@@ -78,26 +78,23 @@ export const wishTextFieldStyles = (theme: Theme): SxProps<Theme> => ({
     color: theme.palette.text.secondary,
   },
   '& .MuiInputBase-input.Mui-disabled': {
-    // Improved visibility for read-only mode
     WebkitTextFillColor: 'rgba(255, 255, 255, 0.9)',
     color: 'rgba(255, 255, 255, 0.9)',
-  }
+  },
 });
 
-// Add style for the cancel button
 export const cancelButtonStyles = (theme: Theme): SxProps<Theme> => ({
   marginRight: theme.spacing(2),
   color: theme.palette.text.secondary,
   borderColor: 'rgba(255, 255, 255, 0.3)',
   '&:hover': {
     borderColor: 'rgba(255, 255, 255, 0.5)',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)'
-  }
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
 });
 
-// Add style for buttons container
 export const buttonsContainerStyles: SxProps<Theme> = {
   display: 'flex',
   justifyContent: 'flex-end',
-  mt: 2
+  mt: 2,
 };

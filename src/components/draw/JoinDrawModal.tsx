@@ -7,20 +7,20 @@ import {
   Button,
   Typography,
   Box,
-  useTheme
+  useTheme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   inputStyles,
   inputLabelStyles,
-  errorStyles
+  errorStyles,
 } from '../../styles/formStyles';
 import {
   joinModalDialogStyles,
   joinModalTitleStyles,
   joinModalContentStyles,
-  joinModalProceedButtonStyles
+  joinModalProceedButtonStyles,
 } from '../../styles/joinDrawModalStyles';
 
 interface JoinDrawModalProps {
@@ -28,10 +28,7 @@ interface JoinDrawModalProps {
   onClose: () => void;
 }
 
-const JoinDrawModal: React.FC<JoinDrawModalProps> = ({
-                                                       open,
-                                                       onClose
-                                                     }) => {
+const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -46,13 +43,11 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({
       return;
     }
 
-    // Navigate to join page with the draw code
     navigate(`/join/${drawCode.trim()}`);
     onClose();
   };
 
   const handleClose = () => {
-    // Reset state
     setDrawCode('');
     setError('');
     onClose();
@@ -65,7 +60,7 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({
       maxWidth="xs"
       fullWidth
       PaperProps={{
-        sx: joinModalDialogStyles
+        sx: joinModalDialogStyles,
       }}
     >
       <DialogTitle sx={joinModalTitleStyles}>
@@ -77,7 +72,7 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({
           sx={{
             color: 'rgba(255, 255, 255, 0.7)',
             textAlign: 'center',
-            mb: 2
+            mb: 2,
           }}
         >
           {t('drawsPage.joinModal.description')}
@@ -95,20 +90,22 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({
           error={!!error}
           helperText={error}
           InputProps={{
-            sx: inputStyles(theme)
+            sx: inputStyles(theme),
           }}
           InputLabelProps={{
-            sx: inputLabelStyles(theme)
+            sx: inputLabelStyles(theme),
           }}
           sx={errorStyles(theme)}
         />
 
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 2,
-          mt: 2
-        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 2,
+            mt: 2,
+          }}
+        >
           <Button
             onClick={handleClose}
             variant="outlined"
@@ -117,8 +114,8 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({
               borderColor: 'rgba(255, 255, 255, 0.5)',
               '&:hover': {
                 borderColor: 'white',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)'
-              }
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              },
             }}
           >
             {t('common.cancel')}

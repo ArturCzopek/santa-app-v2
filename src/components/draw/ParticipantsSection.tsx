@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Avatar,
-  useTheme,
-  Chip
-} from '@mui/material';
+import { Box, Typography, Avatar, useTheme, Chip } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Draw, Participant } from '../../models/Draw';
 import { useAuth } from '../../hooks/useAuth';
@@ -18,7 +12,7 @@ import {
   participantInfoContainerStyles,
   participantNameStyles,
   participantRoleStyles,
-  currentUserHighlightStyles
+  currentUserHighlightStyles,
 } from '../../styles/participantsSectionStyles';
 
 interface ParticipantsSectionProps {
@@ -32,21 +26,24 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
 
   // Sort participants alphabetically by name
   const sortedParticipants = [...draw.participants].sort((a, b) =>
-    a.userName.localeCompare(b.userName)
+    a.userName.localeCompare(b.userName),
   );
 
   const renderParticipantRow = (participant: Participant) => {
     const isCurrentUser = user && participant.userUuid === user.uid;
     const hasProvidedWish = !!participant.wish;
 
-    console.log('===avatar', participant.userUuid, participant.userPhotoUrl)
-    console.log('===display letter?', !participant.userPhotoUrl && participant.userName[0].toUpperCase())
+    console.log('===avatar', participant.userUuid, participant.userPhotoUrl);
+    console.log(
+      '===display letter?',
+      !participant.userPhotoUrl && participant.userName[0].toUpperCase(),
+    );
     return (
       <Box
         key={participant.userUuid}
         sx={{
           ...participantRowStyles(theme),
-          ...(isCurrentUser ? currentUserHighlightStyles(theme) : {})
+          ...(isCurrentUser ? currentUserHighlightStyles() : {}),
         }}
       >
         <Avatar
@@ -66,29 +63,29 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
               : t('drawPage.participantsSection.participant')}
           </Typography>
         </Box>
-          <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
-            {hasProvidedWish ? (
-              <Chip
-                label={t('drawPage.participantsSection.wishProvided')}
-                color="success"
-                size="small"
-                sx={{
-                  backgroundColor: theme.palette.success.main,
-                  color: 'white'
-                }}
-              />
-            ) : (
-              <Chip
-                label={t('drawPage.participantsSection.noWish')}
-                color="warning"
-                size="small"
-                sx={{
-                  backgroundColor: theme.palette.warning.main,
-                  color: 'white'
-                }}
-              />
-            )}
-          </Box>
+        <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
+          {hasProvidedWish ? (
+            <Chip
+              label={t('drawPage.participantsSection.wishProvided')}
+              color="success"
+              size="small"
+              sx={{
+                backgroundColor: theme.palette.success.main,
+                color: 'white',
+              }}
+            />
+          ) : (
+            <Chip
+              label={t('drawPage.participantsSection.noWish')}
+              color="warning"
+              size="small"
+              sx={{
+                backgroundColor: theme.palette.warning.main,
+                color: 'white',
+              }}
+            />
+          )}
+        </Box>
       </Box>
     );
   };
@@ -99,7 +96,9 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
         {t('drawPage.participantsSection.title')}
       </Typography>
 
-      <ContentCard sx={{ width: '100%', p: 3, backgroundColor: 'rgba(0, 43, 0, 0.7)' }}>
+      <ContentCard
+        sx={{ width: '100%', p: 3, backgroundColor: 'rgba(0, 43, 0, 0.7)' }}
+      >
         {sortedParticipants.map(renderParticipantRow)}
       </ContentCard>
     </Box>

@@ -11,7 +11,9 @@ import {
 import { Controller, Control, RegisterOptions } from 'react-hook-form';
 import {
   inputLabelStyles,
-  errorStyles,
+  formSelectContainerStyles,
+  formSelectStyles,
+  formSelectMenuProps,
 } from '../../styles/formStyles';
 
 interface FormSelectProps extends Omit<SelectProps, 'name'> {
@@ -41,20 +43,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
         <FormControl
           fullWidth
           error={!!error}
-          sx={{
-            ...errorStyles(theme),
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: 'rgba(255, 255, 255, 0.6)',
-              borderWidth: '2px',
-            },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: 'rgba(255, 255, 255, 0.8)',
-            },
-            '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: theme.customColors.gold,
-              borderWidth: '2px',
-            },
-          }}
+          sx={formSelectContainerStyles(theme)}
         >
           <InputLabel id={`${name}-label`} sx={inputLabelStyles(theme)}>
             {label}
@@ -64,31 +53,8 @@ const FormSelect: React.FC<FormSelectProps> = ({
             {...props}
             labelId={`${name}-label`}
             label={label}
-            sx={{
-              color: theme.palette.text.primary,
-              '& .MuiSelect-icon': {
-                color: 'rgba(255, 255, 255, 0.8)',
-              },
-            }}
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  bgcolor: theme.customColors.darkGray,
-                  '& .MuiMenuItem-root': {
-                    color: 'white',
-                    '&:hover': {
-                      bgcolor: 'rgba(255, 255, 255, 0.1)',
-                    },
-                    '&.Mui-selected': {
-                      bgcolor: 'rgba(255, 255, 255, 0.2)',
-                      '&:hover': {
-                        bgcolor: 'rgba(255, 255, 255, 0.3)',
-                      },
-                    },
-                  },
-                },
-              },
-            }}
+            sx={formSelectStyles(theme)}
+            MenuProps={formSelectMenuProps(theme)}
           >
             {options.map((option) => (
               <MenuItem key={option.value} value={option.value}>

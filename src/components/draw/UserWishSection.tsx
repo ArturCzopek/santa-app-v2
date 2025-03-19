@@ -1,4 +1,3 @@
-// components/draw/UserWishSection.tsx
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -6,7 +5,7 @@ import {
   TextField,
   Button,
   Alert,
-  useTheme
+  useTheme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Draw } from '../../models/Draw';
@@ -22,7 +21,7 @@ import {
   cancelButtonStyles,
   buttonsContainerStyles,
   noWishWarningStyles,
-  successMessageStyles
+  successMessageStyles,
 } from '../../styles/wishSectionStyles';
 
 interface UserWishSectionProps {
@@ -30,13 +29,17 @@ interface UserWishSectionProps {
   onDrawUpdated: (updatedDraw: Draw) => void;
 }
 
-const UserWishSection: React.FC<UserWishSectionProps> = ({ draw, onDrawUpdated }) => {
+const UserWishSection: React.FC<UserWishSectionProps> = ({
+  draw,
+  onDrawUpdated,
+}) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { user } = useAuth();
 
-  // Find current user's participant data
-  const userParticipant = draw.participants.find(p => p.userUuid === user?.uid);
+  const userParticipant = draw.participants.find(
+    (p) => p.userUuid === user?.uid,
+  );
 
   const [isEditing, setIsEditing] = useState(false);
   const [wish, setWish] = useState('');
@@ -44,7 +47,6 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({ draw, onDrawUpdated }
   const [isSaving, setIsSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Update state when userParticipant changes
   useEffect(() => {
     if (userParticipant) {
       setWish(userParticipant.wish || '');
@@ -52,15 +54,16 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({ draw, onDrawUpdated }
     }
   }, [userParticipant]);
 
-  // Determine if user has provided a wish
-  const hasWish = userParticipant && userParticipant.wish && userParticipant.wish.trim() !== '';
+  const hasWish =
+    userParticipant &&
+    userParticipant.wish &&
+    userParticipant.wish.trim() !== '';
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
   const handleCancelClick = () => {
-    // Reset to original value and exit edit mode
     setWish(originalWish);
     setIsEditing(false);
   };
@@ -72,33 +75,26 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({ draw, onDrawUpdated }
     setSuccess(false);
 
     try {
-      // Get the latest version of the draw to avoid conflicts
       const latestDraw = await drawService.getDrawDetails(draw.id || '');
 
-      // Find the user's participant in the latest draw
       const latestUserParticipant = latestDraw.participants.find(
-        p => p.userUuid === user.uid
+        (p) => p.userUuid === user.uid,
       );
 
       if (!latestUserParticipant) {
         throw new Error('User not found in draw participants');
       }
 
-      // Update the wish
       latestUserParticipant.wish = wish;
 
-      // Save the updated draw
       await drawService.updateDraw(latestDraw);
 
-      // Update local state
       setIsEditing(false);
       setSuccess(true);
-      setOriginalWish(wish); // Update original wish after saving
+      setOriginalWish(wish);
 
-      // Notify parent component about the update
       onDrawUpdated(latestDraw);
 
-      // Hide success message after 3 seconds
       setTimeout(() => {
         setSuccess(false);
       }, 3000);
@@ -137,7 +133,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({ draw, onDrawUpdated }
           InputProps={{
             sx: {
               color: theme.palette.text.primary,
-            }
+            },
           }}
         />
 
@@ -163,7 +159,9 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({ draw, onDrawUpdated }
                 disabled={isSaving}
                 sx={saveButtonStyles(theme)}
               >
-                {isSaving ? t('common.saving') : t('drawPage.wishSection.saveButton')}
+                {isSaving
+                  ? t('common.saving')
+                  : t('drawPage.wishSection.saveButton')}
               </Button>
             </>
           ) : (

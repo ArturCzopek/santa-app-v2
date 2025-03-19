@@ -12,10 +12,8 @@ const AuthPageLayout: React.FC<AuthPageLayoutProps> = ({ children }) => {
 
   return (
     <Box sx={authContainerStyles(theme)}>
-      <SnowfallEffect/>
-      <Card sx={authCardStyles(theme)}>
-        {children}
-      </Card>
+      <SnowfallEffect />
+      <Card sx={authCardStyles(theme)}>{children}</Card>
     </Box>
   );
 };

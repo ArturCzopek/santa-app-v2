@@ -1,7 +1,11 @@
 import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import Navbar from '../navbar/Navbar';
-import { mainContainerStyles, mainContentStyles, pageTitleStyles } from '../../styles/layoutStyles';
+import {
+  mainContainerStyles,
+  mainContentStyles,
+  pageTitleStyles,
+} from '../../styles/layoutStyles';
 import SnowfallEffect from '../SnowfallEffect';
 
 interface MainLayoutProps {
@@ -14,14 +18,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, title }) => {
 
   return (
     <Box sx={mainContainerStyles(theme)}>
-      <SnowfallEffect/>
+      <SnowfallEffect />
       <Navbar />
       <Box sx={mainContentStyles(theme)}>
-        <Typography
-          variant="h1"
-          component="h1"
-          sx={pageTitleStyles(theme)}
-        >
+        <Typography variant="h1" component="h1" sx={pageTitleStyles(theme)}>
           {title}
         </Typography>
 

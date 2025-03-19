@@ -6,7 +6,7 @@ import {
   Navigate,
 } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-import DrawsPage from './pages/DrawsPage';
+import DrawsListPage from './pages/DrawsListPage';
 import JoinToDrawPage from './pages/JoinToDrawPage';
 import { useAuth } from './hooks/useAuth';
 import CreatePage from './pages/CreatePage';
@@ -31,7 +31,7 @@ const AppRoutes = () => {
         {/* Protected Routes */}
         <Route
           path="/draws"
-          element={user ? <DrawsPage /> : <Navigate to="/" replace />}
+          element={user ? <DrawsListPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/draw/:drawId"

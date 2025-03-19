@@ -25,11 +25,12 @@ import {
   createLinkStyles,
   actionButtonsContainerStyles,
   joinButtonStyles,
-  createButtonStyles, appDataContainerStyles
+  createButtonStyles,
+  appDataContainerStyles,
 } from '../styles/drawsPageStyles';
 import { appDataService } from '../services/AppDataService';
 
-const DrawsPage = () => {
+const DrawsListPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -84,7 +85,6 @@ const DrawsPage = () => {
     );
   }
 
-  // Define action buttons for reuse
   const actionButtons = [
     {
       icon: <GroupAdd />,
@@ -153,4 +153,4 @@ const DrawsPage = () => {
   );
 };
 
-export default DrawsPage;
+export default DrawsListPage;

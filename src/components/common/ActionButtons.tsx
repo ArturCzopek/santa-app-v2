@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Box, Button, SxProps, Theme, useTheme } from '@mui/material';
+import { Box, Button, SxProps, Theme } from '@mui/material';
 
 interface ActionButtonProps {
   icon?: React.ReactNode;
@@ -20,7 +20,6 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   containerStyles = {},
   children,
 }) => {
-
   const baseButtonStyles: SxProps<Theme> = {
     minWidth: '220px',
     py: 1.5,

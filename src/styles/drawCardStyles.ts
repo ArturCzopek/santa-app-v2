@@ -1,6 +1,5 @@
 import { SxProps, Theme } from '@mui/material';
 
-// Shared styles for both preview and detail cards
 export const cardBaseStyles = (theme: Theme): SxProps<Theme> => ({
   backgroundColor: theme.customColors.darkGreen,
   p: 3,
@@ -33,7 +32,6 @@ export const completedChipStyles = (theme: Theme): SxProps<Theme> => ({
   color: theme.palette.common.white,
 });
 
-// Preview card specific styles
 export const previewCardStyles = (theme: Theme): SxProps<Theme> => ({
   ...cardBaseStyles(theme),
   mb: 2,

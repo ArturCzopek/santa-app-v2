@@ -65,7 +65,6 @@ const CreatePage = () => {
       const newDrawUid = await drawService.createDraw(data, user);
       setSuccess(true);
 
-      // Log the created entity after 3 seconds
       setTimeout(() => {
         navigate(`/draw/${newDrawUid}`);
       }, 3000);

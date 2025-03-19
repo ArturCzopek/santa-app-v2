@@ -8,12 +8,10 @@ import {
   signOut,
 } from 'firebase/auth';
 
-// Custom hook to manage Firebase authentication
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Sign in with Google
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
@@ -36,7 +34,6 @@ export const useAuth = () => {
     }
   };
 
-  // Listen for changes in user authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser || null);

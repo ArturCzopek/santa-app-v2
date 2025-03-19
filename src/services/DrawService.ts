@@ -6,7 +6,6 @@ import {
   doc,
   query,
   where,
-  getCountFromServer,
   setDoc,
   orderBy,
 } from 'firebase/firestore';
@@ -77,7 +76,6 @@ class DrawService {
 
       const querySnapshot = await getDocs(q);
 
-      // Map the documents to DrawPreview type
       return querySnapshot.docs.map(
         (doc) =>
           ({
@@ -112,20 +110,6 @@ class DrawService {
       } as Draw;
     } catch (error) {
       console.error('Error fetching draw details:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get the total count of draws in the app
-   */
-  async getTotalDrawsCount(): Promise<number> {
-    try {
-      const drawsCollection = collection(db, 'draws');
-      const snapshot = await getCountFromServer(drawsCollection);
-      return snapshot.data().count;
-    } catch (error) {
-      console.error('Error counting draws:', error);
       throw error;
     }
   }
