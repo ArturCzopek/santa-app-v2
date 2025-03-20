@@ -14,6 +14,9 @@ export const useAuth = () => {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      redirect_uri: import.meta.env.VITE_APP_URL
+    });
     try {
       setLoading(true);
       const result = await signInWithPopup(auth, provider);
@@ -28,7 +31,7 @@ export const useAuth = () => {
   const logOut = async () => {
     try {
       await signOut(auth);
-      window.location.href = '/';
+      window.location.href = '/#/';
     } catch (error) {
       console.error('Error signing out: ', error);
     }

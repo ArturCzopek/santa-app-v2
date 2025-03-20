@@ -46,14 +46,26 @@ const DrawPage = () => {
   const [isStartDrawModalOpen, setIsStartDrawModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [drawSuccess, setDrawSuccess] = useState(false);
+  const [accessDenied, setAccessDenied] = useState(false);
 
   useEffect(() => {
     const fetchDrawDetails = async () => {
-      if (!drawId) return;
+      if (!drawId || !user) return;
 
       try {
         setLoading(true);
         const drawData = await drawService.getDrawDetails(drawId);
+
+        const userIsParticipant = drawData.participantUuids.includes(user.uid);
+        const userIsOwner = drawData.ownerUuid === user.uid;
+
+        if (!userIsParticipant && !userIsOwner) {
+          console.warn('Access denied: User is not a participant in this draw');
+          setAccessDenied(true);
+          setError(t('drawPage.errors.accessDenied'));
+          return;
+        }
+
         setDraw(drawData);
       } catch (err) {
         console.error('Error fetching draw details:', err);
@@ -64,9 +76,18 @@ const DrawPage = () => {
     };
 
     fetchDrawDetails();
-  }, [drawId, t]);
+  }, [drawId, t, user]);
 
-  // Determine if action button should be shown
+  useEffect(() => {
+    if (accessDenied && !loading) {
+      const timeout = setTimeout(() => {
+        navigate('/draws');
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [accessDenied, loading, navigate]);
+
   const showActionButton =
     draw &&
     user &&
@@ -112,12 +133,27 @@ const DrawPage = () => {
     );
   }
 
-  if (error || !draw) {
+  if (error || !draw || accessDenied) {
     return (
       <MainLayout title={t('drawPage.title')}>
-        <Typography color="error" sx={errorMessageStyles}>
-          {error || t('drawPage.errors.drawNotFound')}
-        </Typography>
+        <Box sx={errorMessageStyles}>
+          <Typography color="error" variant="h6" gutterBottom>
+            {error || t('drawPage.errors.drawNotFound')}
+          </Typography>
+          {accessDenied && (
+            <Typography variant="body1">
+              {t('drawPage.errors.redirecting')}
+            </Typography>
+          )}
+          <Button
+            variant="contained"
+            startIcon={<ArrowBack />}
+            onClick={() => navigate('/draws')}
+            sx={{ mt: 2 }}
+          >
+            {t('common.backToDraws')}
+          </Button>
+        </Box>
       </MainLayout>
     );
   }

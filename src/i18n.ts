@@ -52,8 +52,10 @@ const resources = {
       drawPage: {
         drawSuccessMessage: 'Draw completed successfully!',
         errors: {
+          accessDenied: "Access denied. You are not a participant in this draw.",
           drawNotFound: "Draw not found or you don't have access to it.",
           fetchFailed: 'Failed to fetch draw details. Please try again.',
+          redirecting: "You will be redirected to your draws in a few seconds.",
           wishUpdateFailed: 'Failed to update your wish. Please try again.',
         },
         inviteButton: 'Invite to Draw',
@@ -130,6 +132,7 @@ const resources = {
           passwordRequired: 'Password is required to join the draw',
         },
         joinButton: 'Join Draw',
+        loginRequired: 'You need to log in to join this draw',
         passwordLabel: 'Provide a password to join to draw',
         passwordPlaceholder: 'Enter the draw password',
         success:
@@ -213,10 +216,12 @@ const resources = {
       drawPage: {
         drawSuccessMessage: 'Losowanie zakończone sukcesem!',
         errors: {
+          accessDenied: "Odmowa dostępu. Nie jesteś uczestnikiem tego losowania.",
           drawNotFound:
             'Losowanie nie zostało znalezione lub nie masz do niego dostępu.',
           fetchFailed:
             'Nie udało się pobrać szczegółów losowania. Spróbuj ponownie.',
+          redirecting: "Za kilka sekund zostaniesz przekierowany do swoich losowań.",
           wishUpdateFailed:
             'Nie udało się zaktualizować twojego życzenia. Spróbuj ponownie.',
         },
@@ -296,6 +301,7 @@ const resources = {
           loginRequired: 'Musisz się zalogować, aby dołączyć do tego losowania',
           passwordRequired: 'Hasło jest wymagane aby dołączyć do losowania',
         },
+        loginRequired: 'Musisz się zalogować, aby dołączyć do tego losowania',
         joinButton: 'Dołącz do Losowania',
         passwordLabel: 'Podaj hasło, aby dołączyć do losowania',
         passwordPlaceholder: 'Wprowadź hasło do losowania',
