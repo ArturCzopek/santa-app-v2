@@ -5,11 +5,13 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from './styles/theme';
 import AppRoutes from './routes';
 import i18n from './i18n';
+import SnowfallEffect from './components/SnowfallEffect';
 
 const App: React.FC = () => {
   return (
     <I18nextProvider i18n={i18n}>
       <ThemeProvider theme={theme}>
+        <SnowfallEffect/>
         <div style={{ position: 'relative', height: '100vh' }}>
           <AppRoutes />
         </div>

@@ -6,7 +6,6 @@ import {
   mainContentStyles,
   pageTitleStyles,
 } from '../../styles/layoutStyles';
-import SnowfallEffect from '../SnowfallEffect';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -18,7 +17,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, title }) => {
 
   return (
     <Box sx={mainContainerStyles(theme)}>
-      <SnowfallEffect />
       <Navbar />
       <Box sx={mainContentStyles(theme)}>
         <Typography variant="h1" component="h1" sx={pageTitleStyles(theme)}>
