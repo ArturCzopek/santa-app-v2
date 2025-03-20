@@ -1,6 +1,7 @@
 {
   "name": "santa-app-v2",
   "version": "1.0.0",
+  "homepage": "https://arturczopek.github.io/santa-app-v2",
   "main": "main.tsx",
   "scripts": {
     "dev": "vite",

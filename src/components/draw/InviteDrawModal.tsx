@@ -43,7 +43,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
   const [copied, setCopied] = useState(false);
 
   const APP_URL = import.meta.env.VITE_APP_URL;
-  const inviteLink = `${APP_URL}/join/${drawId}`;
+  const inviteLink = `${APP_URL}/#/join/${drawId}`;
 
   const handleCopyLink = () => {
     navigator.clipboard
