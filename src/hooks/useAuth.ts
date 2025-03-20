@@ -31,7 +31,7 @@ export const useAuth = () => {
   const logOut = async () => {
     try {
       await signOut(auth);
-      window.location.href = '/#/';
+      window.location.href = import.meta.env.VITE_APP_URL;
     } catch (error) {
       console.error('Error signing out: ', error);
     }
