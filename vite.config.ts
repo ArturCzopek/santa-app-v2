@@ -1,12 +1,13 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [react()],
   base: './',
   resolve: {
     alias: {
-      '@': '/src',
+      '@': resolve(__dirname, './src'),
     },
   },
   optimizeDeps: {
@@ -19,6 +20,7 @@ export default defineConfig({
       'firebase/auth',
       'firebase/firestore',
       'react-router-dom',
+      'date-fns'
     ],
   },
   build: {
@@ -26,5 +28,9 @@ export default defineConfig({
     rollupOptions: {
       external: ['firebase'],
     },
+    commonjsOptions: {
+      include: [/node_modules/], // This helps with CommonJS modules
+      transformMixedEsModules: true,
+    }
   },
 });
