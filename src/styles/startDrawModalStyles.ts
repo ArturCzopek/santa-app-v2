@@ -1,3 +1,5 @@
+import { Theme } from '@mui/material';
+
 export const startDrawModalDialogStyles = {
   backgroundColor: 'rgba(0, 43, 0, 0.9)',
   color: 'white',
@@ -34,9 +36,12 @@ export const startDrawModalCancelButtonStyles = {
   },
 };
 
-export const startDrawModalConfirmButtonStyles = {
-  backgroundColor: '#D32F2F',
+export const startDrawModalConfirmButtonStyles = (theme: Theme) => ({
+  fontWeight: 600,
+  color: theme.palette.text.primary,
+  backgroundColor: theme.palette.primary.main,
   '&:hover': {
-    backgroundColor: '#B71C1C',
+    backgroundColor: theme.customColors.darkRed,
   },
-};
+  minWidth: '100px',
+});

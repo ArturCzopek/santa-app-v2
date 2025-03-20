@@ -22,6 +22,7 @@ import {
   logoutButtonStyles,
 } from '../../styles/navbarStyles';
 import MessageModal from '../MessageModal';
+import ShowSantaModal from '../ShowSantaModal';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const Navbar = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const [messageModalOpen, setMessageModalOpen] = useState(false);
+  const [santaModalOpen, setSantaModalOpen] = useState(false);
 
   const handleOpenMessageModal = () => {
     setMessageModalOpen(true);
@@ -36,6 +38,14 @@ const Navbar = () => {
 
   const handleCloseMessageModal = () => {
     setMessageModalOpen(false);
+  };
+
+  const handleOpenSantaModal = () => {
+    setSantaModalOpen(true);
+  };
+
+  const handleCloseSantaModal = () => {
+    setSantaModalOpen(false);
   };
 
   return (
@@ -66,9 +76,7 @@ const Navbar = () => {
 
             <Divider orientation="vertical" flexItem sx={dividerStyles} />
 
-            <NavbarItem
-              onClick={() => alert('Show Santa feature coming soon!')}
-            >
+            <NavbarItem onClick={handleOpenSantaModal}>
               {t('navbar.showSanta')}
             </NavbarItem>
 
@@ -101,6 +109,8 @@ const Navbar = () => {
       </AppBar>
 
       <MessageModal open={messageModalOpen} onClose={handleCloseMessageModal} />
+
+      <ShowSantaModal open={santaModalOpen} onClose={handleCloseSantaModal} />
     </>
   );
 };
