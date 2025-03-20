@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  base: './',
   resolve: {
     alias: {
       '@': '/src',
@@ -12,7 +13,7 @@ export default defineConfig({
     include: [
       'react',
       'react-dom',
-      'react-snowfall', // Add here the problematic libraries you want to optimize
+      'react-snowfall',
       '@mui/material',
       'firebase/app',
       'firebase/auth',
@@ -21,6 +22,7 @@ export default defineConfig({
     ],
   },
   build: {
+    outDir: 'build',
     rollupOptions: {
       external: ['firebase'],
     },
