@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -21,74 +21,87 @@ import {
   userNameStyles,
   logoutButtonStyles,
 } from '../../styles/navbarStyles';
+import MessageModal from '../MessageModal';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, logOut } = useAuth();
   const { t } = useTranslation();
   const theme = useTheme();
+  const [messageModalOpen, setMessageModalOpen] = useState(false);
+
+  const handleOpenMessageModal = () => {
+    setMessageModalOpen(true);
+  };
+
+  const handleCloseMessageModal = () => {
+    setMessageModalOpen(false);
+  };
 
   return (
-    <AppBar position="sticky" sx={appBarStyles(theme)}>
-      <Toolbar>
-        <Typography
-          variant="h3"
-          component="div"
-          sx={titleStyles(theme)}
-          onClick={() => navigate('/draws')}
-        >
-          {t('navbar.title')}
-        </Typography>
-
-        <Box sx={navItemContainerStyles}>
-          <NavbarItem
-            icon={<GitHub />}
-            onClick={() =>
-              window.open(
-                'https://github.com/ArturCzopek/santa-app-v2',
-                '_blank',
-              )
-            }
+    <>
+      <AppBar position="sticky" sx={appBarStyles(theme)}>
+        <Toolbar>
+          <Typography
+            variant="h3"
+            component="div"
+            sx={titleStyles(theme)}
+            onClick={() => navigate('/draws')}
           >
-            {t('navbar.checkApp')}
-          </NavbarItem>
+            {t('navbar.title')}
+          </Typography>
 
-          <Divider orientation="vertical" flexItem sx={dividerStyles} />
+          <Box sx={navItemContainerStyles}>
+            <NavbarItem
+              icon={<GitHub />}
+              onClick={() =>
+                window.open(
+                  'https://github.com/ArturCzopek/santa-app-v2',
+                  '_blank',
+                )
+              }
+            >
+              {t('navbar.checkApp')}
+            </NavbarItem>
 
-          <NavbarItem onClick={() => alert('Show Santa feature coming soon!')}>
-            {t('navbar.showSanta')}
-          </NavbarItem>
+            <Divider orientation="vertical" flexItem sx={dividerStyles} />
 
-          <Divider orientation="vertical" flexItem sx={dividerStyles} />
+            <NavbarItem
+              onClick={() => alert('Show Santa feature coming soon!')}
+            >
+              {t('navbar.showSanta')}
+            </NavbarItem>
 
-          <NavbarItem
-            icon={<Message />}
-            onClick={() => alert('Message feature coming soon!')}
-          >
-            {t('navbar.leaveMessage')}
-          </NavbarItem>
+            <Divider orientation="vertical" flexItem sx={dividerStyles} />
 
-          {user && (
-            <>
-              <Divider orientation="vertical" flexItem sx={dividerStyles} />
+            <NavbarItem icon={<Message />} onClick={handleOpenMessageModal}>
+              {t('navbar.leaveMessage')}
+            </NavbarItem>
 
-              <Typography sx={userNameStyles(theme)}>
-                {user.displayName}
-              </Typography>
+            {user && (
+              <>
+                <Divider orientation="vertical" flexItem sx={dividerStyles} />
 
-              <IconButton
-                aria-label="logout"
-                onClick={logOut}
-                size="small"
-                sx={logoutButtonStyles(theme)}
-              >
-                <ExitToApp />
-              </IconButton>
-            </>
-          )}
-        </Box>
-      </Toolbar>
-    </AppBar>
+                <Typography sx={userNameStyles(theme)}>
+                  {user.displayName}
+                </Typography>
+
+                <IconButton
+                  aria-label="logout"
+                  onClick={logOut}
+                  size="small"
+                  sx={logoutButtonStyles(theme)}
+                >
+                  <ExitToApp />
+                </IconButton>
+              </>
+            )}
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      <MessageModal open={messageModalOpen} onClose={handleCloseMessageModal} />
+    </>
   );
 };
 

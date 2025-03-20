@@ -101,7 +101,6 @@ const CreatePage = () => {
           onSubmit={handleSubmit(onSubmit)}
           sx={darkGreenBackground(theme)}
         >
-          {/* Display success message if creation was successful */}
           {success && (
             <Alert severity="success" sx={alertStyles(theme)}>
               {t('createPage.success')}
@@ -175,7 +174,6 @@ const CreatePage = () => {
             />
           </Box>
 
-          {/* Password field with visibility toggle */}
           <Controller
             name="password"
             control={control}
@@ -217,7 +215,6 @@ const CreatePage = () => {
                   sx={errorStyles(theme)}
                 />
 
-                {/* Password hint text in amber color */}
                 <FormHelperText
                   sx={{
                     color: theme.customColors.lightGold,

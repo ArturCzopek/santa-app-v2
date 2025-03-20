@@ -141,6 +141,14 @@ const resources = {
         loginWithGoogle: 'Login with Google',
         title: 'Santa App 2.0',
       },
+      messages: {
+        alreadySentToday: "You've already sent a message today. You can send another message tomorrow.",
+        description: "Do you have any feedback? Is something not working? Or maybe you just want to get in touch? This is a good place, you can type and send me a message. I promise to reply :)",
+        messageLabel: "Message",
+        send: "Send",
+        sendError: "Error sending message. Please try again.",
+        sendSuccess: "Message sent successfully!"
+      },
       navbar: {
         checkApp: 'Check the app',
         leaveMessage: 'Leave a message!',
@@ -294,6 +302,14 @@ const resources = {
       loginPage: {
         loginWithGoogle: 'Zaloguj przez Google',
         title: 'Santa App 2.0',
+      },
+      messages: {
+        alreadySentToday: "Wysłałeś już wiadomość dzisiaj. Możesz wysłać kolejną wiadomość jutro.",
+        description: "Masz jakiś feedback? Coś nie działa? A może po prostu chcesz się skontaktować? To jest dobre miejsce, możesz wpisać i wysłać do mnie wiadomość. Obiecuję, że odpiszę :)",
+        messageLabel: "Wiadomość",
+        send: "Wyślij",
+        sendError: "Błąd podczas wysyłania wiadomości. Spróbuj ponownie.",
+        sendSuccess: "Wiadomość wysłana pomyślnie!"
       },
       navbar: {
         checkApp: 'Sprawdź aplikację',
