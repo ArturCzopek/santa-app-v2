@@ -62,3 +62,48 @@ VITE_APP_URL=http://localhost:5173 # path to your application, without '/' at th
 4. Run the app: To start the development server, run:
 
 `yarn dev`
+
+### Local development without a Firebase project
+
+Requires Java (for the emulators). In two terminals:
+
+```bash
+yarn emulators       # Auth + Firestore emulators, fake demo project
+yarn dev:emulators   # the app, connected to the emulators
+```
+
+### Tests
+
+`yarn test` runs the Firestore security rules tests (and unit tests) against
+the emulator. Requires Java.
+
+## Security model
+
+There is no backend: the browser talks to Firestore directly and
+[`firestore.rules`](firestore.rules) is what protects the data.
+
+- `draws/{id}` - public draw info only (anyone signed in who knows the id).
+- `draws/{id}/participants/{uid}` - name and wish, readable by participants,
+  only the user can change their own wish.
+- `draws/{id}/assignments/{uid}` - who `uid` gives a gift to, readable only by
+  `uid`, written once when the owner starts the draw.
+- `draws/{id}/joinKeys/{key}` - the password check; the key is
+  `sha256(drawId + ":" + sha256(password))`, never readable by others.
+
+Deploy rules and indexes after changing them:
+
+```bash
+yarn firebase login
+yarn firebase use --add
+yarn deploy:rules
+```
+
+### Migrating draws created before the security update
+
+```bash
+node scripts/migrate.mjs path/to/service-account-key.json           # dry run
+node scripts/migrate.mjs path/to/service-account-key.json --apply   # write
+```
+
+The key comes from Firebase console -> Project settings -> Service accounts.
+Never commit it.
