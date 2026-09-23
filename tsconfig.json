@@ -11,6 +11,7 @@
     "target": "esnext",
     "module": "esnext",
     "lib": ["dom", "esnext"],
+    "types": ["vite/client"],
     "baseUrl": "./src"
   },
   "include": ["src/**/*"],

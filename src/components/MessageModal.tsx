@@ -52,7 +52,6 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
       messageService
         .canUserSendMessageToday(user.uid)
         .then((canSend) => {
-          console.log(`User can send message today: ${canSend}`);
           setCanSendToday(canSend);
           setIsLoading(false);
         })

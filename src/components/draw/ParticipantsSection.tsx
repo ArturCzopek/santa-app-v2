@@ -33,11 +33,6 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
     const isCurrentUser = user && participant.userUuid === user.uid;
     const hasProvidedWish = !!participant.wish;
 
-    console.log('===avatar', participant.userUuid, participant.userPhotoUrl);
-    console.log(
-      '===display letter?',
-      !participant.userPhotoUrl && participant.userName[0].toUpperCase(),
-    );
     return (
       <Box
         key={participant.userUuid}
