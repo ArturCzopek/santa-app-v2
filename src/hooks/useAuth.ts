@@ -14,9 +14,6 @@ export const useAuth = () => {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({
-      redirect_uri: import.meta.env.VITE_APP_URL + '/'
-    });
     try {
       setLoading(true);
       const result = await signInWithPopup(auth, provider);
