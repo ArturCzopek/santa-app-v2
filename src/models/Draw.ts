@@ -34,7 +34,6 @@ export type Draw = {
   participantUuids: string[];
   status: 'WAITING_FOR_DRAW' | 'DRAWED';
   drawDate?: Date | Timestamp | null;
-  password: string;
 };
 
 export type DrawPreview = Pick<

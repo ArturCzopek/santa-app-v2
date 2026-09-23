@@ -28,6 +28,8 @@ export const ALICE = 'alice-uid';
 export const BOB = 'bob-uid';
 export const MALLORY = 'mallory-uid';
 
+export const JOIN_KEY = 'correct-password-key';
+
 export const authed = (env: RulesTestEnvironment, uid: string) =>
   env
     .authenticatedContext(uid, { name: `${uid} name`, picture: '' })
@@ -52,7 +54,6 @@ export const newDraw = (uid: string) => ({
   currency: 'PLN',
   drawName: 'Office party',
   description: 'Gifts!',
-  password: 'hash',
   participantUuids: [uid],
   status: 'WAITING_FOR_DRAW',
   drawDate: null,
@@ -67,12 +68,23 @@ export const createDraw = (
   const batch = writeBatch(db);
   batch.set(doc(db, `draws/${drawId}`), { ...newDraw(uid), ...overrides });
   batch.set(doc(db, `draws/${drawId}/participants/${uid}`), newParticipant(uid));
+  batch.set(doc(db, `draws/${drawId}/joinKeys/${JOIN_KEY}`), {
+    createdDate: serverTimestamp(),
+  });
   return batch.commit();
 };
 
-export const joinDraw = (db: Db, drawId: string, uid: string) => {
+export const joinDraw = (
+  db: Db,
+  drawId: string,
+  uid: string,
+  joinKey = JOIN_KEY,
+) => {
   const batch = writeBatch(db);
-  batch.set(doc(db, `draws/${drawId}/participants/${uid}`), newParticipant(uid));
+  batch.set(doc(db, `draws/${drawId}/participants/${uid}`), {
+    ...newParticipant(uid),
+    joinKey,
+  });
   batch.update(doc(db, `draws/${drawId}`), {
     participantUuids: arrayUnion(uid),
   });

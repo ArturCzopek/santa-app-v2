@@ -25,6 +25,7 @@ import {
   createDraw,
   createTestEnv,
   joinDraw,
+  JOIN_KEY,
   MALLORY,
   newDraw,
   newParticipant,
@@ -117,6 +118,18 @@ describe('draws', () => {
       await assertFails(batch.commit());
     });
 
+    it('cannot join with a wrong password', async () => {
+      await assertFails(joinDraw(authed(env, ALICE), 'd1', ALICE, 'wrong-key'));
+    });
+
+    it('cannot join without a password', async () => {
+      const db = authed(env, ALICE);
+      const batch = writeBatch(db);
+      batch.set(doc(db, `draws/d1/participants/${ALICE}`), newParticipant(ALICE));
+      batch.update(doc(db, 'draws/d1'), { participantUuids: arrayUnion(ALICE) });
+      await assertFails(batch.commit());
+    });
+
     it('cannot join without a participant document', async () => {
       await assertFails(
         updateDoc(doc(authed(env, ALICE), 'draws/d1'), {
@@ -184,6 +197,47 @@ describe('draws', () => {
       await assertFails(
         updateDoc(doc(authed(env, ALICE), `draws/d1/participants/${ALICE}`), {
           userName: 'Owner',
+        }),
+      );
+    });
+  });
+
+  describe('password (joinKeys)', () => {
+    beforeEach(async () => {
+      await createDraw(authed(env, OWNER), 'd1', OWNER);
+      await joinDraw(authed(env, ALICE), 'd1', ALICE);
+    });
+
+    it('draw document does not contain the password', async () => {
+      await assertFails(
+        createDraw(authed(env, OWNER), 'd2', OWNER, { password: 'hash' }),
+      );
+    });
+
+    it('only the owner can check a password', async () => {
+      await assertSucceeds(
+        getDoc(doc(authed(env, OWNER), `draws/d1/joinKeys/${JOIN_KEY}`)),
+      );
+      await assertFails(
+        getDoc(doc(authed(env, ALICE), `draws/d1/joinKeys/${JOIN_KEY}`)),
+      );
+      await assertFails(
+        getDoc(doc(authed(env, MALLORY), `draws/d1/joinKeys/${JOIN_KEY}`)),
+      );
+    });
+
+    it('nobody can list keys or add one later', async () => {
+      await assertFails(
+        getDocs(collection(authed(env, OWNER), 'draws/d1/joinKeys')),
+      );
+      await assertFails(
+        setDoc(doc(authed(env, MALLORY), 'draws/d1/joinKeys/my-key'), {
+          createdDate: serverTimestamp(),
+        }),
+      );
+      await assertFails(
+        setDoc(doc(authed(env, OWNER), 'draws/d1/joinKeys/another-key'), {
+          createdDate: serverTimestamp(),
         }),
       );
     });

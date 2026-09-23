@@ -27,7 +27,7 @@ service cloud.firestore {
       return d.keys().hasOnly([
           'createdDate', 'ownerUuid', 'ownerName', 'ownerPhotoUrl', 'budget',
           'currency', 'drawName', 'description', 'participantUuids', 'status',
-          'drawDate', 'password'
+          'drawDate'
         ])
         && d.ownerUuid == request.auth.uid
         && d.participantUuids == [request.auth.uid]
@@ -40,7 +40,6 @@ service cloud.firestore {
         && d.currency in ['PLN', 'EUR', 'USD', 'GBP']
         && isString(d.ownerName, 200)
         && isString(d.ownerPhotoUrl, 2000)
-        && d.password is string
         && existsAfter(participantPath(drawId, request.auth.uid));
     }
 
@@ -67,7 +66,7 @@ service cloud.firestore {
 
     function isValidNewParticipant(uid) {
       let p = request.resource.data;
-      return p.keys().hasOnly(['userName', 'userUuid', 'userPhotoUrl', 'entryDate', 'wish'])
+      return p.keys().hasOnly(['userName', 'userUuid', 'userPhotoUrl', 'entryDate', 'wish', 'joinKey'])
         && p.userUuid == uid
         && p.entryDate == request.time
         && p.wish == ''
@@ -87,7 +86,10 @@ service cloud.firestore {
         allow read: if signedIn()
           && request.auth.uid in get(drawPath(drawId)).data.participantUuids;
 
-        // Either the owner creating the draw, or a user joining it.
+        // Either the owner creating the draw, or a user joining it with the
+        // right password (joinKey must name an existing joinKeys document).
+        // The joinKey stays visible to co-participants, who know the password
+        // anyway.
         allow create: if signedIn()
           && request.auth.uid == uid
           && isValidNewParticipant(uid)
@@ -96,7 +98,9 @@ service cloud.firestore {
               && getAfter(drawPath(drawId)).data.ownerUuid == uid)
             || (get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
               && !(uid in get(drawPath(drawId)).data.participantUuids)
-              && uid in getAfter(drawPath(drawId)).data.participantUuids)
+              && uid in getAfter(drawPath(drawId)).data.participantUuids
+              && request.resource.data.joinKey is string
+              && exists(/databases/$(database)/documents/draws/$(drawId)/joinKeys/$(request.resource.data.joinKey)))
           );
 
         // Users may only change their own wish.
@@ -104,6 +108,19 @@ service cloud.firestore {
           && request.auth.uid == uid
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['wish'])
           && isString(request.resource.data.wish, 2000);
+      }
+
+      // Password check: the document id is the password hash. Created only
+      // together with the draw; only the owner may probe it (to confirm
+      // starting the draw) and nobody may list it.
+      match /joinKeys/{joinKey} {
+        allow get: if signedIn()
+          && get(drawPath(drawId)).data.ownerUuid == request.auth.uid;
+
+        allow create: if signedIn()
+          && !exists(drawPath(drawId))
+          && getAfter(drawPath(drawId)).data.ownerUuid == request.auth.uid
+          && request.resource.data.keys().hasOnly(['createdDate']);
       }
 
       // Draw result: one document per giver, readable only by that giver.

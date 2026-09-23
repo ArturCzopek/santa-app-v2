@@ -10,6 +10,7 @@ import {
   updateDoc,
   arrayUnion,
   serverTimestamp,
+  FirestoreError,
 } from 'firebase/firestore';
 import { db } from './FirebaseConfig';
 import { Draw, DrawPreview, Participant } from '../models/Draw';
@@ -22,6 +23,12 @@ class DrawService {
 
   private participantsCollection(drawId: string) {
     return collection(this.drawsCollection, drawId, 'participants');
+  }
+
+  // The password hash is only ever used as a document id in this collection.
+  // Nobody can read or list it; the rules check it exists when someone joins.
+  private joinKeyRef(drawId: string, joinKey: string) {
+    return doc(this.drawsCollection, drawId, 'joinKeys', joinKey);
   }
 
   private newParticipant(user: User) {
@@ -59,7 +66,6 @@ class DrawService {
       currency: formData.currency,
       drawName: formData.drawName,
       description: formData.description,
-      password: PasswordUtils.hashPassword(formData.password),
       participantUuids: [currentUser.uid], // Owner is the first participant
       status: 'WAITING_FOR_DRAW',
       drawDate: null,
@@ -71,6 +77,10 @@ class DrawService {
       batch.set(
         doc(this.participantsCollection(drawRef.id), currentUser.uid),
         this.newParticipant(currentUser),
+      );
+      batch.set(
+        this.joinKeyRef(drawRef.id, PasswordUtils.hashPassword(formData.password)),
+        { createdDate: serverTimestamp() },
       );
       await batch.commit();
 
@@ -153,13 +163,17 @@ class DrawService {
     }
   }
 
+  // Only the owner may check the password (used to confirm starting the draw).
+  async isDrawPasswordValid(drawId: string, password: string): Promise<boolean> {
+    const joinKey = await getDoc(
+      this.joinKeyRef(drawId, PasswordUtils.hashPassword(password)),
+    );
+    return joinKey.exists();
+  }
+
   async joinToDraw(drawId: string, user: User, password: string): Promise<void> {
     try {
       const draw = await this.getDraw(drawId);
-
-      if (!PasswordUtils.comparePasswords(password, draw.password)) {
-        throw new Error('Invalid password');
-      }
 
       if (draw.status !== 'WAITING_FOR_DRAW') {
         throw new Error('Draw is not in waiting status');
@@ -170,16 +184,25 @@ class DrawService {
       }
 
       // Both writes land atomically, so concurrent joins cannot overwrite
-      // each other.
+      // each other. The rules accept them only if joinKey matches the draw's
+      // password, so a rejected write here means a wrong password.
       const batch = writeBatch(db);
-      batch.set(
-        doc(this.participantsCollection(drawId), user.uid),
-        this.newParticipant(user),
-      );
+      batch.set(doc(this.participantsCollection(drawId), user.uid), {
+        ...this.newParticipant(user),
+        joinKey: PasswordUtils.hashPassword(password),
+      });
       batch.update(doc(this.drawsCollection, drawId), {
         participantUuids: arrayUnion(user.uid),
       });
-      await batch.commit();
+
+      try {
+        await batch.commit();
+      } catch (error) {
+        if ((error as FirestoreError).code === 'permission-denied') {
+          throw new Error('Invalid password');
+        }
+        throw error;
+      }
     } catch (error) {
       console.error('Error joining draw:', error);
       throw error;

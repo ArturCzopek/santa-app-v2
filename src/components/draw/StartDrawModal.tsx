@@ -18,7 +18,7 @@ import {
   inputLabelStyles,
   errorStyles,
 } from '../../styles/formStyles';
-import { PasswordUtils } from '../../services/PasswordUtils';
+import { drawService } from '../../services/DrawService';
 import {
   startDrawModalDialogStyles,
   startDrawModalTitleStyles,
@@ -33,14 +33,14 @@ interface StartDrawModalProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  drawPassword: string;
+  drawId: string;
 }
 
 const StartDrawModal: React.FC<StartDrawModalProps> = ({
   open,
   onClose,
   onConfirm,
-  drawPassword,
+  drawId,
 }) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -48,12 +48,13 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isChecking, setIsChecking] = useState(false);
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!password) {
       setError(t('createPage.validation.passwordRequired'));
       return;
@@ -64,9 +65,14 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
       return;
     }
 
-    if (!PasswordUtils.comparePasswords(password, drawPassword)) {
-      setError(t('drawPage.startDraw.incorrectPassword'));
-      return;
+    setIsChecking(true);
+    try {
+      if (!(await drawService.isDrawPasswordValid(drawId, password))) {
+        setError(t('drawPage.startDraw.incorrectPassword'));
+        return;
+      }
+    } finally {
+      setIsChecking(false);
     }
 
     setError('');
@@ -141,6 +147,7 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
           </Button>
           <Button
             onClick={handleConfirm}
+            disabled={isChecking}
             variant="contained"
             color="error"
             sx={startDrawModalConfirmButtonStyles}

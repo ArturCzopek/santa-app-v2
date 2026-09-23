@@ -214,7 +214,7 @@ const DrawPage = () => {
             open={isStartDrawModalOpen}
             onClose={() => setIsStartDrawModalOpen(false)}
             onConfirm={handleStartDraw}
-            drawPassword={draw.password || ''}
+            drawId={draw.id || ''}
           />
         )}
 
