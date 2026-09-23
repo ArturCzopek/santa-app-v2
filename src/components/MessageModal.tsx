@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -43,25 +43,25 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
   const [canSendToday, setCanSendToday] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (open && user) {
-      setIsLoading(true);
-      setMessage(''); // Reset message when opening modal
+  const handleOpening = () => {
+    if (!user) return;
 
-      // Check if user has already sent a message today
-      messageService
-        .canUserSendMessageToday(user.uid)
-        .then((canSend) => {
-          setCanSendToday(canSend);
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error('Error checking message status:', error);
-          setCanSendToday(false); // Default to not allowing on error to be safe
-          setIsLoading(false);
-        });
-    }
-  }, [open, user]);
+    setIsLoading(true);
+    setMessage(''); // Reset message when opening modal
+
+    // Check if user has already sent a message today
+    messageService
+      .canUserSendMessageToday(user.uid)
+      .then((canSend) => {
+        setCanSendToday(canSend);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error checking message status:', error);
+        setCanSendToday(false); // Default to not allowing on error to be safe
+        setIsLoading(false);
+      });
+  };
 
   const handleSendMessage = async () => {
     if (!message.trim() || !user) return;
@@ -130,6 +130,7 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
       <Dialog
         open={open}
         onClose={handleClose}
+        TransitionProps={{ onEnter: handleOpening }}
         maxWidth="xs"
         fullWidth
         PaperProps={{

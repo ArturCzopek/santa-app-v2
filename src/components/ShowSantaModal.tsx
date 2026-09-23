@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -28,13 +28,11 @@ const ShowSantaModal: React.FC<ShowSantaModalProps> = ({ open, onClose }) => {
   const theme = useTheme();
   const [videoId, setVideoId] = useState<string>('');
 
-  useEffect(() => {
-    if (open) {
-      // Select a random video from the list when modal opens
-      const randomIndex = Math.floor(Math.random() * SANTA_VIDEOS.length);
-      setVideoId(SANTA_VIDEOS[randomIndex]);
-    }
-  }, [open]);
+  // Select a random video from the list when modal opens
+  const handleOpening = () => {
+    const randomIndex = Math.floor(Math.random() * SANTA_VIDEOS.length);
+    setVideoId(SANTA_VIDEOS[randomIndex]);
+  };
 
   const handleClose = () => {
     onClose();
@@ -44,6 +42,7 @@ const ShowSantaModal: React.FC<ShowSantaModalProps> = ({ open, onClose }) => {
     <Dialog
       open={open}
       onClose={handleClose}
+      TransitionProps={{ onEnter: handleOpening }}
       maxWidth="md"
       fullWidth
       PaperProps={{

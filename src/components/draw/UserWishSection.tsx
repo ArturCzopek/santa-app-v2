@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -41,30 +41,22 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     (p) => p.userUuid === user?.uid,
   );
 
+  const savedWish = userParticipant?.wish || '';
+
   const [isEditing, setIsEditing] = useState(false);
+  // Draft edited in the text field; the saved wish comes from the draw.
   const [wish, setWish] = useState('');
-  const [originalWish, setOriginalWish] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  useEffect(() => {
-    if (userParticipant) {
-      setWish(userParticipant.wish || '');
-      setOriginalWish(userParticipant.wish || '');
-    }
-  }, [userParticipant]);
-
-  const hasWish =
-    userParticipant &&
-    userParticipant.wish &&
-    userParticipant.wish.trim() !== '';
+  const hasWish = savedWish.trim() !== '';
 
   const handleEditClick = () => {
+    setWish(savedWish);
     setIsEditing(true);
   };
 
   const handleCancelClick = () => {
-    setWish(originalWish);
     setIsEditing(false);
   };
 
@@ -79,7 +71,6 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
 
       setIsEditing(false);
       setSuccess(true);
-      setOriginalWish(wish);
 
       onDrawUpdated({
         ...draw,
@@ -117,7 +108,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
           multiline
           rows={4}
           variant="outlined"
-          value={wish}
+          value={isEditing ? wish : savedWish}
           onChange={(e) => setWish(e.target.value)}
           disabled={!isEditing}
           fullWidth

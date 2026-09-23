@@ -4,6 +4,7 @@ import { Button, Typography, Box, useTheme } from '@mui/material';
 import { Google } from '@mui/icons-material';
 import YouTubeEmbed from '../components/YouTubeEmbed';
 import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
 import AuthPageLayout from '../components/layout/AuthPageLayout';
 import {
   pageTitleStyles,
@@ -17,7 +18,7 @@ const LoginPage = () => {
   const theme = useTheme();
 
   if (user) {
-    window.location.href = '/draws';
+    return <Navigate to="/draws" replace />;
   }
 
   return (
