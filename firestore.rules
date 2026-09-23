@@ -120,6 +120,7 @@ service cloud.firestore {
         allow create: if signedIn()
           && !exists(drawPath(drawId))
           && getAfter(drawPath(drawId)).data.ownerUuid == request.auth.uid
+          && joinKey.matches('^[0-9a-f]{64}$')
           && request.resource.data.keys().hasOnly(['createdDate']);
       }
 

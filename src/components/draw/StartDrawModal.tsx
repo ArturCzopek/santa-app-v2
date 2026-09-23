@@ -60,11 +60,6 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
       return;
     }
 
-    if (password.length < 4) {
-      setError(t('createPage.validation.passwordTooShort'));
-      return;
-    }
-
     setIsChecking(true);
     try {
       if (!(await drawService.isDrawPasswordValid(drawId, password))) {

@@ -115,11 +115,6 @@ const JoinToDrawPage = () => {
       return;
     }
 
-    if (password.length < 4) {
-      setPasswordError(t('createPage.validation.passwordTooShort'));
-      return;
-    }
-
     setJoining(true);
     try {
       await drawService.joinToDraw(draw.id as string, user, password);

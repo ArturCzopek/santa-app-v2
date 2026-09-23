@@ -214,6 +214,17 @@ describe('draws', () => {
       );
     });
 
+    it('key must be a SHA-256 hex digest', async () => {
+      const db = authed(env, OWNER);
+      const batch = writeBatch(db);
+      batch.set(doc(db, 'draws/d2'), newDraw(OWNER));
+      batch.set(doc(db, `draws/d2/participants/${OWNER}`), newParticipant(OWNER));
+      batch.set(doc(db, 'draws/d2/joinKeys/1234'), {
+        createdDate: serverTimestamp(),
+      });
+      await assertFails(batch.commit());
+    });
+
     it('only the owner can check a password', async () => {
       await assertSucceeds(
         getDoc(doc(authed(env, OWNER), `draws/d1/joinKeys/${JOIN_KEY}`)),

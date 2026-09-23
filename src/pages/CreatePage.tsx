@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { drawService } from '../services/DrawService';
 import { useAuth } from '../hooks/useAuth';
+import { MIN_PASSWORD_LENGTH } from '../services/PasswordUtils';
 import {
   alertStyles,
   darkGreenBackground,
@@ -180,7 +181,7 @@ const CreatePage = () => {
             rules={{
               required: t('createPage.validation.passwordRequired'),
               minLength: {
-                value: 4,
+                value: MIN_PASSWORD_LENGTH,
                 message: t('createPage.validation.passwordTooShort'),
               },
             }}

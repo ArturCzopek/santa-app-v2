@@ -10,7 +10,7 @@
     "start": "vite",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write .",
-    "test:rules": "firebase emulators:exec --only firestore --project demo-santa-app \"vitest run\"",
+    "test": "firebase emulators:exec --only firestore --project demo-santa-app \"vitest run\"",
     "deploy:rules": "firebase deploy --only firestore"
   },
   "dependencies": {
@@ -20,7 +20,6 @@
     "@firebase/firestore": "^4.7.5",
     "@mui/icons-material": "^5.10.1",
     "@mui/material": "^5.10.1",
-    "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "firebase": "^11.0.2",
     "i18next": "^24.0.2",

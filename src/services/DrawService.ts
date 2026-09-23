@@ -79,7 +79,10 @@ class DrawService {
         this.newParticipant(currentUser),
       );
       batch.set(
-        this.joinKeyRef(drawRef.id, PasswordUtils.hashPassword(formData.password)),
+        this.joinKeyRef(
+          drawRef.id,
+          await PasswordUtils.joinKey(drawRef.id, formData.password),
+        ),
         { createdDate: serverTimestamp() },
       );
       await batch.commit();
@@ -166,7 +169,7 @@ class DrawService {
   // Only the owner may check the password (used to confirm starting the draw).
   async isDrawPasswordValid(drawId: string, password: string): Promise<boolean> {
     const joinKey = await getDoc(
-      this.joinKeyRef(drawId, PasswordUtils.hashPassword(password)),
+      this.joinKeyRef(drawId, await PasswordUtils.joinKey(drawId, password)),
     );
     return joinKey.exists();
   }
@@ -189,7 +192,7 @@ class DrawService {
       const batch = writeBatch(db);
       batch.set(doc(this.participantsCollection(drawId), user.uid), {
         ...this.newParticipant(user),
-        joinKey: PasswordUtils.hashPassword(password),
+        joinKey: await PasswordUtils.joinKey(drawId, password),
       });
       batch.update(doc(this.drawsCollection, drawId), {
         participantUuids: arrayUnion(user.uid),

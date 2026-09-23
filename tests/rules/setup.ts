@@ -28,7 +28,7 @@ export const ALICE = 'alice-uid';
 export const BOB = 'bob-uid';
 export const MALLORY = 'mallory-uid';
 
-export const JOIN_KEY = 'correct-password-key';
+export const JOIN_KEY = 'a'.repeat(64);
 
 export const authed = (env: RulesTestEnvironment, uid: string) =>
   env

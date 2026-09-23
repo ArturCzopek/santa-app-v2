@@ -35,7 +35,7 @@ const resources = {
           drawNameRequired: 'Draw name is required',
           drawNameTooLong: 'Draw name must be less than 200 characters',
           passwordRequired: 'Password is required',
-          passwordTooShort: 'Password must be at least 4 characters',
+          passwordTooShort: 'Password must be at least 6 characters',
         },
       },
       drawCard: {
@@ -198,7 +198,7 @@ const resources = {
           drawNameRequired: 'Nazwa losowania jest wymagana',
           drawNameTooLong: 'Nazwa losowania nie może przekraczać 200 znaków',
           passwordRequired: 'Hasło jest wymagane',
-          passwordTooShort: 'Hasło musi mieć przynajmniej 4 znaki',
+          passwordTooShort: 'Hasło musi mieć przynajmniej 6 znaków',
         },
       },
       drawCard: {
