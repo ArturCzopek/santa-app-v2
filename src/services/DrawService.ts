@@ -85,9 +85,9 @@ class DrawService {
         ),
         { createdDate: serverTimestamp() },
       );
+      appDataService.addDrawCreated(batch);
       await batch.commit();
 
-      await appDataService.addDrawsCount(1);
       return drawRef.id;
     } catch (error) {
       console.error('Error creating draw:', error);

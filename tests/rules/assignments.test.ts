@@ -79,6 +79,21 @@ describe('assignments', () => {
     );
   });
 
+  it('a draw can be started only once, even concurrently', async () => {
+    const results = await Promise.allSettled([
+      startDraw(OWNER, VALID_PAIRS),
+      startDraw(OWNER, [
+        [OWNER, BOB],
+        [BOB, ALICE],
+        [ALICE, OWNER],
+      ]),
+    ]);
+    const succeeded = results.filter((r) => r.status === 'fulfilled').length;
+    if (succeeded !== 1) {
+      throw new Error(`Expected exactly one start to succeed, got ${succeeded}`);
+    }
+  });
+
   it('rejects self-assignment and outsiders', async () => {
     await assertFails(startDraw(OWNER, [[OWNER, OWNER]]));
     await assertFails(startDraw(OWNER, [[OWNER, 'stranger-uid']]));

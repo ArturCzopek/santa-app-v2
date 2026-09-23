@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, increment, WriteBatch } from 'firebase/firestore';
 import { db } from './FirebaseConfig';
 import { AppData } from '../models/AppData';
 
@@ -10,10 +10,13 @@ export class AppDataService {
       const docSnap = await getDoc(this.appDataDocRef);
 
       if (docSnap.exists()) {
-        return docSnap.data() as AppData;
+        const data = docSnap.data();
+        return {
+          drawsCount: data.drawsCount ?? 0,
+          winnersCount: data.winnersCount ?? 0,
+        };
       }
 
-      await setDoc(this.appDataDocRef, { drawsCount: 0, winnersCount: 0 });
       return { drawsCount: 0, winnersCount: 0 };
     } catch (error) {
       console.error('Error fetching winners count:', error);
@@ -21,33 +24,18 @@ export class AppDataService {
     }
   }
 
-  async addDrawsCount(count: number): Promise<number> {
-    try {
-      const appData = await this.getAppData();
-      const newCount = appData.drawsCount + count;
-      await updateDoc(this.appDataDocRef, { ...appData, drawsCount: newCount });
-
-      return newCount;
-    } catch (error) {
-      console.error('Error updating winners count:', error);
-      return 0;
-    }
+  // Counters are updated atomically in the same batch as the draw change
+  // they count, so concurrent draws cannot lose increments.
+  addDrawCreated(batch: WriteBatch): void {
+    batch.set(this.appDataDocRef, { drawsCount: increment(1) }, { merge: true });
   }
 
-  async addWinnersCount(count: number): Promise<number> {
-    try {
-      const appData = await this.getAppData();
-      const newCount = appData.winnersCount + count;
-      await updateDoc(this.appDataDocRef, {
-        ...appData,
-        winnersCount: newCount,
-      });
-
-      return newCount;
-    } catch (error) {
-      console.error('Error updating winners count:', error);
-      return 0;
-    }
+  addDrawStarted(batch: WriteBatch, winnersCount: number): void {
+    batch.set(
+      this.appDataDocRef,
+      { winnersCount: increment(winnersCount) },
+      { merge: true },
+    );
   }
 }
 

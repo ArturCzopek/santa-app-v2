@@ -93,9 +93,8 @@ export class DrawingService {
       const assignment: Assignment = { toUuid: pair.toUuid };
       batch.set(doc(drawRef, 'assignments', pair.fromUuid), assignment);
     });
+    appDataService.addDrawStarted(batch, pairs.length);
     await batch.commit();
-
-    await appDataService.addWinnersCount(pairs.length);
 
     return {
       ...draw,
