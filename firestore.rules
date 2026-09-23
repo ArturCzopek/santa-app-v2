@@ -18,6 +18,16 @@ service cloud.firestore {
       return /databases/$(database)/documents/draws/$(drawId)/participants/$(uid);
     }
 
+    // Names and photos shown to other participants must be the user's own
+    // Google profile data, with the same fallbacks the client uses.
+    function tokenName() {
+      return request.auth.token.get('name', 'Unknown User');
+    }
+
+    function tokenPicture() {
+      return request.auth.token.get('picture', '');
+    }
+
     function isString(value, maxSize) {
       return value is string && value.size() <= maxSize;
     }
@@ -38,8 +48,8 @@ service cloud.firestore {
         && isString(d.description, 1000)
         && (d.budget is int || d.budget is float) && d.budget > 0 && d.budget <= 1000000
         && d.currency in ['PLN', 'EUR', 'USD', 'GBP']
-        && isString(d.ownerName, 200)
-        && isString(d.ownerPhotoUrl, 2000)
+        && d.ownerName == tokenName()
+        && d.ownerPhotoUrl == tokenPicture()
         && existsAfter(participantPath(drawId, request.auth.uid));
     }
 
@@ -70,8 +80,8 @@ service cloud.firestore {
         && p.userUuid == uid
         && p.entryDate == request.time
         && p.wish == ''
-        && isString(p.userName, 200)
-        && isString(p.userPhotoUrl, 2000);
+        && p.userName == tokenName()
+        && p.userPhotoUrl == tokenPicture();
     }
 
     match /draws/{drawId} {

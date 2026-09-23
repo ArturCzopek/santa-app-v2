@@ -83,6 +83,14 @@ describe('draws', () => {
       await assertFails(createDraw(db, 'd3', OWNER, { currency: 'BTC' }));
     });
 
+    it('owner name and photo must come from their own profile', async () => {
+      const db = authed(env, OWNER);
+      await assertFails(createDraw(db, 'd1', OWNER, { ownerName: 'Santa Claus' }));
+      await assertFails(
+        createDraw(db, 'd2', OWNER, { ownerPhotoUrl: 'https://evil/photo.png' }),
+      );
+    });
+
     it('cannot create a draw without the owner participant document', async () => {
       const db = authed(env, OWNER);
       await assertFails(setDoc(doc(db, 'draws/d1'), newDraw(OWNER)));
@@ -116,6 +124,25 @@ describe('draws', () => {
       batch.set(doc(db, `draws/d1/participants/${BOB}`), newParticipant(BOB));
       batch.update(doc(db, 'draws/d1'), { participantUuids: arrayUnion(BOB) });
       await assertFails(batch.commit());
+    });
+
+    it('cannot join under someone else\'s name or photo', async () => {
+      for (const spoof of [
+        { userName: `${OWNER} name` },
+        { userPhotoUrl: 'https://evil/photo.png' },
+      ]) {
+        const db = authed(env, MALLORY);
+        const batch = writeBatch(db);
+        batch.set(doc(db, `draws/d1/participants/${MALLORY}`), {
+          ...newParticipant(MALLORY),
+          joinKey: JOIN_KEY,
+          ...spoof,
+        });
+        batch.update(doc(db, 'draws/d1'), {
+          participantUuids: arrayUnion(MALLORY),
+        });
+        await assertFails(batch.commit());
+      }
     });
 
     it('cannot join with a wrong password', async () => {
