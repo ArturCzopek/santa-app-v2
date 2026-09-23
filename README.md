@@ -15,17 +15,8 @@
 
 ### Prerequisites
 
-1. **Install Yarn**:
-
-   - If you don't have Yarn installed, you can install it globally via Homebrew or npm:
-     - Using Homebrew:
-       ```bash
-       brew install yarn
-       ```
-     - Using npm:
-       ```bash
-       npm install --global yarn
-       ```
+1. **Install Node.js 24 LTS** (comes with npm). Java 21+ is needed for the
+   Firebase emulators (tests and local development).
 
 2. **Create a Firebase project**:
    - Enable **Google Authentication**.
@@ -39,9 +30,9 @@
    git clone https://github.com/yourusername/santa-app-v2.git
    cd santa-app-v2
    ```
-2. Install dependencies: Use Yarn to install the required dependencies:
+2. Install dependencies:
 
-`yarn install`
+`npm install`
 
 3. Configure Firebase:
    Go to Firebase Console.
@@ -61,20 +52,20 @@ VITE_APP_URL=http://localhost:5173 # path to your application, without '/' at th
 
 4. Run the app: To start the development server, run:
 
-`yarn dev`
+`npm run dev`
 
 ### Local development without a Firebase project
 
 Requires Java (for the emulators). In two terminals:
 
 ```bash
-yarn emulators       # Auth + Firestore emulators, fake demo project
-yarn dev:emulators   # the app, connected to the emulators
+npm run emulators       # Auth + Firestore emulators, fake demo project
+npm run dev:emulators   # the app, connected to the emulators
 ```
 
 ### Tests
 
-`yarn test` runs the Firestore security rules tests (and unit tests) against
+`npm test` runs the Firestore security rules tests (and unit tests) against
 the emulator. Requires Java.
 
 ## Security model
@@ -93,9 +84,9 @@ There is no backend: the browser talks to Firestore directly and
 Deploy rules and indexes after changing them:
 
 ```bash
-yarn firebase login
-yarn firebase use --add
-yarn deploy:rules
+npx firebase login
+npx firebase use --add
+npm run deploy:rules
 ```
 
 ### Migrating draws created before the security update

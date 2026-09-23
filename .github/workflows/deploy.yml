@@ -36,16 +36,16 @@ jobs:
           java-version: '21'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Typecheck
-        run: yarn tsc --noEmit -p .
+        run: npx tsc --noEmit -p .
 
       - name: Test Firestore rules
-        run: yarn test
+        run: npm test
 
       - name: Build
-        run: yarn build
+        run: npm run build
         env:
           PUBLIC_URL: ./
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}

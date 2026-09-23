@@ -1,24 +1,33 @@
 import React from 'react';
 import { TextField, TextFieldProps, useTheme } from '@mui/material';
-import { Controller, Control, RegisterOptions } from 'react-hook-form';
+import {
+  Controller,
+  Control,
+  FieldValues,
+  Path,
+  RegisterOptions,
+} from 'react-hook-form';
 import {
   inputStyles,
   inputLabelStyles,
   errorStyles,
 } from '../../styles/formStyles';
 
-interface FormTextFieldProps extends Omit<TextFieldProps, 'name'> {
-  name: string;
-  control: Control<any>;
-  rules?: RegisterOptions;
-}
+type FormTextFieldProps<T extends FieldValues, N extends Path<T>> = Omit<
+  TextFieldProps,
+  'name'
+> & {
+  name: N;
+  control: Control<T>;
+  rules?: RegisterOptions<T, N>;
+};
 
-const FormTextField: React.FC<FormTextFieldProps> = ({
+const FormTextField = <T extends FieldValues, N extends Path<T>>({
   name,
   control,
   rules,
   ...props
-}) => {
+}: FormTextFieldProps<T, N>) => {
   const theme = useTheme();
 
   return (

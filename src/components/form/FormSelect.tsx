@@ -8,7 +8,13 @@ import {
   SelectProps,
   useTheme,
 } from '@mui/material';
-import { Controller, Control, RegisterOptions } from 'react-hook-form';
+import {
+  Controller,
+  Control,
+  FieldValues,
+  Path,
+  RegisterOptions,
+} from 'react-hook-form';
 import {
   inputLabelStyles,
   formSelectContainerStyles,
@@ -16,22 +22,25 @@ import {
   formSelectMenuProps,
 } from '../../styles/formStyles';
 
-interface FormSelectProps extends Omit<SelectProps, 'name'> {
-  name: string;
-  control: Control<any>;
+type FormSelectProps<T extends FieldValues, N extends Path<T>> = Omit<
+  SelectProps,
+  'name'
+> & {
+  name: N;
+  control: Control<T>;
   label: string;
   options: Array<{ value: string; label: string }>;
-  rules?: RegisterOptions;
-}
+  rules?: RegisterOptions<T, N>;
+};
 
-const FormSelect: React.FC<FormSelectProps> = ({
+const FormSelect = <T extends FieldValues, N extends Path<T>>({
   name,
   control,
   label,
   options,
   rules,
   ...props
-}) => {
+}: FormSelectProps<T, N>) => {
   const theme = useTheme();
 
   return (
