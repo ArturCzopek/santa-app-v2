@@ -63,10 +63,30 @@ npm run emulators       # Auth + Firestore emulators, fake demo project
 npm run dev:emulators   # the app, connected to the emulators
 ```
 
-### Tests
+### Checks and tests
 
-`npm test` runs the Firestore security rules tests (and unit tests) against
-the emulator. Requires Java.
+All need Java (they start the Firebase emulators).
+
+```bash
+npm run lint
+npm run typecheck
+npm test           # rules, services, components, unit, migration
+npm run test:e2e   # Playwright; first time: npx playwright install chromium
+```
+
+CI (`.github/workflows/ci.yml`) runs all of them on pull requests and
+branches.
+
+## Deployment
+
+Pushing to `master` deploys automatically (`.github/workflows/deploy.yml`):
+all checks, then migration of old draws (no-op once done), Firestore rules
+and indexes, and the app on GitHub Pages. It can also be started by hand
+from the Actions tab, optionally with a release tag.
+
+Required repository secrets: the `VITE_FIREBASE_*` / `VITE_APP_URL` values
+and `FIREBASE_SERVICE_ACCOUNT` - a service account key JSON (Firebase console
+-> Project settings -> Service accounts -> Generate new private key).
 
 ## Security model
 
@@ -81,7 +101,7 @@ There is no backend: the browser talks to Firestore directly and
 - `draws/{id}/joinKeys/{key}` - the password check; the key is
   `sha256(drawId + ":" + sha256(password))`, never readable by others.
 
-Deploy rules and indexes after changing them:
+Rules and indexes are deployed by the deploy workflow. To do it by hand:
 
 ```bash
 npx firebase login
@@ -91,10 +111,10 @@ npm run deploy:rules
 
 ### Migrating draws created before the security update
 
-```bash
-node scripts/migrate.mjs path/to/service-account-key.json           # dry run
-node scripts/migrate.mjs path/to/service-account-key.json --apply   # write
-```
+The deploy workflow runs this on every deploy. By hand (dry run unless
+`--apply`; never commit the key):
 
-The key comes from Firebase console -> Project settings -> Service accounts.
-Never commit it.
+```bash
+node scripts/migrate.mjs path/to/service-account-key.json
+node scripts/migrate.mjs path/to/service-account-key.json --apply
+```

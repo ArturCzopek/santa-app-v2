@@ -1,28 +1,42 @@
-// One-off migration of existing draws to the current data format.
+// Migration of existing draws to the current data format. Idempotent:
+// already migrated draws are skipped, so the deploy workflow runs it on
+// every deploy.
 //
-//   node scripts/migrate.mjs <service-account-key.json>           # dry run
-//   node scripts/migrate.mjs <service-account-key.json> --apply   # write
+//   node scripts/migrate.mjs [service-account-key.json]            # dry run
+//   node scripts/migrate.mjs [service-account-key.json] --apply    # write
 //
-// The key comes from Firebase console -> Project settings -> Service
-// accounts -> Generate new private key. Never commit it.
+// Without a key file it uses Application Default Credentials
+// (GOOGLE_APPLICATION_CREDENTIALS, set by the deploy workflow). A key comes
+// from Firebase console -> Project settings -> Service accounts ->
+// Generate new private key. Never commit it.
 import { readFileSync } from 'fs';
-import { cert, initializeApp } from 'firebase-admin/app';
+import { applicationDefault, cert, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { migrateDraws } from './migrateDraws.mjs';
 
-const [keyPath, flag] = process.argv.slice(2);
+const args = process.argv.slice(2);
+const apply = args.includes('--apply');
+const keyPath = args.find((arg) => !arg.startsWith('--'));
 
-if (!keyPath) {
-  console.error('Usage: node scripts/migrate.mjs <service-account-key.json> [--apply]');
-  process.exit(1);
+let projectId;
+if (keyPath) {
+  const serviceAccount = JSON.parse(readFileSync(keyPath, 'utf8'));
+  projectId = serviceAccount.project_id;
+  initializeApp({ credential: cert(serviceAccount) });
+} else {
+  projectId = process.env.GOOGLE_CLOUD_PROJECT ?? process.env.GCLOUD_PROJECT;
+  if (!projectId) {
+    console.error(
+      'Usage: node scripts/migrate.mjs [service-account-key.json] [--apply]\n' +
+        'Without a key file, set GOOGLE_APPLICATION_CREDENTIALS and GOOGLE_CLOUD_PROJECT.',
+    );
+    process.exit(1);
+  }
+  initializeApp({ credential: applicationDefault(), projectId });
 }
 
-const serviceAccount = JSON.parse(readFileSync(keyPath, 'utf8'));
-initializeApp({ credential: cert(serviceAccount) });
-
-const apply = flag === '--apply';
 console.log(
-  `Project ${serviceAccount.project_id}: ${apply ? 'APPLYING migration' : 'dry run (add --apply to write)'}`,
+  `Project ${projectId}: ${apply ? 'APPLYING migration' : 'dry run (add --apply to write)'}`,
 );
 
 await migrateDraws(getFirestore(), { apply });
