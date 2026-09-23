@@ -5,56 +5,13 @@ import {
   writeBatch,
   serverTimestamp,
 } from 'firebase/firestore';
-import { Assignment, Draw, Pair } from '../models/Draw';
+import { Assignment, Draw } from '../models/Draw';
 import { db } from './FirebaseConfig';
 import { appDataService } from './AppDataService';
+import { generatePairs } from './pairs';
 
 export class DrawingService {
   private drawsCollection = collection(db, 'draws');
-
-  // Fisher-Yates shuffle algorithm
-  private shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }
-
-  private validatePairs(pairs: Pair[], participantUuids: string[]): boolean {
-    if (pairs.length !== participantUuids.length) return false;
-
-    const fromUuids = new Set(pairs.map((p) => p.fromUuid));
-    const toUuids = new Set(pairs.map((p) => p.toUuid));
-
-    return (
-      fromUuids.size === participantUuids.length &&
-      toUuids.size === participantUuids.length &&
-      [...fromUuids].every((uuid) => participantUuids.includes(uuid)) &&
-      [...toUuids].every((uuid) => participantUuids.includes(uuid)) &&
-      pairs.every((pair) => pair.fromUuid !== pair.toUuid)
-    );
-  }
-
-  private generatePairs(participantUuids: string[]): Pair[] {
-    const MAX_ATTEMPTS = 100;
-
-    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-      const shuffledUuids = this.shuffleArray(participantUuids);
-
-      const pairs: Pair[] = shuffledUuids.map((uuid, index) => ({
-        fromUuid: uuid,
-        toUuid: shuffledUuids[(index + 1) % shuffledUuids.length],
-      }));
-
-      if (this.validatePairs(pairs, participantUuids)) {
-        return pairs;
-      }
-    }
-
-    throw new Error('Unable to generate valid draw pairs');
-  }
 
   async startDraw(drawId: string, userId: string): Promise<Draw> {
     const drawRef = doc(this.drawsCollection, drawId);
@@ -78,7 +35,7 @@ export class DrawingService {
       throw new Error('Draw cannot be started');
     }
 
-    const pairs = this.generatePairs(draw.participantUuids);
+    const pairs = generatePairs(draw.participantUuids);
 
     const updateData = {
       status: 'DRAWED',
