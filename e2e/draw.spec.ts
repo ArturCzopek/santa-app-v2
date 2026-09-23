@@ -79,7 +79,9 @@ test('a whole Secret Santa: create, invite, join, wishes, draw, results', async 
   await dialog.getByLabel('Hasło', { exact: true }).fill('sekret1');
   await dialog.getByRole('button', { name: 'Losuj' }).click();
   await expect(owner.page.getByRole('heading', { name: 'Twój Los' })).toBeVisible();
-  await expect(owner.page.getByText('Bartek Test')).toBeVisible();
+  // Participants are still listed (the result may show one of them again).
+  await expect(owner.page.getByText('Bartek Test').last()).toBeVisible();
+  await expect(owner.page.getByText('Ania Test').last()).toBeVisible();
 
   // Everybody sees exactly one other person, and the whole thing is a valid draw.
   const everyone = [owner, ...joiners];
