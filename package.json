@@ -10,6 +10,8 @@
     "start": "vite",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write .",
+    "emulators": "firebase emulators:start --only auth,firestore --project demo-santa-app",
+    "dev:emulators": "vite --mode emulators",
     "test": "firebase emulators:exec --only firestore --project demo-santa-app \"vitest run\"",
     "deploy:rules": "firebase deploy --only firestore"
   },
