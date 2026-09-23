@@ -75,25 +75,18 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     setSuccess(false);
 
     try {
-      const latestDraw = await drawService.getDrawDetails(draw.id || '');
-
-      const latestUserParticipant = latestDraw.participants.find(
-        (p) => p.userUuid === user.uid,
-      );
-
-      if (!latestUserParticipant) {
-        throw new Error('User not found in draw participants');
-      }
-
-      latestUserParticipant.wish = wish;
-
-      await drawService.updateDraw(latestDraw);
+      await drawService.updateWish(draw.id || '', user.uid, wish);
 
       setIsEditing(false);
       setSuccess(true);
       setOriginalWish(wish);
 
-      onDrawUpdated(latestDraw);
+      onDrawUpdated({
+        ...draw,
+        participants: draw.participants.map((p) =>
+          p.userUuid === user.uid ? { ...p, wish } : p,
+        ),
+      });
 
       setTimeout(() => {
         setSuccess(false);

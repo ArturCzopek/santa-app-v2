@@ -4,8 +4,32 @@ import {
   assertSucceeds,
   RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, getDoc } from 'firebase/firestore';
-import { ALICE, authed, createTestEnv } from './setup';
+import {
+  arrayUnion,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+  writeBatch,
+} from 'firebase/firestore';
+import {
+  ALICE,
+  authed,
+  BOB,
+  createDraw,
+  createTestEnv,
+  joinDraw,
+  MALLORY,
+  newDraw,
+  newParticipant,
+  OWNER,
+} from './setup';
 
 let env: RulesTestEnvironment;
 
@@ -29,5 +53,168 @@ describe('draws', () => {
 
   it('lets a signed-in user open a draw by id (join page)', async () => {
     await assertSucceeds(getDoc(doc(authed(env, ALICE), 'draws/some-draw')));
+  });
+
+  describe('create', () => {
+    it('owner creates a draw with their participant document', async () => {
+      await assertSucceeds(createDraw(authed(env, OWNER), 'd1', OWNER));
+    });
+
+    it('cannot create a draw for someone else', async () => {
+      await assertFails(
+        createDraw(authed(env, MALLORY), 'd1', MALLORY, { ownerUuid: OWNER }),
+      );
+    });
+
+    it('cannot create a draw pre-filled with participants or results', async () => {
+      const db = authed(env, OWNER);
+      await assertFails(
+        createDraw(db, 'd1', OWNER, { participantUuids: [OWNER, ALICE] }),
+      );
+      await assertFails(createDraw(db, 'd2', OWNER, { status: 'DRAWED' }));
+      await assertFails(createDraw(db, 'd3', OWNER, { pairs: [] }));
+    });
+
+    it('validates field sizes', async () => {
+      const db = authed(env, OWNER);
+      await assertFails(createDraw(db, 'd1', OWNER, { drawName: 'x'.repeat(81) }));
+      await assertFails(createDraw(db, 'd2', OWNER, { budget: -5 }));
+      await assertFails(createDraw(db, 'd3', OWNER, { currency: 'BTC' }));
+    });
+
+    it('cannot create a draw without the owner participant document', async () => {
+      const db = authed(env, OWNER);
+      await assertFails(setDoc(doc(db, 'draws/d1'), newDraw(OWNER)));
+    });
+  });
+
+  describe('join', () => {
+    beforeEach(async () => {
+      await createDraw(authed(env, OWNER), 'd1', OWNER);
+    });
+
+    it('user can add themselves', async () => {
+      await assertSucceeds(joinDraw(authed(env, ALICE), 'd1', ALICE));
+    });
+
+    it('two users joining concurrently are both kept', async () => {
+      await Promise.all([
+        joinDraw(authed(env, ALICE), 'd1', ALICE),
+        joinDraw(authed(env, BOB), 'd1', BOB),
+      ]);
+      const snapshot = await getDoc(doc(authed(env, OWNER), 'draws/d1'));
+      const uuids = snapshot.data()?.participantUuids;
+      if (!uuids.includes(ALICE) || !uuids.includes(BOB)) {
+        throw new Error(`Lost a participant: ${uuids}`);
+      }
+    });
+
+    it('cannot add someone else', async () => {
+      const db = authed(env, MALLORY);
+      const batch = writeBatch(db);
+      batch.set(doc(db, `draws/d1/participants/${BOB}`), newParticipant(BOB));
+      batch.update(doc(db, 'draws/d1'), { participantUuids: arrayUnion(BOB) });
+      await assertFails(batch.commit());
+    });
+
+    it('cannot join without a participant document', async () => {
+      await assertFails(
+        updateDoc(doc(authed(env, ALICE), 'draws/d1'), {
+          participantUuids: arrayUnion(ALICE),
+        }),
+      );
+    });
+
+    it('cannot join a draw that already took place', async () => {
+      await env.withSecurityRulesDisabled((ctx) =>
+        updateDoc(doc(ctx.firestore(), 'draws/d1'), { status: 'DRAWED' }),
+      );
+      await assertFails(joinDraw(authed(env, ALICE), 'd1', ALICE));
+    });
+  });
+
+  describe('tampering', () => {
+    beforeEach(async () => {
+      await createDraw(authed(env, OWNER), 'd1', OWNER);
+      await joinDraw(authed(env, ALICE), 'd1', ALICE);
+      await joinDraw(authed(env, BOB), 'd1', BOB);
+    });
+
+    it('participant cannot remove others or edit draw fields', async () => {
+      const db = authed(env, ALICE);
+      await assertFails(
+        updateDoc(doc(db, 'draws/d1'), { participantUuids: [ALICE] }),
+      );
+      await assertFails(updateDoc(doc(db, 'draws/d1'), { budget: 1 }));
+      await assertFails(updateDoc(doc(db, 'draws/d1'), { ownerUuid: ALICE }));
+      await assertFails(deleteDoc(doc(db, 'draws/d1')));
+    });
+
+    it('participant cannot start the draw', async () => {
+      await assertFails(
+        updateDoc(doc(authed(env, ALICE), 'draws/d1'), {
+          status: 'DRAWED',
+          drawDate: serverTimestamp(),
+        }),
+      );
+    });
+
+    it('owner cannot reset a finished draw', async () => {
+      await env.withSecurityRulesDisabled((ctx) =>
+        updateDoc(doc(ctx.firestore(), 'draws/d1'), { status: 'DRAWED' }),
+      );
+      await assertFails(
+        updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
+          status: 'WAITING_FOR_DRAW',
+        }),
+      );
+    });
+
+    it('users can change only their own wish', async () => {
+      await assertSucceeds(
+        updateDoc(doc(authed(env, ALICE), `draws/d1/participants/${ALICE}`), {
+          wish: 'Socks',
+        }),
+      );
+      await assertFails(
+        updateDoc(doc(authed(env, ALICE), `draws/d1/participants/${BOB}`), {
+          wish: 'Coal',
+        }),
+      );
+      await assertFails(
+        updateDoc(doc(authed(env, ALICE), `draws/d1/participants/${ALICE}`), {
+          userName: 'Owner',
+        }),
+      );
+    });
+  });
+
+  describe('reading', () => {
+    beforeEach(async () => {
+      await createDraw(authed(env, OWNER), 'd1', OWNER);
+      await joinDraw(authed(env, ALICE), 'd1', ALICE);
+    });
+
+    it('participants can read the participant list, outsiders cannot', async () => {
+      await assertSucceeds(
+        getDocs(collection(authed(env, ALICE), 'draws/d1/participants')),
+      );
+      await assertFails(
+        getDocs(collection(authed(env, MALLORY), 'draws/d1/participants')),
+      );
+    });
+
+    it('users can list only their own draws', async () => {
+      const db = authed(env, MALLORY);
+      await assertSucceeds(
+        getDocs(
+          query(
+            collection(db, 'draws'),
+            where('participantUuids', 'array-contains', MALLORY),
+          ),
+        ),
+      );
+      await assertFails(getDocs(collection(db, 'draws')));
+    });
   });
 });

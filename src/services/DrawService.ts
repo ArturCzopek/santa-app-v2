@@ -1,13 +1,15 @@
 import {
   collection,
-  addDoc,
   getDocs,
   getDoc,
   doc,
   query,
   where,
-  setDoc,
   orderBy,
+  writeBatch,
+  updateDoc,
+  arrayUnion,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './FirebaseConfig';
 import { Draw, DrawPreview, Participant } from '../models/Draw';
@@ -17,6 +19,20 @@ import { appDataService } from './AppDataService';
 
 class DrawService {
   private drawsCollection = collection(db, 'draws');
+
+  private participantsCollection(drawId: string) {
+    return collection(this.drawsCollection, drawId, 'participants');
+  }
+
+  private newParticipant(user: User) {
+    return {
+      userName: user.displayName || 'Unknown User',
+      userUuid: user.uid,
+      userPhotoUrl: user.photoURL || '',
+      entryDate: serverTimestamp(),
+      wish: '',
+    };
+  }
 
   async createDraw(
     formData: {
@@ -32,33 +48,34 @@ class DrawService {
       throw new Error('User must be authenticated to create a draw');
     }
 
-    const participant: Participant = {
-      userName: currentUser.displayName || 'Unknown User',
-      userUuid: currentUser.uid,
-      userPhotoUrl: currentUser.photoURL || '',
-      entryDate: new Date(),
-      wish: '',
-    };
+    const drawRef = doc(this.drawsCollection);
 
-    const newDraw: Draw = {
-      createdDate: new Date(),
+    const newDraw = {
+      createdDate: serverTimestamp(),
       ownerUuid: currentUser.uid,
       ownerName: currentUser.displayName || 'Unknown User',
-      budget: formData.budget,
+      ownerPhotoUrl: currentUser.photoURL || '',
+      budget: Number(formData.budget),
       currency: formData.currency,
       drawName: formData.drawName,
       description: formData.description,
       password: PasswordUtils.hashPassword(formData.password),
-      participants: [participant], // Owner is the first participant
-      participantUuids: [participant.userUuid], // Owner is the first participant
+      participantUuids: [currentUser.uid], // Owner is the first participant
       status: 'WAITING_FOR_DRAW',
       drawDate: null,
     };
 
     try {
-      const docRef = await addDoc(collection(db, 'draws'), newDraw);
+      const batch = writeBatch(db);
+      batch.set(drawRef, newDraw);
+      batch.set(
+        doc(this.participantsCollection(drawRef.id), currentUser.uid),
+        this.newParticipant(currentUser),
+      );
+      await batch.commit();
+
       await appDataService.addDrawsCount(1);
-      return docRef.id;
+      return drawRef.id;
     } catch (error) {
       console.error('Error creating draw:', error);
       throw error;
@@ -75,18 +92,22 @@ class DrawService {
 
       const querySnapshot = await getDocs(q);
 
-      return querySnapshot.docs.map(
-        (doc) =>
-          ({
-            id: doc.id,
-            drawName: doc.data().drawName,
-            description: doc.data().description,
-            status: doc.data().status,
-            participantsCount: doc.data().participants?.length || 0,
-            userWishProvided: doc
-              .data()
-              .participants?.find((p) => p.userUuid === userId).wish,
-          }) as DrawPreview,
+      return Promise.all(
+        querySnapshot.docs.map(async (drawDoc) => {
+          const data = drawDoc.data();
+          const ownParticipant = await getDoc(
+            doc(this.participantsCollection(drawDoc.id), userId),
+          );
+
+          return {
+            id: drawDoc.id,
+            drawName: data.drawName,
+            description: data.description,
+            status: data.status,
+            participantsCount: data.participantUuids?.length || 0,
+            userWishProvided: !!ownParticipant.data()?.wish,
+          } as DrawPreview;
+        }),
       );
     } catch (error) {
       console.error('Error fetching user draws:', error);
@@ -94,46 +115,47 @@ class DrawService {
     }
   }
 
-  async getDrawDetails(drawId: string): Promise<Draw> {
+  // Draw document only. Readable by any signed-in user who knows the id, so
+  // it must never contain anything secret.
+  async getDraw(drawId: string): Promise<Draw> {
     try {
-      const drawRef = doc(this.drawsCollection, drawId);
-      const drawSnapshot = await getDoc(drawRef);
+      const drawSnapshot = await getDoc(doc(this.drawsCollection, drawId));
 
       if (!drawSnapshot.exists()) {
         throw new Error('Draw not found');
       }
 
       return {
+        ...(drawSnapshot.data() as Omit<Draw, 'id' | 'participants'>),
         id: drawSnapshot.id,
-        ...drawSnapshot.data(),
-      } as Draw;
+        participants: [],
+      };
     } catch (error) {
-      console.error('Error fetching draw details:', error);
+      console.error('Error fetching draw:', error);
       throw error;
     }
   }
 
-  async updateDraw(draw: Draw): Promise<void> {
-    if (!draw.id) {
-      throw new Error('Draw ID is required for updating');
-    }
+  // Participants (with wishes) are readable only by participants of the draw.
+  async getParticipants(drawId: string): Promise<Participant[]> {
+    const snapshot = await getDocs(this.participantsCollection(drawId));
+    return snapshot.docs.map((participantDoc) => participantDoc.data() as Participant);
+  }
 
+  async updateWish(drawId: string, userId: string, wish: string): Promise<void> {
     try {
-      const drawRef = doc(this.drawsCollection, draw.id);
-      await setDoc(drawRef, draw);
+      await updateDoc(doc(this.participantsCollection(drawId), userId), {
+        wish,
+      });
     } catch (error) {
-      console.error('Error updating draw:', error);
+      console.error('Error updating wish:', error);
       throw error;
     }
   }
 
-  async joinToDraw(
-    drawId: string,
-    user: User,
-    password: string,
-  ): Promise<Draw> {
+  async joinToDraw(drawId: string, user: User, password: string): Promise<void> {
     try {
-      const draw = await this.getDrawDetails(drawId);
+      const draw = await this.getDraw(drawId);
 
       if (!PasswordUtils.comparePasswords(password, draw.password)) {
         throw new Error('Invalid password');
@@ -147,20 +169,17 @@ class DrawService {
         throw new Error('User is already a participant in this draw');
       }
 
-      const newParticipant: Participant = {
-        userName: user.displayName || 'Unknown User',
-        userUuid: user.uid,
-        userPhotoUrl: user.photoURL || '',
-        entryDate: new Date(),
-        wish: '',
-      };
-
-      draw.participants.push(newParticipant);
-      draw.participantUuids.push(user.uid);
-
-      await this.updateDraw(draw);
-
-      return draw;
+      // Both writes land atomically, so concurrent joins cannot overwrite
+      // each other.
+      const batch = writeBatch(db);
+      batch.set(
+        doc(this.participantsCollection(drawId), user.uid),
+        this.newParticipant(user),
+      );
+      batch.update(doc(this.drawsCollection, drawId), {
+        participantUuids: arrayUnion(user.uid),
+      });
+      await batch.commit();
     } catch (error) {
       console.error('Error joining draw:', error);
       throw error;

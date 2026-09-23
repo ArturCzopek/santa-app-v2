@@ -4,6 +4,12 @@ import {
   initializeTestEnvironment,
   RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
+import {
+  arrayUnion,
+  doc,
+  serverTimestamp,
+  writeBatch,
+} from 'firebase/firestore';
 
 export const PROJECT_ID = 'demo-santa-app';
 
@@ -26,3 +32,49 @@ export const authed = (env: RulesTestEnvironment, uid: string) =>
   env
     .authenticatedContext(uid, { name: `${uid} name`, picture: '' })
     .firestore();
+
+type Db = ReturnType<typeof authed>;
+
+export const newParticipant = (uid: string) => ({
+  userName: `${uid} name`,
+  userUuid: uid,
+  userPhotoUrl: '',
+  entryDate: serverTimestamp(),
+  wish: '',
+});
+
+export const newDraw = (uid: string) => ({
+  createdDate: serverTimestamp(),
+  ownerUuid: uid,
+  ownerName: `${uid} name`,
+  ownerPhotoUrl: '',
+  budget: 50,
+  currency: 'PLN',
+  drawName: 'Office party',
+  description: 'Gifts!',
+  password: 'hash',
+  participantUuids: [uid],
+  status: 'WAITING_FOR_DRAW',
+  drawDate: null,
+});
+
+export const createDraw = (
+  db: Db,
+  drawId: string,
+  uid: string,
+  overrides: Record<string, unknown> = {},
+) => {
+  const batch = writeBatch(db);
+  batch.set(doc(db, `draws/${drawId}`), { ...newDraw(uid), ...overrides });
+  batch.set(doc(db, `draws/${drawId}/participants/${uid}`), newParticipant(uid));
+  return batch.commit();
+};
+
+export const joinDraw = (db: Db, drawId: string, uid: string) => {
+  const batch = writeBatch(db);
+  batch.set(doc(db, `draws/${drawId}/participants/${uid}`), newParticipant(uid));
+  batch.update(doc(db, `draws/${drawId}`), {
+    participantUuids: arrayUnion(uid),
+  });
+  return batch.commit();
+};

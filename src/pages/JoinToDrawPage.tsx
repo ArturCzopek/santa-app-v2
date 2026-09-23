@@ -62,9 +62,6 @@ const JoinToDrawPage = () => {
   const isUserParticipant = user && draw?.participantUuids?.includes(user.uid);
   const canJoinDraw =
     draw && draw.status === 'WAITING_FOR_DRAW' && !isUserParticipant;
-  const ownerParticipant = draw?.participants.find(
-    (p) => p.userUuid === draw.ownerUuid,
-  );
 
   useEffect(() => {
     if (!user && drawId) {
@@ -89,7 +86,7 @@ const JoinToDrawPage = () => {
 
       try {
         setLoading(true);
-        const drawData = await drawService.getDrawDetails(drawId);
+        const drawData = await drawService.getDraw(drawId);
         setDraw(drawData);
       } catch (err) {
         console.error('Error fetching draw details:', err);
@@ -298,11 +295,11 @@ const JoinToDrawPage = () => {
               }}
             >
               <Avatar
-                src={ownerParticipant?.userPhotoUrl || undefined}
+                src={draw.ownerPhotoUrl || undefined}
                 alt={draw.ownerName}
                 sx={ownerAvatarStyles}
               >
-                {!ownerParticipant?.userPhotoUrl &&
+                {!draw.ownerPhotoUrl &&
                   draw.ownerName[0].toUpperCase()}
               </Avatar>
             </Box>

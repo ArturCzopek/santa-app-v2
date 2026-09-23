@@ -14,10 +14,97 @@ service cloud.firestore {
       return /databases/$(database)/documents/draws/$(drawId);
     }
 
-    // Everything the current client does needs any signed-in user to be able to
-    // read and rewrite whole draw documents. The following commits tighten this.
+    function participantPath(drawId, uid) {
+      return /databases/$(database)/documents/draws/$(drawId)/participants/$(uid);
+    }
+
+    function isString(value, maxSize) {
+      return value is string && value.size() <= maxSize;
+    }
+
+    function isValidNewDraw(drawId) {
+      let d = request.resource.data;
+      return d.keys().hasOnly([
+          'createdDate', 'ownerUuid', 'ownerName', 'ownerPhotoUrl', 'budget',
+          'currency', 'drawName', 'description', 'participantUuids', 'status',
+          'drawDate', 'password'
+        ])
+        && d.ownerUuid == request.auth.uid
+        && d.participantUuids == [request.auth.uid]
+        && d.status == 'WAITING_FOR_DRAW'
+        && d.drawDate == null
+        && d.createdDate == request.time
+        && isString(d.drawName, 80) && d.drawName.size() > 0
+        && isString(d.description, 1000)
+        && (d.budget is int || d.budget is float) && d.budget > 0 && d.budget <= 1000000
+        && d.currency in ['PLN', 'EUR', 'USD', 'GBP']
+        && isString(d.ownerName, 200)
+        && isString(d.ownerPhotoUrl, 2000)
+        && d.password is string
+        && existsAfter(participantPath(drawId, request.auth.uid));
+    }
+
+    // Owner moves the draw to DRAWED; assignments are written in the same batch.
+    function isStartingDraw() {
+      return resource.data.ownerUuid == request.auth.uid
+        && resource.data.status == 'WAITING_FOR_DRAW'
+        && resource.data.participantUuids.size() >= 2
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'drawDate'])
+        && request.resource.data.status == 'DRAWED'
+        && request.resource.data.drawDate == request.time;
+    }
+
+    // A user adds exactly themselves to participantUuids, together with their
+    // own participant document.
+    function isJoining(drawId) {
+      return resource.data.status == 'WAITING_FOR_DRAW'
+        && !(request.auth.uid in resource.data.participantUuids)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantUuids'])
+        && request.resource.data.participantUuids == resource.data.participantUuids.concat([request.auth.uid])
+        && request.resource.data.participantUuids.size() <= 100
+        && existsAfter(participantPath(drawId, request.auth.uid));
+    }
+
+    function isValidNewParticipant(uid) {
+      let p = request.resource.data;
+      return p.keys().hasOnly(['userName', 'userUuid', 'userPhotoUrl', 'entryDate', 'wish'])
+        && p.userUuid == uid
+        && p.entryDate == request.time
+        && p.wish == ''
+        && isString(p.userName, 200)
+        && isString(p.userPhotoUrl, 2000);
+    }
+
     match /draws/{drawId} {
-      allow read, write: if signedIn();
+      // The draw document holds nothing secret: anyone signed in who knows the
+      // id may open it (join page). Listing only returns the user's own draws.
+      allow get: if signedIn();
+      allow list: if signedIn() && request.auth.uid in resource.data.participantUuids;
+      allow create: if signedIn() && isValidNewDraw(drawId);
+      allow update: if signedIn() && (isStartingDraw() || isJoining(drawId));
+
+      match /participants/{uid} {
+        allow read: if signedIn()
+          && request.auth.uid in get(drawPath(drawId)).data.participantUuids;
+
+        // Either the owner creating the draw, or a user joining it.
+        allow create: if signedIn()
+          && request.auth.uid == uid
+          && isValidNewParticipant(uid)
+          && (
+            (!exists(drawPath(drawId))
+              && getAfter(drawPath(drawId)).data.ownerUuid == uid)
+            || (get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
+              && !(uid in get(drawPath(drawId)).data.participantUuids)
+              && uid in getAfter(drawPath(drawId)).data.participantUuids)
+          );
+
+        // Users may only change their own wish.
+        allow update: if signedIn()
+          && request.auth.uid == uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['wish'])
+          && isString(request.resource.data.wish, 2000);
+      }
 
       // Draw result: one document per giver, readable only by that giver.
       // Written once by the owner, in the same batch that moves the draw from

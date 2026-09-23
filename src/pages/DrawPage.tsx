@@ -54,19 +54,17 @@ const DrawPage = () => {
 
       try {
         setLoading(true);
-        const drawData = await drawService.getDrawDetails(drawId);
+        const drawData = await drawService.getDraw(drawId);
 
-        const userIsParticipant = drawData.participantUuids.includes(user.uid);
-        const userIsOwner = drawData.ownerUuid === user.uid;
-
-        if (!userIsParticipant && !userIsOwner) {
+        if (!drawData.participantUuids.includes(user.uid)) {
           console.warn('Access denied: User is not a participant in this draw');
           setAccessDenied(true);
           setError(t('drawPage.errors.accessDenied'));
           return;
         }
 
-        setDraw(drawData);
+        const participants = await drawService.getParticipants(drawId);
+        setDraw({ ...drawData, participants });
       } catch (err) {
         console.error('Error fetching draw details:', err);
         setError(t('drawPage.errors.fetchFailed'));
@@ -93,7 +91,7 @@ const DrawPage = () => {
     user &&
     draw.ownerUuid === user.uid &&
     draw.status === 'WAITING_FOR_DRAW' &&
-    draw.participants.length >= 2;
+    draw.participantUuids.length >= 2;
 
   const showInviteButton = draw && draw.status === 'WAITING_FOR_DRAW';
 
@@ -102,7 +100,11 @@ const DrawPage = () => {
 
     try {
       const updatedDraw = await drawingService.startDraw(drawId, user.uid);
-      setDraw(updatedDraw);
+      setDraw({
+        ...draw,
+        status: updatedDraw.status,
+        drawDate: updatedDraw.drawDate,
+      });
       setIsStartDrawModalOpen(false);
       setDrawSuccess(true);
 

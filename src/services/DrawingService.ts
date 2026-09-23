@@ -1,5 +1,11 @@
-import { doc, getDoc, collection, writeBatch } from 'firebase/firestore';
-import { Assignment, Draw, Pair, Participant } from '../models/Draw';
+import {
+  doc,
+  getDoc,
+  collection,
+  writeBatch,
+  serverTimestamp,
+} from 'firebase/firestore';
+import { Assignment, Draw, Pair } from '../models/Draw';
 import { db } from './FirebaseConfig';
 import { appDataService } from './AppDataService';
 
@@ -16,37 +22,33 @@ export class DrawingService {
     return shuffled;
   }
 
-  private validatePairs(pairs: Pair[], participants: Participant[]): boolean {
-    const participantUuids = participants.map((p) => p.userUuid);
-
-    if (pairs.length !== participants.length) return false;
+  private validatePairs(pairs: Pair[], participantUuids: string[]): boolean {
+    if (pairs.length !== participantUuids.length) return false;
 
     const fromUuids = new Set(pairs.map((p) => p.fromUuid));
     const toUuids = new Set(pairs.map((p) => p.toUuid));
 
     return (
-      fromUuids.size === participants.length &&
-      toUuids.size === participants.length &&
+      fromUuids.size === participantUuids.length &&
+      toUuids.size === participantUuids.length &&
       [...fromUuids].every((uuid) => participantUuids.includes(uuid)) &&
       [...toUuids].every((uuid) => participantUuids.includes(uuid)) &&
       pairs.every((pair) => pair.fromUuid !== pair.toUuid)
     );
   }
 
-  private generatePairs(participants: Participant[]): Pair[] {
+  private generatePairs(participantUuids: string[]): Pair[] {
     const MAX_ATTEMPTS = 100;
 
     for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-      const shuffledParticipants = this.shuffleArray(participants);
+      const shuffledUuids = this.shuffleArray(participantUuids);
 
-      const pairs: Pair[] = shuffledParticipants.map((participant, index) => ({
-        fromUuid: participant.userUuid,
-        toUuid:
-          shuffledParticipants[(index + 1) % shuffledParticipants.length]
-            .userUuid,
+      const pairs: Pair[] = shuffledUuids.map((uuid, index) => ({
+        fromUuid: uuid,
+        toUuid: shuffledUuids[(index + 1) % shuffledUuids.length],
       }));
 
-      if (this.validatePairs(pairs, participants)) {
+      if (this.validatePairs(pairs, participantUuids)) {
         return pairs;
       }
     }
@@ -68,7 +70,7 @@ export class DrawingService {
       throw new Error('Only draw owner can start the draw');
     }
 
-    if (draw.participants.length < 2) {
+    if (draw.participantUuids.length < 2) {
       throw new Error('Draw must have at least two participants');
     }
 
@@ -76,11 +78,11 @@ export class DrawingService {
       throw new Error('Draw cannot be started');
     }
 
-    const pairs = this.generatePairs(draw.participants);
+    const pairs = this.generatePairs(draw.participantUuids);
 
     const updateData = {
       status: 'DRAWED',
-      drawDate: new Date(),
+      drawDate: serverTimestamp(),
     };
 
     // Each pair goes to its own document that only the giver can read, so the
@@ -97,8 +99,9 @@ export class DrawingService {
 
     return {
       ...draw,
-      ...updateData,
-    } as Draw;
+      status: 'DRAWED',
+      drawDate: new Date(),
+    };
   }
 
   async getMyAssignment(

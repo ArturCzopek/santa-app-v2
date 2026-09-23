@@ -9,6 +9,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  serverTimestamp,
   setDoc,
   writeBatch,
 } from 'firebase/firestore';
@@ -38,7 +39,10 @@ beforeEach(async () => {
 const startDraw = (uid: string, pairs: [string, string][]) => {
   const db = authed(env, uid);
   const batch = writeBatch(db);
-  batch.update(doc(db, 'draws/d1'), { status: 'DRAWED' });
+  batch.update(doc(db, 'draws/d1'), {
+    status: 'DRAWED',
+    drawDate: serverTimestamp(),
+  });
   pairs.forEach(([from, to]) =>
     batch.set(doc(db, `draws/d1/assignments/${from}`), { toUuid: to }),
   );
