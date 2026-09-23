@@ -33,6 +33,10 @@
   "devDependencies": {
     "@eslint/js": "^9.39.5",
     "@firebase/rules-unit-testing": "^5.0.2",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
@@ -41,6 +45,7 @@
     "firebase-admin": "^14.4.0",
     "firebase-tools": "^15.30.2",
     "globals": "^17.12.0",
+    "jsdom": "^30.1.1",
     "prettier": "^3.4.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.70.1",
