@@ -25,9 +25,14 @@ export default tseslint.config(
     rules: reactHooks.configs.recommended.rules,
   },
   {
-    files: ['scripts/**/*.mjs', 'tests/**/*.ts', '*.config.{ts,mjs}'],
+    files: ['scripts/**/*.mjs', 'tests/**/*.{ts,tsx}', '*.config.{ts,mjs}'],
     languageOptions: { globals: globals.node },
   },
+  {
+    files: ['e2e/**/*.ts'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
+  { ignores: ['test-results/', 'playwright-report/'] },
   {
     rules: {
       'react/prop-types': 'off',

@@ -13,6 +13,7 @@
     "emulators": "firebase emulators:start --only auth,firestore --project demo-santa-app",
     "dev:emulators": "vite --mode emulators",
     "test": "firebase emulators:exec --only auth,firestore --project demo-santa-app \"vitest run\"",
+    "test:e2e": "firebase emulators:exec --only auth,firestore --project demo-santa-app \"playwright test\"",
     "deploy:rules": "firebase deploy --only firestore"
   },
   "dependencies": {
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.5",
     "@firebase/rules-unit-testing": "^5.0.2",
+    "@playwright/test": "^1.63.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
