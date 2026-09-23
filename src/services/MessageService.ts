@@ -1,10 +1,9 @@
 import {
   collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  Timestamp,
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
 } from 'firebase/firestore';
 import { db } from './FirebaseConfig';
 import { MessageData } from '../models/Message';
@@ -12,14 +11,21 @@ import { MessageData } from '../models/Message';
 export class MessageService {
   private messagesCollection = collection(db, 'messages');
 
-  async sendMessage(messageData: MessageData): Promise<void> {
-    try {
-      const firestoreData = {
-        ...messageData,
-        date: Timestamp.fromDate(messageData.date),
-      };
+  // One document per user per UTC day. The rules only allow creating the
+  // document for today and never overwriting it, which enforces the
+  // one-message-per-day limit.
+  private todayMessageRef(userUid: string) {
+    const now = new Date();
+    const day = `${now.getUTCFullYear()}-${now.getUTCMonth() + 1}-${now.getUTCDate()}`;
+    return doc(this.messagesCollection, `${userUid}_${day}`);
+  }
 
-      await addDoc(this.messagesCollection, firestoreData);
+  async sendMessage(messageData: Omit<MessageData, 'date'>): Promise<void> {
+    try {
+      await setDoc(this.todayMessageRef(messageData.userUid), {
+        ...messageData,
+        date: serverTimestamp(),
+      });
     } catch (error) {
       console.error('Error sending message:', error);
       throw error;
@@ -30,31 +36,8 @@ export class MessageService {
     try {
       if (!userUid) return false;
 
-      const now = new Date();
-      const startOfDay = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-      );
-      const endOfDay = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        23,
-        59,
-        59,
-        999,
-      );
-
-      const q = query(
-        this.messagesCollection,
-        where('userUid', '==', userUid),
-        where('date', '>=', Timestamp.fromDate(startOfDay)),
-        where('date', '<=', Timestamp.fromDate(endOfDay)),
-      );
-
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.empty;
+      const todayMessage = await getDoc(this.todayMessageRef(userUid));
+      return !todayMessage.exists();
     } catch (error) {
       console.error('Error checking if user can send message:', error);
       return false;

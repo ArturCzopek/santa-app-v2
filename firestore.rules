@@ -142,12 +142,53 @@ service cloud.firestore {
       }
     }
 
-    match /appData/stats {
-      allow read, write: if signedIn();
+    function statValue(field) {
+      return resource == null ? 0 : resource.data.get(field, 0);
     }
 
+    // +1 draw, only in the batch that creates draw lastDrawId.
+    function isCountingNewDraw() {
+      let d = request.resource.data;
+      return d.drawsCount == statValue('drawsCount') + 1
+        && d.get('winnersCount', 0) == statValue('winnersCount')
+        && !exists(drawPath(d.lastDrawId))
+        && getAfter(drawPath(d.lastDrawId)).data.ownerUuid == request.auth.uid;
+    }
+
+    // +N winners, only in the batch that starts draw lastDrawId (N participants).
+    function isCountingStartedDraw() {
+      let d = request.resource.data;
+      return d.get('drawsCount', 0) == statValue('drawsCount')
+        && get(drawPath(d.lastDrawId)).data.status == 'WAITING_FOR_DRAW'
+        && getAfter(drawPath(d.lastDrawId)).data.status == 'DRAWED'
+        && d.winnersCount == statValue('winnersCount')
+          + getAfter(drawPath(d.lastDrawId)).data.participantUuids.size();
+    }
+
+    match /appData/stats {
+      allow get: if signedIn();
+      allow create, update: if signedIn()
+        && request.resource.data.keys().hasOnly(['drawsCount', 'winnersCount', 'lastDrawId'])
+        && request.resource.data.lastDrawId is string
+        && (isCountingNewDraw() || isCountingStartedDraw());
+    }
+
+    // Messages to the author. One document per user per UTC day
+    // ({uid}_{year}-{month}-{day}), create-only: this is the daily limit.
+    // Only the author reads them (in the Firebase console).
     match /messages/{messageId} {
-      allow read, create: if signedIn();
+      allow get: if signedIn()
+        && messageId.matches(request.auth.uid + '_[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}');
+
+      allow create: if signedIn()
+        && messageId == request.auth.uid + '_' + string(request.time.year())
+          + '-' + string(request.time.month()) + '-' + string(request.time.day())
+        && request.resource.data.keys().hasOnly(['userUid', 'userName', 'message', 'date'])
+        && request.resource.data.userUid == request.auth.uid
+        && request.resource.data.userName == request.auth.token.get('name', request.auth.uid)
+        && isString(request.resource.data.message, 1000)
+        && request.resource.data.message.size() > 0
+        && request.resource.data.date == request.time;
     }
   }
 }

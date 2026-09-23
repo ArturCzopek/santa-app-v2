@@ -85,7 +85,6 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
         userUid: user.uid,
         userName: user.displayName || user.uid,
         message: message.trim(),
-        date: new Date(),
       });
 
       setSnackbar({

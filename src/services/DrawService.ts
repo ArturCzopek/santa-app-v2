@@ -85,7 +85,7 @@ class DrawService {
         ),
         { createdDate: serverTimestamp() },
       );
-      appDataService.addDrawCreated(batch);
+      appDataService.addDrawCreated(batch, drawRef.id);
       await batch.commit();
 
       return drawRef.id;

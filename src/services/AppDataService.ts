@@ -25,15 +25,20 @@ export class AppDataService {
   }
 
   // Counters are updated atomically in the same batch as the draw change
-  // they count, so concurrent draws cannot lose increments.
-  addDrawCreated(batch: WriteBatch): void {
-    batch.set(this.appDataDocRef, { drawsCount: increment(1) }, { merge: true });
-  }
-
-  addDrawStarted(batch: WriteBatch, winnersCount: number): void {
+  // they count, so concurrent draws cannot lose increments. lastDrawId lets
+  // the rules check that the change really happens in that batch.
+  addDrawCreated(batch: WriteBatch, drawId: string): void {
     batch.set(
       this.appDataDocRef,
-      { winnersCount: increment(winnersCount) },
+      { drawsCount: increment(1), lastDrawId: drawId },
+      { merge: true },
+    );
+  }
+
+  addDrawStarted(batch: WriteBatch, drawId: string, winnersCount: number): void {
+    batch.set(
+      this.appDataDocRef,
+      { winnersCount: increment(winnersCount), lastDrawId: drawId },
       { merge: true },
     );
   }
