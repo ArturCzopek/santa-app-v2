@@ -13,6 +13,11 @@ export type Pair = {
   toUuid: string;
 };
 
+// Stored in draws/{drawId}/assignments/{giverUuid}, readable only by the giver.
+export type Assignment = {
+  toUuid: string;
+};
+
 export type Draw = {
   id?: string; // nullable, only needed for read as a doc id
   createdDate: Date;
@@ -24,7 +29,6 @@ export type Draw = {
   description: string;
   participants: Participant[];
   participantUuids: string[];
-  pairs: Pair[];
   status: 'WAITING_FOR_DRAW' | 'DRAWED';
   drawDate?: Date | Timestamp | null;
   password: string;

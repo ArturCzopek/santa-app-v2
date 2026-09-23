@@ -10,10 +10,31 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function drawPath(drawId) {
+      return /databases/$(database)/documents/draws/$(drawId);
+    }
+
     // Everything the current client does needs any signed-in user to be able to
     // read and rewrite whole draw documents. The following commits tighten this.
     match /draws/{drawId} {
       allow read, write: if signedIn();
+
+      // Draw result: one document per giver, readable only by that giver.
+      // Written once by the owner, in the same batch that moves the draw from
+      // WAITING_FOR_DRAW to DRAWED, and never changed afterwards.
+      match /assignments/{giverUid} {
+        allow get: if signedIn() && request.auth.uid == giverUid;
+
+        allow create: if signedIn()
+          && get(drawPath(drawId)).data.ownerUuid == request.auth.uid
+          && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
+          && getAfter(drawPath(drawId)).data.status == 'DRAWED'
+          && request.resource.data.keys().hasOnly(['toUuid'])
+          && request.resource.data.toUuid is string
+          && request.resource.data.toUuid != giverUid
+          && giverUid in getAfter(drawPath(drawId)).data.participantUuids
+          && request.resource.data.toUuid in getAfter(drawPath(drawId)).data.participantUuids;
+      }
     }
 
     match /appData/stats {

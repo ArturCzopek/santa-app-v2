@@ -1,5 +1,5 @@
-import { doc, updateDoc, getDoc, collection } from 'firebase/firestore';
-import { Draw, Pair, Participant } from '../models/Draw';
+import { doc, getDoc, collection, writeBatch } from 'firebase/firestore';
+import { Assignment, Draw, Pair, Participant } from '../models/Draw';
 import { db } from './FirebaseConfig';
 import { appDataService } from './AppDataService';
 
@@ -81,16 +81,36 @@ export class DrawingService {
     const updateData = {
       status: 'DRAWED',
       drawDate: new Date(),
-      pairs: pairs,
     };
 
-    await updateDoc(drawRef, updateData);
+    // Each pair goes to its own document that only the giver can read, so the
+    // full result never reaches any browser after this one.
+    const batch = writeBatch(db);
+    batch.update(drawRef, updateData);
+    pairs.forEach((pair) => {
+      const assignment: Assignment = { toUuid: pair.toUuid };
+      batch.set(doc(drawRef, 'assignments', pair.fromUuid), assignment);
+    });
+    await batch.commit();
+
     await appDataService.addWinnersCount(pairs.length);
 
     return {
       ...draw,
       ...updateData,
     } as Draw;
+  }
+
+  async getMyAssignment(
+    drawId: string,
+    userId: string,
+  ): Promise<Assignment | null> {
+    const assignmentRef = doc(this.drawsCollection, drawId, 'assignments', userId);
+    const assignmentSnapshot = await getDoc(assignmentRef);
+
+    return assignmentSnapshot.exists()
+      ? (assignmentSnapshot.data() as Assignment)
+      : null;
   }
 }
 

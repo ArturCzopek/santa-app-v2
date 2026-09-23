@@ -51,7 +51,6 @@ class DrawService {
       password: PasswordUtils.hashPassword(formData.password),
       participants: [participant], // Owner is the first participant
       participantUuids: [participant.userUuid], // Owner is the first participant
-      pairs: [], // Empty initially
       status: 'WAITING_FOR_DRAW',
       drawDate: null,
     };

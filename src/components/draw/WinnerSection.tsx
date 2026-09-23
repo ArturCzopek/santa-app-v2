@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Avatar, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
-import { Draw } from '../../models/Draw';
+import { Assignment, Draw } from '../../models/Draw';
+import { drawingService } from '../../services/DrawingService';
 import ContentCard from '../common/ContentCard';
 import {
   winnerSectionContainerStyles,
@@ -20,14 +21,22 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { user } = useAuth();
+  const [assignment, setAssignment] = useState<Assignment | null>(null);
 
-  const userPair = draw.pairs.find((pair) => pair.fromUuid === user?.uid);
+  useEffect(() => {
+    if (!draw.id || !user) return;
 
-  // If no pair found, return null
-  if (!userPair) return null;
+    drawingService
+      .getMyAssignment(draw.id, user.uid)
+      .then(setAssignment)
+      .catch((error) => console.error('Error fetching assignment:', error));
+  }, [draw.id, user]);
+
+  // If no assignment found (yet), return null
+  if (!assignment) return null;
 
   const winner = draw.participants.find(
-    (participant) => participant.userUuid === userPair.toUuid,
+    (participant) => participant.userUuid === assignment.toUuid,
   );
 
   if (!winner) return null;
