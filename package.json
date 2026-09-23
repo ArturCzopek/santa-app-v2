@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "start": "vite",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.tests.json",
     "format": "prettier --write .",
     "emulators": "firebase emulators:start --only auth,firestore --project demo-santa-app",
     "dev:emulators": "vite --mode emulators",

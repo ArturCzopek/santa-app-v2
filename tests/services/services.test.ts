@@ -12,6 +12,7 @@ import { drawingService } from '../../src/services/DrawingService';
 import { messageService } from '../../src/services/MessageService';
 import { appDataService } from '../../src/services/AppDataService';
 import { isValidDraw } from '../../src/services/pairs';
+import { Pair } from '../../src/models/Draw';
 import { PROJECT_ID } from '../rules/setup';
 
 // Signs in against the Auth emulator, which accepts unsigned Google tokens.
@@ -92,7 +93,7 @@ describe('DrawService + DrawingService against the emulator', () => {
     expect(started.status).toBe('DRAWED');
     await expect(drawingService.startDraw(drawId, owner.uid)).rejects.toThrow();
 
-    const pairs = [];
+    const pairs: Pair[] = [];
     for (const [sub, name, uid] of [
       ['owner', 'Olga Owner', owner.uid],
       ['alice', 'Ania Test', alice.uid],
