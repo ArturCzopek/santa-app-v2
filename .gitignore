@@ -5,3 +5,6 @@ build/
 .idea
 *-debug.log
 .firebase/
+# Service account keys (used by scripts/migrate.mjs) - never commit them
+*firebase-adminsdk*.json
+service-account*.json
