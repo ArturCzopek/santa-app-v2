@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "draws",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "participantUuids", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "createdDate", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
