@@ -13,7 +13,7 @@ import {
 } from '../../styles/drawCardStyles';
 import { format } from 'date-fns';
 import { pl, enUS } from 'date-fns/locale';
-import { Timestamp } from '@firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 
 interface DrawCardBaseProps {
   title: string;

@@ -1,4 +1,4 @@
-import { Timestamp } from '@firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 
 // Stored in draws/{drawId}/participants/{userUuid}, readable by participants
 // of the draw and writable (wish only) by that user.
