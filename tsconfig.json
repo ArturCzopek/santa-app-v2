@@ -2,7 +2,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
     "noImplicitAny": false,
     "skipLibCheck": true,
@@ -11,8 +11,7 @@
     "target": "esnext",
     "module": "esnext",
     "lib": ["dom", "esnext"],
-    "types": ["vite/client"],
-    "baseUrl": "./src"
+    "types": ["vite/client"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
