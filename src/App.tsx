@@ -6,6 +6,7 @@ import theme from './styles/theme';
 import AppRoutes from './routes';
 import i18n from './i18n';
 import SnowfallEffect from './components/SnowfallEffect';
+import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './hooks/useAuth';
 import { NotifyProvider } from './hooks/useNotify';
 
@@ -15,11 +16,13 @@ const App: React.FC = () => {
       <ThemeProvider theme={theme}>
         <SnowfallEffect/>
         <div style={{ position: 'relative', height: '100vh' }}>
-          <AuthProvider>
-            <NotifyProvider>
-              <AppRoutes />
-            </NotifyProvider>
-          </AuthProvider>
+          <ErrorBoundary>
+            <AuthProvider>
+              <NotifyProvider>
+                <AppRoutes />
+              </NotifyProvider>
+            </AuthProvider>
+          </ErrorBoundary>
         </div>
       </ThemeProvider>
     </I18nextProvider>

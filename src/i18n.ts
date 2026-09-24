@@ -12,6 +12,12 @@ const resources = {
         saving: 'Saving...',
         submitting: 'Submitting...',
       },
+      errorPage: {
+        backHome: 'Back to the home page',
+        description:
+          'Something went wrong on this page. Go back to the home page and try again.',
+        title: 'Oops!',
+      },
       createPage: {
         budget: 'Budget',
         createButton: 'Create Draw',
@@ -179,6 +185,12 @@ const resources = {
         joining: 'Dołączanie...',
         saving: 'Zapisywanie...',
         submitting: 'Wysyłanie...',
+      },
+      errorPage: {
+        backHome: 'Wróć na stronę główną',
+        description:
+          'Coś poszło nie tak na tej stronie. Wróć na stronę główną i spróbuj ponownie.',
+        title: 'Ups!',
       },
       createPage: {
         budget: 'Budżet',
