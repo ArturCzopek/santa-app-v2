@@ -41,24 +41,3 @@ export const footerStyles: SxProps<Theme> = {
   position: 'relative',
   zIndex: 1,
 };
-
-export const authContainerStyles = (theme: Theme): SxProps<Theme> => ({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  minHeight: '100dvh',
-  backgroundColor: theme.palette.background.default,
-  padding: 0,
-  margin: 0,
-});
-
-export const authCardStyles = (theme: Theme): SxProps<Theme> => ({
-  maxWidth: 550,
-  width: '100%',
-  padding: theme.spacing(2),
-  boxShadow: 3,
-  backgroundColor: theme.palette.background.paper,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-});

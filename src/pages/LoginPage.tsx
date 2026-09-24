@@ -1,22 +1,20 @@
 import React from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { Button, Typography, Box, useTheme } from '@mui/material';
-import { Google } from '@mui/icons-material';
-import YouTubeEmbed from '../components/YouTubeEmbed';
+import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Location, Navigate, useLocation } from 'react-router';
-import AuthPageLayout from '../components/layout/AuthPageLayout';
+import { useAuth } from '../hooks/useAuth';
+import MainLayout from '../components/layout/MainLayout';
+import PaperCard from '../components/common/PaperCard';
+import HowItWorks from '../components/HowItWorks';
 import InAppBrowserNotice from '../components/InAppBrowserNotice';
-import {
-  pageTitleStyles,
-  loginButtonStyles,
-  youtubeContainerStyles,
-} from '../styles/loginPageStyles';
+import GoogleSignInButton from '../components/GoogleSignInButton';
+import YouTubeEmbed from '../components/YouTubeEmbed';
+import SectionHeading from '../components/draw/SectionHeading';
+import { tokens } from '../styles/theme';
 
 const LoginPage = () => {
-  const { user, signInWithGoogle } = useAuth();
+  const { user } = useAuth();
   const { t } = useTranslation();
-  const theme = useTheme();
   // Set by protected routes when a guest opens them (e.g. from a link).
   const from = (useLocation().state as { from?: Location } | null)?.from;
 
@@ -25,27 +23,39 @@ const LoginPage = () => {
   }
 
   return (
-    <AuthPageLayout>
-      <Typography variant="h1" gutterBottom sx={pageTitleStyles(theme)}>
-        {t('loginPage.title')}
-      </Typography>
-
-      <Box sx={youtubeContainerStyles}>
-        <YouTubeEmbed videoId="z59gAXZ0ksQ" />
-      </Box>
-
-      <InAppBrowserNotice />
-
-      <Button
-        variant="contained"
-        color="error"
-        sx={loginButtonStyles}
-        startIcon={<Google sx={{ color: 'white' }} />}
-        onClick={signInWithGoogle}
+    <MainLayout>
+      <Box
+        sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 4, sm: 5 } }}
       >
-        {t('loginPage.loginWithGoogle')}
-      </Button>
-    </AuthPageLayout>
+        <Box component="header">
+          <Typography variant="h1" sx={{ color: tokens.snow, mb: 1.5 }}>
+            {t('loginPage.title')}
+          </Typography>
+          <Typography
+            sx={{
+              color: tokens.snowMuted,
+              fontSize: '1.125rem',
+              maxWidth: '60ch',
+            }}
+          >
+            {t('loginPage.lead')}
+          </Typography>
+        </Box>
+
+        <PaperCard airmail>
+          <HowItWorks />
+          <InAppBrowserNotice />
+          <GoogleSignInButton />
+        </PaperCard>
+
+        <Box component="section">
+          <SectionHeading>{t('loginPage.videoTitle')}</SectionHeading>
+          <PaperCard sx={{ p: { xs: 1, sm: 1.5 } }}>
+            <YouTubeEmbed videoId="z59gAXZ0ksQ" title="Dubstep Santa" />
+          </PaperCard>
+        </Box>
+      </Box>
+    </MainLayout>
   );
 };
 

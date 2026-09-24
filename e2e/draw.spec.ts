@@ -50,13 +50,13 @@ test('a whole Secret Santa: create, invite, join, wishes, draw, results', async 
   ]) {
     const joiner = await signedInUser(browser, sub, name, contextOptions);
     await joiner.page.goto(`/#/join/${drawId}`);
-    await expect(joiner.page.getByText('Utworzone przez Olga Owner')).toBeVisible();
+    await expect(joiner.page.getByText('Od: Olga Owner')).toBeVisible();
     if (sub === 'alice') {
-      await joiner.page.getByLabel('Hasło', { exact: true }).fill('zlehaslo');
+      await joiner.page.getByLabel('Hasło do losowania').fill('zlehaslo');
       await joiner.page.getByRole('button', { name: 'Dołącz do losowania' }).click();
       await expect(joiner.page.getByText(/Nieprawidłowe hasło/)).toBeVisible();
     }
-    await joiner.page.getByLabel('Hasło', { exact: true }).fill('sekret1');
+    await joiner.page.getByLabel('Hasło do losowania').fill('sekret1');
     await joiner.page.getByRole('button', { name: 'Dołącz do losowania' }).click();
     await joiner.page.waitForURL(/#\/draw\//, { timeout: 10_000 });
     await expect(joiner.page.getByText('Olga Owner').last()).toBeVisible();

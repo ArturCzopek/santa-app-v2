@@ -145,9 +145,16 @@ const resources = {
         totalDrawsPromptWithData:
           'Have fun and be a participant in one of {{count}} draws and one of {{winnersCount}} winners!',
       },
+      howItWorks: {
+        step1: 'The organizer creates a draw and sends everyone one link.',
+        step2: 'Everyone joins and writes a letter to Santa: what they would like to get.',
+        step3: 'The organizer draws the pairs. You open your envelope and see who you are buying a gift for – nobody else does.',
+        title: 'How does it work?',
+      },
       joinPage: {
         alreadyParticipating: 'You are already participating in this draw',
-        createdBy: 'Created by {{name}}',
+        createdBy: 'From: {{name}}',
+        invitedBy: '{{name}} invites you to a Secret Santa.',
         errors: {
           drawAlreadyStarted:
             'This draw has already been started and cannot be joined.',
@@ -159,12 +166,12 @@ const resources = {
           passwordRequired: 'Password is required to join the draw',
         },
         joinButton: 'Join Draw',
-        loginRequired: 'You need to log in to join this draw',
-        passwordLabel: 'Provide a password to join to draw',
+        loginRequired: 'Someone invites you to a Secret Santa. You need to sign in to see the details and join.',
+        passwordHint: 'You get the password from the organizer along with the link.',
+        passwordLabel: 'Draw password',
         passwordPlaceholder: 'Enter the draw password',
-        success:
-          'You have successfully joined the draw! Redirecting to the draw page...',
-        title: 'Join Draw',
+        success: 'You are in! Now write your letter to Santa.',
+        title: 'Invitation to a draw',
         viewDraw: 'View Draw',
       },
       loginPage: {
@@ -180,8 +187,11 @@ const resources = {
           message:
             'This page is open inside another app (e.g. Messenger or Instagram), where Google does not allow signing in. Open it in your regular browser: tap ⋮ or ⋯ in the corner and choose "Open in browser", or copy the link and paste it there.',
         },
+        googleNote: 'All you need is a Google account. We use your name and photo so others know who joined.',
+        lead: 'One link for the whole group. Everyone writes a letter to Santa, and on draw day opens an envelope with the name of the person they buy a gift for.',
         loginWithGoogle: 'Login with Google',
-        title: 'Santa App 2.0',
+        title: 'Secret Santa without paper slips in a hat',
+        videoTitle: 'To warm up',
       },
       messages: {
         alreadySentToday:
@@ -358,9 +368,16 @@ const resources = {
         totalDrawsPromptWithData:
           'Dołącz do zabawy i bądź uczestnikiem jednego z {{count}} losowań oraz bądź jednym z {{winnersCount}} rozlosowanych osób!',
       },
+      howItWorks: {
+        step1: 'Organizator zakłada losowanie i wysyła wszystkim jeden link.',
+        step2: 'Każdy dołącza i pisze list do Mikołaja: co chciałby dostać.',
+        step3: 'Organizator losuje pary. Otwierasz swoją kopertę i widzisz, komu kupujesz prezent – nikt inny tego nie wie.',
+        title: 'Jak to działa?',
+      },
       joinPage: {
         alreadyParticipating: 'Już uczestniczysz w tym losowaniu',
-        createdBy: 'Utworzone przez {{name}}',
+        createdBy: 'Od: {{name}}',
+        invitedBy: '{{name}} zaprasza cię do Tajemniczego Mikołaja.',
         errors: {
           drawAlreadyStarted:
             'To losowanie już się rozpoczęło i nie można do niego dołączyć.',
@@ -373,13 +390,13 @@ const resources = {
           loginRequired: 'Musisz się zalogować, aby dołączyć do tego losowania',
           passwordRequired: 'Hasło jest wymagane aby dołączyć do losowania',
         },
-        loginRequired: 'Musisz się zalogować, aby dołączyć do tego losowania',
+        loginRequired: 'Ktoś zaprasza cię do Tajemniczego Mikołaja. Musisz się zalogować, żeby zobaczyć szczegóły i dołączyć.',
         joinButton: 'Dołącz do losowania',
-        passwordLabel: 'Podaj hasło, aby dołączyć do losowania',
+        passwordHint: 'Hasło dostajesz od organizatora razem z linkiem.',
+        passwordLabel: 'Hasło do losowania',
         passwordPlaceholder: 'Wprowadź hasło do losowania',
-        success:
-          'Pomyślnie dołączyłeś do losowania! Przekierowywanie do strony losowania...',
-        title: 'Dołącz do losowania',
+        success: 'Jesteś w losowaniu! Teraz napisz list do Mikołaja.',
+        title: 'Zaproszenie do losowania',
         viewDraw: 'Zobacz losowanie',
       },
       loginPage: {
@@ -395,8 +412,11 @@ const resources = {
           message:
             'Ta strona jest otwarta w innej aplikacji (np. Messengerze lub Instagramie), a tam Google nie pozwala się zalogować. Otwórz ją w swojej przeglądarce: stuknij ⋮ lub ⋯ w rogu i wybierz „Otwórz w przeglądarce” albo skopiuj link i wklej go tam.',
         },
+        googleNote: 'Wystarczy konto Google. Używamy imienia i zdjęcia, żeby inni wiedzieli, kto dołączył.',
+        lead: 'Jeden link dla całej grupy. Każdy pisze list do Mikołaja, a w dniu losowania otwiera kopertę z imieniem osoby, której kupuje prezent.',
         loginWithGoogle: 'Zaloguj przez Google',
-        title: 'Santa App 2.0',
+        title: 'Tajemniczy Mikołaj bez karteczek w czapce',
+        videoTitle: 'Na rozgrzewkę',
       },
       messages: {
         alreadySentToday:

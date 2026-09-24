@@ -1,30 +1,40 @@
 import React from 'react';
-import { Button, Typography, useTheme } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import AuthPageLayout from './layout/AuthPageLayout';
-import { pageTitleStyles } from '../styles/loginPageStyles';
+import PaperCard from './common/PaperCard';
 
+// Rendered outside the router and auth, so it cannot use MainLayout.
 const ErrorPage = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
-    <AuthPageLayout>
-      <Typography variant="h4" component="h1" sx={pageTitleStyles(theme)}>
-        {t('errorPage.title')}
-      </Typography>
-      <Typography sx={{ color: '#212121', textAlign: 'center', mb: 3 }}>
-        {t('errorPage.description')}
-      </Typography>
-      {/* A full load, so whatever broke starts from a clean state. */}
-      <Button
-        variant="contained"
-        color="error"
-        onClick={() => window.location.replace(window.location.pathname)}
-      >
-        {t('errorPage.backHome')}
-      </Button>
-    </AuthPageLayout>
+    <Box
+      component="main"
+      sx={{
+        minHeight: '100dvh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        px: 2,
+      }}
+    >
+      <Box sx={{ width: '100%', maxWidth: 480 }}>
+        <PaperCard airmail>
+          <Typography variant="h1" sx={{ fontSize: '2rem' }}>
+            {t('errorPage.title')}
+          </Typography>
+          <Typography>{t('errorPage.description')}</Typography>
+          {/* A full load, so whatever broke starts from a clean state. */}
+          <Button
+            variant="contained"
+            onClick={() => window.location.replace(window.location.pathname)}
+            sx={{ alignSelf: 'flex-start' }}
+          >
+            {t('errorPage.backHome')}
+          </Button>
+        </PaperCard>
+      </Box>
+    </Box>
   );
 };
 

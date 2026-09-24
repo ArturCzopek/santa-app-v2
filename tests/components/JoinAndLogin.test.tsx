@@ -43,7 +43,10 @@ const draw: Draw = {
 };
 
 const renderJoinPage = () =>
-  renderWithProviders(<JoinToDrawPage />, { route: '/join/d1', path: '/join/:drawId' });
+  renderWithProviders(<JoinToDrawPage />, {
+    route: '/join/d1',
+    path: '/join/:drawId',
+  });
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -66,20 +69,28 @@ describe('JoinToDrawPage', () => {
     renderJoinPage();
 
     expect(await screen.findByText('Office party')).toBeInTheDocument();
-    expect(screen.getByText(/Olga Owner/)).toBeInTheDocument();
+    expect(screen.getByText('Od: Olga Owner')).toBeInTheDocument();
     expect(screen.getByText(/Zostaw wiadomość/)).toBeInTheDocument();
   });
 
   it('shows an error for a wrong password', async () => {
-    vi.mocked(drawService.joinToDraw).mockRejectedValue(new Error('Invalid password'));
+    vi.mocked(drawService.joinToDraw).mockRejectedValue(
+      new Error('Invalid password'),
+    );
     const user = userEvent.setup();
     renderJoinPage();
 
     await user.type(await screen.findByLabelText(/Hasło/), 'wrong-1');
-    await user.click(screen.getByRole('button', { name: 'Dołącz do losowania' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Dołącz do losowania' }),
+    );
 
     expect(await screen.findByText(/Nieprawidłowe hasło/)).toBeInTheDocument();
-    expect(drawService.joinToDraw).toHaveBeenCalledWith('d1', auth.user, 'wrong-1');
+    expect(drawService.joinToDraw).toHaveBeenCalledWith(
+      'd1',
+      auth.user,
+      'wrong-1',
+    );
   });
 
   it('confirms joining with the right password', async () => {
@@ -88,17 +99,24 @@ describe('JoinToDrawPage', () => {
     renderJoinPage();
 
     await user.type(await screen.findByLabelText(/Hasło/), 'secret1');
-    await user.click(screen.getByRole('button', { name: 'Dołącz do losowania' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Dołącz do losowania' }),
+    );
 
-    expect(await screen.findByText(/Pomyślnie dołączyłeś/)).toBeInTheDocument();
+    expect(await screen.findByText(/Jesteś w losowaniu/)).toBeInTheDocument();
   });
 
   it('does not offer joining a draw that already took place', async () => {
-    vi.mocked(drawService.getDraw).mockResolvedValue({ ...draw, status: 'DRAWED' });
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...draw,
+      status: 'DRAWED',
+    });
     renderJoinPage();
 
     expect(await screen.findByText(/już się rozpoczęło/)).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Dołącz do losowania' })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: 'Dołącz do losowania' }),
+    ).toBeNull();
   });
 });
 
@@ -113,7 +131,9 @@ describe('LoginPage', () => {
     auth.user = null;
     renderWithProviders(<LoginPage />);
 
-    expect(screen.getByRole('button', { name: /Zaloguj przez Google/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Zaloguj przez Google/ }),
+    ).toBeInTheDocument();
     expect(screen.queryByText(/otwarta w innej aplikacji/)).toBeNull();
   });
 
@@ -125,7 +145,9 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />);
 
     expect(screen.getByText(/otwarta w innej aplikacji/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Skopiuj link' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Skopiuj link' }),
+    ).toBeInTheDocument();
     vi.restoreAllMocks();
   });
 });
