@@ -64,23 +64,6 @@ const JoinToDrawPage = () => {
     draw && draw.status === 'WAITING_FOR_DRAW' && !isUserParticipant;
 
   useEffect(() => {
-    if (!user && drawId) {
-      sessionStorage.setItem('redirectAfterLogin', `/join/${drawId}`);
-    }
-
-    if (user) {
-      const redirectPath = sessionStorage.getItem('redirectAfterLogin');
-      if (redirectPath) {
-        sessionStorage.removeItem('redirectAfterLogin');
-
-        if (window.location.pathname !== redirectPath) {
-          navigate(redirectPath);
-        }
-      }
-    }
-  }, [user, drawId, navigate]);
-
-  useEffect(() => {
     const fetchDrawDetails = async () => {
       if (!drawId) return;
 
