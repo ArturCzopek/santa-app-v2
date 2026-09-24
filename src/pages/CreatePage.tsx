@@ -1,33 +1,29 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import {
-  Box,
-  Alert,
-  useTheme,
-  IconButton,
-  InputAdornment,
-  FormHelperText,
-  TextField,
-} from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Box, Typography } from '@mui/material';
 import MainLayout from '../components/layout/MainLayout';
-import ContentCard from '../components/common/ContentCard';
+import PaperCard from '../components/common/PaperCard';
 import FormTextField from '../components/form/FormTextField';
 import FormSelect from '../components/form/FormSelect';
 import FormActions from '../components/form/FormActions';
+import PasswordField from '../components/form/PasswordField';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { drawService } from '../services/DrawService';
 import { useAuth } from '../hooks/useAuth';
 import { useNotify } from '../hooks/useNotify';
 import { MIN_PASSWORD_LENGTH } from '../services/PasswordUtils';
-import {
-  alertStyles,
-  darkGreenBackground,
-  inputStyles,
-  inputLabelStyles,
-  errorStyles,
-} from '../styles/formStyles';
+import { tokens } from '../styles/theme';
+
+// Same limits as the Firestore rules.
+const DRAW_NAME_MAX_LENGTH = 80;
+const DESCRIPTION_MAX_LENGTH = 1000;
+const BUDGET_MAX = 1_000_000;
+
+const currencyOptions = ['PLN', 'EUR', 'USD', 'GBP'].map((value) => ({
+  value,
+  label: value,
+}));
 
 type FormData = {
   drawName: string;
@@ -42,10 +38,7 @@ const CreatePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const notify = useNotify();
-  const theme = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
   const { control, handleSubmit } = useForm<FormData>({
     defaultValues: {
@@ -63,103 +56,101 @@ const CreatePage = () => {
 
     setIsSubmitting(true);
     try {
-      const newDrawUid = await drawService.createDraw(data, user);
-      setSuccess(true);
-
-      setTimeout(() => {
-        navigate(`/draw/${newDrawUid}`);
-      }, 3000);
+      const newDrawUid = await drawService.createDraw(
+        {
+          ...data,
+          drawName: data.drawName.trim(),
+          description: data.description.trim(),
+        },
+        user,
+      );
+      notify(t('createPage.success'), 'success');
+      // The password is hashed, so this is the only moment the invite can
+      // carry it. The owner is a participant too, so the letter editor opens.
+      navigate(`/draw/${newDrawUid}`, {
+        state: { justJoined: true, createdPassword: data.password },
+      });
     } catch (error) {
       console.error('Error creating draw:', error);
       notify(t('createPage.errors.createFailed'));
-    } finally {
       setIsSubmitting(false);
     }
   };
 
-  const currencyOptions = [
-    { value: 'PLN', label: 'PLN' },
-    { value: 'EUR', label: 'EUR' },
-    { value: 'USD', label: 'USD' },
-    { value: 'GBP', label: 'GBP' },
-  ];
-
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
-    <MainLayout title={t('createPage.title')}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          mt: 4,
-        }}
-      >
-        <ContentCard
-          onSubmit={handleSubmit(onSubmit)}
-          sx={darkGreenBackground(theme)}
-        >
-          {success && (
-            <Alert severity="success" sx={alertStyles(theme)}>
-              {t('createPage.success')}
-            </Alert>
-          )}
+    <MainLayout>
+      <Box component="header" sx={{ mb: 3 }}>
+        <Typography variant="h1" sx={{ color: tokens.snow, mb: 1.5 }}>
+          {t('createPage.title')}
+        </Typography>
+        <Typography sx={{ color: tokens.snowMuted, fontSize: '1.125rem' }}>
+          {t('createPage.lead')}
+        </Typography>
+      </Box>
 
+      <PaperCard airmail onSubmit={handleSubmit(onSubmit)}>
+        <FormTextField
+          name="drawName"
+          control={control}
+          label={t('createPage.drawName')}
+          fullWidth
+          autoComplete="off"
+          slotProps={{ htmlInput: { maxLength: DRAW_NAME_MAX_LENGTH } }}
+          rules={{
+            validate: (value) =>
+              value.trim().length > 0 ||
+              t('createPage.validation.drawNameRequired'),
+            maxLength: {
+              value: DRAW_NAME_MAX_LENGTH,
+              message: t('createPage.validation.drawNameTooLong'),
+            },
+          }}
+        />
+
+        <FormTextField
+          name="description"
+          control={control}
+          label={t('createPage.description')}
+          helperText={t('createPage.descriptionHint')}
+          fullWidth
+          multiline
+          minRows={3}
+          slotProps={{ htmlInput: { maxLength: DESCRIPTION_MAX_LENGTH } }}
+          rules={{
+            maxLength: {
+              value: DESCRIPTION_MAX_LENGTH,
+              message: t('createPage.validation.descriptionTooLong'),
+            },
+          }}
+        />
+
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
           <FormTextField
-            name="drawName"
+            name="budget"
             control={control}
-            label={t('createPage.drawName')}
-            variant="outlined"
-            fullWidth
+            label={t('createPage.budget')}
+            type="number"
+            sx={{ flex: 1, minWidth: 0 }}
+            slotProps={{
+              htmlInput: { min: 1, max: BUDGET_MAX, inputMode: 'decimal' },
+            }}
             rules={{
-              required: t('createPage.validation.drawNameRequired'),
-              maxLength: {
-                value: 80,
-                message: t('createPage.validation.drawNameTooLong'),
+              required: t('createPage.validation.budgetRequired'),
+              validate: {
+                isNumber: (value) =>
+                  !isNaN(Number(value)) ||
+                  t('createPage.validation.budgetMustBeNumber'),
+                positive: (value) =>
+                  Number(value) > 0 ||
+                  t('createPage.validation.budgetPositive'),
+                notTooHigh: (value) =>
+                  Number(value) <= BUDGET_MAX ||
+                  t('createPage.validation.budgetTooHigh'),
               },
             }}
           />
 
-          <FormTextField
-            name="description"
-            control={control}
-            label={t('createPage.description')}
-            variant="outlined"
-            fullWidth
-            multiline
-            rows={4}
-            rules={{
-              required: t('createPage.validation.descriptionRequired'),
-              maxLength: {
-                value: 1000,
-                message: t('createPage.validation.descriptionTooLong'),
-              },
-            }}
-          />
-
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <FormTextField
-              name="budget"
-              control={control}
-              label={t('createPage.budget')}
-              variant="outlined"
-              fullWidth
-              type="number"
-              rules={{
-                required: t('createPage.validation.budgetRequired'),
-                validate: {
-                  positive: (value) =>
-                    value > 0 || t('createPage.validation.budgetPositive'),
-                  isNumber: (value) =>
-                    !isNaN(Number(value)) ||
-                    t('createPage.validation.budgetMustBeNumber'),
-                },
-              }}
-            />
-
+          <Box sx={{ width: { xs: 104, sm: 120 }, flexShrink: 0 }}>
             <FormSelect
               name="currency"
               control={control}
@@ -174,7 +165,9 @@ const CreatePage = () => {
               }}
             />
           </Box>
+        </Box>
 
+        <Box sx={{ borderTop: `1px dashed ${tokens.paperLine}`, pt: 2.5 }}>
           <Controller
             name="password"
             control={control}
@@ -185,65 +178,27 @@ const CreatePage = () => {
                 message: t('createPage.validation.passwordTooShort'),
               },
             }}
-            render={({ field, fieldState: { error } }) => (
-              <Box sx={{ width: '100%' }}>
-                <TextField
-                  {...field}
-                  label={t('createPage.password')}
-                  variant="outlined"
-                  fullWidth
-                  type={showPassword ? 'text' : 'password'}
-                  error={!!error}
-                  helperText={error?.message}
-                  sx={errorStyles(theme)}
-                  slotProps={{
-                    input: {
-                      sx: inputStyles(theme),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleTogglePasswordVisibility}
-                            edge="end"
-                            sx={{ color: theme.palette.text.primary }}
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    },
-
-                    inputLabel: {
-                      sx: inputLabelStyles(theme),
-                    },
-                  }}
-                />
-
-                <FormHelperText
-                  sx={{
-                    color: theme.customColors.lightGold,
-                    mt: 0.5,
-                    mb: 2,
-                    opacity: 0.9,
-                    fontSize: '0.9rem',
-                    fontStyle: 'italic',
-                  }}
-                >
-                  {t('createPage.passwordHint')}
-                </FormHelperText>
-              </Box>
+            render={({ field: { ref, ...field }, fieldState: { error } }) => (
+              <PasswordField
+                {...field}
+                // Lets react-hook-form move focus to the field when it's invalid.
+                inputRef={ref}
+                label={t('createPage.password')}
+                autoComplete="new-password"
+                error={error?.message}
+                helperText={t('createPage.passwordHint')}
+              />
             )}
           />
+        </Box>
 
-          <FormActions
-            primaryLabel={t('createPage.createButton')}
-            secondaryLabel={t('common.cancel')}
-            onSecondaryClick={() => navigate('/draws')}
-            isSubmitting={isSubmitting}
-            isDisabled={success}
-          />
-        </ContentCard>
-      </Box>
+        <FormActions
+          primaryLabel={t('createPage.createButton')}
+          secondaryLabel={t('common.cancel')}
+          onSecondaryClick={() => navigate('/draws')}
+          isSubmitting={isSubmitting}
+        />
+      </PaperCard>
     </MainLayout>
   );
 };

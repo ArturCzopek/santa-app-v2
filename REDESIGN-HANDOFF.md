@@ -32,18 +32,12 @@ Plik dla kolejnej sesji Claude Code. Rozmowa z autorem (Artur) po polsku.
 
 R0 kontekst Impeccable · R1 tokeny motywu · R2 navbar + układ + stopka · R3 strona losowania na
 papierze (list do Mikołaja, znaczki, stemple, okna jako formularze) · R4 logowanie + zaproszenie
-jako pocztówka · R5 lista losowań jako koperty.
+jako pocztówka · R5 lista losowań jako koperty · R6 formularz tworzenia na papierze (po utworzeniu
+przejście na losowanie ze `state: { justJoined: true, createdPassword }` – R10 ma odczytać
+`createdPassword` w `DrawPage` i otworzyć zaproszenie).
 
 ## Do zrobienia
 
-- [ ] **R6 – formularz tworzenia (`src/pages/CreatePage.tsx`)** – nadal używa starego
-  `ContentCard` i `styles/formStyles.ts` (na razie nieczytelny: ciemne tło + granatowy tekst).
-  Przepisać na `PaperCard` + `FormTextField`/`FormSelect`/`PasswordField`/`FormActions`;
-  tytuł „Nowe losowanie”; opis opcjonalny (reguły pozwalają na pusty); komunikaty limitów
-  `drawNameTooLong` = 80 znaków i `currencyTooLong` = 3 (dziś w i18n błędnie 200 i 30);
-  krótsza podpowiedź do hasła. Po utworzeniu: przejście na stronę losowania bez 3-sekundowego
-  czekania, z `state` zawierającym hasło, żeby otworzyć zaproszenie (R10). Potem usunąć
-  `ContentCard.tsx` i `formStyles.ts`.
 - [ ] **R7 – śnieg** (`src/components/SnowfallEffect.tsx`): za treścią (dziś `zIndex: 1000` nad
   wszystkim, także nad oknami), mniej płatków na telefonie, brak przy `prefers-reduced-motion`.
 - [ ] **R8 – dostępność i język**: kontrast AA wszędzie (sprawdzić stemple na ciemnym tle),
