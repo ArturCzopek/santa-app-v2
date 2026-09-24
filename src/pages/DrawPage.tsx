@@ -201,11 +201,10 @@ const DrawPage = () => {
 
         <DrawDetailCard draw={draw} />
 
-        {draw.status !== 'DRAWED' ? (
-          <UserWishSection draw={draw} onDrawUpdated={handleDrawUpdated} />
-        ) : (
-          <WinnerSection draw={draw} />
-        )}
+        {draw.status === 'DRAWED' && <WinnerSection draw={draw} />}
+
+        {/* Still editable after the draw, so the Santa sees the latest wish. */}
+        <UserWishSection draw={draw} onDrawUpdated={handleDrawUpdated} />
 
         <ParticipantsSection draw={draw} />
 

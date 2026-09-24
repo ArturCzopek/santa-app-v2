@@ -103,6 +103,21 @@ describe('DrawPage', () => {
     expect(screen.getByText('Socks')).toBeInTheDocument();
   });
 
+  it('still shows your own wish, editable, after the draw', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({ toUuid: 'alice' });
+    renderDrawPage();
+
+    expect(await screen.findByText('Twój Los')).toBeInTheDocument();
+    expect(screen.getByText('Socks')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Wpisz swoje życzenie/)).toHaveValue('Mountain book');
+    expect(screen.getByRole('button', { name: 'Edytuj życzenie' })).toBeEnabled();
+  });
+
   it('does not start the draw with a wrong password', async () => {
     vi.mocked(drawService.isDrawPasswordValid).mockResolvedValue(false);
     const user = userEvent.setup();
