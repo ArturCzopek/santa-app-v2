@@ -68,8 +68,12 @@ stop with Ctrl+C). `npm run emulators:save` saves while they run,
 `npm run emulators:reset` starts from scratch. Tests always use a clean,
 separate emulator run and never touch this data.
 
-Sign-in opens the emulator's fake Google account picker, where any number
-of test accounts can be added. To be signed in as several people at once,
+`npm run emulators:seed` (with the emulators running) adds six test Google
+accounts and two draws (password `test123`): one waiting to be drawn and one
+already drawn.
+
+Sign-in opens the emulator's fake Google account picker, where the seeded
+accounts are listed and any number of new test accounts can be added. To be signed in as several people at once,
 use separate incognito windows or browser profiles.
 
 ### Checks and tests
