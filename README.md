@@ -63,6 +63,15 @@ npm run emulators       # Auth + Firestore emulators, fake demo project
 npm run dev:emulators   # the app, connected to the emulators
 ```
 
+Data is kept between runs in `.emulator-data/` (saved when the emulators
+stop with Ctrl+C). `npm run emulators:save` saves while they run,
+`npm run emulators:reset` starts from scratch. Tests always use a clean,
+separate emulator run and never touch this data.
+
+Sign-in opens the emulator's fake Google account picker, where any number
+of test accounts can be added. To be signed in as several people at once,
+use separate incognito windows or browser profiles.
+
 ### Checks and tests
 
 All need Java (they start the Firebase emulators).
