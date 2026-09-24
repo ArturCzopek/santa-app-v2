@@ -34,12 +34,11 @@ R0 kontekst Impeccable · R1 tokeny motywu · R2 navbar + układ + stopka · R3 
 papierze (list do Mikołaja, znaczki, stemple, okna jako formularze) · R4 logowanie + zaproszenie
 jako pocztówka · R5 lista losowań jako koperty · R6 formularz tworzenia na papierze (po utworzeniu
 przejście na losowanie ze `state: { justJoined: true, createdPassword }` – R10 ma odczytać
-`createdPassword` w `DrawPage` i otworzyć zaproszenie).
+`createdPassword` w `DrawPage` i otworzyć zaproszenie) · R7 śnieg za treścią, 60 płatków na telefonie, brak przy
+`prefers-reduced-motion`.
 
 ## Do zrobienia
 
-- [ ] **R7 – śnieg** (`src/components/SnowfallEffect.tsx`): za treścią (dziś `zIndex: 1000` nad
-  wszystkim, także nad oknami), mniej płatków na telefonie, brak przy `prefers-reduced-motion`.
 - [ ] **R8 – dostępność i język**: kontrast AA wszędzie (sprawdzić stemple na ciemnym tle),
   polskie `aria-label`, fokus na pierwsze błędne pole, formy neutralne płciowo w pozostałych
   tekstach i18n (np. `messages.alreadySentToday` „Wysłałeś…”, `drawPage.errors.accessDenied`

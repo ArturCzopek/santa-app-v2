@@ -16,8 +16,8 @@ const App: React.FC = () => {
     <I18nextProvider i18n={i18n}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <SnowfallEffect/>
-        <div style={{ position: 'relative', minHeight: '100dvh' }}>
+        <SnowfallEffect />
+        <div style={{ position: 'relative', zIndex: 1, minHeight: '100dvh' }}>
           <ErrorBoundary>
             <NotifyProvider>
               <AuthProvider>
