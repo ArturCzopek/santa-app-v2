@@ -52,8 +52,8 @@ const DrawsListPage = () => {
         const userDraws = await drawService.getDrawPreviews(user.uid);
         setDrawPreviews(userDraws);
         const appData = await appDataService.getAppData();
-        setTotalDrawsCount(appData.drawsCount + 100);
-        setTotalWinnersCount(appData.winnersCount + 314);
+        setTotalDrawsCount(appData.drawsCount);
+        setTotalWinnersCount(appData.winnersCount);
       } catch (err) {
         console.error('Error fetching draws:', err);
         setError(t('drawsPage.errors.fetchFailed'));
@@ -85,6 +85,9 @@ const DrawsListPage = () => {
     );
   }
 
+  // "one of 1 draws" reads oddly, so the real counts show up once they grow.
+  const showStats = totalDrawsCount >= 2 && totalWinnersCounts >= 2;
+
   const actionButtons = [
     {
       icon: <GroupAdd />,
@@ -115,23 +118,28 @@ const DrawsListPage = () => {
                 sx={createLinkStyles(theme)}
               >
                 {t('drawsPage.createOwn')}
-              </Link>{' '}
-              {t('drawsPage.totalDrawsPrompt', {
-                count: totalDrawsCount,
-                winnersCount: totalWinnersCounts,
-              })}
+              </Link>
+              {showStats
+                ? ' ' +
+                  t('drawsPage.totalDrawsPrompt', {
+                    count: totalDrawsCount,
+                    winnersCount: totalWinnersCounts,
+                  })
+                : '.'}
             </Typography>
           </Box>
         ) : (
           <>
-            <Box sx={appDataContainerStyles}>
-              <Typography sx={emptyStateTextStyles(theme)}>
-                {t('drawsPage.totalDrawsPromptWithData', {
-                  count: totalDrawsCount,
-                  winnersCount: totalWinnersCounts,
-                })}
-              </Typography>
-            </Box>
+            {showStats && (
+              <Box sx={appDataContainerStyles}>
+                <Typography sx={emptyStateTextStyles(theme)}>
+                  {t('drawsPage.totalDrawsPromptWithData', {
+                    count: totalDrawsCount,
+                    winnersCount: totalWinnersCounts,
+                  })}
+                </Typography>
+              </Box>
+            )}
 
             {drawPreviews.map((drawPreview) => (
               <DrawPreviewCard key={drawPreview.id} drawPreview={drawPreview} />
