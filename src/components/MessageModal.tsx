@@ -11,6 +11,7 @@ import {
   Alert,
   CircularProgress,
   AlertColor,
+  useTheme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,7 +22,9 @@ import {
   messageModalButtonContainerStyles,
   messageModalCancelButtonStyles,
   messageModalSendButtonStyles,
+  messageModalInputStyles,
 } from '../styles/messageModalStyles';
+import { inputLabelStyles, inputStyles } from '../styles/formStyles';
 import { useAuth } from '../hooks/useAuth';
 import { messageService } from '../services/MessageService';
 import { MESSAGE_MAX_LENGTH } from '../models/Message';
@@ -33,6 +36,7 @@ interface MessageModalProps {
 
 const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { user } = useAuth();
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -173,7 +177,12 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
               onChange={(e) => setMessage(e.target.value)}
               disabled={isSending || !canSendToday}
               helperText={`${message.length} / ${MESSAGE_MAX_LENGTH}`}
-              slotProps={{ htmlInput: { maxLength: MESSAGE_MAX_LENGTH } }}
+              sx={messageModalInputStyles(theme)}
+              slotProps={{
+                input: { sx: inputStyles(theme) },
+                inputLabel: { sx: inputLabelStyles(theme) },
+                htmlInput: { maxLength: MESSAGE_MAX_LENGTH },
+              }}
             />
           </Box>
 

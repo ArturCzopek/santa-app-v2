@@ -23,6 +23,16 @@ export const messageModalInputContainerStyles = {
   marginBottom: '24px',
 };
 
+export const messageModalInputStyles = (theme: Theme) => ({
+  '& .MuiFormHelperText-root': {
+    color: theme.palette.text.secondary,
+    textAlign: 'right',
+  },
+  '& .MuiInputBase-input.Mui-disabled': {
+    WebkitTextFillColor: theme.palette.text.secondary,
+  },
+});
+
 export const messageModalButtonContainerStyles = {
   display: 'flex',
   justifyContent: 'center',
