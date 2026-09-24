@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   HashRouter as Router,
   Routes,
@@ -15,6 +15,15 @@ import { useAuth } from './hooks/useAuth';
 import CreatePage from './pages/CreatePage';
 import DrawPage from './pages/DrawPage';
 import PrivacyPage from './pages/PrivacyPage';
+
+// A new page starts at the top, not where the previous one was scrolled.
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
 
 // Guests go to the login page, which brings them back here after signing in.
 const RequireAuth: React.FC<{ children: React.ReactElement }> = ({
@@ -50,6 +59,7 @@ const AppRoutes = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Redirects signed-in users on its own */}
         <Route path="/" element={<LoginPage />} />
