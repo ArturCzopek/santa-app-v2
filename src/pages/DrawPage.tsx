@@ -29,6 +29,7 @@ import {
   drawActionButtonStyles,
 } from '../styles/drawPageStyles';
 import { useAuth } from '../hooks/useAuth';
+import { useNotify } from '../hooks/useNotify';
 import UserWishSection from '../components/draw/UserWishSection';
 import { drawingService } from '../services/DrawingService';
 import { inviteButtonStyles } from '../styles/inviteModalStyles';
@@ -39,6 +40,7 @@ const DrawPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const notify = useNotify();
 
   const [draw, setDraw] = useState<Draw | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -113,7 +115,7 @@ const DrawPage = () => {
       }, 2000);
     } catch (err) {
       console.error('Error starting draw:', err);
-      alert(err instanceof Error ? err.message : 'Failed to start draw');
+      notify(t('drawPage.errors.startDrawFailed'));
     }
   };
 

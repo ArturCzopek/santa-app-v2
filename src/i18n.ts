@@ -18,6 +18,9 @@ const resources = {
         currency: 'Currency',
         description: 'Description',
         drawName: 'Draw Name',
+        errors: {
+          createFailed: 'Failed to create the draw. Please try again.',
+        },
         joinButton: 'Join to Draw',
         password: 'Password',
         passwordHint:
@@ -56,6 +59,8 @@ const resources = {
           drawNotFound: "Draw not found or you don't have access to it.",
           fetchFailed: 'Failed to fetch draw details. Please try again.',
           redirecting: "You will be redirected to your draws in a few seconds.",
+          startDrawFailed:
+            'Failed to start the draw. Refresh the page and try again.',
           wishUpdateFailed: 'Failed to update your wish. Please try again.',
         },
         inviteButton: 'Invite to Draw',
@@ -181,6 +186,9 @@ const resources = {
         currency: 'Waluta',
         description: 'Opis',
         drawName: 'Nazwa Losowania',
+        errors: {
+          createFailed: 'Nie udało się utworzyć losowania. Spróbuj ponownie.',
+        },
         password: 'Hasło',
         passwordHint:
           'Zapamiętaj hasło! Musisz je podać innym osobom, aby mogły dołączyć do losowania. Nie ma opcji zmiany ani podglądnięcia hasła później.',
@@ -222,6 +230,8 @@ const resources = {
           fetchFailed:
             'Nie udało się pobrać szczegółów losowania. Spróbuj ponownie.',
           redirecting: "Za kilka sekund zostaniesz przekierowany do swoich losowań.",
+          startDrawFailed:
+            'Nie udało się przeprowadzić losowania. Odśwież stronę i spróbuj ponownie.',
           wishUpdateFailed:
             'Nie udało się zaktualizować twojego życzenia. Spróbuj ponownie.',
         },

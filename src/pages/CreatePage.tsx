@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { drawService } from '../services/DrawService';
 import { useAuth } from '../hooks/useAuth';
+import { useNotify } from '../hooks/useNotify';
 import { MIN_PASSWORD_LENGTH } from '../services/PasswordUtils';
 import {
   alertStyles,
@@ -40,6 +41,7 @@ const CreatePage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const notify = useNotify();
   const theme = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -56,10 +58,8 @@ const CreatePage = () => {
   });
 
   const onSubmit = async (data: FormData) => {
-    if (!user) {
-      alert(t('createPage.errors.notAuthenticated'));
-      return;
-    }
+    // The route is only open to signed-in users.
+    if (!user) return;
 
     setIsSubmitting(true);
     try {
@@ -71,7 +71,7 @@ const CreatePage = () => {
       }, 3000);
     } catch (error) {
       console.error('Error creating draw:', error);
-      alert(t('createPage.errors.createFailed'));
+      notify(t('createPage.errors.createFailed'));
     } finally {
       setIsSubmitting(false);
     }

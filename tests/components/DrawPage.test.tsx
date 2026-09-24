@@ -132,6 +132,25 @@ describe('DrawPage', () => {
     expect(drawingService.startDraw).not.toHaveBeenCalled();
   });
 
+  it('explains in Polish when starting the draw fails', async () => {
+    vi.mocked(drawService.isDrawPasswordValid).mockResolvedValue(true);
+    vi.mocked(drawingService.startDraw).mockRejectedValue(
+      new Error('Draw cannot be started'),
+    );
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.click(await screen.findByRole('button', { name: 'Rozpocznij Losowanie' }));
+    const dialog = await screen.findByRole('dialog');
+    await user.type(within(dialog).getByLabelText(/Hasło/), 'secret1');
+    await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
+
+    expect(
+      await screen.findByText(/Nie udało się przeprowadzić losowania/),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Draw cannot be started')).toBeNull();
+  });
+
   it('only the owner sees the start button', async () => {
     auth.user = fakeUser('alice', 'Ania Test');
     renderDrawPage();
@@ -174,6 +193,21 @@ describe('DrawPage', () => {
 
     expect(await screen.findByText(/zostało zapisane pomyślnie/)).toBeInTheDocument();
     expect(drawService.updateWish).toHaveBeenCalledWith('d1', 'owner', 'Coffee');
+    expect(wishField).toHaveValue('Coffee');
+  });
+
+  it('keeps the draft and says so when saving the wish fails', async () => {
+    vi.mocked(drawService.updateWish).mockRejectedValue(new Error('offline'));
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.click(await screen.findByRole('button', { name: 'Edytuj życzenie' }));
+    const wishField = screen.getByPlaceholderText(/Wpisz swoje życzenie/);
+    await user.clear(wishField);
+    await user.type(wishField, 'Coffee');
+    await user.click(screen.getByRole('button', { name: 'Zapisz życzenie' }));
+
+    expect(await screen.findByText(/Nie udało się zaktualizować/)).toBeInTheDocument();
     expect(wishField).toHaveValue('Coffee');
   });
 });

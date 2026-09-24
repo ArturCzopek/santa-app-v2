@@ -7,6 +7,7 @@ import { MemoryRouter, Route, Routes } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../../src/i18n';
 import theme from '../../src/styles/theme';
+import { NotifyProvider } from '../../src/hooks/useNotify';
 
 // Vitest runs without globals, so Testing Library cannot register this itself.
 afterEach(cleanup);
@@ -20,12 +21,14 @@ export const renderWithProviders = (
   render(
     <I18nextProvider i18n={i18n}>
       <ThemeProvider theme={theme}>
-        <MemoryRouter initialEntries={[route]}>
-          <Routes>
-            <Route path={path} element={ui} />
-            <Route path="/draws" element={<div>Draws list page</div>} />
-          </Routes>
-        </MemoryRouter>
+        <NotifyProvider>
+          <MemoryRouter initialEntries={[route]}>
+            <Routes>
+              <Route path={path} element={ui} />
+              <Route path="/draws" element={<div>Draws list page</div>} />
+            </Routes>
+          </MemoryRouter>
+        </NotifyProvider>
       </ThemeProvider>
     </I18nextProvider>,
   );

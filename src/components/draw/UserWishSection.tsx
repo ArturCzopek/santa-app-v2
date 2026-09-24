@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Draw, WISH_MAX_LENGTH } from '../../models/Draw';
 import { drawService } from '../../services/DrawService';
 import { useAuth } from '../../hooks/useAuth';
+import { useNotify } from '../../hooks/useNotify';
 import {
   wishSectionContainerStyles,
   wishSectionTitleStyles,
@@ -36,6 +37,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
   const { t } = useTranslation();
   const theme = useTheme();
   const { user } = useAuth();
+  const notify = useNotify();
 
   const userParticipant = draw.participants.find(
     (p) => p.userUuid === user?.uid,
@@ -84,7 +86,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
       }, 3000);
     } catch (error) {
       console.error('Error updating wish:', error);
-      alert(t('drawPage.errors.wishUpdateFailed'));
+      notify(t('drawPage.errors.wishUpdateFailed'));
     } finally {
       setIsSaving(false);
     }
