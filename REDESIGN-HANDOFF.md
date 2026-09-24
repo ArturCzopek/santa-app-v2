@@ -48,7 +48,11 @@ Lokalnie w chmurze Claude: Playwright potrzebuje `launchOptions.executablePath: 
 
 ## Do zrobienia
 
-- [ ] **R12 – zakończenie**: skill Impeccable (`/plugin marketplace add pbakaus/impeccable`,
-  potem `/impeccable critique src` i `/impeccable audit`); cel ≥ 30/40 (start: 20/40).
-  Detektor: `impeccable detect --json src`. Napisać `DESIGN.md` z gotowego systemu.
-  Usunąć ten plik, zmergować gałąź do `master` (Artur pushuje).
+- [ ] **R12 – zakończenie** (częściowo):
+  - [x] Detektor `npx impeccable detect --json src` – 0 znalezisk (2026-09-24).
+  - [x] `DESIGN.md` opisuje gotowy system (tokeny z kontrastami, typografia, klocki, ruch,
+    dostępność, język).
+  - [ ] `/impeccable critique src` i `/impeccable audit` (cel ≥ 30/40, start 20/40) – w chmurze
+    Claude nie dało się pobrać skilli (`impeccable install` → 403 przy pobieraniu paczki),
+    trzeba uruchomić lokalnie: `/plugin marketplace add pbakaus/impeccable`.
+  - [ ] Po krytyce: usunąć ten plik, zmergować gałąź do `master` (Artur pushuje).
