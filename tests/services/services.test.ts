@@ -167,6 +167,56 @@ describe('DrawService + DrawingService against the emulator', () => {
     expect(await drawService.getDrawPreviews(owner.uid)).toEqual([]);
   });
 
+  it('draws around the exclusions', async () => {
+    const owner = await signInAs('owner', 'Olga Owner');
+    const drawId = await drawService.createDraw(newDrawForm, owner);
+    const people = [owner];
+    for (const [sub, name] of [
+      ['alice', 'Ania Test'],
+      ['bob', 'Bob Test'],
+      ['celina', 'Celina Test'],
+    ]) {
+      const person = await signInAs(sub, name);
+      await drawService.joinToDraw(drawId, person, 'secret1');
+      people.push(person);
+    }
+    const [, alice, bob, celina] = people;
+
+    await signInAs('owner', 'Olga Owner');
+    await drawService.addExclusion(drawId, [alice.uid, bob.uid]);
+    await drawService.addExclusion(drawId, [owner.uid, celina.uid]);
+    await drawService.addExclusion(drawId, [celina.uid, bob.uid]);
+    await drawService.removeExclusion(drawId, [bob.uid, celina.uid]);
+    expect(await drawService.getExclusions(drawId)).toHaveLength(2);
+
+    await drawingService.startDraw(drawId, owner.uid);
+
+    const pairs: Pair[] = [];
+    for (const [sub, name, person] of [
+      ['owner', 'Olga Owner', owner],
+      ['alice', 'Ania Test', alice],
+      ['bob', 'Bob Test', bob],
+      ['celina', 'Celina Test', celina],
+    ] as const) {
+      await signInAs(sub, name);
+      const assignment = await drawingService.getMyAssignment(
+        drawId,
+        person.uid,
+      );
+      pairs.push({ fromUuid: person.uid, toUuid: assignment!.toUuid });
+    }
+    expect(
+      isValidDraw(
+        pairs,
+        people.map((p) => p.uid),
+        [
+          [alice.uid, bob.uid],
+          [owner.uid, celina.uid],
+        ],
+      ),
+    ).toBe(true);
+  });
+
   it('keeps outsiders out of participants and results', async () => {
     const owner = await signInAs('owner', 'Olga Owner');
     const drawId = await drawService.createDraw(newDrawForm, owner);

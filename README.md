@@ -156,6 +156,8 @@ tests in `tests/rules`).
 - `draws/{id}/participants/{uid}` - name and wish, readable by participants;
   users can only change their own wish, and names/photos must match their
   Google profile.
+- `draws/{id}/exclusions/{a}_{b}` - pairs who must not draw each other; only
+  the owner reads and changes them, before the draw.
 - `draws/{id}/assignments/{uid}` - who `uid` gives a gift to, readable only by
   `uid`, written once when the owner starts the draw.
 - `draws/{id}/joinKeys/{key}` - the join check; the key is

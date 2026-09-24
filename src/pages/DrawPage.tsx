@@ -18,6 +18,11 @@ import StartDrawModal from '../components/draw/StartDrawModal';
 import InviteDrawModal from '../components/draw/InviteDrawModal';
 import EditDrawModal from '../components/draw/EditDrawModal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
+import ExclusionsSection, {
+  currentExclusions,
+  EXCLUSIONS_SECTION_ID,
+} from '../components/draw/ExclusionsSection';
+import { Exclusion } from '../services/pairs';
 import DrawOptionsMenu, {
   DrawOption,
 } from '../components/draw/DrawOptionsMenu';
@@ -68,6 +73,7 @@ const DrawPage = () => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(justCreated);
   const [accessDenied, setAccessDenied] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [exclusions, setExclusions] = useState<Exclusion[]>([]);
   const [confirming, setConfirming] = useState<'delete' | 'leave' | null>(null);
 
   // A reload should not open the invite again.
@@ -94,6 +100,13 @@ const DrawPage = () => {
 
         const participants = await drawService.getParticipants(drawId);
         setDraw({ ...drawData, participants });
+        // Only the owner may read them, and they matter only before the draw.
+        if (
+          drawData.ownerUuid === user.uid &&
+          drawData.status === 'WAITING_FOR_DRAW'
+        ) {
+          setExclusions(await drawService.getExclusions(drawId));
+        }
       } catch (err) {
         console.error('Error fetching draw details:', err);
         setError(t('drawPage.errors.fetchFailed'));
@@ -156,6 +169,15 @@ const DrawPage = () => {
       );
       setConfirming(null);
     }
+  };
+
+  // From the start dialog to the exclusions, once the dialog has closed.
+  const goToExclusions = () => {
+    setTimeout(() => {
+      const section = document.getElementById(EXCLUSIONS_SECTION_ID);
+      section?.scrollIntoView({ block: 'start' });
+      section?.querySelector<HTMLElement>('[role="combobox"]')?.focus();
+    }, 300);
   };
 
   const handleStartDraw = async () => {
@@ -256,6 +278,14 @@ const DrawPage = () => {
         />
 
         <ParticipantsSection draw={draw} />
+
+        {isOwner && isWaiting && draw.participantUuids.length >= 2 && (
+          <ExclusionsSection
+            draw={draw}
+            exclusions={exclusions}
+            onChange={setExclusions}
+          />
+        )}
       </Box>
 
       {showStartButton && (
@@ -263,7 +293,9 @@ const DrawPage = () => {
           open={isStartDrawModalOpen}
           onClose={() => setIsStartDrawModalOpen(false)}
           onConfirm={handleStartDraw}
-          drawId={draw.id || ''}
+          draw={draw}
+          exclusions={currentExclusions(draw, exclusions)}
+          onEditExclusions={goToExclusions}
           withoutWish={draw.participants
             .filter((p) => !p.wish)
             .map((p) => p.userName)}

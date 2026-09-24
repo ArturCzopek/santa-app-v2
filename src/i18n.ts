@@ -104,6 +104,24 @@ const resources = {
           text: 'Leave "{{name}}"? Your letter to Santa will be deleted. You can join again with the invite link.',
           title: 'Leave the draw?',
         },
+        exclusions: {
+          add: 'Add the pair',
+          alreadyThere: 'This pair is already on the list.',
+          explanation:
+            'People in a pair will not draw each other – e.g. a couple who buy presents together anyway.',
+          first: 'Person',
+          impossibleRemoveMore:
+            'With these exclusions the draw is impossible. Remove a few pairs.',
+          impossibleRemoveOne:
+            'With these exclusions the draw is impossible. Remove one of these pairs: {{pairs}}.',
+          pickTwo: 'Pick two different people.',
+          remove: 'Remove the pair {{pair}}',
+          saveFailed: 'Could not save the exclusions. Please try again.',
+          second: 'Does not draw',
+          title: 'Exclusions ({{count}})',
+          wouldBeImpossible:
+            'With this pair the draw would be impossible – too few people are left to draw.',
+        },
         inviteButton: 'Invite to Draw',
         inviteModal: {
           copyLink: 'Copy link',
@@ -147,6 +165,10 @@ const resources = {
           you: '(you)',
         },
         startDraw: {
+          allExclusionsSet: 'Are these all the pairs who should not draw each other?',
+          editExclusions: 'Change the exclusions',
+          exclusions: 'Exclusions: {{pairs}}.',
+          noExclusions: 'No exclusions – everyone is in the hat for everyone.',
           confirmationText:
             'Are you sure you want to draw pairs? This action is irreversible.\nTo confirm the draw, enter the password created when the draw was set up.',
           drawButton: 'Draw',
@@ -381,6 +403,24 @@ const resources = {
           text: 'Opuścić „{{name}}”? Twój list do Mikołaja zostanie usunięty. Możesz wrócić przez link z zaproszeniem.',
           title: 'Opuścić losowanie?',
         },
+        exclusions: {
+          add: 'Dodaj parę',
+          alreadyThere: 'Ta para już jest na liście.',
+          explanation:
+            'Osoby w parze nie wylosują siebie nawzajem – np. małżonkowie, którzy i tak kupują sobie prezenty.',
+          first: 'Osoba',
+          impossibleRemoveMore:
+            'Przy tych wykluczeniach losowanie jest niemożliwe. Usuń kilka par.',
+          impossibleRemoveOne:
+            'Przy tych wykluczeniach losowanie jest niemożliwe. Usuń jedną z tych par: {{pairs}}.',
+          pickTwo: 'Wybierz dwie różne osoby.',
+          remove: 'Usuń parę {{pair}}',
+          saveFailed: 'Nie udało się zapisać wykluczeń. Spróbuj ponownie.',
+          second: 'Nie losuje z',
+          title: 'Wykluczenia ({{count}})',
+          wouldBeImpossible:
+            'Z tą parą losowanie byłoby niemożliwe – zostaje za mało osób do wylosowania.',
+        },
         inviteButton: 'Zaproś do losowania',
         inviteModal: {
           copyLink: 'Kopiuj link',
@@ -424,6 +464,10 @@ const resources = {
           you: '(ty)',
         },
         startDraw: {
+          allExclusionsSet: 'Czy to wszystkie pary, które nie powinny się wylosować?',
+          editExclusions: 'Zmień wykluczenia',
+          exclusions: 'Wykluczenia: {{pairs}}.',
+          noExclusions: 'Brak wykluczeń – losujemy spośród wszystkich.',
           confirmationText:
             'Czy na pewno chcesz wylosować pary? Tego nie da się cofnąć.\nAby potwierdzić, wpisz hasło ustalone przy tworzeniu losowania.',
           drawButton: 'Losuj',

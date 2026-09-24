@@ -8,6 +8,8 @@ import {
   orderBy,
   writeBatch,
   updateDoc,
+  setDoc,
+  deleteDoc,
   arrayUnion,
   arrayRemove,
   serverTimestamp,
@@ -23,6 +25,7 @@ import {
 } from '../models/Draw';
 import { User } from 'firebase/auth';
 import { PasswordUtils } from './PasswordUtils';
+import { Exclusion } from './pairs';
 import { appDataService } from './AppDataService';
 
 class DrawService {
@@ -36,6 +39,16 @@ class DrawService {
   // Nobody can read or list it; the rules check it exists when someone joins.
   private joinKeyRef(drawId: string, joinKey: string) {
     return doc(this.drawsCollection, drawId, 'joinKeys', joinKey);
+  }
+
+  private exclusionsCollection(drawId: string) {
+    return collection(this.drawsCollection, drawId, 'exclusions');
+  }
+
+  // One document per pair, with the two ids in a fixed order.
+  private exclusionRef(drawId: string, [first, second]: Exclusion) {
+    const [a, b] = [first, second].sort();
+    return doc(this.exclusionsCollection(drawId), `${a}_${b}`);
   }
 
   private inviteRef(drawId: string) {
@@ -203,13 +216,15 @@ class DrawService {
   // batch, so nothing is left behind half-deleted.
   async deleteDraw(drawId: string): Promise<void> {
     const drawRef = doc(this.drawsCollection, drawId);
-    const [participants, joinKeys] = await Promise.all([
+    const subcollections = await Promise.all([
       getDocs(this.participantsCollection(drawId)),
       getDocs(collection(drawRef, 'joinKeys')),
+      getDocs(this.exclusionsCollection(drawId)),
     ]);
     const batch = writeBatch(db);
-    participants.docs.forEach((d) => batch.delete(d.ref));
-    joinKeys.docs.forEach((d) => batch.delete(d.ref));
+    subcollections.forEach((snapshot) =>
+      snapshot.docs.forEach((d) => batch.delete(d.ref)),
+    );
     batch.delete(this.inviteRef(drawId));
     batch.delete(drawRef);
     await batch.commit();
@@ -224,6 +239,22 @@ class DrawService {
       participantUuids: arrayRemove(userId),
     });
     await batch.commit();
+  }
+
+  // Owner only.
+  async getExclusions(drawId: string): Promise<Exclusion[]> {
+    const snapshot = await getDocs(this.exclusionsCollection(drawId));
+    return snapshot.docs.map((d) => [d.data().a, d.data().b] as Exclusion);
+  }
+
+  // Owner only, before the draw.
+  async addExclusion(drawId: string, exclusion: Exclusion): Promise<void> {
+    const [a, b] = [...exclusion].sort();
+    await setDoc(this.exclusionRef(drawId, exclusion), { a, b });
+  }
+
+  async removeExclusion(drawId: string, exclusion: Exclusion): Promise<void> {
+    await deleteDoc(this.exclusionRef(drawId, exclusion));
   }
 
   // The key of the invite link, readable by participants. Draws created

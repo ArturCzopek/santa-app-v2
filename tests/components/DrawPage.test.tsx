@@ -23,6 +23,9 @@ vi.mock('../../src/services/DrawService', () => ({
     getInviteKey: vi.fn(),
     updateDrawDetails: vi.fn(),
     deleteDraw: vi.fn(),
+    getExclusions: vi.fn(),
+    addExclusion: vi.fn(),
+    removeExclusion: vi.fn(),
     leaveDraw: vi.fn(),
     renewInviteKey: vi.fn(),
     updateWish: vi.fn(),
@@ -83,6 +86,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
   vi.mocked(drawService.getInviteKey).mockResolvedValue('link-key');
+  vi.mocked(drawService.getExclusions).mockResolvedValue([]);
   auth.user = fakeUser('owner', 'Olga Owner');
   vi.mocked(drawService.getDraw).mockResolvedValue(waitingDraw);
   vi.mocked(drawService.getParticipants).mockResolvedValue([
@@ -531,5 +535,116 @@ describe('DrawPage', () => {
     renderDrawPage();
     await screen.findByText('Office party');
     expect(screen.queryByRole('button', { name: 'Więcej' })).toBeNull();
+  });
+  describe('exclusions', () => {
+    const pick = async (
+      user: ReturnType<typeof userEvent.setup>,
+      label: string,
+      name: string,
+    ) => {
+      await user.click(screen.getByRole('combobox', { name: label }));
+      await user.click(await screen.findByRole('option', { name }));
+    };
+
+    it('refuses a pair that would make the draw impossible (two people)', async () => {
+      const user = userEvent.setup();
+      renderDrawPage();
+
+      await screen.findByRole('heading', { name: 'Wykluczenia (0)' });
+      await pick(user, 'Osoba', 'Olga Owner');
+      await pick(user, 'Nie losuje z', 'Ania Test');
+      await user.click(screen.getByRole('button', { name: 'Dodaj parę' }));
+
+      expect(
+        await screen.findByText(/losowanie byłoby niemożliwe/),
+      ).toBeInTheDocument();
+      expect(drawService.addExclusion).not.toHaveBeenCalled();
+    });
+
+    it('adds and removes a pair', async () => {
+      vi.mocked(drawService.getDraw).mockResolvedValue({
+        ...waitingDraw,
+        participantUuids: ['owner', 'alice', 'bob', 'celina'],
+      });
+      vi.mocked(drawService.getParticipants).mockResolvedValue([
+        participant('owner', 'Olga Owner'),
+        participant('alice', 'Ania Test'),
+        participant('bob', 'Bartek Test'),
+        participant('celina', 'Celina Test'),
+      ]);
+      vi.mocked(drawService.addExclusion).mockResolvedValue();
+      vi.mocked(drawService.removeExclusion).mockResolvedValue();
+      const user = userEvent.setup();
+      renderDrawPage();
+
+      await screen.findByRole('heading', { name: 'Wykluczenia (0)' });
+      await pick(user, 'Osoba', 'Ania Test');
+      await pick(user, 'Nie losuje z', 'Bartek Test');
+      await user.click(screen.getByRole('button', { name: 'Dodaj parę' }));
+
+      expect(drawService.addExclusion).toHaveBeenCalledWith('d1', [
+        'alice',
+        'bob',
+      ]);
+      expect(
+        await screen.findByText('Ania Test ↔ Bartek Test'),
+      ).toBeInTheDocument();
+
+      await user.click(
+        screen.getByRole('button', {
+          name: 'Usuń parę Ania Test ↔ Bartek Test',
+        }),
+      );
+      expect(drawService.removeExclusion).toHaveBeenCalledWith('d1', [
+        'alice',
+        'bob',
+      ]);
+      expect(
+        await screen.findByRole('heading', { name: 'Wykluczenia (0)' }),
+      ).toBeInTheDocument();
+    });
+
+    it('asks before the draw whether all exclusions are set', async () => {
+      const user = userEvent.setup();
+      renderDrawPage();
+
+      await user.click(
+        await screen.findByRole('button', { name: 'Rozpocznij losowanie' }),
+      );
+      const dialog = await screen.findByRole('dialog');
+      expect(
+        within(dialog).getByText(
+          'Brak wykluczeń – losujemy spośród wszystkich.',
+        ),
+      ).toBeInTheDocument();
+      expect(
+        within(dialog).getByText(/Czy to wszystkie pary/),
+      ).toBeInTheDocument();
+      expect(
+        within(dialog).getByRole('button', { name: 'Losuj' }),
+      ).toBeEnabled();
+    });
+
+    it('blocks the draw and names the pair to remove when it is impossible', async () => {
+      // Bartek left, so Olga and Ania are alone and excluded from each other.
+      vi.mocked(drawService.getExclusions).mockResolvedValue([
+        ['alice', 'owner'],
+      ]);
+      const user = userEvent.setup();
+      renderDrawPage();
+
+      await user.click(
+        await screen.findByRole('button', { name: 'Rozpocznij losowanie' }),
+      );
+      const dialog = await screen.findByRole('dialog');
+      expect(
+        within(dialog).getByText(
+          /Usuń jedną z tych par: Ania Test ↔ Olga Owner/,
+        ),
+      ).toBeInTheDocument();
+      expect(
+        within(dialog).getByRole('button', { name: 'Losuj' }),
+      ).toBeDisabled();
+    });
   });
 });

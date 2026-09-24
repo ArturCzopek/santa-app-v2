@@ -234,6 +234,27 @@ service cloud.firestore {
         allow delete: if signedIn() && isDeletingDraw(drawId);
       }
 
+      // Pairs of participants who must not draw each other (e.g. a couple).
+      // Only the owner sees and changes them, before the draw; the id is
+      // "{a}_{b}" with a < b, so each pair exists once.
+      match /exclusions/{pairId} {
+        allow read: if signedIn()
+          && get(drawPath(drawId)).data.ownerUuid == request.auth.uid;
+
+        allow create: if signedIn()
+          && isOwnerBeforeDraw(drawId)
+          && request.resource.data.keys().hasOnly(['a', 'b'])
+          && request.resource.data.a is string
+          && request.resource.data.b is string
+          && request.resource.data.a < request.resource.data.b
+          && pairId == request.resource.data.a + '_' + request.resource.data.b
+          && request.resource.data.a in get(drawPath(drawId)).data.participantUuids
+          && request.resource.data.b in get(drawPath(drawId)).data.participantUuids;
+
+        allow delete: if signedIn()
+          && (isOwnerBeforeDraw(drawId) || isDeletingDraw(drawId));
+      }
+
       // Draw result: one document per giver, readable only by that giver.
       // Written once by the owner, in the same batch that moves the draw from
       // WAITING_FOR_DRAW to DRAWED, and never changed afterwards.

@@ -9,6 +9,7 @@ import { Assignment, Draw } from '../models/Draw';
 import { db } from './FirebaseConfig';
 import { appDataService } from './AppDataService';
 import { generatePairs } from './pairs';
+import { drawService } from './DrawService';
 
 export class DrawingService {
   private drawsCollection = collection(db, 'draws');
@@ -35,7 +36,9 @@ export class DrawingService {
       throw new Error('Draw cannot be started');
     }
 
-    const pairs = generatePairs(draw.participantUuids);
+    // Read with the owner's rights: exclusions are visible only to them.
+    const exclusions = await drawService.getExclusions(drawId);
+    const pairs = generatePairs(draw.participantUuids, exclusions);
 
     const updateData = {
       status: 'DRAWED',

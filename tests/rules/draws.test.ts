@@ -441,6 +441,61 @@ describe('draws', () => {
     });
   });
 
+  describe('exclusions', () => {
+    const pairId = [ALICE, BOB].sort().join('_');
+    const [a, b] = [ALICE, BOB].sort();
+
+    beforeEach(async () => {
+      await createDraw(authed(env, OWNER), 'd1', OWNER);
+      await joinDraw(authed(env, ALICE), 'd1', ALICE);
+      await joinDraw(authed(env, BOB), 'd1', BOB);
+    });
+
+    it('owner adds, reads and removes a pair before the draw', async () => {
+      const db = authed(env, OWNER);
+      await assertSucceeds(
+        setDoc(doc(db, `draws/d1/exclusions/${pairId}`), { a, b }),
+      );
+      await assertSucceeds(getDocs(collection(db, 'draws/d1/exclusions')));
+      await assertSucceeds(deleteDoc(doc(db, `draws/d1/exclusions/${pairId}`)));
+    });
+
+    it('participants can neither see nor change them', async () => {
+      await setDoc(doc(authed(env, OWNER), `draws/d1/exclusions/${pairId}`), {
+        a,
+        b,
+      });
+      const db = authed(env, ALICE);
+      await assertFails(getDocs(collection(db, 'draws/d1/exclusions')));
+      await assertFails(deleteDoc(doc(db, `draws/d1/exclusions/${pairId}`)));
+    });
+
+    it('a pair is two different participants under its own id', async () => {
+      const db = authed(env, OWNER);
+      await assertFails(
+        setDoc(doc(db, `draws/d1/exclusions/${b}_${a}`), { a: b, b: a }),
+      );
+      await assertFails(setDoc(doc(db, 'draws/d1/exclusions/x_y'), { a, b }));
+      await assertFails(
+        setDoc(doc(db, `draws/d1/exclusions/${a}_${MALLORY}`), {
+          a,
+          b: MALLORY,
+        }),
+      );
+    });
+
+    it('nothing changes after the draw', async () => {
+      const db = authed(env, OWNER);
+      await updateDoc(doc(db, 'draws/d1'), {
+        status: 'DRAWED',
+        drawDate: serverTimestamp(),
+      });
+      await assertFails(
+        setDoc(doc(db, `draws/d1/exclusions/${pairId}`), { a, b }),
+      );
+    });
+  });
+
   describe('invite link', () => {
     const LINK_KEY = 'b'.repeat(64);
     const NEW_LINK_KEY = 'c'.repeat(64);
