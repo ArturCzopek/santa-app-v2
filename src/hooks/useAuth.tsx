@@ -1,12 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { auth } from '../services/FirebaseConfig';
 import {
+  AuthError,
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
   User,
   signOut,
 } from 'firebase/auth';
+import { useNotify } from './useNotify';
 
 interface AuthContextValue {
   user: User | null;
@@ -18,13 +21,8 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const signInWithGoogle = async () => {
-  try {
-    await signInWithPopup(auth, new GoogleAuthProvider());
-  } catch (error) {
-    console.error('Error signing in with Google: ', error);
-  }
-};
+// Closing the Google window is the person's own choice, not an error.
+const CANCELLED = ['auth/popup-closed-by-user', 'auth/cancelled-popup-request'];
 
 const logOut = async () => {
   try {
@@ -38,6 +36,8 @@ const logOut = async () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { t } = useTranslation();
+  const notify = useNotify();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -49,6 +49,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }),
     [],
   );
+
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (error) {
+      const code = (error as AuthError).code;
+      if (CANCELLED.includes(code)) return;
+      console.error('Error signing in with Google: ', error);
+      notify(
+        t(
+          code === 'auth/popup-blocked'
+            ? 'loginPage.errors.popupBlocked'
+            : 'loginPage.errors.signInFailed',
+        ),
+      );
+    }
+  };
 
   return (
     <AuthContext.Provider value={{ user, loading, signInWithGoogle, logOut }}>

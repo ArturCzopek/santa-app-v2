@@ -114,5 +114,18 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />);
 
     expect(screen.getByRole('button', { name: /Zaloguj przez Google/ })).toBeInTheDocument();
+    expect(screen.queryByText(/otwarta w innej aplikacji/)).toBeNull();
+  });
+
+  it('tells people inside Messenger & co. to open the page in their browser', () => {
+    auth.user = null;
+    vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 [FBAN/MessengerForiOS;FBAV/470.0.0.37.109]',
+    );
+    renderWithProviders(<LoginPage />);
+
+    expect(screen.getByText(/otwarta w innej aplikacji/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Skopiuj link' })).toBeInTheDocument();
+    vi.restoreAllMocks();
   });
 });

@@ -6,6 +6,7 @@ import YouTubeEmbed from '../components/YouTubeEmbed';
 import { useTranslation } from 'react-i18next';
 import { Location, Navigate, useLocation } from 'react-router';
 import AuthPageLayout from '../components/layout/AuthPageLayout';
+import InAppBrowserNotice from '../components/InAppBrowserNotice';
 import {
   pageTitleStyles,
   loginButtonStyles,
@@ -32,6 +33,8 @@ const LoginPage = () => {
       <Box sx={youtubeContainerStyles}>
         <YouTubeEmbed videoId="z59gAXZ0ksQ" />
       </Box>
+
+      <InAppBrowserNotice />
 
       <Button
         variant="contained"

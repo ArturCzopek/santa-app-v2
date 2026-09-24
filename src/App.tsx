@@ -17,11 +17,11 @@ const App: React.FC = () => {
         <SnowfallEffect/>
         <div style={{ position: 'relative', height: '100vh' }}>
           <ErrorBoundary>
-            <AuthProvider>
-              <NotifyProvider>
+            <NotifyProvider>
+              <AuthProvider>
                 <AppRoutes />
-              </NotifyProvider>
-            </AuthProvider>
+              </AuthProvider>
+            </NotifyProvider>
           </ErrorBoundary>
         </div>
       </ThemeProvider>

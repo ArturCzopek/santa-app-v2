@@ -18,6 +18,7 @@ import { useTheme } from '@mui/material/styles';
 import MainLayout from '../components/layout/MainLayout';
 import ContentCard from '../components/common/ContentCard';
 import DrawCardBase from '../components/draw/DrawCardBase';
+import InAppBrowserNotice from '../components/InAppBrowserNotice';
 import { drawService } from '../services/DrawService';
 import { useAuth } from '../hooks/useAuth';
 import { Draw } from '../models/Draw';
@@ -134,6 +135,8 @@ const JoinToDrawPage = () => {
             <Typography variant="h5" sx={{ mb: 2, textAlign: 'center' }}>
               {t('joinPage.loginRequired')}
             </Typography>
+
+            <InAppBrowserNotice />
 
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Button

@@ -152,6 +152,18 @@ const resources = {
         viewDraw: 'View Draw',
       },
       loginPage: {
+        errors: {
+          popupBlocked:
+            'The browser blocked the sign-in window. Allow pop-ups for this page and try again.',
+          signInFailed: 'Failed to sign in. Please try again.',
+        },
+        inAppBrowser: {
+          copyFailed: 'Could not copy the link. Copy this address: {{url}}',
+          copyLink: 'Copy link',
+          linkCopied: 'Link copied. Paste it into your browser.',
+          message:
+            'This page is open inside another app (e.g. Messenger or Instagram), where Google does not allow signing in. Open it in your regular browser: tap ⋮ or ⋯ in the corner and choose "Open in browser", or copy the link and paste it there.',
+        },
         loginWithGoogle: 'Login with Google',
         title: 'Santa App 2.0',
       },
@@ -333,6 +345,18 @@ const resources = {
         viewDraw: 'Zobacz Losowanie',
       },
       loginPage: {
+        errors: {
+          popupBlocked:
+            'Przeglądarka zablokowała okno logowania. Zezwól na wyskakujące okna dla tej strony i spróbuj ponownie.',
+          signInFailed: 'Nie udało się zalogować. Spróbuj ponownie.',
+        },
+        inAppBrowser: {
+          copyFailed: 'Nie udało się skopiować linku. Skopiuj ten adres: {{url}}',
+          copyLink: 'Skopiuj link',
+          linkCopied: 'Skopiowano link. Wklej go w swojej przeglądarce.',
+          message:
+            'Ta strona jest otwarta w innej aplikacji (np. Messengerze lub Instagramie), a tam Google nie pozwala się zalogować. Otwórz ją w swojej przeglądarce: stuknij ⋮ lub ⋯ w rogu i wybierz „Otwórz w przeglądarce” albo skopiuj link i wklej go tam.',
+        },
         loginWithGoogle: 'Zaloguj przez Google',
         title: 'Santa App 2.0',
       },
