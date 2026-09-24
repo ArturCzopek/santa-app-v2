@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Card, useTheme } from '@mui/material';
 import { authContainerStyles, authCardStyles } from '../../styles/layoutStyles';
 
-
 interface AuthPageLayoutProps {
   children: React.ReactNode;
 }

@@ -52,10 +52,12 @@ const baseTheme = createTheme({
       default: tokens.spruce,
       paper: tokens.paper,
     },
+    // Text on paper; pages on the spruce ground set snow themselves.
     text: {
-      primary: 'rgba(255, 255, 255, 0.95)',
-      secondary: 'rgba(255, 255, 255, 0.85)',
+      primary: tokens.ink,
+      secondary: tokens.inkMuted,
     },
+    divider: tokens.paperLine,
   },
   shape: { borderRadius: 10 },
   typography: {
@@ -116,6 +118,42 @@ const baseTheme = createTheme({
     },
     MuiPaper: {
       styleOverrides: { root: { backgroundImage: 'none' } },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          borderRadius: 12,
+          color: tokens.ink,
+          boxShadow: '0 24px 48px -16px rgba(0, 0, 0, 0.6)',
+        },
+      },
+    },
+    MuiDialogTitle: {
+      styleOverrides: { root: { fontWeight: 800, fontSize: '1.3rem', paddingBottom: 8 } },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#FFFFFF',
+          '& .MuiOutlinedInput-notchedOutline': { borderColor: '#8C8272' },
+          '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: tokens.ink },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: tokens.ink,
+            borderWidth: 2,
+          },
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: { color: tokens.inkMuted, '&.Mui-focused': { color: tokens.ink } },
+      },
+    },
+    MuiFormHelperText: {
+      styleOverrides: { root: { fontSize: '0.875rem', marginLeft: 2 } },
+    },
+    MuiMenu: {
+      styleOverrides: { paper: { color: tokens.ink } },
     },
     MuiCard: {
       styleOverrides: {

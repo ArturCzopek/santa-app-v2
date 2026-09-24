@@ -1,104 +1,68 @@
 import React, { ReactNode } from 'react';
-import { Typography, Box, Chip, useTheme } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import ContentCard from '../common/ContentCard';
-import {
-  cardHeaderStyles,
-  cardTitleStyles,
-  descriptionStyles,
-  waitingChipStyles,
-  completedChipStyles,
-  metadataContainerStyles,
-  metadataTextStyles,
-} from '../../styles/drawCardStyles';
-import { format } from 'date-fns';
-import { pl, enUS } from 'date-fns/locale';
-import { Timestamp } from 'firebase/firestore';
+import PaperCard from '../common/PaperCard';
+import Postmark from '../common/Postmark';
 
 interface DrawCardBaseProps {
   title: string;
   description: string;
   status: 'WAITING_FOR_DRAW' | 'DRAWED';
-  cardStyles: any;
   children?: ReactNode;
   budget?: number;
   currency?: string;
-  drawDate?: Date | Timestamp | null;
-  showMetadata?: boolean;
+  airmail?: boolean;
 }
 
+// A draw on paper: its name, a status postmark, budget and description.
 const DrawCardBase: React.FC<DrawCardBaseProps> = ({
   title,
   description,
   status,
-  cardStyles,
   children,
   budget,
   currency,
-  drawDate,
-  showMetadata = false, // Default to false
+  airmail = false,
 }) => {
-  const { t, i18n } = useTranslation();
-  const theme = useTheme();
-
-  const getStatusChip = () => {
-    if (status === 'WAITING_FOR_DRAW') {
-      return (
-        <Chip
-          label={t('drawCard.waitingStatus')}
-          color="warning"
-          sx={waitingChipStyles(theme)}
-        />
-      );
-    } else {
-      return (
-        <Chip
-          label={t('drawCard.drawedStatus')}
-          color="success"
-          sx={completedChipStyles(theme)}
-        />
-      );
-    }
-  };
-
-  const formattedDrawDate = drawDate
-    ? format(
-        (drawDate as Timestamp).seconds
-          ? new Date((drawDate as Timestamp).seconds * 1000) // Convert Firestore Timestamp to Date
-          : new Date(drawDate as any), // Handle case where it might already be a Date or date string
-        'PP',
-        { locale: i18n.language === 'pl' ? pl : enUS },
-      )
-    : '-';
+  const { t } = useTranslation();
 
   return (
-    <ContentCard sx={cardStyles}>
-      <Box sx={cardHeaderStyles}>
-        <Box>
-          <Typography variant="h4" sx={cardTitleStyles(theme)}>
-            {title}
-          </Typography>
-        </Box>
-        <Box>{getStatusChip()}</Box>
+    <PaperCard airmail={airmail}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          gap: 2,
+        }}
+      >
+        <Typography variant="h2" sx={{ fontSize: '1.35rem', minWidth: 0 }}>
+          {title}
+        </Typography>
+        <Postmark
+          tone={status === 'DRAWED' ? 'done' : 'waiting'}
+          label={
+            status === 'DRAWED'
+              ? t('drawCard.drawedStatus')
+              : t('drawCard.waitingStatus')
+          }
+        />
       </Box>
 
-      {showMetadata && budget !== undefined && currency && (
-        <Box sx={metadataContainerStyles}>
-          <Typography sx={metadataTextStyles()}>
-            {t('drawCard.budget', { budget, currency })}
-          </Typography>
-          <Typography sx={metadataTextStyles()}>
-            {t('drawCard.drawDate', { drawDate: formattedDrawDate })}
-          </Typography>
-        </Box>
+      {budget !== undefined && currency && (
+        <Typography sx={{ fontWeight: 700 }}>
+          {t('drawCard.budget', { budget, currency })}
+        </Typography>
       )}
 
-      <Typography variant="body2" sx={descriptionStyles()}>
-        {description}
-      </Typography>
+      {description && (
+        <Typography variant="body2" color="text.secondary">
+          {description}
+        </Typography>
+      )}
 
       {children}
-    </ContentCard>
+    </PaperCard>
   );
 };
 

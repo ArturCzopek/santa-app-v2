@@ -34,7 +34,11 @@ import DrawPage from '../../src/pages/DrawPage';
 import { drawService } from '../../src/services/DrawService';
 import { drawingService } from '../../src/services/DrawingService';
 
-const participant = (uid: string, userName: string, wish = ''): Participant => ({
+const participant = (
+  uid: string,
+  userName: string,
+  wish = '',
+): Participant => ({
   userUuid: uid,
   userName,
   userPhotoUrl: '',
@@ -58,7 +62,10 @@ const waitingDraw: Draw = {
 };
 
 const renderDrawPage = () =>
-  renderWithProviders(<DrawPage />, { route: '/draw/d1', path: '/draw/:drawId' });
+  renderWithProviders(<DrawPage />, {
+    route: '/draw/d1',
+    path: '/draw/:drawId',
+  });
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -87,19 +94,27 @@ describe('DrawPage', () => {
       status: 'DRAWED',
       drawDate: new Date(),
     });
-    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({ toUuid: 'alice' });
+    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
     const user = userEvent.setup();
     renderDrawPage();
 
-    await user.click(await screen.findByRole('button', { name: 'Rozpocznij losowanie' }));
+    await user.click(
+      await screen.findByRole('button', { name: 'Rozpocznij losowanie' }),
+    );
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'secret1');
     await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
 
-    expect(await screen.findByText('Twój los')).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Twój wynik losowania' }),
+    ).toBeInTheDocument();
     expect(drawingService.startDraw).toHaveBeenCalledWith('d1', 'owner');
     // Regression: the page used to go blank because participants were lost.
-    await waitFor(() => expect(screen.getAllByText('Ania Test').length).toBe(2));
+    await waitFor(() =>
+      expect(screen.getAllByText('Ania Test').length).toBe(2),
+    );
     expect(screen.getByText('Socks')).toBeInTheDocument();
   });
 
@@ -109,13 +124,17 @@ describe('DrawPage', () => {
       status: 'DRAWED',
       drawDate: new Date(),
     });
-    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({ toUuid: 'alice' });
+    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
     renderDrawPage();
 
-    expect(await screen.findByText('Twój los')).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Twój wynik losowania' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Socks')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Wpisz swoje życzenie/)).toHaveValue('Mountain book');
-    expect(screen.getByRole('button', { name: 'Edytuj życzenie' })).toBeEnabled();
+    expect(screen.getByText('Mountain book')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Edytuj list' })).toBeEnabled();
   });
 
   it('does not start the draw with a wrong password', async () => {
@@ -123,12 +142,16 @@ describe('DrawPage', () => {
     const user = userEvent.setup();
     renderDrawPage();
 
-    await user.click(await screen.findByRole('button', { name: 'Rozpocznij losowanie' }));
+    await user.click(
+      await screen.findByRole('button', { name: 'Rozpocznij losowanie' }),
+    );
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'wrong-1');
     await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
 
-    expect(await within(dialog).findByText('Nieprawidłowe hasło')).toBeInTheDocument();
+    expect(
+      await within(dialog).findByText('Nieprawidłowe hasło'),
+    ).toBeInTheDocument();
     expect(drawingService.startDraw).not.toHaveBeenCalled();
   });
 
@@ -140,7 +163,9 @@ describe('DrawPage', () => {
     const user = userEvent.setup();
     renderDrawPage();
 
-    await user.click(await screen.findByRole('button', { name: 'Rozpocznij losowanie' }));
+    await user.click(
+      await screen.findByRole('button', { name: 'Rozpocznij losowanie' }),
+    );
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'secret1');
     await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
@@ -156,7 +181,9 @@ describe('DrawPage', () => {
     renderDrawPage();
 
     expect(await screen.findByText('Office party')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Rozpocznij losowanie' })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: 'Rozpocznij losowanie' }),
+    ).toBeNull();
   });
 
   it('denies access to users outside the draw', async () => {
@@ -173,27 +200,34 @@ describe('DrawPage', () => {
     const user = userEvent.setup();
     renderDrawPage();
 
-    const wishField = await screen.findByPlaceholderText(/Wpisz swoje życzenie/);
-    expect(wishField).toHaveValue('Mountain book');
-    expect(wishField).toBeDisabled();
+    expect(await screen.findByText('Mountain book')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Co chcesz dostać?')).toBeNull();
 
-    await user.click(screen.getByRole('button', { name: 'Edytuj życzenie' }));
+    await user.click(screen.getByRole('button', { name: 'Edytuj list' }));
+    let wishField = screen.getByLabelText('Co chcesz dostać?');
+    expect(wishField).toHaveValue('Mountain book');
     // Same limit as the rules, so a long wish cannot fail on save.
     expect(wishField).toHaveAttribute('maxLength', '2000');
     expect(screen.getByText('13 / 2000')).toBeInTheDocument();
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
     await user.click(screen.getByRole('button', { name: 'Anuluj' }));
-    expect(wishField).toHaveValue('Mountain book');
+    expect(screen.queryByLabelText('Co chcesz dostać?')).toBeNull();
+    expect(screen.getByText('Mountain book')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Edytuj życzenie' }));
+    await user.click(screen.getByRole('button', { name: 'Edytuj list' }));
+    wishField = screen.getByLabelText('Co chcesz dostać?');
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
-    await user.click(screen.getByRole('button', { name: 'Zapisz życzenie' }));
+    await user.click(screen.getByRole('button', { name: 'Zapisz list' }));
 
-    expect(await screen.findByText(/zostało zapisane pomyślnie/)).toBeInTheDocument();
-    expect(drawService.updateWish).toHaveBeenCalledWith('d1', 'owner', 'Coffee');
-    expect(wishField).toHaveValue('Coffee');
+    expect(await screen.findByText(/List zapisany/)).toBeInTheDocument();
+    expect(drawService.updateWish).toHaveBeenCalledWith(
+      'd1',
+      'owner',
+      'Coffee',
+    );
+    expect(screen.getByText('Coffee')).toBeInTheDocument();
   });
 
   it('keeps the draft and says so when saving the wish fails', async () => {
@@ -201,13 +235,17 @@ describe('DrawPage', () => {
     const user = userEvent.setup();
     renderDrawPage();
 
-    await user.click(await screen.findByRole('button', { name: 'Edytuj życzenie' }));
-    const wishField = screen.getByPlaceholderText(/Wpisz swoje życzenie/);
+    await user.click(
+      await screen.findByRole('button', { name: 'Edytuj list' }),
+    );
+    const wishField = screen.getByLabelText('Co chcesz dostać?');
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
-    await user.click(screen.getByRole('button', { name: 'Zapisz życzenie' }));
+    await user.click(screen.getByRole('button', { name: 'Zapisz list' }));
 
-    expect(await screen.findByText(/Nie udało się zaktualizować/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Nie udało się zaktualizować/),
+    ).toBeInTheDocument();
     expect(wishField).toHaveValue('Coffee');
   });
 });

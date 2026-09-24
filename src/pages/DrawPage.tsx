@@ -1,53 +1,53 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  CircularProgress,
-  Typography,
-  useTheme,
-  Button,
-  Snackbar,
-  Alert,
-} from '@mui/material';
-import { useParams, useNavigate } from 'react-router';
+import { Box, CircularProgress, Typography, Button } from '@mui/material';
+import { useParams, useNavigate, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowBack, PlayArrow, PersonAdd } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
-import DrawDetailCard from '../components/draw/DrawDetailCard';
+import DrawHeader from '../components/draw/DrawHeader';
 import ParticipantsSection from '../components/draw/ParticipantsSection';
 import WinnerSection from '../components/draw/WinnerSection';
 import StartDrawModal from '../components/draw/StartDrawModal';
 import InviteDrawModal from '../components/draw/InviteDrawModal';
 import { drawService } from '../services/DrawService';
 import { Draw } from '../models/Draw';
-import {
-  pageContainerStyles,
-  backButtonContainerStyles,
-  backButtonStyles,
-  loadingContainerStyles,
-  errorMessageStyles,
-  actionButtonContainerStyles,
-  drawActionButtonStyles,
-} from '../styles/drawPageStyles';
 import { useAuth } from '../hooks/useAuth';
 import { useNotify } from '../hooks/useNotify';
 import UserWishSection from '../components/draw/UserWishSection';
 import { drawingService } from '../services/DrawingService';
-import { inviteButtonStyles } from '../styles/inviteModalStyles';
+import { tokens } from '../styles/theme';
+
+const BackToDraws = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  return (
+    <Button
+      color="inherit"
+      startIcon={<ArrowBack />}
+      onClick={() => navigate('/draws')}
+      sx={{ alignSelf: 'flex-start', ml: -1.5, color: tokens.snowMuted }}
+    >
+      {t('common.backToDraws')}
+    </Button>
+  );
+};
 
 const DrawPage = () => {
   const { drawId } = useParams<{ drawId: string }>();
   const { t } = useTranslation();
-  const theme = useTheme();
   const navigate = useNavigate();
   const { user } = useAuth();
   const notify = useNotify();
+  // Set by the join page, so a new participant lands in the letter editor.
+  const justJoined = !!(useLocation().state as { justJoined?: boolean } | null)
+    ?.justJoined;
 
   const [draw, setDraw] = useState<Draw | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isStartDrawModalOpen, setIsStartDrawModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const [drawSuccess, setDrawSuccess] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
 
   useEffect(() => {
@@ -78,24 +78,10 @@ const DrawPage = () => {
     fetchDrawDetails();
   }, [drawId, t, user]);
 
-  useEffect(() => {
-    if (accessDenied && !loading) {
-      const timeout = setTimeout(() => {
-        navigate('/draws');
-      }, 3000);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [accessDenied, loading, navigate]);
-
-  const showActionButton =
-    draw &&
-    user &&
-    draw.ownerUuid === user.uid &&
-    draw.status === 'WAITING_FOR_DRAW' &&
-    draw.participantUuids.length >= 2;
-
-  const showInviteButton = draw && draw.status === 'WAITING_FOR_DRAW';
+  const isOwner = !!draw && !!user && draw.ownerUuid === user.uid;
+  const isWaiting = draw?.status === 'WAITING_FOR_DRAW';
+  const showStartButton =
+    isOwner && isWaiting && (draw?.participantUuids.length ?? 0) >= 2;
 
   const handleStartDraw = async () => {
     if (!draw || !drawId || !user) return;
@@ -108,30 +94,18 @@ const DrawPage = () => {
         drawDate: updatedDraw.drawDate,
       });
       setIsStartDrawModalOpen(false);
-      setDrawSuccess(true);
-
-      setTimeout(() => {
-        setDrawSuccess(false);
-      }, 2000);
+      notify(t('drawPage.drawSuccessMessage'), 'success');
     } catch (err) {
       console.error('Error starting draw:', err);
       notify(t('drawPage.errors.startDrawFailed'));
     }
   };
 
-  const handleDrawUpdated = (updatedDraw: Draw) => {
-    setDraw(updatedDraw);
-  };
-
-  const handleCloseDrawSuccess = () => {
-    setDrawSuccess(false);
-  };
-
   if (loading) {
     return (
-      <MainLayout title={t('drawPage.title')}>
-        <Box sx={loadingContainerStyles}>
-          <CircularProgress color="inherit" />
+      <MainLayout>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
+          <CircularProgress color="inherit" aria-label={t('common.loading')} />
         </Box>
       </MainLayout>
     );
@@ -140,106 +114,90 @@ const DrawPage = () => {
   if (error || !draw || accessDenied) {
     return (
       <MainLayout title={t('drawPage.title')}>
-        <Box sx={errorMessageStyles}>
-          <Typography color="error" variant="h6" gutterBottom>
-            {error || t('drawPage.errors.drawNotFound')}
-          </Typography>
-          {accessDenied && (
-            <Typography variant="body1">
-              {t('drawPage.errors.redirecting')}
-            </Typography>
-          )}
-          <Button
-            variant="contained"
-            startIcon={<ArrowBack />}
-            onClick={() => navigate('/draws')}
-            sx={{ mt: 2 }}
-          >
-            {t('common.backToDraws')}
-          </Button>
-        </Box>
+        <Typography variant="h2" sx={{ fontSize: '1.2rem', mb: 2 }}>
+          {error || t('drawPage.errors.drawNotFound')}
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<ArrowBack />}
+          onClick={() => navigate('/draws')}
+        >
+          {t('common.backToDraws')}
+        </Button>
       </MainLayout>
     );
   }
 
   return (
-    <MainLayout title={t('drawPage.title')}>
-      <Box sx={pageContainerStyles}>
-        <Box sx={backButtonContainerStyles}>
-          <Box sx={actionButtonContainerStyles}>
-            <Button
-              variant="contained"
-              startIcon={<ArrowBack />}
-              onClick={() => navigate('/draws')}
-              sx={backButtonStyles(theme)}
-            >
-              {t('common.backToDraws')}
-            </Button>
+    <MainLayout>
+      <Box
+        sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 4, sm: 5 } }}
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <BackToDraws />
+          <DrawHeader draw={draw} />
 
-            {showInviteButton && (
+          {isWaiting && (
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 1.5,
+                '& > *': { flex: { xs: '1 1 100%', sm: '0 0 auto' } },
+              }}
+            >
               <Button
                 variant="contained"
                 startIcon={<PersonAdd />}
                 onClick={() => setIsInviteModalOpen(true)}
-                sx={inviteButtonStyles()}
               >
                 {t('drawPage.inviteButton')}
               </Button>
-            )}
 
-            {showActionButton && (
-              <Button
-                variant="contained"
-                color="error"
-                startIcon={<PlayArrow />}
-                onClick={() => setIsStartDrawModalOpen(true)}
-                sx={drawActionButtonStyles(theme)}
-              >
-                {t('drawPage.startDrawButton')}
-              </Button>
-            )}
-          </Box>
+              {showStartButton && (
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  startIcon={<PlayArrow />}
+                  onClick={() => setIsStartDrawModalOpen(true)}
+                  sx={{ color: tokens.snow }}
+                >
+                  {t('drawPage.startDrawButton')}
+                </Button>
+              )}
+            </Box>
+          )}
         </Box>
-
-        <DrawDetailCard draw={draw} />
 
         {draw.status === 'DRAWED' && <WinnerSection draw={draw} />}
 
         {/* Still editable after the draw, so the Santa sees the latest wish. */}
-        <UserWishSection draw={draw} onDrawUpdated={handleDrawUpdated} />
-
-        <ParticipantsSection draw={draw} />
-
-        {showActionButton && (
-          <StartDrawModal
-            open={isStartDrawModalOpen}
-            onClose={() => setIsStartDrawModalOpen(false)}
-            onConfirm={handleStartDraw}
-            drawId={draw.id || ''}
-          />
-        )}
-
-        <InviteDrawModal
-          open={isInviteModalOpen}
-          onClose={() => setIsInviteModalOpen(false)}
-          drawId={draw.id || ''}
+        <UserWishSection
+          draw={draw}
+          onDrawUpdated={setDraw}
+          startEditing={justJoined && isWaiting}
         />
 
-        <Snackbar
-          open={drawSuccess}
-          autoHideDuration={2000}
-          onClose={handleCloseDrawSuccess}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        >
-          <Alert
-            onClose={handleCloseDrawSuccess}
-            severity="success"
-            sx={{ width: '100%' }}
-          >
-            {t('drawPage.drawSuccessMessage')}
-          </Alert>
-        </Snackbar>
+        <ParticipantsSection draw={draw} />
       </Box>
+
+      {showStartButton && (
+        <StartDrawModal
+          open={isStartDrawModalOpen}
+          onClose={() => setIsStartDrawModalOpen(false)}
+          onConfirm={handleStartDraw}
+          drawId={draw.id || ''}
+          withoutWish={draw.participants
+            .filter((p) => !p.wish)
+            .map((p) => p.userName)}
+        />
+      )}
+
+      <InviteDrawModal
+        open={isInviteModalOpen}
+        onClose={() => setIsInviteModalOpen(false)}
+        drawId={draw.id || ''}
+      />
     </MainLayout>
   );
 };

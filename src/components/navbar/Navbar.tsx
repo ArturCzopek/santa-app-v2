@@ -79,7 +79,10 @@ const Navbar = () => {
                 color="inherit"
                 startIcon={<FeedbackOutlined />}
                 onClick={openMessageModal}
-                sx={{ ...navButtonStyles, display: { xs: 'none', md: 'inline-flex' } }}
+                sx={{
+                  ...navButtonStyles,
+                  display: { xs: 'none', md: 'inline-flex' },
+                }}
               >
                 {t('navbar.leaveMessage')}
               </Button>

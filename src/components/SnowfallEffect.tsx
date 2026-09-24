@@ -12,7 +12,7 @@ const SnowfallEffect = () => (
       height: '100vh',
       pointerEvents: 'none',
       zIndex: 1000,
-      overflow: 'hidden'
+      overflow: 'hidden',
     }}
   />
 );

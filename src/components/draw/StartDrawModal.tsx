@@ -4,36 +4,21 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
-  TextField,
+  DialogActions,
   Button,
-  Box,
-  InputAdornment,
-  IconButton,
-  useTheme,
 } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import {
-  inputStyles,
-  inputLabelStyles,
-  errorStyles,
-} from '../../styles/formStyles';
 import { drawService } from '../../services/DrawService';
-import {
-  startDrawModalDialogStyles,
-  startDrawModalTitleStyles,
-  startDrawModalDescriptionStyles,
-  startDrawModalInputContainerStyles,
-  startDrawModalButtonContainerStyles,
-  startDrawModalCancelButtonStyles,
-  startDrawModalConfirmButtonStyles,
-} from '../../styles/startDrawModalStyles';
+import PasswordField from '../form/PasswordField';
+import { tokens } from '../../styles/theme';
 
 interface StartDrawModalProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
   drawId: string;
+  // People who have not written their letter yet.
+  withoutWish?: string[];
 }
 
 const StartDrawModal: React.FC<StartDrawModalProps> = ({
@@ -41,20 +26,16 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
   onClose,
   onConfirm,
   drawId,
+  withoutWish = [],
 }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isChecking, setIsChecking] = useState(false);
 
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleConfirm = async () => {
+  const handleConfirm = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!password) {
       setError(t('createPage.validation.passwordRequired'));
       return;
@@ -75,10 +56,8 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
   };
 
   const handleClose = () => {
-    // Reset state when closing
     setPassword('');
     setError('');
-    setShowPassword(false);
     onClose();
   };
 
@@ -88,74 +67,42 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
       onClose={handleClose}
       maxWidth="xs"
       fullWidth
-      slotProps={{
-        paper: {
-          sx: startDrawModalDialogStyles,
-        },
-      }}
+      slotProps={{ paper: { component: 'form', onSubmit: handleConfirm } }}
     >
-      <DialogTitle sx={startDrawModalTitleStyles}>
-        {t('drawPage.startDrawButton')}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText sx={startDrawModalDescriptionStyles}>
+      <DialogTitle>{t('drawPage.startDrawButton')}</DialogTitle>
+      <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <DialogContentText sx={{ color: tokens.ink }}>
           {t('drawPage.startDraw.confirmationText')}
         </DialogContentText>
 
-        <Box sx={startDrawModalInputContainerStyles}>
-          <TextField
-            label={t('createPage.password')}
-            variant="outlined"
-            fullWidth
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            error={!!error}
-            helperText={error}
-            sx={errorStyles(theme)}
-            slotProps={{
-              input: {
-                sx: inputStyles(theme),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleTogglePasswordVisibility}
-                      edge="end"
-                      sx={{ color: theme.palette.text.primary }}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
+        {withoutWish.length > 0 && (
+          <DialogContentText sx={{ color: tokens.amber, fontWeight: 700 }}>
+            {t('drawPage.startDraw.withoutWish', {
+              count: withoutWish.length,
+              names: withoutWish.join(', '),
+            })}
+          </DialogContentText>
+        )}
 
-              inputLabel: {
-                sx: inputLabelStyles(theme),
-              },
-            }}
-          />
-        </Box>
-
-        <Box sx={startDrawModalButtonContainerStyles}>
-          <Button
-            onClick={handleClose}
-            variant="outlined"
-            sx={startDrawModalCancelButtonStyles}
-          >
-            {t('common.cancel')}
-          </Button>
-          <Button
-            onClick={handleConfirm}
-            disabled={isChecking}
-            variant="contained"
-            color="error"
-            sx={startDrawModalConfirmButtonStyles}
-          >
-            {t('drawPage.startDraw.drawButton')}
-          </Button>
-        </Box>
+        <PasswordField
+          label={t('createPage.password')}
+          value={password}
+          onChange={(value) => {
+            setPassword(value);
+            setError('');
+          }}
+          error={error}
+          autoFocus
+        />
       </DialogContent>
+      <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+        <Button onClick={handleClose} sx={{ color: tokens.ink }}>
+          {t('common.cancel')}
+        </Button>
+        <Button type="submit" disabled={isChecking} variant="contained">
+          {t('drawPage.startDraw.drawButton')}
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

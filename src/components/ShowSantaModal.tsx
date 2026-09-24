@@ -3,17 +3,10 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogActions,
   Button,
-  Box,
-  useTheme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import {
-  showSantaModalDialogStyles,
-  showSantaModalTitleStyles,
-  showSantaModalButtonContainerStyles,
-  showSantaModalCloseButtonStyles,
-} from '../styles/showSantaModalStyles';
 import YouTubeEmbed from './YouTubeEmbed';
 
 const SANTA_VIDEOS = ['fGRQJ_ZKvvU', 'LPGTkkUx63M', 'z59gAXZ0ksQ'];
@@ -25,7 +18,6 @@ interface ShowSantaModalProps {
 
 const ShowSantaModal: React.FC<ShowSantaModalProps> = ({ open, onClose }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const [videoId, setVideoId] = useState<string>('');
 
   // Select a random video from the list when modal opens
@@ -34,40 +26,23 @@ const ShowSantaModal: React.FC<ShowSantaModalProps> = ({ open, onClose }) => {
     setVideoId(SANTA_VIDEOS[randomIndex]);
   };
 
-  const handleClose = () => {
-    onClose();
-  };
-
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={onClose}
       maxWidth="md"
       fullWidth
-      slotProps={{
-        transition: { onEnter: handleOpening },
-
-        paper: {
-          sx: showSantaModalDialogStyles,
-        },
-      }}
+      slotProps={{ transition: { onEnter: handleOpening } }}
     >
-      <DialogTitle sx={showSantaModalTitleStyles}>
-        {t('santaModal.title')} 🎅
-      </DialogTitle>
+      <DialogTitle>{t('santaModal.title')} 🎅</DialogTitle>
       <DialogContent>
         {videoId && <YouTubeEmbed videoId={videoId} />}
-
-        <Box sx={showSantaModalButtonContainerStyles}>
-          <Button
-            onClick={handleClose}
-            variant="outlined"
-            sx={showSantaModalCloseButtonStyles(theme)}
-          >
-            {t('common.close')}
-          </Button>
-        </Box>
       </DialogContent>
+      <DialogActions sx={{ px: 3, pb: 3 }}>
+        <Button variant="contained" onClick={onClose}>
+          {t('common.close')}
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

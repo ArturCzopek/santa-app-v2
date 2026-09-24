@@ -4,6 +4,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
+  DialogActions,
   TextField,
   Button,
   Box,
@@ -11,23 +12,12 @@ import {
   Alert,
   CircularProgress,
   AlertColor,
-  useTheme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import {
-  messageModalDialogStyles,
-  messageModalTitleStyles,
-  messageModalDescriptionStyles,
-  messageModalInputContainerStyles,
-  messageModalButtonContainerStyles,
-  messageModalCancelButtonStyles,
-  messageModalSendButtonStyles,
-  messageModalInputStyles,
-} from '../styles/messageModalStyles';
-import { inputLabelStyles, inputStyles } from '../styles/formStyles';
 import { useAuth } from '../hooks/useAuth';
 import { messageService } from '../services/MessageService';
 import { MESSAGE_MAX_LENGTH } from '../models/Message';
+import { tokens } from '../styles/theme';
 
 interface MessageModalProps {
   open: boolean;
@@ -36,7 +26,6 @@ interface MessageModalProps {
 
 const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { user } = useAuth();
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -68,7 +57,8 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
       });
   };
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!message.trim() || !user) return;
 
     // Double-check if the user can send a message today
@@ -140,77 +130,60 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
         slotProps={{
           transition: { onEnter: handleOpening },
 
-          paper: {
-            sx: messageModalDialogStyles,
-          },
+          paper: { component: 'form', onSubmit: handleSendMessage },
         }}
       >
-        <DialogTitle sx={messageModalTitleStyles}>
-          {t('navbar.leaveMessage')}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={messageModalDescriptionStyles}>
+        <DialogTitle>{t('navbar.leaveMessage')}</DialogTitle>
+        <DialogContent
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+        >
+          <DialogContentText sx={{ color: tokens.ink }}>
             {t('messages.description')}
           </DialogContentText>
 
           {isLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <CircularProgress size={24} />
             </Box>
           ) : !canSendToday ? (
-            <Alert severity="info" sx={{ mb: 2 }}>
-              {t('messages.alreadySentToday')}
-            </Alert>
+            <Alert severity="info">{t('messages.alreadySentToday')}</Alert>
           ) : null}
 
-          <Box sx={messageModalInputContainerStyles}>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="message"
-              label={t('messages.messageLabel')}
-              variant="outlined"
-              multiline
-              rows={4}
-              fullWidth
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              disabled={isSending || !canSendToday}
-              helperText={`${message.length} / ${MESSAGE_MAX_LENGTH}`}
-              sx={messageModalInputStyles(theme)}
-              slotProps={{
-                input: { sx: inputStyles(theme) },
-                inputLabel: { sx: inputLabelStyles(theme) },
-                htmlInput: { maxLength: MESSAGE_MAX_LENGTH },
-              }}
-            />
-          </Box>
-
-          <Box sx={messageModalButtonContainerStyles}>
-            <Button
-              onClick={handleClose}
-              variant="outlined"
-              disabled={isSending}
-              sx={messageModalCancelButtonStyles}
-            >
-              {t('common.cancel')}
-            </Button>
-            <Button
-              onClick={handleSendMessage}
-              variant="contained"
-              color="primary"
-              disabled={!message.trim() || isSending || !canSendToday}
-              startIcon={
-                isSending ? (
-                  <CircularProgress size={24} color="inherit" />
-                ) : null
-              }
-              sx={messageModalSendButtonStyles}
-            >
-              {t('messages.send')}
-            </Button>
-          </Box>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="message"
+            label={t('messages.messageLabel')}
+            multiline
+            rows={4}
+            fullWidth
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            disabled={isSending || !canSendToday}
+            helperText={`${message.length} / ${MESSAGE_MAX_LENGTH}`}
+            slotProps={{ htmlInput: { maxLength: MESSAGE_MAX_LENGTH } }}
+          />
         </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+          <Button
+            onClick={handleClose}
+            disabled={isSending}
+            sx={{ color: tokens.ink }}
+          >
+            {t('common.cancel')}
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={!message.trim() || isSending || !canSendToday}
+            startIcon={
+              isSending ? <CircularProgress size={24} color="inherit" /> : null
+            }
+          >
+            {t('messages.send')}
+          </Button>
+        </DialogActions>
       </Dialog>
 
       <Snackbar

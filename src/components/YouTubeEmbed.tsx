@@ -1,16 +1,21 @@
 import React from 'react';
 
-const YouTubeEmbed: React.FC<{ videoId: string }> = ({ videoId }) => (
+// Keeps 16:9 at any width instead of a fixed 315 px height.
+const YouTubeEmbed: React.FC<{ videoId: string; title?: string }> = ({
+  videoId,
+  title = 'YouTube',
+}) => (
   <iframe
-    width="100%"
-    height="315"
     style={{
+      display: 'block',
+      width: '100%',
+      aspectRatio: '16 / 9',
       border: 0,
-      margin: 0,
-      padding: 0,
+      borderRadius: 6,
     }}
     src={`https://www.youtube.com/embed/${videoId}`}
-    title="YouTube video player"
+    title={title}
+    loading="lazy"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
     allowFullScreen
   ></iframe>

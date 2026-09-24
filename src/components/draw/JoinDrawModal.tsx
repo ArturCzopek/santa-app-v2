@@ -3,47 +3,43 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogContentText,
+  DialogActions,
   TextField,
   Button,
-  Typography,
-  Box,
-  useTheme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import {
-  inputStyles,
-  inputLabelStyles,
-  errorStyles,
-} from '../../styles/formStyles';
-import {
-  joinModalDialogStyles,
-  joinModalTitleStyles,
-  joinModalContentStyles,
-  joinModalProceedButtonStyles,
-} from '../../styles/joinDrawModalStyles';
+import { tokens } from '../../styles/theme';
 
 interface JoinDrawModalProps {
   open: boolean;
   onClose: () => void;
 }
 
+// People paste the whole invite link more often than the bare code.
+export const drawIdFrom = (input: string) => {
+  const trimmed = input.trim();
+  const fromLink = trimmed.match(/\/join\/([^/?#\s]+)/);
+  return fromLink ? fromLink[1] : trimmed;
+};
+
 const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const navigate = useNavigate();
 
   const [drawCode, setDrawCode] = useState('');
   const [error, setError] = useState('');
 
-  const handleJoinDraw = () => {
-    // Basic validation
-    if (!drawCode.trim()) {
+  const handleJoinDraw = (event: React.FormEvent) => {
+    event.preventDefault();
+    const drawId = drawIdFrom(drawCode);
+    if (!drawId) {
       setError(t('drawsPage.joinModal.codeRequired'));
       return;
     }
 
-    navigate(`/join/${drawCode.trim()}`);
+    navigate(`/join/${drawId}`);
     onClose();
   };
 
@@ -59,31 +55,18 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
       onClose={handleClose}
       maxWidth="xs"
       fullWidth
-      slotProps={{
-        paper: {
-          sx: joinModalDialogStyles,
-        },
-      }}
+      slotProps={{ paper: { component: 'form', onSubmit: handleJoinDraw } }}
     >
-      <DialogTitle sx={joinModalTitleStyles}>
-        {t('drawsPage.joinButton')}
-      </DialogTitle>
-      <DialogContent sx={joinModalContentStyles}>
-        <Typography
-          variant="body2"
-          sx={{
-            color: 'rgba(255, 255, 255, 0.7)',
-            textAlign: 'center',
-            mb: 2,
-          }}
-        >
+      <DialogTitle>{t('drawsPage.joinButton')}</DialogTitle>
+      <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <DialogContentText sx={{ color: tokens.ink }}>
           {t('drawsPage.joinModal.description')}
-        </Typography>
+        </DialogContentText>
 
         <TextField
           label={t('drawsPage.joinModal.drawCodeLabel')}
-          variant="outlined"
           fullWidth
+          autoFocus
           value={drawCode}
           onChange={(e) => {
             setDrawCode(e.target.value);
@@ -91,49 +74,16 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
           }}
           error={!!error}
           helperText={error}
-          sx={errorStyles(theme)}
-          slotProps={{
-            input: {
-              sx: inputStyles(theme),
-            },
-
-            inputLabel: {
-              sx: inputLabelStyles(theme),
-            },
-          }}
         />
-
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 2,
-            mt: 2,
-          }}
-        >
-          <Button
-            onClick={handleClose}
-            variant="outlined"
-            sx={{
-              color: 'white',
-              borderColor: 'rgba(255, 255, 255, 0.5)',
-              '&:hover': {
-                borderColor: 'white',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              },
-            }}
-          >
-            {t('common.cancel')}
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleJoinDraw}
-            sx={joinModalProceedButtonStyles}
-          >
-            {t('drawsPage.joinModal.proceedButton')}
-          </Button>
-        </Box>
       </DialogContent>
+      <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+        <Button onClick={handleClose} sx={{ color: tokens.ink }}>
+          {t('common.cancel')}
+        </Button>
+        <Button type="submit" variant="contained">
+          {t('drawsPage.joinModal.proceedButton')}
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

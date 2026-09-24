@@ -1,41 +1,28 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Alert,
-  useTheme,
-} from '@mui/material';
+import { Box, Typography, TextField, Button } from '@mui/material';
+import { Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Draw, WISH_MAX_LENGTH } from '../../models/Draw';
 import { drawService } from '../../services/DrawService';
 import { useAuth } from '../../hooks/useAuth';
 import { useNotify } from '../../hooks/useNotify';
-import {
-  wishSectionContainerStyles,
-  wishSectionTitleStyles,
-  wishFormContainerStyles,
-  wishTextFieldStyles,
-  editButtonStyles,
-  saveButtonStyles,
-  cancelButtonStyles,
-  buttonsContainerStyles,
-  noWishWarningStyles,
-  successMessageStyles,
-} from '../../styles/wishSectionStyles';
+import PaperCard from '../common/PaperCard';
+import SectionHeading from './SectionHeading';
+import { handFont, tokens } from '../../styles/theme';
 
 interface UserWishSectionProps {
   draw: Draw;
   onDrawUpdated: (updatedDraw: Draw) => void;
+  // Opens the editor right away, e.g. after joining.
+  startEditing?: boolean;
 }
 
 const UserWishSection: React.FC<UserWishSectionProps> = ({
   draw,
   onDrawUpdated,
+  startEditing = false,
 }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { user } = useAuth();
   const notify = useNotify();
 
@@ -44,35 +31,28 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
   );
 
   const savedWish = userParticipant?.wish || '';
-
-  const [isEditing, setIsEditing] = useState(false);
-  // Draft edited in the text field; the saved wish comes from the draw.
-  const [wish, setWish] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [success, setSuccess] = useState(false);
-
   const hasWish = savedWish.trim() !== '';
+
+  const [isEditing, setIsEditing] = useState(startEditing);
+  // Draft edited in the text field; the saved wish comes from the draw.
+  const [wish, setWish] = useState(startEditing ? savedWish : '');
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleEditClick = () => {
     setWish(savedWish);
     setIsEditing(true);
   };
 
-  const handleCancelClick = () => {
-    setIsEditing(false);
-  };
-
-  const handleSaveClick = async () => {
+  const handleSave = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!user || !userParticipant) return;
 
     setIsSaving(true);
-    setSuccess(false);
-
     try {
       await drawService.updateWish(draw.id || '', user.uid, wish);
 
       setIsEditing(false);
-      setSuccess(true);
+      notify(t('drawPage.wishSection.saveSuccess'), 'success');
 
       onDrawUpdated({
         ...draw,
@@ -80,10 +60,6 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
           p.userUuid === user.uid ? { ...p, wish } : p,
         ),
       });
-
-      setTimeout(() => {
-        setSuccess(false);
-      }, 3000);
     } catch (error) {
       console.error('Error updating wish:', error);
       notify(t('drawPage.errors.wishUpdateFailed'));
@@ -93,62 +69,55 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
   };
 
   return (
-    <Box sx={wishSectionContainerStyles}>
-      <Typography variant="h5" sx={wishSectionTitleStyles(theme)}>
-        {t('drawPage.wishSection.title')}
-      </Typography>
+    <Box component="section">
+      <SectionHeading>{t('drawPage.wishSection.title')}</SectionHeading>
 
-      <Box sx={wishFormContainerStyles(theme)}>
-        {success && (
-          <Alert severity="success" sx={successMessageStyles(theme)}>
-            {t('drawPage.wishSection.saveSuccess')}
-          </Alert>
-        )}
+      <PaperCard onSubmit={isEditing ? handleSave : undefined}>
+        <Typography
+          sx={{ fontFamily: handFont, fontSize: '1.6rem', lineHeight: 1.1 }}
+        >
+          {t('drawPage.wishSection.salutation')}
+        </Typography>
 
-        <TextField
-          label={t('drawPage.wishSection.wishLabel')}
-          multiline
-          rows={4}
-          variant="outlined"
-          value={isEditing ? wish : savedWish}
-          onChange={(e) => setWish(e.target.value)}
-          disabled={!isEditing}
-          fullWidth
-          placeholder={t('drawPage.wishSection.wishPlaceholder')}
-          helperText={isEditing && `${wish.length} / ${WISH_MAX_LENGTH}`}
-          sx={wishTextFieldStyles(theme)}
-          slotProps={{
-            input: {
-              sx: {
-                color: theme.palette.text.primary,
-              },
-            },
-            htmlInput: { maxLength: WISH_MAX_LENGTH },
-          }}
-        />
-
-        {!hasWish && !isEditing && (
-          <Typography sx={noWishWarningStyles(theme)}>
+        {isEditing ? (
+          <TextField
+            label={t('drawPage.wishSection.wishLabel')}
+            multiline
+            minRows={4}
+            autoFocus
+            value={wish}
+            onChange={(e) => setWish(e.target.value)}
+            fullWidth
+            placeholder={t('drawPage.wishSection.wishPlaceholder')}
+            helperText={`${wish.length} / ${WISH_MAX_LENGTH}`}
+            slotProps={{ htmlInput: { maxLength: WISH_MAX_LENGTH } }}
+          />
+        ) : hasWish ? (
+          <Typography sx={{ whiteSpace: 'pre-line' }}>{savedWish}</Typography>
+        ) : (
+          <Typography sx={{ color: tokens.amber, fontWeight: 700 }}>
             {t('drawPage.wishSection.noWishWarning')}
           </Typography>
         )}
 
-        <Box sx={buttonsContainerStyles}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'flex-end',
+            gap: 1.5,
+          }}
+        >
           {isEditing ? (
             <>
               <Button
-                variant="outlined"
-                onClick={handleCancelClick}
-                sx={cancelButtonStyles(theme)}
+                variant="text"
+                onClick={() => setIsEditing(false)}
+                sx={{ color: tokens.ink }}
               >
                 {t('common.cancel')}
               </Button>
-              <Button
-                variant="contained"
-                onClick={handleSaveClick}
-                disabled={isSaving}
-                sx={saveButtonStyles(theme)}
-              >
+              <Button type="submit" variant="contained" disabled={isSaving}>
                 {isSaving
                   ? t('common.saving')
                   : t('drawPage.wishSection.saveButton')}
@@ -156,15 +125,22 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
             </>
           ) : (
             <Button
-              variant="outlined"
+              variant={hasWish ? 'outlined' : 'contained'}
+              startIcon={<Edit />}
               onClick={handleEditClick}
-              sx={editButtonStyles(theme)}
+              sx={
+                hasWish
+                  ? { color: tokens.ink, borderColor: tokens.ink }
+                  : undefined
+              }
             >
-              {t('drawPage.wishSection.editButton')}
+              {hasWish
+                ? t('drawPage.wishSection.editButton')
+                : t('drawPage.wishSection.writeButton')}
             </Button>
           )}
         </Box>
-      </Box>
+      </PaperCard>
     </Box>
   );
 };

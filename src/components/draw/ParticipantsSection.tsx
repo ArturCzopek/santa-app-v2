@@ -1,19 +1,13 @@
 import React from 'react';
-import { Box, Typography, Avatar, useTheme, Chip } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import { CheckCircle, HourglassEmpty } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Draw, Participant } from '../../models/Draw';
 import { useAuth } from '../../hooks/useAuth';
-import ContentCard from '../common/ContentCard';
-import {
-  participantsSectionContainerStyles,
-  participantsSectionTitleStyles,
-  participantRowStyles,
-  participantAvatarStyles,
-  participantInfoContainerStyles,
-  participantNameStyles,
-  participantRoleStyles,
-  currentUserHighlightStyles,
-} from '../../styles/participantsSectionStyles';
+import PaperCard from '../common/PaperCard';
+import StampAvatar from '../common/StampAvatar';
+import SectionHeading from './SectionHeading';
+import { tokens } from '../../styles/theme';
 
 interface ParticipantsSectionProps {
   draw: Draw;
@@ -21,81 +15,92 @@ interface ParticipantsSectionProps {
 
 const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { user } = useAuth();
+  // Whether someone wrote a letter matters only until the draw.
+  const showWishStatus = draw.status === 'WAITING_FOR_DRAW';
 
-  // Sort participants alphabetically by name
   const sortedParticipants = [...draw.participants].sort((a, b) =>
     a.userName.localeCompare(b.userName),
   );
 
   const renderParticipantRow = (participant: Participant) => {
     const isCurrentUser = user && participant.userUuid === user.uid;
-    const hasProvidedWish = !!participant.wish;
+    const hasWish = !!participant.wish;
 
     return (
       <Box
+        component="li"
         key={participant.userUuid}
         sx={{
-          ...participantRowStyles(theme),
-          ...(isCurrentUser ? currentUserHighlightStyles() : {}),
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.5,
+          py: 1,
+          px: 1,
+          mx: -1,
+          borderRadius: '6px',
+          backgroundColor: isCurrentUser ? tokens.paperShade : 'transparent',
         }}
       >
-        <Avatar
-          src={participant.userPhotoUrl || undefined}
-          alt={participant.userName}
-          sx={participantAvatarStyles}
-        >
-          {!participant.userPhotoUrl && participant.userName[0].toUpperCase()}
-        </Avatar>
-        <Box sx={participantInfoContainerStyles}>
-          <Typography sx={participantNameStyles(theme)}>
+        <StampAvatar
+          name={participant.userName}
+          photoUrl={participant.userPhotoUrl}
+        />
+        <Box sx={{ minWidth: 0, flexGrow: 1 }}>
+          <Typography sx={{ fontWeight: 700 }}>
             {participant.userName}
+            {isCurrentUser && (
+              <Typography component="span" color="text.secondary">
+                {' '}
+                {t('drawPage.participantsSection.you')}
+              </Typography>
+            )}
           </Typography>
-          <Typography sx={participantRoleStyles(theme)}>
+          <Typography variant="body2" color="text.secondary">
             {participant.userUuid === draw.ownerUuid
               ? t('drawPage.participantsSection.owner')
               : t('drawPage.participantsSection.participant')}
           </Typography>
         </Box>
-        <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
-          {hasProvidedWish ? (
-            <Chip
-              label={t('drawPage.participantsSection.wishProvided')}
-              color="success"
-              size="small"
-              sx={{
-                backgroundColor: theme.palette.success.main,
-                color: 'white',
-              }}
-            />
-          ) : (
-            <Chip
-              label={t('drawPage.participantsSection.noWish')}
-              color="warning"
-              size="small"
-              sx={{
-                backgroundColor: theme.palette.warning.main,
-                color: 'white',
-              }}
-            />
-          )}
-        </Box>
+        {showWishStatus && (
+          <Typography
+            variant="body2"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              flexShrink: 0,
+              fontWeight: 700,
+              color: hasWish ? tokens.pine : tokens.amber,
+            }}
+          >
+            {hasWish ? (
+              <CheckCircle fontSize="small" />
+            ) : (
+              <HourglassEmpty fontSize="small" />
+            )}
+            {hasWish
+              ? t('drawPage.participantsSection.wishProvided')
+              : t('drawPage.participantsSection.noWish')}
+          </Typography>
+        )}
       </Box>
     );
   };
 
   return (
-    <Box sx={participantsSectionContainerStyles}>
-      <Typography variant="h5" sx={participantsSectionTitleStyles(theme)}>
-        {t('drawPage.participantsSection.title')}
-      </Typography>
+    <Box component="section">
+      <SectionHeading>
+        {t('drawPage.participantsSection.title', {
+          count: draw.participants.length,
+        })}
+      </SectionHeading>
 
-      <ContentCard
-        sx={{ width: '100%', p: 3, backgroundColor: 'rgba(0, 43, 0, 0.7)' }}
-      >
-        {sortedParticipants.map(renderParticipantRow)}
-      </ContentCard>
+      <PaperCard sx={{ gap: 0, py: { xs: 1.5, sm: 2 } }}>
+        <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
+          {sortedParticipants.map(renderParticipantRow)}
+        </Box>
+      </PaperCard>
     </Box>
   );
 };

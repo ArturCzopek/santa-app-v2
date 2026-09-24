@@ -1,11 +1,7 @@
 import React, { ReactNode } from 'react';
-import { Box, Button, useTheme } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import {
-  buttonContainerStyles,
-  primaryButtonStyles,
-  secondaryButtonStyles,
-} from '../../styles/formStyles';
+import { tokens } from '../../styles/theme';
 
 interface FormActionsProps {
   primaryLabel: string;
@@ -18,6 +14,8 @@ interface FormActionsProps {
   children?: ReactNode;
 }
 
+// Main action on the right; on phones both buttons take the full width,
+// main action first.
 const FormActions: React.FC<FormActionsProps> = ({
   primaryLabel,
   onPrimaryClick,
@@ -28,18 +26,20 @@ const FormActions: React.FC<FormActionsProps> = ({
   isPrimarySubmit = true,
   children,
 }) => {
-  const theme = useTheme();
   const { t } = useTranslation();
 
   return (
-    <Box sx={buttonContainerStyles}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column-reverse', sm: 'row' },
+        justifyContent: 'flex-end',
+        gap: 1.5,
+        mt: 1,
+      }}
+    >
       {secondaryLabel && (
-        <Button
-          variant="outlined"
-          size="large"
-          onClick={onSecondaryClick}
-          sx={secondaryButtonStyles(theme)}
-        >
+        <Button onClick={onSecondaryClick} sx={{ color: tokens.ink }}>
           {secondaryLabel}
         </Button>
       )}
@@ -47,11 +47,8 @@ const FormActions: React.FC<FormActionsProps> = ({
       <Button
         type={isPrimarySubmit ? 'submit' : 'button'}
         variant="contained"
-        color="primary"
-        size="large"
         disabled={isSubmitting || isDisabled}
         onClick={isPrimarySubmit ? undefined : onPrimaryClick}
-        sx={primaryButtonStyles(theme)}
       >
         {isSubmitting ? t('common.submitting') : primaryLabel}
       </Button>

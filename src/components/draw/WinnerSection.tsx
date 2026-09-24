@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Avatar, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { Assignment, Draw } from '../../models/Draw';
 import { drawingService } from '../../services/DrawingService';
-import ContentCard from '../common/ContentCard';
-import {
-  winnerSectionContainerStyles,
-  winnerSectionTitleStyles,
-  winnerAvatarStyles,
-  winnerNameStyles,
-  winnerWishStyles,
-} from '../../styles/winnerSectionStyles';
+import PaperCard from '../common/PaperCard';
+import StampAvatar from '../common/StampAvatar';
+import SectionHeading from './SectionHeading';
+import { handFont, tokens } from '../../styles/theme';
 
 interface WinnerSectionProps {
   draw: Draw;
@@ -19,7 +15,6 @@ interface WinnerSectionProps {
 
 const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { user } = useAuth();
   const [assignment, setAssignment] = useState<Assignment | null>(null);
 
@@ -32,7 +27,6 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
       .catch((error) => console.error('Error fetching assignment:', error));
   }, [draw.id, user]);
 
-  // If no assignment found (yet), return null
   if (!assignment) return null;
 
   const winner = draw.participants.find(
@@ -42,39 +36,65 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
   if (!winner) return null;
 
   return (
-    <Box sx={winnerSectionContainerStyles}>
-      <Typography variant="h5" sx={winnerSectionTitleStyles(theme)}>
-        {t('drawPage.winnerSection.title')}
-      </Typography>
+    <Box component="section">
+      <SectionHeading>{t('drawPage.winnerSection.title')}</SectionHeading>
 
-      <ContentCard
-        sx={{ width: '100%', p: 3, backgroundColor: 'rgba(0, 43, 0, 0.7)' }}
-      >
+      <PaperCard airmail sx={{ gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
+          <StampAvatar
+            name={winner.userName}
+            photoUrl={winner.userPhotoUrl}
+            size="large"
+          />
+          <Box sx={{ minWidth: 0 }}>
+            <Typography color="text.secondary" sx={{ fontWeight: 700 }}>
+              {t('drawPage.winnerSection.youBuyFor')}
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: handFont,
+                fontWeight: 700,
+                fontSize: { xs: '2.4rem', sm: '3rem' },
+                lineHeight: 1.05,
+                color: tokens.ink,
+              }}
+            >
+              {winner.userName}
+            </Typography>
+            <Typography sx={{ fontWeight: 700, mt: 0.5 }}>
+              {t('drawPage.winnerSection.budget', {
+                budget: draw.budget,
+                currency: draw.currency,
+              })}
+            </Typography>
+          </Box>
+        </Box>
+
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
+            borderTop: `1px dashed ${tokens.paperLine}`,
+            pt: 2,
           }}
         >
-          <Avatar
-            src={winner.userPhotoUrl || undefined}
-            alt={winner.userName}
-            sx={winnerAvatarStyles}
+          <Typography
+            sx={{
+              fontFamily: handFont,
+              fontSize: '1.5rem',
+              lineHeight: 1.2,
+              mb: 0.5,
+            }}
           >
-            {!winner.userPhotoUrl && winner.userName[0].toUpperCase()}
-          </Avatar>
-
-          <Typography sx={winnerNameStyles(theme)}>
-            {winner.userName}
+            {t('drawPage.winnerSection.theirLetter', { name: winner.userName })}
           </Typography>
-
-          <Typography sx={winnerWishStyles(theme)}>
+          <Typography sx={{ whiteSpace: 'pre-line' }}>
             {winner.wish || t('drawPage.winnerSection.noWishProvided')}
           </Typography>
         </Box>
-      </ContentCard>
+
+        <Typography variant="body2" color="text.secondary">
+          {t('drawPage.winnerSection.keepSecret')}
+        </Typography>
+      </PaperCard>
     </Box>
   );
 };

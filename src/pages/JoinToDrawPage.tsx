@@ -33,7 +33,6 @@ import {
   pageContainerStyles,
   loadingContainerStyles,
   errorMessageStyles,
-  detailCardStyles,
   ownerSectionContainerStyles,
   ownerSectionTitleStyles,
   ownerAvatarStyles,
@@ -257,9 +256,7 @@ const JoinToDrawPage = () => {
           status={draw.status}
           budget={draw.budget}
           currency={draw.currency}
-          drawDate={draw.drawDate}
-          showMetadata={true}
-          cardStyles={detailCardStyles(theme)}
+          airmail
         >
           <Box sx={ownerSectionContainerStyles}>
             <Typography variant="h6" sx={ownerSectionTitleStyles(theme)}>

@@ -19,12 +19,17 @@ const InAppBrowserNotice = () => {
       notify(t('loginPage.inAppBrowser.linkCopied'), 'success');
     } catch (error) {
       console.error('Failed to copy:', error);
-      notify(t('loginPage.inAppBrowser.copyFailed', { url: window.location.href }));
+      notify(
+        t('loginPage.inAppBrowser.copyFailed', { url: window.location.href }),
+      );
     }
   };
 
   return (
-    <Alert severity="warning" sx={{ width: '100%', boxSizing: 'border-box', textAlign: 'left' }}>
+    <Alert
+      severity="warning"
+      sx={{ width: '100%', boxSizing: 'border-box', textAlign: 'left' }}
+    >
       {t('loginPage.inAppBrowser.message')}
       <Box sx={{ mt: 1 }}>
         <Button

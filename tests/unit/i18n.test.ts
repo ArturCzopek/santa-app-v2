@@ -28,6 +28,7 @@ describe('translations', () => {
   });
 
   it.each(['pl', 'en'])('has every used key in %s', (lng) => {
-    expect(usedKeys.filter((key) => !i18n.exists(key, { lng }))).toEqual([]);
+    // count: 1 also finds keys that only exist in plural forms (key_one, ...).
+    expect(usedKeys.filter((key) => !i18n.exists(key, { lng, count: 1 }))).toEqual([]);
   });
 });

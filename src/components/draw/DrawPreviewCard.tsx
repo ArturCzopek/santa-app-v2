@@ -1,71 +1,83 @@
 import React from 'react';
-import { Typography, Box, Button, useTheme } from '@mui/material';
-import { ArrowForward } from '@mui/icons-material';
-import { useNavigate } from 'react-router';
+import { Typography, Box, ButtonBase } from '@mui/material';
+import {
+  ArrowForward,
+  HourglassEmpty,
+  MarkEmailUnread,
+} from '@mui/icons-material';
+import { Link as RouterLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../hooks/useAuth';
 import DrawCardBase from './DrawCardBase';
 import { DrawPreview } from '../../models/Draw';
-import {
-  previewCardStyles,
-  participantsStyles,
-  noWishStyles,
-  resultStyles,
-  actionContainerStyles,
-  viewDetailsButtonStyles,
-} from '../../styles/drawCardStyles';
+import { tokens } from '../../styles/theme';
 
 interface DrawPreviewCardProps {
   drawPreview: DrawPreview;
 }
 
+// The whole envelope is the link to the draw.
 const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const theme = useTheme();
-
-  const isUserWishEmpty = () => {
-    if (drawPreview.status === 'WAITING_FOR_DRAW' && user) {
-      return !drawPreview.userWishProvided;
-    }
-    return false;
-  };
+  const drawn = drawPreview.status === 'DRAWED';
+  const missingWish = !drawn && !drawPreview.userWishProvided;
 
   return (
-    <DrawCardBase
-      title={drawPreview.drawName}
-      description={drawPreview.description}
-      status={drawPreview.status}
-      cardStyles={previewCardStyles(theme)}
+    <ButtonBase
+      component={RouterLink}
+      to={`/draw/${drawPreview.id}`}
+      sx={{
+        display: 'block',
+        width: '100%',
+        textAlign: 'left',
+        borderRadius: '12px',
+        transition: 'transform 160ms ease-out',
+        '&:hover': { transform: 'translateY(-2px)' },
+        '@media (prefers-reduced-motion: reduce)': {
+          transition: 'none',
+          '&:hover': { transform: 'none' },
+        },
+      }}
     >
-      <Typography sx={participantsStyles(theme)}>
-        {t('drawCard.participants', { count: drawPreview.participantsCount })}
-      </Typography>
-
-      {drawPreview.status === 'WAITING_FOR_DRAW' && isUserWishEmpty() && (
-        <Typography sx={noWishStyles(theme)}>
-          {t('drawPage.wishSection.noWishWarning')}
+      <DrawCardBase
+        title={drawPreview.drawName}
+        description={drawPreview.description}
+        status={drawPreview.status}
+        airmail={drawn}
+      >
+        <Typography color="text.secondary">
+          {t('drawCard.participants', { count: drawPreview.participantsCount })}
         </Typography>
-      )}
 
-      {drawPreview.status === 'DRAWED' && (
-        <Typography sx={resultStyles()}>
-          {t('drawCard.checkResults')}
-        </Typography>
-      )}
+        {(drawn || missingWish) && (
+          <Typography
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              fontWeight: 700,
+              color: drawn ? tokens.wax : tokens.amber,
+            }}
+          >
+            {drawn ? <MarkEmailUnread /> : <HourglassEmpty />}
+            {drawn ? t('drawCard.checkResults') : t('drawCard.noWish')}
+          </Typography>
+        )}
 
-      <Box sx={actionContainerStyles}>
-        <Button
-          variant="contained"
-          endIcon={<ArrowForward />}
-          onClick={() => navigate(`/draw/${drawPreview.id}`)}
-          sx={viewDetailsButtonStyles(theme)}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            gap: 0.5,
+            fontWeight: 700,
+            color: tokens.ink,
+          }}
         >
           {t('drawCard.viewDetails')}
-        </Button>
-      </Box>
-    </DrawCardBase>
+          <ArrowForward fontSize="small" />
+        </Box>
+      </DrawCardBase>
+    </ButtonBase>
   );
 };
 

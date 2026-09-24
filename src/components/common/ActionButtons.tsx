@@ -5,8 +5,8 @@ interface ActionButtonProps {
   icon?: React.ReactNode;
   label: string;
   onClick?: () => void;
-  color?: 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
-  customStyles?: SxProps<Theme>;
+  variant?: 'contained' | 'outlined';
+  sx?: SxProps<Theme>;
 }
 
 interface ActionButtonsProps {
@@ -15,44 +15,37 @@ interface ActionButtonsProps {
   children?: ReactNode;
 }
 
+// A row of page actions that stacks to full-width buttons on phones.
 const ActionButtons: React.FC<ActionButtonsProps> = ({
   buttons,
   containerStyles = {},
   children,
-}) => {
-  const baseButtonStyles: SxProps<Theme> = {
-    minWidth: '220px',
-    py: 1.5,
-    fontWeight: 'bold',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-  };
-
-  return (
-    <Box
-      sx={{
+}) => (
+  <Box
+    sx={[
+      {
         display: 'flex',
-        gap: 2,
-        ...containerStyles,
-      }}
-    >
-      {buttons.map((button, index) => (
-        <Button
-          key={index}
-          variant="contained"
-          color={button.color || 'primary'}
-          startIcon={button.icon}
-          onClick={button.onClick}
-          sx={{
-            ...baseButtonStyles,
-            ...(button.customStyles || {}),
-          }}
-        >
-          {button.label}
-        </Button>
-      ))}
-      {children}
-    </Box>
-  );
-};
+        flexWrap: 'wrap',
+        gap: 1.5,
+        '& > *': { flex: { xs: '1 1 100%', sm: '0 0 auto' } },
+      },
+      ...(Array.isArray(containerStyles) ? containerStyles : [containerStyles]),
+    ]}
+  >
+    {buttons.map((button) => (
+      <Button
+        key={button.label}
+        variant={button.variant ?? 'contained'}
+        color={button.variant === 'outlined' ? 'inherit' : 'primary'}
+        startIcon={button.icon}
+        onClick={button.onClick}
+        sx={button.sx}
+      >
+        {button.label}
+      </Button>
+    ))}
+    {children}
+  </Box>
+);
 
 export default ActionButtons;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, TextFieldProps, useTheme } from '@mui/material';
+import { TextField, TextFieldProps } from '@mui/material';
 import {
   Controller,
   Control,
@@ -7,11 +7,6 @@ import {
   Path,
   RegisterOptions,
 } from 'react-hook-form';
-import {
-  inputStyles,
-  inputLabelStyles,
-  errorStyles,
-} from '../../styles/formStyles';
 
 type FormTextFieldProps<T extends FieldValues, N extends Path<T>> = Omit<
   TextFieldProps,
@@ -26,35 +21,24 @@ const FormTextField = <T extends FieldValues, N extends Path<T>>({
   name,
   control,
   rules,
+  helperText,
   ...props
-}: FormTextFieldProps<T, N>) => {
-  const theme = useTheme();
-
-  return (
-    <Controller
-      name={name}
-      control={control}
-      rules={rules}
-      render={({ field, fieldState: { error } }) => (
-        <TextField
-          {...field}
-          {...props}
-          error={!!error}
-          helperText={error?.message}
-          sx={errorStyles(theme)}
-          slotProps={{
-            input: {
-              sx: inputStyles(theme),
-            },
-
-            inputLabel: {
-              sx: inputLabelStyles(theme),
-            },
-          }}
-        />
-      )}
-    />
-  );
-};
+}: FormTextFieldProps<T, N>) => (
+  <Controller
+    name={name}
+    control={control}
+    rules={rules}
+    render={({ field: { ref, ...field }, fieldState: { error } }) => (
+      <TextField
+        {...field}
+        {...props}
+        // Lets react-hook-form move focus to the first invalid field.
+        inputRef={ref}
+        error={!!error}
+        helperText={error?.message ?? helperText}
+      />
+    )}
+  />
+);
 
 export default FormTextField;

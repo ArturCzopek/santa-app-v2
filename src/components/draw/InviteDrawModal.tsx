@@ -1,31 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
+  DialogActions,
   TextField,
   Button,
-  Box,
-  Snackbar,
-  Alert,
-  IconButton,
-  useTheme,
 } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import {
-  inviteModalDialogStyles,
-  inviteModalTitleStyles,
-  inviteModalContentStyles,
-  inviteModalDescriptionStyles,
-  inviteModalDrawCodeDescriptionStyles,
-  inviteModalLinkContainerStyles,
-  inviteModalLinkInputStyles,
-  inviteModalLinkLabelStyles,
-  inviteModalCopyButtonStyles,
-  inviteModalCloseButtonStyles,
-} from '../../styles/inviteModalStyles';
+import { useNotify } from '../../hooks/useNotify';
+import { tokens } from '../../styles/theme';
 
 interface InviteDrawModalProps {
   open: boolean;
@@ -39,117 +25,54 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
   drawId,
 }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const [copied, setCopied] = useState(false);
+  const notify = useNotify();
 
   const APP_URL = import.meta.env.VITE_APP_URL;
   const inviteLink = `${APP_URL}/#/join/${drawId}`;
 
-  const handleCopyLink = () => {
-    navigator.clipboard
-      .writeText(inviteLink)
-      .then(() => {
-        setCopied(true);
-
-        // Hide copied message after 2 seconds
-        setTimeout(() => {
-          setCopied(false);
-        }, 2000);
-      })
-      .catch((err) => {
-        console.error('Failed to copy:', err);
-      });
-  };
-
-  const handleClose = () => {
-    setCopied(false);
-    onClose();
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      notify(t('drawPage.inviteModal.linkCopied'), 'success');
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      notify(t('loginPage.inAppBrowser.copyFailed', { url: inviteLink }));
+    }
   };
 
   return (
-    <>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        maxWidth="xs"
-        fullWidth
-        slotProps={{
-          paper: {
-            sx: inviteModalDialogStyles,
-          },
-        }}
-      >
-        <DialogTitle sx={inviteModalTitleStyles}>
-          {t('drawPage.inviteButton')}
-        </DialogTitle>
-        <DialogContent sx={inviteModalContentStyles}>
-          <DialogContentText sx={inviteModalDescriptionStyles}>
-            {t('drawPage.inviteModal.descriptionPart1')}{' '}
-            <Box
-              component="span"
-              sx={{
-                fontWeight: 'bold',
-                color: 'inherit',
-              }}
-            >
-              {drawId}
-            </Box>
-          </DialogContentText>
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <DialogTitle>{t('drawPage.inviteButton')}</DialogTitle>
+      <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <DialogContentText sx={{ color: tokens.ink }}>
+          {t('drawPage.inviteModal.descriptionPart1')}
+        </DialogContentText>
 
-          <DialogContentText sx={inviteModalDrawCodeDescriptionStyles(theme)}>
-            {t('drawPage.inviteModal.descriptionPart2')}
-          </DialogContentText>
+        <TextField
+          fullWidth
+          label={t('drawPage.inviteModal.linkLabel')}
+          value={inviteLink}
+          slotProps={{ input: { readOnly: true } }}
+          onFocus={(e) => e.target.select()}
+        />
 
-          <Box sx={inviteModalLinkContainerStyles}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              value={inviteLink}
-              slotProps={{
-                input: {
-                  readOnly: true,
-                  sx: inviteModalLinkInputStyles,
-                },
-
-                inputLabel: {
-                  sx: inviteModalLinkLabelStyles,
-                },
-              }}
-            />
-            <IconButton
-              onClick={handleCopyLink}
-              sx={inviteModalCopyButtonStyles}
-            >
-              <ContentCopy />
-            </IconButton>
-          </Box>
-
-          <Button
-            fullWidth
-            variant="contained"
-            onClick={handleClose}
-            sx={inviteModalCloseButtonStyles}
-          >
-            {t('common.close')}
-          </Button>
-        </DialogContent>
-      </Dialog>
-
-      <Snackbar
-        open={copied}
-        autoHideDuration={2000}
-        onClose={() => setCopied(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={() => setCopied(false)}
-          severity="success"
-          sx={{ width: '100%' }}
+        <DialogContentText sx={{ color: tokens.amber, fontWeight: 700 }}>
+          {t('drawPage.inviteModal.descriptionPart2')}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+        <Button onClick={onClose} sx={{ color: tokens.ink }}>
+          {t('common.close')}
+        </Button>
+        <Button
+          variant="contained"
+          startIcon={<ContentCopy />}
+          onClick={handleCopyLink}
         >
-          {t('drawPage.inviteModal.linkCopied')}
-        </Alert>
-      </Snackbar>
-    </>
+          {t('drawPage.inviteModal.copyLink')}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
