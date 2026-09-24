@@ -1,144 +1,198 @@
 # Santa App V2
 
-## About
+Secret Santa draws with friends, family or colleagues:
+[arturczopek.github.io/santa-app-v2](https://arturczopek.github.io/santa-app-v2)
 
-**Santa App V2** is a Christmas-themed draw and messaging app built with React, Firebase, and Material UI.
+Sign in with Google, create a draw (name, description, budget, password),
+share the invite link, let everybody write a wish, and start the draw. Each
+person sees only who they buy a gift for, together with that person's wish.
 
-- **Author**: Artur Czopek
-- **Technologies**:
-  - React 18
-  - Firebase
-  - Material UI
-  - TypeScript
+**Author:** Artur Czopek · **License:** MIT
 
-## Developer Setup
+## Tech stack
 
-### Prerequisites
+- React 19, TypeScript 6, Vite 8, MUI 9, React Router 8, i18next (Polish / English)
+- Firebase 12: Authentication (Google) and Firestore - there is no own backend
+- Tests: Vitest 4, React Testing Library, Playwright, Firebase emulators
+- Hosting: GitHub Pages, deployed by GitHub Actions
 
-1. **Install Node.js 24 LTS** (comes with npm). Java 21+ is needed for the
-   Firebase emulators (tests and local development).
+## Environments
 
-2. **Create a Firebase project**:
-   - Enable **Google Authentication**.
-   - Set up **Firestore Database**.
-   - Enable **Analytics** for logging.
+| Environment | Data | Sign-in | How to run |
+|---|---|---|---|
+| **Local** | Firebase emulators on your computer (fake project `demo-santa-app`) | Fake Google accounts | `npm run emulators` + `npm run dev:emulators` |
+| **Staging** | Your dev Firebase project | Real Google | `npm run dev:staging` |
+| **Production** | Production Firebase project | Real Google | Push to `master` (automatic deploy) |
 
-### Setup Steps
+Use local for everyday work and for trying things with many accounts; use
+staging to check real Google sign-in before it reaches production.
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/yourusername/santa-app-v2.git
-   cd santa-app-v2
-   ```
-2. Install dependencies:
+## Getting started
 
-`npm install`
-
-3. Configure Firebase:
-   Go to Firebase Console.
-   Copy your Firebase project configuration (API Key, Auth Domain, etc.).
-   Create a .env file in the root of the project and add the following:
-
-```
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
-VITE_APP_URL=http://localhost:5173 # path to your application, without '/' at the end!
-```
-
-4. Run the app: To start the development server, run:
-
-`npm run dev`
-
-### Local development without a Firebase project
-
-Requires Java (for the emulators). In two terminals:
+Requirements: [Node.js 24 LTS](https://nodejs.org) (includes npm),
+[Java 21+](https://adoptium.net) (the Firebase emulators need it) and Git.
 
 ```bash
-npm run emulators       # Auth + Firestore emulators, fake demo project
-npm run dev:emulators   # the app, connected to the emulators
+git clone https://github.com/ArturCzopek/santa-app-v2.git
+cd santa-app-v2
+npm install
+npx playwright install chromium   # only needed for the E2E tests
 ```
 
-Data is kept between runs in `.emulator-data/` (saved when the emulators
-stop with Ctrl+C). `npm run emulators:save` saves while they run,
-`npm run emulators:reset` starts from scratch. Tests always use a clean,
-separate emulator run and never touch this data.
+## Local development (emulators)
 
-`npm run emulators:seed` (with the emulators running) adds six test Google
-accounts and two draws (password `test123`): one waiting to be drawn and one
-already drawn.
+Two terminals:
 
-Sign-in opens the emulator's fake Google account picker, where the seeded
-accounts are listed and any number of new test accounts can be added. To be signed in as several people at once,
-use separate incognito windows or browser profiles.
+```bash
+npm run emulators        # terminal 1: Auth + Firestore emulators
+npm run dev:emulators    # terminal 2: the app at http://localhost:5173
+```
 
-### Staging (dev Firebase project)
+Optionally fill the database with test data (emulators must be running):
 
-For real Google sign-in without touching production: copy
-`.env.staging.example` to `.env.staging`, fill in the dev project's web app
-config and run `npm run dev:staging`. The deploy workflow keeps the dev
-project's rules and data format up to date when the
-`FIREBASE_SERVICE_ACCOUNT_DEV` secret is set.
+```bash
+npm run emulators:seed
+```
 
-### Checks and tests
+This adds six test Google accounts (Olga, Ania, Bartek, Celina, Darek, Ewa)
+and two draws with password `test123`: *Testowa Wigilia* with all six people,
+waiting to be drawn by Olga, and *Testowe Mikołajki*, already drawn.
 
-All need Java (they start the Firebase emulators).
+**Signing in:** "Zaloguj przez Google" opens the emulator's fake account
+picker. Pick a seeded account or click "Add new account" to create any number
+of new ones - no real Google account is involved. A browser window is signed
+in as one person at a time; to act as several people at once, use separate
+incognito windows or browser profiles.
+
+### The local database
+
+- Everything the app writes locally (accounts, draws, wishes, results) lives
+  only in the emulators. Nothing is sent to a real Firebase project.
+- The data is kept in the `.emulator-data/` folder in the project (ignored by
+  git). It is loaded when `npm run emulators` starts and **saved when you
+  stop the emulators with Ctrl+C** in their terminal.
+- Closing the terminal window or killing the process does **not** save -
+  changes since the last save are lost. To save without stopping, run
+  `npm run emulators:save` in another terminal.
+- `npm run emulators:reset` deletes the folder (emulators stopped), so the
+  next start is empty.
+- Tests (`npm test`, `npm run test:e2e`) start their own clean emulators and
+  never read or change this data. They use the same ports, so stop
+  `npm run emulators` before running tests.
+
+## Staging (dev Firebase project)
+
+Runs the app on your computer against the dev Firebase project, with real
+Google sign-in.
+
+One-time setup:
+
+1. Copy `.env.staging.example` to `.env.staging` (ignored by git).
+2. Fill it with the dev project's web app config: Firebase console ->
+   dev project -> Project settings -> General -> Your apps -> Config.
+
+Then:
+
+```bash
+npm run dev:staging      # the app at http://localhost:5173, using the dev project
+```
+
+The dev project's Firestore rules, indexes and data format are updated by
+the deploy workflow on every push to `master`, before production (see
+Deployment). Anything you do in staging uses real accounts and real data of
+the dev project - not production.
+
+## Checks and tests
 
 ```bash
 npm run lint
 npm run typecheck
-npm test           # rules, services, components, unit, migration
-npm run test:e2e   # Playwright; first time: npx playwright install chromium
+npm test            # Firestore rules, services, components, unit, migration (emulators)
+npm run test:e2e    # Playwright end-to-end tests in real browsers (emulators)
 ```
 
-CI (`.github/workflows/ci.yml`) runs all of them on pull requests and
-branches.
+CI (`.github/workflows/ci.yml`) runs all of them on pull requests and on
+pushes to branches other than `master`.
 
 ## Deployment
 
-Pushing to `master` deploys automatically (`.github/workflows/deploy.yml`):
-all checks, then migration of old draws (no-op once done), Firestore rules
-and indexes, and the app on GitHub Pages. It can also be started by hand
-from the Actions tab, optionally with a release tag.
+Every push to `master` runs `.github/workflows/deploy.yml`:
 
-Required repository secrets: the `VITE_FIREBASE_*` / `VITE_APP_URL` values
-and `FIREBASE_SERVICE_ACCOUNT` - a service account key JSON (Firebase console
--> Project settings -> Service accounts -> Generate new private key). The
-account needs the "Firebase Admin" and "Service Usage Consumer" roles in
-Google Cloud IAM to deploy rules. Optional `FIREBASE_SERVICE_ACCOUNT_DEV`
-(same, for the dev project) enables staging, deployed before production.
+1. All checks and tests (the CI workflow).
+2. **Staging** (only when `FIREBASE_SERVICE_ACCOUNT_DEV` is set): migrate old
+   draws and deploy Firestore rules and indexes to the dev project.
+3. **Production:** migrate old draws, deploy Firestore rules and indexes,
+   build the app and publish it to GitHub Pages.
+
+If a step fails, the following steps do not run, so production is only
+touched when the tests and staging passed. The workflow can also be started
+by hand in the Actions tab, optionally creating a release tag.
+
+Repository secrets (Settings -> Secrets and variables -> Actions):
+
+| Secret | Purpose |
+|---|---|
+| `VITE_FIREBASE_*`, `VITE_APP_URL` | Production web app config, built into the app |
+| `FIREBASE_SERVICE_ACCOUNT` | Service account key JSON of the production project |
+| `FIREBASE_SERVICE_ACCOUNT_DEV` | Service account key JSON of the dev project (enables staging) |
+
+A key comes from Firebase console -> Project settings -> Service accounts ->
+Generate new private key. The `firebase-adminsdk-...` account it belongs to
+needs the **Firebase Admin** and **Service Usage Consumer** roles
+(Google Cloud console -> IAM) to deploy rules; new roles can take a few
+minutes to start working. Delete the downloaded key file after adding it as a
+secret and never commit it.
 
 ## Security model
 
 There is no backend: the browser talks to Firestore directly and
-[`firestore.rules`](firestore.rules) is what protects the data.
+[`firestore.rules`](firestore.rules) is what protects the data (covered by
+tests in `tests/rules`).
 
 - `draws/{id}` - public draw info only (anyone signed in who knows the id).
-- `draws/{id}/participants/{uid}` - name and wish, readable by participants,
-  only the user can change their own wish.
+- `draws/{id}/participants/{uid}` - name and wish, readable by participants;
+  users can only change their own wish, and names/photos must match their
+  Google profile.
 - `draws/{id}/assignments/{uid}` - who `uid` gives a gift to, readable only by
   `uid`, written once when the owner starts the draw.
 - `draws/{id}/joinKeys/{key}` - the password check; the key is
-  `sha256(drawId + ":" + sha256(password))`, never readable by others.
+  `sha256(drawId + ":" + sha256(password))` and is never readable by others.
+- `appData/stats`, `messages` - counters that only grow together with real
+  draws, and at most one message per user per day.
 
-Rules and indexes are deployed by the deploy workflow. To do it by hand:
+Known trade-off: the owner's browser shuffles the pairs, so a determined
+owner could look at the result in the browser's developer tools. Other
+participants cannot.
+
+## Maintenance
+
+Deploy rules by hand (normally the workflow does it):
 
 ```bash
 npx firebase login
-npx firebase use --add
-npm run deploy:rules
+npx firebase deploy --only firestore --project <project-id>
 ```
 
-### Migrating draws created before the security update
-
-The deploy workflow runs this on every deploy. By hand (dry run unless
-`--apply`; never commit the key):
+Migrate draws created before the security update by hand (the workflow runs
+this on every deploy; dry run unless `--apply`):
 
 ```bash
 node scripts/migrate.mjs path/to/service-account-key.json
 node scripts/migrate.mjs path/to/service-account-key.json --apply
 ```
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run emulators` | Start local Auth + Firestore emulators (data kept in `.emulator-data/`) |
+| `npm run emulators:seed` | Add test accounts and draws to the running emulators |
+| `npm run emulators:save` | Save emulator data without stopping |
+| `npm run emulators:reset` | Delete saved emulator data |
+| `npm run dev:emulators` | Run the app against the local emulators |
+| `npm run dev:staging` | Run the app against the dev Firebase project (`.env.staging`) |
+| `npm run build` | Production build into `build/` |
+| `npm run lint` / `npm run typecheck` | ESLint / TypeScript checks |
+| `npm test` | Rules, services, components, unit and migration tests |
+| `npm run test:e2e` | Playwright end-to-end tests |
+| `npm run deploy:rules` | Deploy Firestore rules/indexes to the project selected with `firebase use` |
