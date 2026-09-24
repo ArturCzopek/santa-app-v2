@@ -10,6 +10,7 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  AlertColor,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,7 +22,6 @@ import {
   messageModalCancelButtonStyles,
   messageModalSendButtonStyles,
 } from '../styles/messageModalStyles';
-import { AlertColor } from '@mui/material/Alert/Alert';
 import { useAuth } from '../hooks/useAuth';
 import { messageService } from '../services/MessageService';
 
@@ -130,11 +130,14 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
       <Dialog
         open={open}
         onClose={handleClose}
-        TransitionProps={{ onEnter: handleOpening }}
         maxWidth="xs"
         fullWidth
-        PaperProps={{
-          sx: messageModalDialogStyles,
+        slotProps={{
+          transition: { onEnter: handleOpening },
+
+          paper: {
+            sx: messageModalDialogStyles,
+          },
         }}
       >
         <DialogTitle sx={messageModalTitleStyles}>
@@ -146,7 +149,7 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
           </DialogContentText>
 
           {isLoading ? (
-            <Box display="flex" justifyContent="center" my={2}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
               <CircularProgress size={24} />
             </Box>
           ) : !canSendToday ? (

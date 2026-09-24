@@ -76,11 +76,16 @@ const theme = createTheme({
           borderRadius: 8,
           padding: '8px 16px',
           boxShadow: '0 3px 5px rgba(0,0,0,0.2)',
-        },
-        containedPrimary: {
-          '&:hover': {
-            backgroundColor: customColors.darkRed,
-          },
+          variants: [
+            {
+              props: { variant: 'contained', color: 'primary' },
+              style: {
+                '&:hover': {
+                  backgroundColor: customColors.darkRed,
+                },
+              },
+            },
+          ],
         },
       },
     },

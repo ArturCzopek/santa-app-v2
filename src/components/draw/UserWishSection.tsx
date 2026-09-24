@@ -114,9 +114,11 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
           fullWidth
           placeholder={t('drawPage.wishSection.wishPlaceholder')}
           sx={wishTextFieldStyles(theme)}
-          InputProps={{
-            sx: {
-              color: theme.palette.text.primary,
+          slotProps={{
+            input: {
+              sx: {
+                color: theme.palette.text.primary,
+              },
             },
           }}
         />

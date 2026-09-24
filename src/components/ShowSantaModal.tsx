@@ -42,11 +42,14 @@ const ShowSantaModal: React.FC<ShowSantaModalProps> = ({ open, onClose }) => {
     <Dialog
       open={open}
       onClose={handleClose}
-      TransitionProps={{ onEnter: handleOpening }}
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        sx: showSantaModalDialogStyles,
+      slotProps={{
+        transition: { onEnter: handleOpening },
+
+        paper: {
+          sx: showSantaModalDialogStyles,
+        },
       }}
     >
       <DialogTitle sx={showSantaModalTitleStyles}>

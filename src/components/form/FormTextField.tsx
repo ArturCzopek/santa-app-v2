@@ -41,13 +41,16 @@ const FormTextField = <T extends FieldValues, N extends Path<T>>({
           {...props}
           error={!!error}
           helperText={error?.message}
-          InputProps={{
-            sx: inputStyles(theme),
-          }}
-          InputLabelProps={{
-            sx: inputLabelStyles(theme),
-          }}
           sx={errorStyles(theme)}
+          slotProps={{
+            input: {
+              sx: inputStyles(theme),
+            },
+
+            inputLabel: {
+              sx: inputLabelStyles(theme),
+            },
+          }}
         />
       )}
     />

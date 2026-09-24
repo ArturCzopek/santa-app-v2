@@ -88,8 +88,10 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
       onClose={handleClose}
       maxWidth="xs"
       fullWidth
-      PaperProps={{
-        sx: startDrawModalDialogStyles,
+      slotProps={{
+        paper: {
+          sx: startDrawModalDialogStyles,
+        },
       }}
     >
       <DialogTitle sx={startDrawModalTitleStyles}>
@@ -110,25 +112,28 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
             onChange={(e) => setPassword(e.target.value)}
             error={!!error}
             helperText={error}
-            InputProps={{
-              sx: inputStyles(theme),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleTogglePasswordVisibility}
-                    edge="end"
-                    sx={{ color: theme.palette.text.primary }}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            InputLabelProps={{
-              sx: inputLabelStyles(theme),
-            }}
             sx={errorStyles(theme)}
+            slotProps={{
+              input: {
+                sx: inputStyles(theme),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleTogglePasswordVisibility}
+                      edge="end"
+                      sx={{ color: theme.palette.text.primary }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+
+              inputLabel: {
+                sx: inputLabelStyles(theme),
+              },
+            }}
           />
         </Box>
 

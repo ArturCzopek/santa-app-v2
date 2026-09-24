@@ -59,8 +59,10 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
       onClose={handleClose}
       maxWidth="xs"
       fullWidth
-      PaperProps={{
-        sx: joinModalDialogStyles,
+      slotProps={{
+        paper: {
+          sx: joinModalDialogStyles,
+        },
       }}
     >
       <DialogTitle sx={joinModalTitleStyles}>
@@ -89,13 +91,16 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
           }}
           error={!!error}
           helperText={error}
-          InputProps={{
-            sx: inputStyles(theme),
-          }}
-          InputLabelProps={{
-            sx: inputLabelStyles(theme),
-          }}
           sx={errorStyles(theme)}
+          slotProps={{
+            input: {
+              sx: inputStyles(theme),
+            },
+
+            inputLabel: {
+              sx: inputLabelStyles(theme),
+            },
+          }}
         />
 
         <Box

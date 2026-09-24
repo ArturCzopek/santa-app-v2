@@ -73,8 +73,10 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
         onClose={handleClose}
         maxWidth="xs"
         fullWidth
-        PaperProps={{
-          sx: inviteModalDialogStyles,
+        slotProps={{
+          paper: {
+            sx: inviteModalDialogStyles,
+          },
         }}
       >
         <DialogTitle sx={inviteModalTitleStyles}>
@@ -103,12 +105,15 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
               fullWidth
               variant="outlined"
               value={inviteLink}
-              InputProps={{
-                readOnly: true,
-                sx: inviteModalLinkInputStyles,
-              }}
-              InputLabelProps={{
-                sx: inviteModalLinkLabelStyles,
+              slotProps={{
+                input: {
+                  readOnly: true,
+                  sx: inviteModalLinkInputStyles,
+                },
+
+                inputLabel: {
+                  sx: inviteModalLinkLabelStyles,
+                },
               }}
             />
             <IconButton
