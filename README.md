@@ -150,6 +150,9 @@ There is no backend: the browser talks to Firestore directly and
 tests in `tests/rules`).
 
 - `draws/{id}` - public draw info only (anyone signed in who knows the id).
+  Before the draw the owner may edit its details or delete it with everything
+  under it, and participants other than the owner may leave; after the draw
+  it does not change.
 - `draws/{id}/participants/{uid}` - name and wish, readable by participants;
   users can only change their own wish, and names/photos must match their
   Google profile.

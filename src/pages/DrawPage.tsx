@@ -4,7 +4,9 @@ import { useParams, useNavigate, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowBack,
+  DeleteOutlined,
   EditOutlined,
+  Logout,
   PlayArrow,
   PersonAdd,
 } from '@mui/icons-material';
@@ -15,6 +17,7 @@ import WinnerSection from '../components/draw/WinnerSection';
 import StartDrawModal from '../components/draw/StartDrawModal';
 import InviteDrawModal from '../components/draw/InviteDrawModal';
 import EditDrawModal from '../components/draw/EditDrawModal';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 import DrawOptionsMenu, {
   DrawOption,
 } from '../components/draw/DrawOptionsMenu';
@@ -65,6 +68,7 @@ const DrawPage = () => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(justCreated);
   const [accessDenied, setAccessDenied] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [confirming, setConfirming] = useState<'delete' | 'leave' | null>(null);
 
   // A reload should not open the invite again.
   useEffect(() => {
@@ -106,16 +110,53 @@ const DrawPage = () => {
   const showStartButton =
     isOwner && isWaiting && (draw?.participantUuids.length ?? 0) >= 2;
 
-  const options: DrawOption[] =
-    isOwner && isWaiting
+  // After the draw everyone needs their result, so the draw stays as it is.
+  const options: DrawOption[] = !isWaiting
+    ? []
+    : isOwner
       ? [
           {
             label: t('drawPage.options.edit'),
             icon: <EditOutlined fontSize="small" />,
             onClick: () => setIsEditModalOpen(true),
           },
+          {
+            label: t('drawPage.options.delete'),
+            icon: <DeleteOutlined fontSize="small" />,
+            onClick: () => setConfirming('delete'),
+            danger: true,
+          },
         ]
-      : [];
+      : [
+          {
+            label: t('drawPage.options.leave'),
+            icon: <Logout fontSize="small" />,
+            onClick: () => setConfirming('leave'),
+            danger: true,
+          },
+        ];
+
+  const handleDeleteOrLeave = async () => {
+    if (!draw?.id || !user) return;
+    try {
+      if (confirming === 'delete') {
+        await drawService.deleteDraw(draw.id);
+        notify(t('drawPage.delete.done'), 'success');
+      } else {
+        await drawService.leaveDraw(draw.id, user.uid);
+        notify(t('drawPage.leave.done'), 'success');
+      }
+      navigate('/draws', { replace: true });
+    } catch (err) {
+      console.error('Error deleting or leaving the draw:', err);
+      notify(
+        confirming === 'delete'
+          ? t('drawPage.delete.failed')
+          : t('drawPage.leave.failed'),
+      );
+      setConfirming(null);
+    }
+  };
 
   const handleStartDraw = async () => {
     if (!draw || !drawId || !user) return;
@@ -237,6 +278,27 @@ const DrawPage = () => {
           onSaved={(details) => setDraw({ ...draw, ...details })}
         />
       )}
+
+      <ConfirmDialog
+        open={!!confirming}
+        title={
+          confirming === 'delete'
+            ? t('drawPage.delete.title')
+            : t('drawPage.leave.title')
+        }
+        text={
+          confirming === 'delete'
+            ? t('drawPage.delete.text', { name: draw.drawName })
+            : t('drawPage.leave.text', { name: draw.drawName })
+        }
+        confirmLabel={
+          confirming === 'delete'
+            ? t('drawPage.delete.confirm')
+            : t('drawPage.leave.confirm')
+        }
+        onClose={() => setConfirming(null)}
+        onConfirm={handleDeleteOrLeave}
+      />
 
       <InviteDrawModal
         open={isInviteModalOpen && isWaiting}

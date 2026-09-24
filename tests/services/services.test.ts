@@ -148,6 +148,25 @@ describe('DrawService + DrawingService against the emulator', () => {
     await drawService.joinToDraw(drawId, bob, secondKey);
   });
 
+  it('lets a participant leave and the owner delete the draw', async () => {
+    const owner = await signInAs('owner', 'Olga Owner');
+    const drawId = await drawService.createDraw(newDrawForm, owner);
+    const alice = await signInAs('alice', 'Ania Test');
+    await drawService.joinToDraw(drawId, alice, 'secret1');
+    await drawService.updateWish(drawId, alice.uid, 'Socks');
+
+    await drawService.leaveDraw(drawId, alice.uid);
+    expect(await drawService.getDrawPreviews(alice.uid)).toEqual([]);
+
+    await signInAs('owner', 'Olga Owner');
+    expect((await drawService.getDraw(drawId)).participantUuids).toEqual([
+      owner.uid,
+    ]);
+    await drawService.deleteDraw(drawId);
+    await expect(drawService.getDraw(drawId)).rejects.toThrow('Draw not found');
+    expect(await drawService.getDrawPreviews(owner.uid)).toEqual([]);
+  });
+
   it('keeps outsiders out of participants and results', async () => {
     const owner = await signInAs('owner', 'Olga Owner');
     const drawId = await drawService.createDraw(newDrawForm, owner);

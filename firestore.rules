@@ -30,6 +30,14 @@ service cloud.firestore {
           && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW');
     }
 
+    // The owner deletes the whole draw (before the draw) in this batch; the
+    // subcollections go in the same batch as the draw document.
+    function isDeletingDraw(drawId) {
+      return get(drawPath(drawId)).data.ownerUuid == request.auth.uid
+        && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
+        && !existsAfter(drawPath(drawId));
+    }
+
     function participantPath(drawId, uid) {
       return /databases/$(database)/documents/draws/$(drawId)/participants/$(uid);
     }
@@ -109,6 +117,17 @@ service cloud.firestore {
         && existsAfter(participantPath(drawId, request.auth.uid));
     }
 
+    // A participant (not the owner) takes themselves out before the draw,
+    // together with their participant document.
+    function isLeaving(drawId) {
+      return resource.data.status == 'WAITING_FOR_DRAW'
+        && request.auth.uid in resource.data.participantUuids
+        && request.auth.uid != resource.data.ownerUuid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantUuids'])
+        && request.resource.data.participantUuids == resource.data.participantUuids.removeAll([request.auth.uid])
+        && !existsAfter(participantPath(drawId, request.auth.uid));
+    }
+
     function isValidNewParticipant(uid) {
       let p = request.resource.data;
       return p.keys().hasOnly(['userName', 'userUuid', 'userPhotoUrl', 'entryDate', 'wish', 'joinKey'])
@@ -126,7 +145,11 @@ service cloud.firestore {
       allow list: if signedIn() && request.auth.uid in resource.data.participantUuids;
       allow create: if signedIn() && isValidNewDraw(drawId);
       allow update: if signedIn()
-        && (isStartingDraw() || isJoining(drawId) || isEditingDetails());
+        && (isStartingDraw() || isJoining(drawId) || isEditingDetails()
+          || isLeaving(drawId));
+      allow delete: if signedIn()
+        && resource.data.ownerUuid == request.auth.uid
+        && resource.data.status == 'WAITING_FOR_DRAW';
 
       match /participants/{uid} {
         allow read: if signedIn()
@@ -154,15 +177,23 @@ service cloud.firestore {
           && request.auth.uid == uid
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['wish'])
           && isString(request.resource.data.wish, 2000);
+
+        // Leaving the draw, or the owner deleting it.
+        allow delete: if signedIn()
+          && (isDeletingDraw(drawId)
+            || (request.auth.uid == uid
+              && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
+              && uid != get(drawPath(drawId)).data.ownerUuid
+              && !(uid in getAfter(drawPath(drawId)).data.participantUuids)));
       }
 
       // Join check: the document id is the hash of a secret that lets people
       // in - the password, or the key carried by the invite link. The
       // password one is created together with the draw, the link one with
-      // the invite document. Only the owner may probe them (to confirm
-      // starting the draw) and nobody may list them.
+      // the invite document. Only the owner may read them: to confirm
+      // starting the draw, and to find them all when deleting the draw.
       match /joinKeys/{joinKey} {
-        allow get: if signedIn()
+        allow read: if signedIn()
           && get(drawPath(drawId)).data.ownerUuid == request.auth.uid;
 
         allow create: if signedIn()
@@ -177,9 +208,10 @@ service cloud.firestore {
 
         // A new invite link retires the key of the old one.
         allow delete: if signedIn()
-          && isOwnerBeforeDraw(drawId)
-          && get(invitePath(drawId)).data.joinKey == joinKey
-          && getAfter(invitePath(drawId)).data.joinKey != joinKey;
+          && (isDeletingDraw(drawId)
+            || (isOwnerBeforeDraw(drawId)
+              && get(invitePath(drawId)).data.joinKey == joinKey
+              && getAfter(invitePath(drawId)).data.joinKey != joinKey));
       }
 
       // The invite link's key, in readable form so that participants can
@@ -198,6 +230,8 @@ service cloud.firestore {
           && request.resource.data.joinKey.matches('^[0-9a-f]{64}$')
           && request.resource.data.createdDate == request.time
           && existsAfter(joinKeyPath(drawId, request.resource.data.joinKey));
+
+        allow delete: if signedIn() && isDeletingDraw(drawId);
       }
 
       // Draw result: one document per giver, readable only by that giver.

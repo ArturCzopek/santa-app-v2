@@ -1,10 +1,11 @@
-import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   assertFails,
   assertSucceeds,
   RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
 import {
+  arrayRemove,
   arrayUnion,
   collection,
   deleteDoc,
@@ -295,9 +296,12 @@ describe('draws', () => {
       );
     });
 
-    it('nobody can list keys or add one later', async () => {
-      await assertFails(
+    it('only the owner can list keys, and nobody can add one later', async () => {
+      await assertSucceeds(
         getDocs(collection(authed(env, OWNER), 'draws/d1/joinKeys')),
+      );
+      await assertFails(
+        getDocs(collection(authed(env, ALICE), 'draws/d1/joinKeys')),
       );
       await assertFails(
         setDoc(doc(authed(env, MALLORY), 'draws/d1/joinKeys/my-key'), {
@@ -368,6 +372,72 @@ describe('draws', () => {
       await assertFails(
         updateDoc(doc(db, 'draws/d1'), { ...changes, eventDate: '24.12' }),
       );
+    });
+  });
+
+  describe('delete and leave', () => {
+    beforeEach(async () => {
+      await createDraw(authed(env, OWNER), 'd1', OWNER);
+      await joinDraw(authed(env, ALICE), 'd1', ALICE);
+    });
+
+    const deleteAll = (db: ReturnType<typeof authed>) => {
+      const batch = writeBatch(db);
+      batch.delete(doc(db, `draws/d1/participants/${OWNER}`));
+      batch.delete(doc(db, `draws/d1/participants/${ALICE}`));
+      batch.delete(doc(db, `draws/d1/joinKeys/${JOIN_KEY}`));
+      batch.delete(doc(db, 'draws/d1/invite/link'));
+      batch.delete(doc(db, 'draws/d1'));
+      return batch.commit();
+    };
+
+    const leave = (db: ReturnType<typeof authed>, uid: string) => {
+      const batch = writeBatch(db);
+      batch.delete(doc(db, `draws/d1/participants/${uid}`));
+      batch.update(doc(db, 'draws/d1'), {
+        participantUuids: arrayRemove(uid),
+      });
+      return batch.commit();
+    };
+
+    it('owner deletes the draw with everything in it', async () => {
+      await assertSucceeds(deleteAll(authed(env, OWNER)));
+    });
+
+    it('nobody else can delete it, and the owner not after the draw', async () => {
+      await assertFails(deleteAll(authed(env, ALICE)));
+      await assertFails(deleteAll(authed(env, MALLORY)));
+
+      const db = authed(env, OWNER);
+      await updateDoc(doc(db, 'draws/d1'), {
+        status: 'DRAWED',
+        drawDate: serverTimestamp(),
+      });
+      await assertFails(deleteAll(db));
+    });
+
+    it('owner cannot remove a participant without deleting the draw', async () => {
+      await assertFails(
+        deleteDoc(doc(authed(env, OWNER), `draws/d1/participants/${ALICE}`)),
+      );
+    });
+
+    it('a participant can leave before the draw', async () => {
+      await assertSucceeds(leave(authed(env, ALICE), ALICE));
+      const snapshot = await getDoc(doc(authed(env, OWNER), 'draws/d1'));
+      expect(snapshot.data()?.participantUuids).toEqual([OWNER]);
+    });
+
+    it('cannot take someone else out, the owner cannot leave, nobody leaves after the draw', async () => {
+      await joinDraw(authed(env, BOB), 'd1', BOB);
+      await assertFails(leave(authed(env, BOB), ALICE));
+      await assertFails(leave(authed(env, OWNER), OWNER));
+
+      await updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
+        status: 'DRAWED',
+        drawDate: serverTimestamp(),
+      });
+      await assertFails(leave(authed(env, ALICE), ALICE));
     });
   });
 

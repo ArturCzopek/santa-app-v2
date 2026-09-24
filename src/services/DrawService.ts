@@ -9,6 +9,7 @@ import {
   writeBatch,
   updateDoc,
   arrayUnion,
+  arrayRemove,
   serverTimestamp,
   FirestoreError,
   WriteBatch,
@@ -196,6 +197,33 @@ class DrawService {
   // Owner only, before the draw (the rules refuse it afterwards).
   async updateDrawDetails(drawId: string, details: DrawDetails): Promise<void> {
     await updateDoc(doc(this.drawsCollection, drawId), details);
+  }
+
+  // Owner only, before the draw: the draw and everything under it go in one
+  // batch, so nothing is left behind half-deleted.
+  async deleteDraw(drawId: string): Promise<void> {
+    const drawRef = doc(this.drawsCollection, drawId);
+    const [participants, joinKeys] = await Promise.all([
+      getDocs(this.participantsCollection(drawId)),
+      getDocs(collection(drawRef, 'joinKeys')),
+    ]);
+    const batch = writeBatch(db);
+    participants.docs.forEach((d) => batch.delete(d.ref));
+    joinKeys.docs.forEach((d) => batch.delete(d.ref));
+    batch.delete(this.inviteRef(drawId));
+    batch.delete(drawRef);
+    await batch.commit();
+  }
+
+  // A participant other than the owner, before the draw. Their letter goes
+  // with them.
+  async leaveDraw(drawId: string, userId: string): Promise<void> {
+    const batch = writeBatch(db);
+    batch.delete(doc(this.participantsCollection(drawId), userId));
+    batch.update(doc(this.drawsCollection, drawId), {
+      participantUuids: arrayRemove(userId),
+    });
+    await batch.commit();
   }
 
   // The key of the invite link, readable by participants. Draws created

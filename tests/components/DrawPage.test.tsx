@@ -22,6 +22,8 @@ vi.mock('../../src/services/DrawService', () => ({
     isDrawPasswordValid: vi.fn(),
     getInviteKey: vi.fn(),
     updateDrawDetails: vi.fn(),
+    deleteDraw: vi.fn(),
+    leaveDraw: vi.fn(),
     renewInviteKey: vi.fn(),
     updateWish: vi.fn(),
   },
@@ -472,13 +474,51 @@ describe('DrawPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('offers no editing to other participants or after the draw', async () => {
+  it('lets a participant leave, but not edit, before the draw', async () => {
+    vi.mocked(drawService.leaveDraw).mockResolvedValue();
     auth.user = fakeUser('alice', 'Ania Test');
-    const { unmount } = renderDrawPage();
-    await screen.findByText('Office party');
-    expect(screen.queryByRole('button', { name: 'Więcej' })).toBeNull();
-    unmount();
+    const user = userEvent.setup();
+    renderDrawPage();
 
+    await user.click(await screen.findByRole('button', { name: 'Więcej' }));
+    expect(
+      screen.queryByRole('menuitem', { name: 'Edytuj losowanie' }),
+    ).toBeNull();
+    await user.click(screen.getByRole('menuitem', { name: 'Opuść losowanie' }));
+    const dialog = await screen.findByRole('dialog');
+    expect(
+      within(dialog).getByText(/Twój list do Mikołaja zostanie usunięty/),
+    ).toBeInTheDocument();
+    await user.click(within(dialog).getByRole('button', { name: 'Opuść' }));
+
+    expect(drawService.leaveDraw).toHaveBeenCalledWith('d1', 'alice');
+    expect(await screen.findByText('Draws list page')).toBeInTheDocument();
+  });
+
+  it('lets the owner delete the draw after confirming', async () => {
+    vi.mocked(drawService.deleteDraw).mockResolvedValue();
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.click(await screen.findByRole('button', { name: 'Więcej' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Usuń losowanie' }));
+    const dialog = await screen.findByRole('dialog');
+    await user.click(within(dialog).getByRole('button', { name: 'Anuluj' }));
+    expect(drawService.deleteDraw).not.toHaveBeenCalled();
+
+    // Waits for the dialog to close and give the page back.
+    await user.click(await screen.findByRole('button', { name: 'Więcej' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Usuń losowanie' }));
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', {
+        name: 'Usuń',
+      }),
+    );
+    expect(drawService.deleteDraw).toHaveBeenCalledWith('d1');
+    expect(await screen.findByText('Draws list page')).toBeInTheDocument();
+  });
+
+  it('offers no options after the draw', async () => {
     auth.user = fakeUser('owner', 'Olga Owner');
     vi.mocked(drawService.getDraw).mockResolvedValue({
       ...waitingDraw,

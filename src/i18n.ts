@@ -78,6 +78,13 @@ const resources = {
             'Failed to start the draw. Refresh the page and try again.',
           wishUpdateFailed: 'Failed to update your wish. Please try again.',
         },
+        delete: {
+          confirm: 'Delete',
+          done: 'The draw is deleted.',
+          failed: 'Could not delete the draw. Please try again.',
+          text: 'Delete "{{name}}"? Everyone’s letters go with it. This cannot be undone.',
+          title: 'Delete the draw?',
+        },
         edit: {
           save: 'Save changes',
           saveFailed: 'Could not save the changes. Please try again.',
@@ -85,8 +92,17 @@ const resources = {
           title: 'Edit the draw',
         },
         options: {
+          delete: 'Delete the draw',
           edit: 'Edit the draw',
+          leave: 'Leave the draw',
           more: 'More',
+        },
+        leave: {
+          confirm: 'Leave',
+          done: 'You left the draw.',
+          failed: 'Could not leave the draw. Please try again.',
+          text: 'Leave "{{name}}"? Your letter to Santa will be deleted. You can join again with the invite link.',
+          title: 'Leave the draw?',
         },
         inviteButton: 'Invite to Draw',
         inviteModal: {
@@ -339,6 +355,13 @@ const resources = {
             'Nie udało się przeprowadzić losowania. Odśwież stronę i spróbuj ponownie.',
           wishUpdateFailed: 'Nie udało się zapisać listu. Spróbuj ponownie.',
         },
+        delete: {
+          confirm: 'Usuń',
+          done: 'Losowanie usunięte.',
+          failed: 'Nie udało się usunąć losowania. Spróbuj ponownie.',
+          text: 'Usunąć „{{name}}”? Znikną też listy wszystkich uczestników. Tego nie da się cofnąć.',
+          title: 'Usunąć losowanie?',
+        },
         edit: {
           save: 'Zapisz zmiany',
           saveFailed: 'Nie udało się zapisać zmian. Spróbuj ponownie.',
@@ -346,8 +369,17 @@ const resources = {
           title: 'Edytuj losowanie',
         },
         options: {
+          delete: 'Usuń losowanie',
           edit: 'Edytuj losowanie',
+          leave: 'Opuść losowanie',
           more: 'Więcej',
+        },
+        leave: {
+          confirm: 'Opuść',
+          done: 'Nie bierzesz już udziału w losowaniu.',
+          failed: 'Nie udało się opuścić losowania. Spróbuj ponownie.',
+          text: 'Opuścić „{{name}}”? Twój list do Mikołaja zostanie usunięty. Możesz wrócić przez link z zaproszeniem.',
+          title: 'Opuścić losowanie?',
         },
         inviteButton: 'Zaproś do losowania',
         inviteModal: {
