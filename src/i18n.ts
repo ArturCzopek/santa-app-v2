@@ -76,13 +76,26 @@ const resources = {
         inviteButton: 'Invite to Draw',
         inviteModal: {
           copyLink: 'Copy link',
-          drawCode: 'Draw Code',
-          descriptionPart1:
-            'Send this link to the people you want in the draw, e.g. in your group chat.',
-          descriptionPart2:
-            'They will also need the draw password – send it along with the link.',
-          linkCopied: 'Link copied to clipboard!',
-          linkLabel: 'Invite link',
+          copyMessage: 'Copy invite',
+          description: 'Send the invite to everyone, e.g. in your group chat.',
+          linkCopied: 'Link copied.',
+          message: {
+            budget: 'Gift budget: {{budget}} {{currency}}.',
+            greeting: 'Join our Secret Santa "{{name}}"!',
+            howToJoin:
+              'Sign in with Google, type the password and write your letter to Santa.',
+            link: 'Join here: {{link}}',
+            password: 'Password: {{password}}',
+            passwordSeparately: 'I will send you the password separately.',
+          },
+          messageCopied: 'Invite copied. Paste it in your chat.',
+          passwordNotIncluded:
+            'The password is not in the invite (we do not keep it). Send it separately.',
+          passwordOnlyNow:
+            'The password is in the invite only now. Later, send it separately.',
+          postcardTitle: 'Greetings from Santa!',
+          share: 'Share',
+          titleAfterCreate: 'Send the invite',
         },
         organizer: 'Organizer: {{name}}',
         participantsSection: {
@@ -295,13 +308,26 @@ const resources = {
         inviteButton: 'Zaproś do losowania',
         inviteModal: {
           copyLink: 'Kopiuj link',
-          drawCode: 'Kod losowania',
-          descriptionPart1:
-            'Wyślij ten link osobom, które mają wziąć udział – np. na grupowym czacie.',
-          descriptionPart2:
-            'Będą też potrzebować hasła do losowania – wyślij je razem z linkiem.',
-          linkCopied: 'Link skopiowany do schowka!',
-          linkLabel: 'Link z zaproszeniem',
+          copyMessage: 'Kopiuj zaproszenie',
+          description: 'Wyślij zaproszenie wszystkim, np. na grupowym czacie.',
+          linkCopied: 'Link skopiowany.',
+          message: {
+            budget: 'Budżet na prezent: {{budget}} {{currency}}.',
+            greeting: 'Dołącz do naszego Tajemniczego Mikołaja „{{name}}”!',
+            howToJoin:
+              'Zaloguj się kontem Google, wpisz hasło i napisz list do Mikołaja.',
+            link: 'Dołącz tutaj: {{link}}',
+            password: 'Hasło: {{password}}',
+            passwordSeparately: 'Hasło wyślę ci osobno.',
+          },
+          messageCopied: 'Zaproszenie skopiowane. Wklej je na czacie.',
+          passwordNotIncluded:
+            'Hasła nie ma w zaproszeniu (nie przechowujemy go). Wyślij je osobno.',
+          passwordOnlyNow:
+            'Hasło jest w zaproszeniu tylko teraz. Później wysyła się je osobno.',
+          postcardTitle: 'Pozdrowienia od Mikołaja!',
+          share: 'Udostępnij',
+          titleAfterCreate: 'Wyślij zaproszenie',
         },
         organizer: 'Organizator: {{name}}',
         participantsSection: {

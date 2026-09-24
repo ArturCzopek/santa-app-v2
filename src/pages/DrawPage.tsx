@@ -39,16 +39,29 @@ const DrawPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const notify = useNotify();
-  // Set by the join page, so a new participant lands in the letter editor.
-  const justJoined = !!(useLocation().state as { justJoined?: boolean } | null)
-    ?.justJoined;
+  const location = useLocation();
+  const navigationState = location.state as {
+    // Set by the join and create pages: the letter editor opens.
+    justJoined?: boolean;
+    // Set by the create page: the only moment the invite can carry it.
+    createdPassword?: string;
+  } | null;
+  const justJoined = !!navigationState?.justJoined;
 
   const [draw, setDraw] = useState<Draw | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isStartDrawModalOpen, setIsStartDrawModalOpen] = useState(false);
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [createdPassword] = useState(navigationState?.createdPassword);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(!!createdPassword);
   const [accessDenied, setAccessDenied] = useState(false);
+
+  // Keep the password in memory only, not in the browser history.
+  useEffect(() => {
+    if (navigationState?.createdPassword) {
+      navigate(location.pathname, { replace: true, state: { justJoined } });
+    }
+  }, [navigationState, navigate, location.pathname, justJoined]);
 
   useEffect(() => {
     const fetchDrawDetails = async () => {
@@ -194,9 +207,10 @@ const DrawPage = () => {
       )}
 
       <InviteDrawModal
-        open={isInviteModalOpen}
+        open={isInviteModalOpen && isWaiting}
         onClose={() => setIsInviteModalOpen(false)}
-        drawId={draw.id || ''}
+        draw={draw}
+        password={createdPassword}
       />
     </MainLayout>
   );

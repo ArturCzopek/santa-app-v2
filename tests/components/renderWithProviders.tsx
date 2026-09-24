@@ -16,7 +16,14 @@ afterEach(cleanup);
 // router), optionally at a route so useParams works.
 export const renderWithProviders = (
   ui: React.ReactElement,
-  { route = '/', path = '*' }: { route?: string; path?: string } = {},
+  {
+    route = '/',
+    path = '*',
+  }: {
+    // A path, or a path with navigation state (as navigate(path, { state })).
+    route?: string | { pathname: string; state?: unknown };
+    path?: string;
+  } = {},
 ) =>
   render(
     <I18nextProvider i18n={i18n}>
@@ -34,4 +41,8 @@ export const renderWithProviders = (
   );
 
 export const fakeUser = (uid: string, displayName: string) =>
-  ({ uid, displayName, photoURL: null }) as unknown as import('firebase/auth').User;
+  ({
+    uid,
+    displayName,
+    photoURL: null,
+  }) as unknown as import('firebase/auth').User;

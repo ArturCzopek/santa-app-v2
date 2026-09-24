@@ -39,13 +39,12 @@ przejście na losowanie ze `state: { justJoined: true, createdPassword }` – R1
 teksty MUI (`plPL`), `aria-label` spinnerów, fokus na błędne pole w oknach i na stronie dołączania,
 neutralne płciowo teksty (role „Organizator”/„Uczestnik” zostały). · R9 zapieczętowana koperta
 (`SealedEnvelope.tsx`, otwarcie pamiętane w `localStorage` per losowanie i osoba), zwinięta lista
-uczestników po losowaniu, „Napisane listy: 4 z 6” dla organizatora.
+uczestników po losowaniu, „Napisane listy: 4 z 6” dla organizatora. · R10 zaproszenie jako pocztówka: gotowa wiadomość,
+„Udostępnij” (Web Share API) albo „Kopiuj zaproszenie”, po utworzeniu okno „Wyślij zaproszenie” z hasłem
+(hasło tylko w pamięci, usuwane z historii przeglądarki).
 
 ## Do zrobienia
 
-- [ ] **R10 – zaproszenie jako pocztówka** (`InviteDrawModal.tsx`): główny przycisk „Udostępnij”
-  (Web Share API, gotowa wiadomość: link, budżet, jak dołączyć; fallback: kopiuj), ekran/okno
-  „Wyślij zaproszenie” zaraz po utworzeniu losowania (wtedy z hasłem).
 - [ ] **R11 – E2E** (`e2e/draw.spec.ts`, `e2e/helpers.ts`): **od R3 nieuruchamiane** – na pewno
   do poprawy: po dołączeniu edytor listu jest już otwarty (przycisk „Zapisz list”, pole
   „Co chcesz dostać?”, zamiast „Edytuj życzenie”/„Zapisz życzenie”/placeholder „Wpisz swoje

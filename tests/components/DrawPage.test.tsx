@@ -326,4 +326,55 @@ describe('DrawPage', () => {
     await screen.findByText('Office party');
     expect(screen.queryByText(/Napisane listy/)).not.toBeInTheDocument();
   });
+  it('offers the invite with the password right after creating the draw', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<DrawPage />, {
+      route: {
+        pathname: '/draw/d1',
+        state: { justJoined: true, createdPassword: 'sekret1' },
+      },
+      path: '/draw/:drawId',
+    });
+
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Wyślij zaproszenie',
+    });
+    expect(within(dialog).getByText(/Hasło: sekret1/)).toBeInTheDocument();
+    expect(
+      within(dialog).getByText(/Budżet na prezent: 80 PLN/),
+    ).toBeInTheDocument();
+
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Kopiuj zaproszenie' }),
+    );
+    // user-event provides the clipboard.
+    expect(await navigator.clipboard.readText()).toMatch(
+      /#\/join\/d1[\s\S]*Hasło: sekret1/,
+    );
+  });
+
+  it('shares the invite without the password later', async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'share', {
+      value: share,
+      configurable: true,
+    });
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Zaproś do losowania' }),
+    );
+    const dialog = await screen.findByRole('dialog');
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Udostępnij' }),
+    );
+
+    expect(share).toHaveBeenCalledWith({
+      title: 'Office party',
+      text: expect.stringContaining('Hasło wyślę ci osobno.'),
+    });
+    expect(share.mock.calls[0][0].text).toContain('#/join/d1');
+    Reflect.deleteProperty(navigator, 'share');
+  });
 });
