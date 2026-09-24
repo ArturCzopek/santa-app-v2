@@ -146,9 +146,12 @@ test('a draw link opened before signing in leads to the draw afterwards', async 
   await expect(page).toHaveURL(new RegExp(`#/draw/${drawId}$`));
 });
 
-test('pages fit the phone screen without horizontal scrolling', async ({ page }, testInfo) => {
+// Signed-in pages still overflow on phones (mobile M1-M7, see the fixme in
+// the whole-draw test); the join page for guests already fits.
+test('the join page fits the phone screen without horizontal scrolling', async ({
+  page,
+}, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile');
-  test.fail(true, 'Mobile M1-M7: fixed widths overflow on phones');
 
   await page.goto('/#/join/some-draw');
   await expect(page.getByText(/Musisz się zalogować/)).toBeVisible();

@@ -88,14 +88,15 @@ const Navbar = () => {
               {t('navbar.showSanta')}
             </NavbarItem>
 
-            <Divider orientation="vertical" flexItem sx={dividerStyles} />
-
-            <NavbarItem icon={<Message />} onClick={handleOpenMessageModal}>
-              {t('navbar.leaveMessage')}
-            </NavbarItem>
-
+            {/* Messages are tied to an account, so guests cannot send them. */}
             {user && (
               <>
+                <Divider orientation="vertical" flexItem sx={dividerStyles} />
+
+                <NavbarItem icon={<Message />} onClick={handleOpenMessageModal}>
+                  {t('navbar.leaveMessage')}
+                </NavbarItem>
+
                 <Divider orientation="vertical" flexItem sx={dividerStyles} />
 
                 <Typography sx={userNameStyles(theme)}>
@@ -116,7 +117,9 @@ const Navbar = () => {
         </Toolbar>
       </AppBar>
 
-      <MessageModal open={messageModalOpen} onClose={handleCloseMessageModal} />
+      {user && (
+        <MessageModal open={messageModalOpen} onClose={handleCloseMessageModal} />
+      )}
 
       <ShowSantaModal open={santaModalOpen} onClose={handleCloseSantaModal} />
     </>

@@ -58,6 +58,8 @@ describe('JoinToDrawPage', () => {
 
     expect(screen.getByText(/Musisz się zalogować/)).toBeInTheDocument();
     expect(drawService.getDraw).not.toHaveBeenCalled();
+    // Messages need an account; the modal used to spin forever for guests.
+    expect(screen.queryByText(/Zostaw wiadomość/)).toBeNull();
   });
 
   it('shows the draw and its owner', async () => {
@@ -65,6 +67,7 @@ describe('JoinToDrawPage', () => {
 
     expect(await screen.findByText('Office party')).toBeInTheDocument();
     expect(screen.getByText(/Olga Owner/)).toBeInTheDocument();
+    expect(screen.getByText(/Zostaw wiadomość/)).toBeInTheDocument();
   });
 
   it('shows an error for a wrong password', async () => {
