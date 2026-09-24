@@ -121,7 +121,11 @@ const Navbar = () => {
                   {userName}
                 </Typography>
                 <Divider />
-                <MenuItem onClick={openMessageModal}>
+                {/* Wider screens have this button in the bar itself. */}
+                <MenuItem
+                  onClick={openMessageModal}
+                  sx={{ display: { md: 'none' } }}
+                >
                   <ListItemIcon>
                     <FeedbackOutlined fontSize="small" />
                   </ListItemIcon>
