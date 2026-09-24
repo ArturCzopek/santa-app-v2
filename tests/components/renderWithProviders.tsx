@@ -3,7 +3,7 @@ import React from 'react';
 import { afterEach } from 'vitest';
 import { cleanup, render } from '@testing-library/react';
 import { ThemeProvider } from '@mui/material/styles';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../../src/i18n';
 import theme from '../../src/styles/theme';

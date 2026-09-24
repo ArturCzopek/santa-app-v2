@@ -4,7 +4,7 @@ import {
   Routes,
   Route,
   Navigate,
-} from 'react-router-dom';
+} from 'react-router';
 import LoginPage from './pages/LoginPage';
 import DrawsListPage from './pages/DrawsListPage';
 import JoinToDrawPage from './pages/JoinToDrawPage';

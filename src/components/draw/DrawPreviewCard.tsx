@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Box, Button, useTheme } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import DrawCardBase from './DrawCardBase';

@@ -9,7 +9,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { ExitToApp, Message, GitHub } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useAuth } from '../../hooks/useAuth';
 import NavbarItem from './NavbarItem';
 import { useTranslation } from 'react-i18next';

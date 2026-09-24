@@ -16,7 +16,7 @@ import FormTextField from '../components/form/FormTextField';
 import FormSelect from '../components/form/FormSelect';
 import FormActions from '../components/form/FormActions';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { drawService } from '../services/DrawService';
 import { useAuth } from '../hooks/useAuth';
 import { MIN_PASSWORD_LENGTH } from '../services/PasswordUtils';

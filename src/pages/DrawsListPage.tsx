@@ -9,7 +9,7 @@ import {
 import { Add, GroupAdd } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
 import { drawService } from '../services/DrawService';
 import { DrawPreview } from '../models/Draw';

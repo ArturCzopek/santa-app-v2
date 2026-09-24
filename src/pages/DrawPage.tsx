@@ -8,7 +8,7 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowBack, PlayArrow, PersonAdd } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
