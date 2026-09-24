@@ -21,6 +21,7 @@ vi.mock('../../src/services/DrawService', () => ({
     getParticipants: vi.fn(),
     isDrawPasswordValid: vi.fn(),
     getInviteKey: vi.fn(),
+    updateDrawDetails: vi.fn(),
     renewInviteKey: vi.fn(),
     updateWish: vi.fn(),
   },
@@ -444,5 +445,51 @@ describe('DrawPage', () => {
         /Wręczenie prezentów: 24 grudnia 2026, U babci\./,
       ),
     ).toBeInTheDocument();
+  });
+  it('lets the owner edit the draw before it takes place', async () => {
+    vi.mocked(drawService.updateDrawDetails).mockResolvedValue();
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.click(await screen.findByRole('button', { name: 'Więcej' }));
+    await user.click(
+      screen.getByRole('menuitem', { name: 'Edytuj losowanie' }),
+    );
+    const dialog = await screen.findByRole('dialog');
+    const name = within(dialog).getByLabelText('Nazwa losowania');
+    await user.clear(name);
+    await user.type(name, 'Wigilia');
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Zapisz zmiany' }),
+    );
+
+    expect(drawService.updateDrawDetails).toHaveBeenCalledWith(
+      'd1',
+      expect.objectContaining({ drawName: 'Wigilia', budget: 80 }),
+    );
+    expect(
+      await screen.findByRole('heading', { name: 'Wigilia' }),
+    ).toBeInTheDocument();
+  });
+
+  it('offers no editing to other participants or after the draw', async () => {
+    auth.user = fakeUser('alice', 'Ania Test');
+    const { unmount } = renderDrawPage();
+    await screen.findByText('Office party');
+    expect(screen.queryByRole('button', { name: 'Więcej' })).toBeNull();
+    unmount();
+
+    auth.user = fakeUser('owner', 'Olga Owner');
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
+    renderDrawPage();
+    await screen.findByText('Office party');
+    expect(screen.queryByRole('button', { name: 'Więcej' })).toBeNull();
   });
 });

@@ -2,13 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { Box, CircularProgress, Typography, Button } from '@mui/material';
 import { useParams, useNavigate, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowBack, PlayArrow, PersonAdd } from '@mui/icons-material';
+import {
+  ArrowBack,
+  EditOutlined,
+  PlayArrow,
+  PersonAdd,
+} from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import DrawHeader from '../components/draw/DrawHeader';
 import ParticipantsSection from '../components/draw/ParticipantsSection';
 import WinnerSection from '../components/draw/WinnerSection';
 import StartDrawModal from '../components/draw/StartDrawModal';
 import InviteDrawModal from '../components/draw/InviteDrawModal';
+import EditDrawModal from '../components/draw/EditDrawModal';
+import DrawOptionsMenu, {
+  DrawOption,
+} from '../components/draw/DrawOptionsMenu';
 import { drawService } from '../services/DrawService';
 import { Draw } from '../models/Draw';
 import { useAuth } from '../hooks/useAuth';
@@ -55,6 +64,7 @@ const DrawPage = () => {
   const [justCreated] = useState(!!navigationState?.justCreated);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(justCreated);
   const [accessDenied, setAccessDenied] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // A reload should not open the invite again.
   useEffect(() => {
@@ -95,6 +105,17 @@ const DrawPage = () => {
   const isWaiting = draw?.status === 'WAITING_FOR_DRAW';
   const showStartButton =
     isOwner && isWaiting && (draw?.participantUuids.length ?? 0) >= 2;
+
+  const options: DrawOption[] =
+    isOwner && isWaiting
+      ? [
+          {
+            label: t('drawPage.options.edit'),
+            icon: <EditOutlined fontSize="small" />,
+            onClick: () => setIsEditModalOpen(true),
+          },
+        ]
+      : [];
 
   const handleStartDraw = async () => {
     if (!draw || !drawId || !user) return;
@@ -178,6 +199,8 @@ const DrawPage = () => {
                   {t('drawPage.startDrawButton')}
                 </Button>
               )}
+
+              <DrawOptionsMenu options={options} />
             </Box>
           )}
         </Box>
@@ -203,6 +226,15 @@ const DrawPage = () => {
           withoutWish={draw.participants
             .filter((p) => !p.wish)
             .map((p) => p.userName)}
+        />
+      )}
+
+      {isOwner && isWaiting && (
+        <EditDrawModal
+          open={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          draw={draw}
+          onSaved={(details) => setDraw({ ...draw, ...details })}
         />
       )}
 

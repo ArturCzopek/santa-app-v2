@@ -78,6 +78,16 @@ const resources = {
             'Failed to start the draw. Refresh the page and try again.',
           wishUpdateFailed: 'Failed to update your wish. Please try again.',
         },
+        edit: {
+          save: 'Save changes',
+          saveFailed: 'Could not save the changes. Please try again.',
+          saved: 'Changes saved.',
+          title: 'Edit the draw',
+        },
+        options: {
+          edit: 'Edit the draw',
+          more: 'More',
+        },
         inviteButton: 'Invite to Draw',
         inviteModal: {
           copyLink: 'Copy link',
@@ -328,6 +338,16 @@ const resources = {
           startDrawFailed:
             'Nie udało się przeprowadzić losowania. Odśwież stronę i spróbuj ponownie.',
           wishUpdateFailed: 'Nie udało się zapisać listu. Spróbuj ponownie.',
+        },
+        edit: {
+          save: 'Zapisz zmiany',
+          saveFailed: 'Nie udało się zapisać zmian. Spróbuj ponownie.',
+          saved: 'Zmiany zapisane.',
+          title: 'Edytuj losowanie',
+        },
+        options: {
+          edit: 'Edytuj losowanie',
+          more: 'Więcej',
         },
         inviteButton: 'Zaproś do losowania',
         inviteModal: {

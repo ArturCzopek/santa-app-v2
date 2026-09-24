@@ -193,6 +193,11 @@ class DrawService {
     }
   }
 
+  // Owner only, before the draw (the rules refuse it afterwards).
+  async updateDrawDetails(drawId: string, details: DrawDetails): Promise<void> {
+    await updateDoc(doc(this.drawsCollection, drawId), details);
+  }
+
   // The key of the invite link, readable by participants. Draws created
   // before invite links have none until the owner makes one.
   async getInviteKey(drawId: string): Promise<string | null> {

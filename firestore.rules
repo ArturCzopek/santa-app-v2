@@ -88,6 +88,16 @@ service cloud.firestore {
         && request.resource.data.drawDate == request.time;
     }
 
+    // Owner changes the draw's own fields; after the draw nothing changes.
+    function isEditingDetails() {
+      return resource.data.ownerUuid == request.auth.uid
+        && resource.data.status == 'WAITING_FOR_DRAW'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'drawName', 'description', 'budget', 'currency', 'eventDate', 'eventPlace'
+        ])
+        && hasValidDetails(request.resource.data);
+    }
+
     // A user adds exactly themselves to participantUuids, together with their
     // own participant document.
     function isJoining(drawId) {
@@ -115,7 +125,8 @@ service cloud.firestore {
       allow get: if signedIn();
       allow list: if signedIn() && request.auth.uid in resource.data.participantUuids;
       allow create: if signedIn() && isValidNewDraw(drawId);
-      allow update: if signedIn() && (isStartingDraw() || isJoining(drawId));
+      allow update: if signedIn()
+        && (isStartingDraw() || isJoining(drawId) || isEditingDetails());
 
       match /participants/{uid} {
         allow read: if signedIn()

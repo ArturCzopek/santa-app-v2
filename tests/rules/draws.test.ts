@@ -312,6 +312,65 @@ describe('draws', () => {
     });
   });
 
+  describe('edit', () => {
+    beforeEach(async () => {
+      await createDraw(authed(env, OWNER), 'd1', OWNER);
+      await joinDraw(authed(env, ALICE), 'd1', ALICE);
+    });
+
+    const changes = {
+      drawName: 'Christmas Eve',
+      description: '',
+      budget: 100,
+      currency: 'EUR',
+      eventDate: '2026-12-24',
+      eventPlace: 'At grandma’s',
+    };
+
+    it('owner can change the details before the draw', async () => {
+      await assertSucceeds(
+        updateDoc(doc(authed(env, OWNER), 'draws/d1'), changes),
+      );
+    });
+
+    it('participants and outsiders cannot', async () => {
+      await assertFails(
+        updateDoc(doc(authed(env, ALICE), 'draws/d1'), changes),
+      );
+      await assertFails(
+        updateDoc(doc(authed(env, MALLORY), 'draws/d1'), changes),
+      );
+    });
+
+    it('nothing changes after the draw', async () => {
+      const db = authed(env, OWNER);
+      await updateDoc(doc(db, 'draws/d1'), {
+        status: 'DRAWED',
+        drawDate: serverTimestamp(),
+      });
+      await assertFails(updateDoc(doc(db, 'draws/d1'), changes));
+    });
+
+    it('cannot touch participants or status, or break the limits', async () => {
+      const db = authed(env, OWNER);
+      await assertFails(
+        updateDoc(doc(db, 'draws/d1'), {
+          ...changes,
+          participantUuids: [OWNER],
+        }),
+      );
+      await assertFails(
+        updateDoc(doc(db, 'draws/d1'), { ...changes, ownerUuid: ALICE }),
+      );
+      await assertFails(
+        updateDoc(doc(db, 'draws/d1'), { ...changes, drawName: '' }),
+      );
+      await assertFails(
+        updateDoc(doc(db, 'draws/d1'), { ...changes, eventDate: '24.12' }),
+      );
+    });
+  });
+
   describe('invite link', () => {
     const LINK_KEY = 'b'.repeat(64);
     const NEW_LINK_KEY = 'c'.repeat(64);
