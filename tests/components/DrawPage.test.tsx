@@ -159,6 +159,9 @@ describe('DrawPage', () => {
     expect(wishField).toBeDisabled();
 
     await user.click(screen.getByRole('button', { name: 'Edytuj życzenie' }));
+    // Same limit as the rules, so a long wish cannot fail on save.
+    expect(wishField).toHaveAttribute('maxLength', '2000');
+    expect(screen.getByText('13 / 2000')).toBeInTheDocument();
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
     await user.click(screen.getByRole('button', { name: 'Anuluj' }));

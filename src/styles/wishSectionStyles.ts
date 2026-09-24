@@ -61,8 +61,8 @@ export const successMessageStyles = (theme: Theme): SxProps<Theme> => ({
 });
 
 export const wishTextFieldStyles = (theme: Theme): SxProps<Theme> => ({
-  backgroundColor: 'rgba(0, 0, 0, 0.2)',
   '& .MuiOutlinedInput-root': {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
     color: theme.palette.text.primary,
     '& fieldset': {
       borderColor: 'rgba(255, 255, 255, 0.3)',
@@ -80,6 +80,10 @@ export const wishTextFieldStyles = (theme: Theme): SxProps<Theme> => ({
   '& .MuiInputBase-input.Mui-disabled': {
     WebkitTextFillColor: 'rgba(255, 255, 255, 0.9)',
     color: 'rgba(255, 255, 255, 0.9)',
+  },
+  '& .MuiFormHelperText-root': {
+    color: theme.palette.text.secondary,
+    textAlign: 'right',
   },
 });
 

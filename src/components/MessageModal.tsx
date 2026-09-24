@@ -24,6 +24,7 @@ import {
 } from '../styles/messageModalStyles';
 import { useAuth } from '../hooks/useAuth';
 import { messageService } from '../services/MessageService';
+import { MESSAGE_MAX_LENGTH } from '../models/Message';
 
 interface MessageModalProps {
   open: boolean;
@@ -171,6 +172,8 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               disabled={isSending || !canSendToday}
+              helperText={`${message.length} / ${MESSAGE_MAX_LENGTH}`}
+              slotProps={{ htmlInput: { maxLength: MESSAGE_MAX_LENGTH } }}
             />
           </Box>
 

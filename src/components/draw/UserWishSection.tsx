@@ -8,7 +8,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { Draw } from '../../models/Draw';
+import { Draw, WISH_MAX_LENGTH } from '../../models/Draw';
 import { drawService } from '../../services/DrawService';
 import { useAuth } from '../../hooks/useAuth';
 import {
@@ -113,6 +113,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
           disabled={!isEditing}
           fullWidth
           placeholder={t('drawPage.wishSection.wishPlaceholder')}
+          helperText={isEditing && `${wish.length} / ${WISH_MAX_LENGTH}`}
           sx={wishTextFieldStyles(theme)}
           slotProps={{
             input: {
@@ -120,6 +121,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
                 color: theme.palette.text.primary,
               },
             },
+            htmlInput: { maxLength: WISH_MAX_LENGTH },
           }}
         />
 

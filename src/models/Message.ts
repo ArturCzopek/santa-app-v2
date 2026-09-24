@@ -6,3 +6,6 @@ export type MessageData = {
   message: string;
   date: Timestamp;
 };
+
+// Same limit as in firestore.rules.
+export const MESSAGE_MAX_LENGTH = 1000;

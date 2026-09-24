@@ -10,6 +10,9 @@ export type Participant = {
   wish?: string;
 };
 
+// Same limit as in firestore.rules.
+export const WISH_MAX_LENGTH = 2000;
+
 export type Pair = {
   fromUuid: string;
   toUuid: string;
