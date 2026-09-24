@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import { clearFirestore, openDraw, signedInUser, TestUser } from './helpers';
 
 test.beforeEach(async () => {
@@ -108,22 +108,42 @@ test('a whole Secret Santa: create, invite, join, wishes, draw, results', async 
   ).toContainText('Książka o górach');
 });
 
+const createDraw = async (page: Page, name: string) => {
+  await page.getByRole('button', { name: 'Stwórz nowe losowanie' }).click();
+  await page.getByLabel('Nazwa Losowania').fill(name);
+  await page.getByLabel('Opis').fill('x');
+  await page.getByLabel('Hasło', { exact: true }).fill('sekret1');
+  await page.getByRole('button', { name: 'Stwórz Losowanie' }).click();
+  await page.waitForURL(/#\/draw\//, { timeout: 10_000 });
+  return page.url().split('/draw/')[1];
+};
+
+// Only the draw page has this section (the list also shows the draw name).
+const wishHeading = (page: Page) => page.getByRole('heading', { name: 'Twoje Życzenie' });
+
 test('reloading a draw page keeps you on it', async ({ browser }) => {
-  test.fail(true, 'Bug B1: protected routes redirect before Firebase restores the session');
   const owner = await signedInUser(browser, 'owner', 'Olga Owner');
-  await owner.page.getByRole('button', { name: 'Stwórz nowe losowanie' }).click();
-  await owner.page.getByLabel('Nazwa Losowania').fill('Reload test');
-  await owner.page.getByLabel('Opis').fill('x');
-  await owner.page.getByLabel('Hasło', { exact: true }).fill('sekret1');
-  await owner.page.getByRole('button', { name: 'Stwórz Losowanie' }).click();
-  await owner.page.waitForURL(/#\/draw\//, { timeout: 10_000 });
+  await createDraw(owner.page, 'Reload test');
 
   await owner.page.reload();
-  // Only the draw page has this section (the list also shows the draw name).
-  await expect(owner.page.getByRole('heading', { name: 'Twoje Życzenie' })).toBeVisible({
-    timeout: 5_000,
-  });
+  await expect(wishHeading(owner.page)).toBeVisible({ timeout: 5_000 });
   await expect(owner.page).toHaveURL(/#\/draw\//);
+});
+
+test('a draw link opened before signing in leads to the draw afterwards', async ({
+  browser,
+}) => {
+  const owner = await signedInUser(browser, 'owner', 'Olga Owner');
+  const drawId = await createDraw(owner.page, 'Link test');
+
+  const page = await (await browser.newContext()).newPage();
+  await page.goto(`/#/draw/${drawId}`);
+  await expect(page.getByRole('button', { name: /Zaloguj przez Google/ })).toBeVisible();
+  await page.waitForFunction(() => window.__santaTest !== undefined);
+  await page.evaluate(() => window.__santaTest.signIn('owner', 'Olga Owner'));
+
+  await expect(wishHeading(page)).toBeVisible();
+  await expect(page).toHaveURL(new RegExp(`#/draw/${drawId}$`));
 });
 
 test('pages fit the phone screen without horizontal scrolling', async ({ page }, testInfo) => {

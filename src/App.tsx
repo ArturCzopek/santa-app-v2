@@ -6,6 +6,7 @@ import theme from './styles/theme';
 import AppRoutes from './routes';
 import i18n from './i18n';
 import SnowfallEffect from './components/SnowfallEffect';
+import { AuthProvider } from './hooks/useAuth';
 
 const App: React.FC = () => {
   return (
@@ -13,7 +14,9 @@ const App: React.FC = () => {
       <ThemeProvider theme={theme}>
         <SnowfallEffect/>
         <div style={{ position: 'relative', height: '100vh' }}>
-          <AppRoutes />
+          <AuthProvider>
+            <AppRoutes />
+          </AuthProvider>
         </div>
       </ThemeProvider>
     </I18nextProvider>

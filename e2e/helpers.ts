@@ -34,8 +34,7 @@ export const signedInUser = async (
   return { page, name };
 };
 
-// Opens a draw from the list. Goes through the UI rather than a URL:
-// reloading a protected page currently redirects to the list (bug B1).
+// Opens a draw from the list, the way people do it.
 export const openDraw = async (page: Page, drawName: string) => {
   const backButton = page.getByRole('button', { name: 'Powrót do Losowań' });
   if (await backButton.isVisible()) await backButton.click();

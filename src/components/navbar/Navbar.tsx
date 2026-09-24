@@ -32,6 +32,14 @@ const Navbar = () => {
   const [messageModalOpen, setMessageModalOpen] = useState(false);
   const [santaModalOpen, setSantaModalOpen] = useState(false);
 
+  const handleLogOut = async () => {
+    await logOut();
+    // Start over from the login page. A plain navigate would keep the
+    // protected page remembered as the one to return to, so whoever signs in
+    // next would land on it.
+    window.location.replace(window.location.pathname);
+  };
+
   const handleOpenMessageModal = () => {
     setMessageModalOpen(true);
   };
@@ -96,7 +104,7 @@ const Navbar = () => {
 
                 <IconButton
                   aria-label="logout"
-                  onClick={logOut}
+                  onClick={handleLogOut}
                   size="small"
                   sx={logoutButtonStyles(theme)}
                 >

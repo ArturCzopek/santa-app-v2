@@ -4,7 +4,7 @@ import { Button, Typography, Box, useTheme } from '@mui/material';
 import { Google } from '@mui/icons-material';
 import YouTubeEmbed from '../components/YouTubeEmbed';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Location, Navigate, useLocation } from 'react-router';
 import AuthPageLayout from '../components/layout/AuthPageLayout';
 import {
   pageTitleStyles,
@@ -16,9 +16,11 @@ const LoginPage = () => {
   const { user, signInWithGoogle } = useAuth();
   const { t } = useTranslation();
   const theme = useTheme();
+  // Set by protected routes when a guest opens them (e.g. from a link).
+  const from = (useLocation().state as { from?: Location } | null)?.from;
 
   if (user) {
-    return <Navigate to="/draws" replace />;
+    return <Navigate to={from ?? '/draws'} replace />;
   }
 
   return (
