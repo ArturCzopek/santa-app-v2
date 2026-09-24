@@ -29,6 +29,7 @@ vi.mock('../../src/services/DrawService', () => ({
     leaveDraw: vi.fn(),
     renewInviteKey: vi.fn(),
     updateWish: vi.fn(),
+    getLetter: vi.fn(),
   },
 }));
 vi.mock('../../src/services/DrawingService', () => ({
@@ -42,17 +43,19 @@ import DrawPage from '../../src/pages/DrawPage';
 import { drawService } from '../../src/services/DrawService';
 import { drawingService } from '../../src/services/DrawingService';
 
-const participant = (
-  uid: string,
-  userName: string,
-  wish = '',
-): Participant => ({
-  userUuid: uid,
-  userName,
-  userPhotoUrl: '',
-  entryDate: new Date(),
-  wish,
-});
+// Letters live apart from participants; getLetter below serves them.
+let letters: Record<string, string> = {};
+
+const participant = (uid: string, userName: string, wish = ''): Participant => {
+  letters[uid] = wish;
+  return {
+    userUuid: uid,
+    userName,
+    userPhotoUrl: '',
+    entryDate: new Date(),
+    hasWish: wish !== '',
+  };
+};
 
 const waitingDraw: Draw = {
   id: 'd1',
@@ -87,6 +90,10 @@ beforeEach(() => {
   localStorage.clear();
   vi.mocked(drawService.getInviteKey).mockResolvedValue('link-key');
   vi.mocked(drawService.getExclusions).mockResolvedValue([]);
+  letters = {};
+  vi.mocked(drawService.getLetter).mockImplementation(
+    async (_, uid) => letters[uid] ?? '',
+  );
   auth.user = fakeUser('owner', 'Olga Owner');
   vi.mocked(drawService.getDraw).mockResolvedValue(waitingDraw);
   vi.mocked(drawService.getParticipants).mockResolvedValue([
@@ -159,6 +166,13 @@ describe('DrawPage', () => {
     expect(await screen.findByText('Socks')).toBeInTheDocument();
     expect(screen.getByText('Mountain book')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Edytuj list' })).toBeEnabled();
+    // Only the user's own letter and the one of their recipient are fetched.
+    expect(
+      vi
+        .mocked(drawService.getLetter)
+        .mock.calls.map(([, uid]) => uid)
+        .sort(),
+    ).toEqual(['alice', 'owner']);
   });
 
   it('does not start the draw with a wrong password', async () => {

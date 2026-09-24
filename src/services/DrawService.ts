@@ -41,6 +41,10 @@ class DrawService {
     return doc(this.drawsCollection, drawId, 'joinKeys', joinKey);
   }
 
+  private letterRef(drawId: string, userId: string) {
+    return doc(this.drawsCollection, drawId, 'letters', userId);
+  }
+
   private exclusionsCollection(drawId: string) {
     return collection(this.drawsCollection, drawId, 'exclusions');
   }
@@ -79,7 +83,7 @@ class DrawService {
       userUuid: user.uid,
       userPhotoUrl: user.photoURL || '',
       entryDate: serverTimestamp(),
-      wish: '',
+      hasWish: false,
     };
   }
 
@@ -159,7 +163,7 @@ class DrawService {
             eventDate: data.eventDate ?? '',
             eventPlace: data.eventPlace ?? '',
             participantsCount: data.participantUuids?.length || 0,
-            userWishProvided: !!ownParticipant.data()?.wish,
+            userWishProvided: !!ownParticipant.data()?.hasWish,
           } as DrawPreview;
         }),
       );
@@ -190,17 +194,22 @@ class DrawService {
     }
   }
 
-  // Participants (with wishes) are readable only by participants of the draw.
+  // Participants are readable only by participants of the draw. Letters are
+  // not in there: see getLetter.
   async getParticipants(drawId: string): Promise<Participant[]> {
     const snapshot = await getDocs(this.participantsCollection(drawId));
     return snapshot.docs.map((participantDoc) => participantDoc.data() as Participant);
   }
 
+  // The letter and the public "written" mark change together.
   async updateWish(drawId: string, userId: string, wish: string): Promise<void> {
     try {
-      await updateDoc(doc(this.participantsCollection(drawId), userId), {
-        wish,
+      const batch = writeBatch(db);
+      batch.set(this.letterRef(drawId, userId), { wish });
+      batch.update(doc(this.participantsCollection(drawId), userId), {
+        hasWish: wish.length > 0,
       });
+      await batch.commit();
     } catch (error) {
       console.error('Error updating wish:', error);
       throw error;
@@ -210,6 +219,13 @@ class DrawService {
   // Owner only, before the draw (the rules refuse it afterwards).
   async updateDrawDetails(drawId: string, details: DrawDetails): Promise<void> {
     await updateDoc(doc(this.drawsCollection, drawId), details);
+  }
+
+  // A letter to Santa: the user's own, or after the draw the one of the
+  // person they give a gift to. '' when not written yet.
+  async getLetter(drawId: string, userId: string): Promise<string> {
+    const letter = await getDoc(this.letterRef(drawId, userId));
+    return letter.exists() ? (letter.data().wish as string) : '';
   }
 
   // Owner only, before the draw: the draw and everything under it go in one
@@ -225,6 +241,11 @@ class DrawService {
     subcollections.forEach((snapshot) =>
       snapshot.docs.forEach((d) => batch.delete(d.ref)),
     );
+    // Nobody may list letters, but there is at most one per participant.
+    const draw = await getDoc(drawRef);
+    (draw.data()?.participantUuids ?? []).forEach((uid: string) =>
+      batch.delete(this.letterRef(drawId, uid)),
+    );
     batch.delete(this.inviteRef(drawId));
     batch.delete(drawRef);
     await batch.commit();
@@ -235,6 +256,7 @@ class DrawService {
   async leaveDraw(drawId: string, userId: string): Promise<void> {
     const batch = writeBatch(db);
     batch.delete(doc(this.participantsCollection(drawId), userId));
+    batch.delete(this.letterRef(drawId, userId));
     batch.update(doc(this.drawsCollection, drawId), {
       participantUuids: arrayRemove(userId),
     });

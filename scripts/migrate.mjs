@@ -12,7 +12,7 @@
 import { readFileSync } from 'fs';
 import { applicationDefault, cert, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import { migrateDraws } from './migrateDraws.mjs';
+import { migrateDraws, migrateLetters } from './migrateDraws.mjs';
 
 const args = process.argv.slice(2);
 const apply = args.includes('--apply');
@@ -40,3 +40,4 @@ console.log(
 );
 
 await migrateDraws(getFirestore(), { apply });
+await migrateLetters(getFirestore(), { apply });

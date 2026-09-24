@@ -38,6 +38,10 @@ service cloud.firestore {
         && !existsAfter(drawPath(drawId));
     }
 
+    function letterPath(drawId, uid) {
+      return /databases/$(database)/documents/draws/$(drawId)/letters/$(uid);
+    }
+
     function participantPath(drawId, uid) {
       return /databases/$(database)/documents/draws/$(drawId)/participants/$(uid);
     }
@@ -130,10 +134,10 @@ service cloud.firestore {
 
     function isValidNewParticipant(uid) {
       let p = request.resource.data;
-      return p.keys().hasOnly(['userName', 'userUuid', 'userPhotoUrl', 'entryDate', 'wish', 'joinKey'])
+      return p.keys().hasOnly(['userName', 'userUuid', 'userPhotoUrl', 'entryDate', 'hasWish', 'joinKey'])
         && p.userUuid == uid
         && p.entryDate == request.time
-        && p.wish == ''
+        && p.hasWish == false
         && p.userName == tokenName()
         && p.userPhotoUrl == tokenPicture();
     }
@@ -172,11 +176,12 @@ service cloud.firestore {
               && exists(/databases/$(database)/documents/draws/$(drawId)/joinKeys/$(request.resource.data.joinKey)))
           );
 
-        // Users may only change their own wish.
+        // Users only mark whether they wrote their letter, in the same batch
+        // as the letter itself (see letters below), so the mark is true.
         allow update: if signedIn()
           && request.auth.uid == uid
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['wish'])
-          && isString(request.resource.data.wish, 2000);
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hasWish'])
+          && request.resource.data.hasWish == (getAfter(letterPath(drawId, uid)).data.wish.size() > 0);
 
         // Leaving the draw, or the owner deleting it.
         allow delete: if signedIn()
@@ -232,6 +237,30 @@ service cloud.firestore {
           && existsAfter(joinKeyPath(drawId, request.resource.data.joinKey));
 
         allow delete: if signedIn() && isDeletingDraw(drawId);
+      }
+
+      // Letters to Santa. Only their author reads them, and after the draw
+      // the one person whose result is the author - nobody else, not even
+      // the owner or the other participants.
+      match /letters/{uid} {
+        allow get: if signedIn()
+          && (request.auth.uid == uid
+            || (get(drawPath(drawId)).data.status == 'DRAWED'
+              && get(/databases/$(database)/documents/draws/$(drawId)/assignments/$(request.auth.uid)).data.toUuid == uid));
+
+        allow create, update: if signedIn()
+          && request.auth.uid == uid
+          && request.auth.uid in get(drawPath(drawId)).data.participantUuids
+          && request.resource.data.keys().hasOnly(['wish'])
+          && isString(request.resource.data.wish, 2000)
+          && getAfter(participantPath(drawId, uid)).data.hasWish == (request.resource.data.wish.size() > 0);
+
+        // Leaving the draw, or the owner deleting it.
+        allow delete: if signedIn()
+          && (isDeletingDraw(drawId)
+            || (request.auth.uid == uid
+              && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
+              && !(uid in getAfter(drawPath(drawId)).data.participantUuids)));
       }
 
       // Pairs of participants who must not draw each other (e.g. a couple).

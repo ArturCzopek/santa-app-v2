@@ -74,6 +74,7 @@ const DrawPage = () => {
   const [accessDenied, setAccessDenied] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [exclusions, setExclusions] = useState<Exclusion[]>([]);
+  const [myWish, setMyWish] = useState('');
   const [confirming, setConfirming] = useState<'delete' | 'leave' | null>(null);
 
   // A reload should not open the invite again.
@@ -100,6 +101,7 @@ const DrawPage = () => {
 
         const participants = await drawService.getParticipants(drawId);
         setDraw({ ...drawData, participants });
+        setMyWish(await drawService.getLetter(drawId, user.uid));
         // Only the owner may read them, and they matter only before the draw.
         if (
           drawData.ownerUuid === user.uid &&
@@ -273,7 +275,16 @@ const DrawPage = () => {
         {/* Still editable after the draw, so the Santa sees the latest wish. */}
         <UserWishSection
           draw={draw}
-          onDrawUpdated={setDraw}
+          savedWish={myWish}
+          onWishSaved={(wish) => {
+            setMyWish(wish);
+            setDraw({
+              ...draw,
+              participants: draw.participants.map((p) =>
+                p.userUuid === user?.uid ? { ...p, hasWish: wish !== '' } : p,
+              ),
+            });
+          }}
           startEditing={justJoined && isWaiting}
         />
 
@@ -297,7 +308,7 @@ const DrawPage = () => {
           exclusions={currentExclusions(draw, exclusions)}
           onEditExclusions={goToExclusions}
           withoutWish={draw.participants
-            .filter((p) => !p.wish)
+            .filter((p) => !p.hasWish)
             .map((p) => p.userName)}
         />
       )}

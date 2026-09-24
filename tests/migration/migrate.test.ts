@@ -8,7 +8,7 @@ import {
 import { deleteApp, initializeApp } from 'firebase-admin/app';
 import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { doc, getDoc } from 'firebase/firestore';
-import { migrateDraws } from '../../scripts/migrateDraws.mjs';
+import { migrateDraws, migrateLetters } from '../../scripts/migrateDraws.mjs';
 import { PasswordUtils } from '../../src/services/PasswordUtils';
 import {
   ALICE,
@@ -93,9 +93,15 @@ describe('migrateDraws', () => {
 
     const participants = await adminDb.collection('draws/drawn/participants').get();
     expect(participants.size).toBe(2);
-    expect(
-      (await adminDb.doc(`draws/drawn/participants/${OWNER}`).get()).data()?.wish,
-    ).toBe('Book');
+    const owner = (await adminDb.doc(`draws/drawn/participants/${OWNER}`).get()).data();
+    expect(owner?.wish).toBeUndefined();
+    expect(owner?.hasWish).toBe(true);
+    expect((await adminDb.doc(`draws/drawn/letters/${OWNER}`).get()).data()).toEqual({
+      wish: 'Book',
+    });
+    expect((await adminDb.doc(`draws/drawn/participants/${ALICE}`).get()).data()?.hasWish).toBe(
+      false,
+    );
   });
 
   it('is idempotent', async () => {
@@ -123,3 +129,37 @@ describe('migrateDraws', () => {
     );
   });
 });
+
+describe('migrateLetters', () => {
+  beforeEach(async () => {
+    // A draw from before letters moved out: wishes in participant documents.
+    await adminDb.doc('draws/d1').set({ participantUuids: [OWNER, ALICE], status: 'DRAWED' });
+    await adminDb.doc(`draws/d1/participants/${OWNER}`).set(legacyParticipant(OWNER, 'Book'));
+    await adminDb.doc(`draws/d1/participants/${ALICE}`).set(legacyParticipant(ALICE));
+    await adminDb.doc(`draws/d1/assignments/${ALICE}`).set({ toUuid: OWNER });
+  });
+
+  it('dry run changes nothing', async () => {
+    expect(await migrateLetters(adminDb, { apply: false, log: silent })).toBe(2);
+    expect((await adminDb.doc(`draws/d1/participants/${OWNER}`).get()).data()?.wish).toBe(
+      'Book',
+    );
+  });
+
+  it('moves wishes into letters, leaves hasWish, and runs once', async () => {
+    expect(await migrateLetters(adminDb, { apply: true, log: silent })).toBe(2);
+    expect(await migrateLetters(adminDb, { apply: true, log: silent })).toBe(0);
+
+    const owner = (await adminDb.doc(`draws/d1/participants/${OWNER}`).get()).data();
+    expect(owner?.wish).toBeUndefined();
+    expect(owner?.hasWish).toBe(true);
+    expect((await adminDb.doc(`draws/d1/letters/${OWNER}`).get()).data()).toEqual({
+      wish: 'Book',
+    });
+    expect((await adminDb.doc(`draws/d1/letters/${ALICE}`).get()).exists).toBe(false);
+
+    // Now only the owner's Santa (Alice) can read it.
+    await assertSucceeds(getDoc(doc(authed(env, ALICE), `draws/d1/letters/${OWNER}`)));
+  });
+});
+

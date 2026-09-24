@@ -28,7 +28,7 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
   const [expanded, setExpanded] = useState(false);
   const listId = useId();
   const isOwner = !!user && user.uid === draw.ownerUuid;
-  const lettersWritten = draw.participants.filter((p) => !!p.wish).length;
+  const lettersWritten = draw.participants.filter((p) => !!p.hasWish).length;
 
   const sortedParticipants = [...draw.participants].sort((a, b) =>
     a.userName.localeCompare(b.userName),
@@ -36,7 +36,7 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
 
   const renderParticipantRow = (participant: Participant) => {
     const isCurrentUser = user && participant.userUuid === user.uid;
-    const hasWish = !!participant.wish;
+    const hasWish = !!participant.hasWish;
 
     return (
       <Box

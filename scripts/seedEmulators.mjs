@@ -111,13 +111,15 @@ const seedDraw = async (drawId, name, owner, people, drawn) => {
     createdDate: now,
   });
   for (const person of people) {
+    const wish = WISHES[person.sub] ?? '';
     await setDoc(`draws/${drawId}/participants/${person.uid}`, {
       userName: person.name,
       userUuid: person.uid,
       userPhotoUrl: '',
       entryDate: now,
-      wish: WISHES[person.sub] ?? '',
+      hasWish: wish !== '',
     });
+    if (wish) await setDoc(`draws/${drawId}/letters/${person.uid}`, { wish });
   }
   if (drawn) {
     for (const [from, to] of shuffledCircle(people.map((p) => p.uid))) {

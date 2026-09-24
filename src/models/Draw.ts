@@ -1,13 +1,15 @@
 import { Timestamp } from 'firebase/firestore';
 
 // Stored in draws/{drawId}/participants/{userUuid}, readable by participants
-// of the draw and writable (wish only) by that user.
+// of the draw. The letter itself is in draws/{drawId}/letters/{userUuid},
+// readable only by its author and, after the draw, their Santa; hasWish
+// says only whether it is written.
 export type Participant = {
   userName: string;
   userUuid: string;
   userPhotoUrl: string;
   entryDate: Date | Timestamp;
-  wish?: string;
+  hasWish?: boolean;
 };
 
 // Same limit as in firestore.rules.

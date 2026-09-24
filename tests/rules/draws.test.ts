@@ -31,6 +31,7 @@ import {
   newDraw,
   newParticipant,
   OWNER,
+  writeLetter,
 } from './setup';
 
 let env: RulesTestEnvironment;
@@ -239,22 +240,84 @@ describe('draws', () => {
       );
     });
 
-    it('users can change only their own wish', async () => {
-      await assertSucceeds(
-        updateDoc(doc(authed(env, ALICE), `draws/d1/participants/${ALICE}`), {
-          wish: 'Socks',
-        }),
-      );
-      await assertFails(
-        updateDoc(doc(authed(env, ALICE), `draws/d1/participants/${BOB}`), {
-          wish: 'Coal',
-        }),
-      );
+    it('participant documents change only through a letter', async () => {
       await assertFails(
         updateDoc(doc(authed(env, ALICE), `draws/d1/participants/${ALICE}`), {
           userName: 'Owner',
         }),
       );
+      await assertFails(
+        updateDoc(doc(authed(env, ALICE), `draws/d1/participants/${ALICE}`), {
+          wish: 'Socks',
+        }),
+      );
+    });
+  });
+
+  describe('letters', () => {
+    beforeEach(async () => {
+      await createDraw(authed(env, OWNER), 'd1', OWNER);
+      await joinDraw(authed(env, ALICE), 'd1', ALICE);
+      await joinDraw(authed(env, BOB), 'd1', BOB);
+    });
+
+    const letter = (uid: string) => `draws/d1/letters/${uid}`;
+
+    it('only the author writes a letter, with a true hasWish mark', async () => {
+      await assertSucceeds(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, 'Socks'),
+      );
+      await assertSucceeds(writeLetter(authed(env, ALICE), 'd1', ALICE, ''));
+      await assertFails(writeLetter(authed(env, BOB), 'd1', ALICE, 'Coal'));
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, 'Socks', false),
+      );
+      await assertFails(writeLetter(authed(env, ALICE), 'd1', ALICE, '', true));
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, 'x'.repeat(2001)),
+      );
+      await assertFails(writeLetter(authed(env, MALLORY), 'd1', MALLORY, 'Hi'));
+    });
+
+    it('before the draw nobody but the author reads it, not even the owner', async () => {
+      await writeLetter(authed(env, ALICE), 'd1', ALICE, 'Socks');
+      await assertSucceeds(getDoc(doc(authed(env, ALICE), letter(ALICE))));
+      await assertFails(getDoc(doc(authed(env, BOB), letter(ALICE))));
+      await assertFails(getDoc(doc(authed(env, OWNER), letter(ALICE))));
+      await assertFails(getDoc(doc(authed(env, MALLORY), letter(ALICE))));
+      await assertFails(
+        getDocs(collection(authed(env, OWNER), 'draws/d1/letters')),
+      );
+    });
+
+    it('after the draw only the Santa reads the recipient’s letter', async () => {
+      await writeLetter(authed(env, ALICE), 'd1', ALICE, 'Socks');
+      const db = authed(env, OWNER);
+      const batch = writeBatch(db);
+      batch.update(doc(db, 'draws/d1'), {
+        status: 'DRAWED',
+        drawDate: serverTimestamp(),
+      });
+      // Bob gives to Alice.
+      batch.set(doc(db, `draws/d1/assignments/${BOB}`), { toUuid: ALICE });
+      batch.set(doc(db, `draws/d1/assignments/${ALICE}`), { toUuid: OWNER });
+      batch.set(doc(db, `draws/d1/assignments/${OWNER}`), { toUuid: BOB });
+      await batch.commit();
+
+      await assertSucceeds(getDoc(doc(authed(env, BOB), letter(ALICE))));
+      await assertSucceeds(getDoc(doc(authed(env, ALICE), letter(ALICE))));
+      await assertFails(getDoc(doc(authed(env, OWNER), letter(ALICE))));
+      await assertFails(getDoc(doc(authed(env, BOB), letter(OWNER))));
+      await assertFails(getDoc(doc(authed(env, MALLORY), letter(ALICE))));
+    });
+
+    it('participants see only whether a letter is written', async () => {
+      await writeLetter(authed(env, ALICE), 'd1', ALICE, 'Socks');
+      const alice = await getDoc(
+        doc(authed(env, BOB), `draws/d1/participants/${ALICE}`),
+      );
+      expect(alice.data()?.hasWish).toBe(true);
+      expect(alice.data()?.wish).toBeUndefined();
     });
   });
 

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { Assignment, Draw } from '../../models/Draw';
 import { drawingService } from '../../services/DrawingService';
+import { drawService } from '../../services/DrawService';
 import PaperCard from '../common/PaperCard';
 import StampAvatar from '../common/StampAvatar';
 import SectionHeading from './SectionHeading';
@@ -47,6 +48,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [assignment, setAssignment] = useState<Assignment | null>(null);
+  const [winnerWish, setWinnerWish] = useState('');
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)', {
     noSsr: true,
   });
@@ -59,10 +61,20 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
   useEffect(() => {
     if (!draw.id || !user) return;
 
-    drawingService
-      .getMyAssignment(draw.id, user.uid)
-      .then(setAssignment)
-      .catch((error) => console.error('Error fetching assignment:', error));
+    const drawId = draw.id;
+    (async () => {
+      try {
+        const mine = await drawingService.getMyAssignment(drawId, user.uid);
+        // The rules let only the Santa read the recipient's letter.
+        const letter = mine
+          ? await drawService.getLetter(drawId, mine.toUuid)
+          : '';
+        setWinnerWish(letter);
+        setAssignment(mine);
+      } catch (error) {
+        console.error('Error fetching assignment:', error);
+      }
+    })();
   }, [draw.id, user]);
 
   useEffect(() => {
@@ -170,7 +182,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
                 })}
               </Typography>
               <Typography sx={{ whiteSpace: 'pre-line' }}>
-                {winner.wish || t('drawPage.winnerSection.noWishProvided')}
+                {winnerWish || t('drawPage.winnerSection.noWishProvided')}
               </Typography>
             </Box>
 

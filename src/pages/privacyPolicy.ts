@@ -39,7 +39,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
       heading: 'Kto widzi Twoje dane',
       items: [
         'Uczestnicy tego samego losowania widzą Twoje imię, zdjęcie i to, czy napiszesz list. Zalogowana osoba z linkiem do losowania widzi tylko informacje o nim samym (nazwę, opis, budżet, datę i miejsce, organizatora) – na stronie z zaproszeniem.',
-        'Treść Twojego listu jest dostępna dla uczestników Twojego losowania; w aplikacji pokazujemy ją osobie, która Cię wylosuje.',
+        'Treść Twojego listu do Mikołaja widzisz tylko Ty i – po losowaniu – osoba, która Cię wylosuje. Nikt inny, także organizator, nie ma do niej dostępu.',
         'Wynik losowania (kogo obdarowujesz) widzisz tylko Ty. Wykluczenia par widzi tylko organizator.',
         'Dane przechowują dostawcy usług, z których korzysta aplikacja: Google (Firebase Authentication – logowanie, Cloud Firestore – baza danych, Google Fonts – czcionki), GitHub (GitHub Pages – strona aplikacji) i YouTube (filmy, ładowane w trybie bez plików cookie dopiero, gdy są widoczne). Google może przetwarzać dane także poza Europejskim Obszarem Gospodarczym, na zasadach opisanych w swoich warunkach ochrony danych.',
       ],
@@ -88,7 +88,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
       heading: 'Who sees your data',
       items: [
         'Participants of the same draw see your name, photo and whether you wrote a letter. A signed-in person with the draw’s link sees only the draw itself (name, description, budget, date and place, organizer) – on the invite page.',
-        'The text of your letter is available to the participants of your draw; the app shows it to the person who draws you.',
+        'Only you and – after the draw – the person who draws you can read your letter to Santa. Nobody else, not even the organizer, has access to it.',
         'Only you see your result (whom you give a gift to). Only the organizer sees the excluded pairs.',
         'The data is kept by the providers the app uses: Google (Firebase Authentication – sign-in, Cloud Firestore – database, Google Fonts – fonts), GitHub (GitHub Pages – the app’s website) and YouTube (videos, loaded in no-cookie mode only when they are shown). Google may also process data outside the European Economic Area, under its data protection terms.',
       ],

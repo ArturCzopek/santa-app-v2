@@ -12,14 +12,17 @@ import { handFont, tokens } from '../../styles/theme';
 
 interface UserWishSectionProps {
   draw: Draw;
-  onDrawUpdated: (updatedDraw: Draw) => void;
+  // The user's own letter ('' when not written yet).
+  savedWish: string;
+  onWishSaved: (wish: string) => void;
   // Opens the editor right away, e.g. after joining.
   startEditing?: boolean;
 }
 
 const UserWishSection: React.FC<UserWishSectionProps> = ({
   draw,
-  onDrawUpdated,
+  savedWish,
+  onWishSaved,
   startEditing = false,
 }) => {
   const { t } = useTranslation();
@@ -30,11 +33,10 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     (p) => p.userUuid === user?.uid,
   );
 
-  const savedWish = userParticipant?.wish || '';
-  const hasWish = savedWish.trim() !== '';
+  const hasWish = savedWish !== '';
 
   const [isEditing, setIsEditing] = useState(startEditing);
-  // Draft edited in the text field; the saved wish comes from the draw.
+  // Draft edited in the text field; the saved wish comes from the page.
   const [wish, setWish] = useState(startEditing ? savedWish : '');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -49,17 +51,12 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
 
     setIsSaving(true);
     try {
-      await drawService.updateWish(draw.id || '', user.uid, wish);
+      const text = wish.trim();
+      await drawService.updateWish(draw.id || '', user.uid, text);
 
       setIsEditing(false);
       notify(t('drawPage.wishSection.saveSuccess'), 'success');
-
-      onDrawUpdated({
-        ...draw,
-        participants: draw.participants.map((p) =>
-          p.userUuid === user.uid ? { ...p, wish } : p,
-        ),
-      });
+      onWishSaved(text);
     } catch (error) {
       console.error('Error updating wish:', error);
       notify(t('drawPage.errors.wishUpdateFailed'));

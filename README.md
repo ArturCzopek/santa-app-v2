@@ -119,9 +119,9 @@ pushes to branches other than `master`.
 Every push to `master` runs `.github/workflows/deploy.yml`:
 
 1. All checks and tests (the CI workflow).
-2. **Staging** (only when `FIREBASE_SERVICE_ACCOUNT_DEV` is set): migrate old
-   draws and deploy Firestore rules and indexes to the dev project.
-3. **Production:** migrate old draws, deploy Firestore rules and indexes,
+2. **Staging** (only when `FIREBASE_SERVICE_ACCOUNT_DEV` is set): deploy
+   Firestore rules and indexes to the dev project, then migrate old data.
+3. **Production:** deploy Firestore rules and indexes, migrate old data,
    build the app and publish it to GitHub Pages.
 
 If a step fails, the following steps do not run, so production is only
@@ -153,9 +153,12 @@ tests in `tests/rules`).
   Before the draw the owner may edit its details or delete it with everything
   under it, and participants other than the owner may leave; after the draw
   it does not change.
-- `draws/{id}/participants/{uid}` - name and wish, readable by participants;
-  users can only change their own wish, and names/photos must match their
+- `draws/{id}/participants/{uid}` - name, photo and whether the letter is
+  written (`hasWish`), readable by participants; names/photos must match the
   Google profile.
+- `draws/{id}/letters/{uid}` - the letter to Santa, readable only by its
+  author and, after the draw, by the one person whose result is the author.
+  Written only by the author, together with `hasWish`.
 - `draws/{id}/exclusions/{a}_{b}` - pairs who must not draw each other; only
   the owner reads and changes them, before the draw.
 - `draws/{id}/assignments/{uid}` - who `uid` gives a gift to, readable only by
@@ -184,8 +187,9 @@ npx firebase login
 npx firebase deploy --only firestore --project <project-id>
 ```
 
-Migrate draws created before the security update by hand (the workflow runs
-this on every deploy; dry run unless `--apply`):
+Migrate old data by hand - draws created before the security update and
+letters still stored in participant documents (the workflow runs this on
+every deploy; dry run unless `--apply`):
 
 ```bash
 node scripts/migrate.mjs path/to/service-account-key.json

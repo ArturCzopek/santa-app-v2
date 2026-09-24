@@ -1,14 +1,13 @@
 name: Deploy
 
-# Every push to master: all checks, then migrate old data (no-op once
-# done), deploy Firestore rules + indexes, and publish the app to GitHub
-# Pages. Can also be started by hand (optionally creating a release).
+# Every push to master: all checks, then deploy Firestore rules + indexes,
+# migrate old data (no-op once done), and publish the app to GitHub Pages. Can also be started by hand (optionally creating a release).
 #
 # Needs the repository secret FIREBASE_SERVICE_ACCOUNT (service account key
 # JSON) next to the existing VITE_FIREBASE_* secrets.
 #
 # Optional staging: with FIREBASE_SERVICE_ACCOUNT_DEV (key of the dev
-# Firebase project) the same migration and rules go to the dev project
+# Firebase project) the same rules and migration go to the dev project
 # first; if that fails, production is not touched.
 on:
   push:
@@ -68,13 +67,13 @@ jobs:
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
 
-      - name: Migrate existing draws (staging)
-        if: env.HAS_STAGING == 'true'
-        run: node scripts/migrate.mjs --apply
-
       - name: Deploy Firestore rules and indexes (staging)
         if: env.HAS_STAGING == 'true'
         run: npx firebase deploy --only firestore --project "${{ steps.auth-staging.outputs.project_id }}" --non-interactive
+
+      - name: Migrate existing draws (staging)
+        if: env.HAS_STAGING == 'true'
+        run: node scripts/migrate.mjs --apply
 
       # Production.
       - name: Authenticate to Google Cloud
@@ -82,13 +81,15 @@ jobs:
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
-      # Old app versions stored results and password hashes in the draw
-      # document; this moves them out. Skips draws that are already migrated.
-      - name: Migrate existing draws
-        run: node scripts/migrate.mjs --apply
-
       - name: Deploy Firestore rules and indexes
         run: npx firebase deploy --only firestore --project "${{ secrets.VITE_FIREBASE_PROJECT_ID }}" --non-interactive
+
+      # Old app versions stored results and password hashes in the draw
+      # document, and letters in participant documents; this moves them out.
+      # It runs after the rules, so the old app cannot write data in the old
+      # place once it has been moved. Skips what is already migrated.
+      - name: Migrate existing draws
+        run: node scripts/migrate.mjs --apply
 
       - name: Build
         run: npm run build

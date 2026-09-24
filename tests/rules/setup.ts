@@ -42,7 +42,7 @@ export const newParticipant = (uid: string) => ({
   userUuid: uid,
   userPhotoUrl: '',
   entryDate: serverTimestamp(),
-  wish: '',
+  hasWish: false,
 });
 
 export const newDraw = (uid: string) => ({
@@ -67,7 +67,10 @@ export const createDraw = (
 ) => {
   const batch = writeBatch(db);
   batch.set(doc(db, `draws/${drawId}`), { ...newDraw(uid), ...overrides });
-  batch.set(doc(db, `draws/${drawId}/participants/${uid}`), newParticipant(uid));
+  batch.set(
+    doc(db, `draws/${drawId}/participants/${uid}`),
+    newParticipant(uid),
+  );
   batch.set(doc(db, `draws/${drawId}/joinKeys/${JOIN_KEY}`), {
     createdDate: serverTimestamp(),
   });
@@ -88,5 +91,19 @@ export const joinDraw = (
   batch.update(doc(db, `draws/${drawId}`), {
     participantUuids: arrayUnion(uid),
   });
+  return batch.commit();
+};
+
+// Writes a letter the way the app does: together with the hasWish mark.
+export const writeLetter = (
+  db: Db,
+  drawId: string,
+  uid: string,
+  wish: string,
+  hasWish = wish.length > 0,
+) => {
+  const batch = writeBatch(db);
+  batch.set(doc(db, `draws/${drawId}/letters/${uid}`), { wish });
+  batch.update(doc(db, `draws/${drawId}/participants/${uid}`), { hasWish });
   return batch.commit();
 };
