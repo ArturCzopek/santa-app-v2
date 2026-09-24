@@ -34,7 +34,7 @@ const resources = {
         lead: 'Set the name, budget and password. Then you will invite everyone else.',
         password: 'Password',
         passwordHint:
-          'Invited people type it in to join. It cannot be viewed or changed later.',
+          'Needed to start the draw and to join without the link. It cannot be viewed or changed later.',
         success: 'Draw created. Now write your letter to Santa!',
         title: 'New draw',
         validation: {
@@ -83,17 +83,24 @@ const resources = {
             budget: 'Gift budget: {{budget}} {{currency}}.',
             greeting: 'Join our Secret Santa "{{name}}"!',
             howToJoin:
+              'Open the link, sign in with Google and write your letter to Santa.',
+            howToJoinWithPassword:
               'Sign in with Google, type the password and write your letter to Santa.',
             link: 'Join here: {{link}}',
-            password: 'Password: {{password}}',
             passwordSeparately: 'I will send you the password separately.',
           },
           messageCopied: 'Invite copied. Paste it in your chat.',
+          keyWarning:
+            'The link lets people in without the password – send it only to the people in the draw.',
           passwordNotIncluded:
             'The password is not in the invite (we do not keep it). Send it separately.',
-          passwordOnlyNow:
-            'The password is in the invite only now. Later, send it separately.',
           postcardTitle: 'Greetings from Santa!',
+          renewButton: 'Yes, make a new link',
+          renewConfirm:
+            'The current link will stop working. People who already joined stay in the draw.',
+          renewFailed: 'Could not make a new link. Please try again.',
+          renewLink: 'Link got to the wrong people? Make a new one',
+          renewed: 'New link ready. The old one no longer works.',
           share: 'Share',
           titleAfterCreate: 'Send the invite',
         },
@@ -175,13 +182,15 @@ const resources = {
           drawNotFound: 'Draw not found or it may have been deleted.',
           fetchFailed: 'Failed to fetch draw details. Please try again.',
           invalidPassword: 'Invalid password. Please try again.',
+          linkExpired:
+            'This link no longer works – the organizer made a new one. Type the password or ask for the new link.',
           joinFailed: 'Failed to join the draw. Please try again.',
           loginRequired: 'You need to log in to join this draw',
           passwordRequired: 'Password is required to join the draw',
         },
         joinButton: 'Join Draw',
         loginRequired: 'Someone invites you to a Secret Santa. You need to sign in to see the details and join.',
-        passwordHint: 'You get the password from the organizer along with the link.',
+        passwordHint: 'You get the password from the organizer.',
         passwordLabel: 'Draw password',
         passwordPlaceholder: 'Enter the draw password',
         success: 'You are in! Now write your letter to Santa.',
@@ -264,7 +273,7 @@ const resources = {
         lead: 'Ustal nazwę, budżet i hasło. Potem zaprosisz pozostałe osoby.',
         password: 'Hasło',
         passwordHint:
-          'Zaproszone osoby wpiszą je przy dołączaniu. Później nie da się go podejrzeć ani zmienić.',
+          'Potrzebne do rozpoczęcia losowania i do dołączenia bez linku. Później nie da się go podejrzeć ani zmienić.',
         success: 'Losowanie utworzone. Teraz napisz swój list do Mikołaja!',
         title: 'Nowe losowanie',
         validation: {
@@ -315,17 +324,24 @@ const resources = {
             budget: 'Budżet na prezent: {{budget}} {{currency}}.',
             greeting: 'Dołącz do naszego Tajemniczego Mikołaja „{{name}}”!',
             howToJoin:
+              'Otwórz link, zaloguj się kontem Google i napisz list do Mikołaja.',
+            howToJoinWithPassword:
               'Zaloguj się kontem Google, wpisz hasło i napisz list do Mikołaja.',
             link: 'Dołącz tutaj: {{link}}',
-            password: 'Hasło: {{password}}',
             passwordSeparately: 'Hasło wyślę ci osobno.',
           },
           messageCopied: 'Zaproszenie skopiowane. Wklej je na czacie.',
+          keyWarning:
+            'Link wpuszcza do losowania bez hasła – wysyłaj go tylko uczestnikom.',
           passwordNotIncluded:
             'Hasła nie ma w zaproszeniu (nie przechowujemy go). Wyślij je osobno.',
-          passwordOnlyNow:
-            'Hasło jest w zaproszeniu tylko teraz. Później wysyła się je osobno.',
           postcardTitle: 'Pozdrowienia od Mikołaja!',
+          renewButton: 'Tak, utwórz nowy link',
+          renewConfirm:
+            'Obecny link przestanie działać. Osoby, które już dołączyły, zostają w losowaniu.',
+          renewFailed: 'Nie udało się utworzyć nowego linku. Spróbuj ponownie.',
+          renewLink: 'Link trafił do niewłaściwych osób? Utwórz nowy',
+          renewed: 'Nowy link gotowy. Stary już nie działa.',
           share: 'Udostępnij',
           titleAfterCreate: 'Wyślij zaproszenie',
         },
@@ -412,13 +428,15 @@ const resources = {
           fetchFailed:
             'Nie udało się pobrać szczegółów losowania. Spróbuj ponownie.',
           invalidPassword: 'Nieprawidłowe hasło. Spróbuj ponownie.',
+          linkExpired:
+            'Ten link już nie działa – organizator utworzył nowy. Wpisz hasło albo poproś o nowy link.',
           joinFailed: 'Nie udało się dołączyć do losowania. Spróbuj ponownie.',
           loginRequired: 'Musisz się zalogować, aby dołączyć do tego losowania',
           passwordRequired: 'Wpisz hasło, żeby dołączyć do losowania',
         },
         loginRequired: 'Ktoś zaprasza cię do Tajemniczego Mikołaja. Musisz się zalogować, żeby zobaczyć szczegóły i dołączyć.',
         joinButton: 'Dołącz do losowania',
-        passwordHint: 'Hasło dostajesz od organizatora razem z linkiem.',
+        passwordHint: 'Hasło dostajesz od organizatora.',
         passwordLabel: 'Hasło do losowania',
         passwordPlaceholder: 'Wprowadź hasło do losowania',
         success: 'Jesteś w losowaniu! Teraz napisz list do Mikołaja.',

@@ -11,6 +11,7 @@ import {
   arrayUnion,
   serverTimestamp,
   FirestoreError,
+  WriteBatch,
 } from 'firebase/firestore';
 import { db } from './FirebaseConfig';
 import { Draw, DrawPreview, Participant } from '../models/Draw';
@@ -29,6 +30,28 @@ class DrawService {
   // Nobody can read or list it; the rules check it exists when someone joins.
   private joinKeyRef(drawId: string, joinKey: string) {
     return doc(this.drawsCollection, drawId, 'joinKeys', joinKey);
+  }
+
+  private inviteRef(drawId: string) {
+    return doc(this.drawsCollection, drawId, 'invite', 'link');
+  }
+
+  // Adds a fresh invite key (and its joinKeys document) to the batch.
+  private async setNewInviteKey(
+    batch: WriteBatch,
+    drawId: string,
+  ): Promise<string> {
+    const key = PasswordUtils.newInviteKey();
+    const joinKey = await PasswordUtils.joinKey(drawId, key);
+    batch.set(this.joinKeyRef(drawId, joinKey), {
+      createdDate: serverTimestamp(),
+    });
+    batch.set(this.inviteRef(drawId), {
+      key,
+      joinKey,
+      createdDate: serverTimestamp(),
+    });
+    return key;
   }
 
   private newParticipant(user: User) {
@@ -85,6 +108,7 @@ class DrawService {
         ),
         { createdDate: serverTimestamp() },
       );
+      await this.setNewInviteKey(batch, drawRef.id);
       appDataService.addDrawCreated(batch, drawRef.id);
       await batch.commit();
 
@@ -166,15 +190,39 @@ class DrawService {
     }
   }
 
-  // Only the owner may check the password (used to confirm starting the draw).
-  async isDrawPasswordValid(drawId: string, password: string): Promise<boolean> {
-    const joinKey = await getDoc(
-      this.joinKeyRef(drawId, await PasswordUtils.joinKey(drawId, password)),
-    );
-    return joinKey.exists();
+  // The key of the invite link, readable by participants. Draws created
+  // before invite links have none until the owner makes one.
+  async getInviteKey(drawId: string): Promise<string | null> {
+    const invite = await getDoc(this.inviteRef(drawId));
+    return invite.exists() ? (invite.data().key as string) : null;
   }
 
-  async joinToDraw(drawId: string, user: User, password: string): Promise<void> {
+  // Owner only, before the draw. The previous link stops working.
+  async renewInviteKey(drawId: string): Promise<string> {
+    const current = await getDoc(this.inviteRef(drawId));
+    const batch = writeBatch(db);
+    const key = await this.setNewInviteKey(batch, drawId);
+    if (current.exists()) {
+      batch.delete(this.joinKeyRef(drawId, current.data().joinKey));
+    }
+    await batch.commit();
+    return key;
+  }
+
+  // Only the owner may check the password (used to confirm starting the draw).
+  // The invite link's key opens the same door, so it is ruled out here.
+  async isDrawPasswordValid(drawId: string, password: string): Promise<boolean> {
+    const joinKey = await PasswordUtils.joinKey(drawId, password);
+    const [joinKeyDoc, invite] = await Promise.all([
+      getDoc(this.joinKeyRef(drawId, joinKey)),
+      getDoc(this.inviteRef(drawId)),
+    ]);
+    return joinKeyDoc.exists() && invite.data()?.joinKey !== joinKey;
+  }
+
+  // The secret is the draw password or the key from the invite link; both
+  // are checked the same way.
+  async joinToDraw(drawId: string, user: User, secret: string): Promise<void> {
     try {
       const draw = await this.getDraw(drawId);
 
@@ -192,7 +240,7 @@ class DrawService {
       const batch = writeBatch(db);
       batch.set(doc(this.participantsCollection(drawId), user.uid), {
         ...this.newParticipant(user),
-        joinKey: await PasswordUtils.joinKey(drawId, password),
+        joinKey: await PasswordUtils.joinKey(drawId, secret),
       });
       batch.update(doc(this.drawsCollection, drawId), {
         participantUuids: arrayUnion(user.uid),

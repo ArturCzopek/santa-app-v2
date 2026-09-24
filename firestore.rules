@@ -14,6 +14,22 @@ service cloud.firestore {
       return /databases/$(database)/documents/draws/$(drawId);
     }
 
+    function invitePath(drawId) {
+      return /databases/$(database)/documents/draws/$(drawId)/invite/link;
+    }
+
+    function joinKeyPath(drawId, joinKey) {
+      return /databases/$(database)/documents/draws/$(drawId)/joinKeys/$(joinKey);
+    }
+
+    // The owner, either creating the draw in this batch or before the draw.
+    function isOwnerBeforeDraw(drawId) {
+      return (!exists(drawPath(drawId))
+          && getAfter(drawPath(drawId)).data.ownerUuid == request.auth.uid)
+        || (get(drawPath(drawId)).data.ownerUuid == request.auth.uid
+          && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW');
+    }
+
     function participantPath(drawId, uid) {
       return /databases/$(database)/documents/draws/$(drawId)/participants/$(uid);
     }
@@ -120,18 +136,48 @@ service cloud.firestore {
           && isString(request.resource.data.wish, 2000);
       }
 
-      // Password check: the document id is the password hash. Created only
-      // together with the draw; only the owner may probe it (to confirm
-      // starting the draw) and nobody may list it.
+      // Join check: the document id is the hash of a secret that lets people
+      // in - the password, or the key carried by the invite link. The
+      // password one is created together with the draw, the link one with
+      // the invite document. Only the owner may probe them (to confirm
+      // starting the draw) and nobody may list them.
       match /joinKeys/{joinKey} {
         allow get: if signedIn()
           && get(drawPath(drawId)).data.ownerUuid == request.auth.uid;
 
         allow create: if signedIn()
-          && !exists(drawPath(drawId))
-          && getAfter(drawPath(drawId)).data.ownerUuid == request.auth.uid
           && joinKey.matches('^[0-9a-f]{64}$')
-          && request.resource.data.keys().hasOnly(['createdDate']);
+          && request.resource.data.keys().hasOnly(['createdDate'])
+          && (
+            (!exists(drawPath(drawId))
+              && getAfter(drawPath(drawId)).data.ownerUuid == request.auth.uid)
+            || (isOwnerBeforeDraw(drawId)
+              && getAfter(invitePath(drawId)).data.joinKey == joinKey)
+          );
+
+        // A new invite link retires the key of the old one.
+        allow delete: if signedIn()
+          && isOwnerBeforeDraw(drawId)
+          && get(invitePath(drawId)).data.joinKey == joinKey
+          && getAfter(invitePath(drawId)).data.joinKey != joinKey;
+      }
+
+      // The invite link's key, in readable form so that participants can
+      // share the link again. Knowing it is the same as knowing the password.
+      match /invite/{inviteId} {
+        allow get: if signedIn()
+          && request.auth.uid in get(drawPath(drawId)).data.participantUuids;
+
+        allow create, update: if signedIn()
+          && inviteId == 'link'
+          && isOwnerBeforeDraw(drawId)
+          && request.resource.data.keys().hasOnly(['key', 'joinKey', 'createdDate'])
+          && request.resource.data.key is string
+          && request.resource.data.key.matches('^[A-Za-z0-9_-]{22,64}$')
+          && request.resource.data.joinKey is string
+          && request.resource.data.joinKey.matches('^[0-9a-f]{64}$')
+          && request.resource.data.createdDate == request.time
+          && existsAfter(joinKeyPath(drawId, request.resource.data.joinKey));
       }
 
       // Draw result: one document per giver, readable only by that giver.

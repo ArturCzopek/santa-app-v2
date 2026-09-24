@@ -11,7 +11,15 @@ const sha256Hex = async (text: string): Promise<string> => {
 };
 
 export const PasswordUtils = {
-  // Key stored as a document id in draws/{drawId}/joinKeys. Salted with the
+  // Secret carried by the invite link: 128 random bits, base64url.
+  newInviteKey: (): string =>
+    btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, ''),
+
+  // Key stored as a document id in draws/{drawId}/joinKeys, for the password
+  // and for the invite link's secret alike. Salted with the
   // draw id so the same password gives different keys in different draws.
   // The inner hash matches what older versions stored, which lets existing
   // draws be migrated without knowing their passwords.

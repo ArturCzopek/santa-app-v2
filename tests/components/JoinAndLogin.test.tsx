@@ -106,6 +106,55 @@ describe('JoinToDrawPage', () => {
     expect(await screen.findByText(/Jesteś w losowaniu/)).toBeInTheDocument();
   });
 
+  it('joins with the key from the invite link, without the password', async () => {
+    vi.mocked(drawService.joinToDraw).mockResolvedValue();
+    const user = userEvent.setup();
+    renderWithProviders(<JoinToDrawPage />, {
+      route: '/join/d1?k=link-key-1234567890abcd',
+      path: '/join/:drawId',
+    });
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Dołącz do losowania' }),
+    );
+
+    expect(screen.queryByLabelText(/Hasło/)).not.toBeInTheDocument();
+    expect(drawService.joinToDraw).toHaveBeenCalledWith(
+      'd1',
+      auth.user,
+      'link-key-1234567890abcd',
+    );
+    expect(await screen.findByText(/Jesteś w losowaniu/)).toBeInTheDocument();
+  });
+
+  it('asks for the password when the link was replaced', async () => {
+    vi.mocked(drawService.joinToDraw).mockRejectedValueOnce(
+      new Error('Invalid password'),
+    );
+    const user = userEvent.setup();
+    renderWithProviders(<JoinToDrawPage />, {
+      route: '/join/d1?k=old-key-1234567890abcdef',
+      path: '/join/:drawId',
+    });
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Dołącz do losowania' }),
+    );
+
+    expect(
+      await screen.findByText(/Ten link już nie działa/),
+    ).toBeInTheDocument();
+    await user.type(screen.getByLabelText(/Hasło/), 'secret1');
+    await user.click(
+      screen.getByRole('button', { name: 'Dołącz do losowania' }),
+    );
+    expect(drawService.joinToDraw).toHaveBeenLastCalledWith(
+      'd1',
+      auth.user,
+      'secret1',
+    );
+  });
+
   it('does not offer joining a draw that already took place', async () => {
     vi.mocked(drawService.getDraw).mockResolvedValue({
       ...draw,

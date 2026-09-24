@@ -70,11 +70,13 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
   await owner.page.getByLabel('Hasło', { exact: true }).fill('sekret1');
   await owner.page.getByRole('button', { name: 'Stwórz losowanie' }).click();
   await owner.page.waitForURL(/#\/draw\//, { timeout: 10_000 });
+  const drawId = owner.page.url().split('/draw/')[1];
 
-  // The invite opens by itself, with the password this one time.
+  // The invite opens by itself; its link carries a key instead of the password.
   const invite = owner.page.getByRole('dialog', { name: 'Wyślij zaproszenie' });
-  await expect(invite).toContainText('Hasło: sekret1');
+  await expect(invite).toContainText('?k=');
   await expect(invite).toContainText('Budżet na prezent: 80 PLN');
+  await expect(invite).not.toContainText('sekret1');
   const inviteLink = (await invite.innerText()).match(/\S*#\/join\/\S+/)![0];
   await invite.getByRole('button', { name: 'Zamknij' }).click();
 
@@ -82,14 +84,14 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
   await writeLetter(owner.page, 'Książka o górach');
   await expectNoHorizontalScroll(owner.page);
 
-  // Two people join with the invite link; the first tries a wrong password.
+  // One person joins with the bare link and the password, trying a wrong one first.
   const alice = await signedInUser(
     browser,
     'alice',
     'Ania Test',
     contextOptions,
   );
-  await alice.page.goto(inviteLink);
+  await alice.page.goto(`/#/join/${drawId}`);
   await expect(alice.page.getByText('Od: Olga Owner')).toBeVisible();
   await alice.page.getByLabel('Hasło do losowania').fill('zlehaslo');
   await alice.page.getByRole('button', { name: 'Dołącz do losowania' }).click();
@@ -99,7 +101,8 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
   await alice.page.waitForURL(/#\/draw\//, { timeout: 10_000 });
   await writeLetter(alice.page, 'Skarpetki');
 
-  // The second one opens the link before signing in and stays on the invite.
+  // The other opens the invite link before signing in, stays on the invite
+  // and joins without the password.
   const bobPage = await guest(browser, contextOptions);
   await bobPage.goto(inviteLink);
   await expect(
@@ -108,7 +111,7 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
   await expectNoHorizontalScroll(bobPage);
   await signInHere(bobPage, 'bob', 'Bartek Test');
   await expect(bobPage.getByText('Od: Olga Owner')).toBeVisible();
-  await bobPage.getByLabel('Hasło do losowania').fill('sekret1');
+  await expect(bobPage.getByLabel('Hasło do losowania')).toHaveCount(0);
   await bobPage.getByRole('button', { name: 'Dołącz do losowania' }).click();
   await bobPage.waitForURL(/#\/draw\//, { timeout: 10_000 });
   await expect(

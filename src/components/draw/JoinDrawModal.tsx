@@ -17,11 +17,15 @@ interface JoinDrawModalProps {
   onClose: () => void;
 }
 
-// People paste the whole invite link more often than the bare code.
-export const drawIdFrom = (input: string) => {
+// People paste the whole invite link more often than the bare code. The
+// link's key is kept, so they do not need the password.
+export const joinPathFrom = (input: string): string | null => {
   const trimmed = input.trim();
-  const fromLink = trimmed.match(/\/join\/([^/?#\s]+)/);
-  return fromLink ? fromLink[1] : trimmed;
+  const fromLink = trimmed.match(/\/join\/([^/?#\s]+)(?:\?k=([\w-]+))?/);
+  if (fromLink) {
+    return `/join/${fromLink[1]}${fromLink[2] ? `?k=${fromLink[2]}` : ''}`;
+  }
+  return trimmed ? `/join/${trimmed}` : null;
 };
 
 const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
@@ -34,14 +38,14 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
 
   const handleJoinDraw = (event: React.FormEvent) => {
     event.preventDefault();
-    const drawId = drawIdFrom(drawCode);
-    if (!drawId) {
+    const joinPath = joinPathFrom(drawCode);
+    if (!joinPath) {
       setError(t('drawsPage.joinModal.codeRequired'));
       inputRef.current?.focus();
       return;
     }
 
-    navigate(`/join/${drawId}`);
+    navigate(joinPath);
     onClose();
   };
 

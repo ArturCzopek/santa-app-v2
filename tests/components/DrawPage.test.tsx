@@ -20,6 +20,8 @@ vi.mock('../../src/services/DrawService', () => ({
     getDraw: vi.fn(),
     getParticipants: vi.fn(),
     isDrawPasswordValid: vi.fn(),
+    getInviteKey: vi.fn(),
+    renewInviteKey: vi.fn(),
     updateWish: vi.fn(),
   },
 }));
@@ -77,6 +79,7 @@ const openEnvelope = async (user = userEvent.setup()) =>
 beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
+  vi.mocked(drawService.getInviteKey).mockResolvedValue('link-key');
   auth.user = fakeUser('owner', 'Olga Owner');
   vi.mocked(drawService.getDraw).mockResolvedValue(waitingDraw);
   vi.mocked(drawService.getParticipants).mockResolvedValue([
@@ -330,12 +333,12 @@ describe('DrawPage', () => {
     await screen.findByText('Office party');
     expect(screen.queryByText(/Napisane listy/)).not.toBeInTheDocument();
   });
-  it('offers the invite with the password right after creating the draw', async () => {
+  it('opens the invite with the key link right after creating the draw', async () => {
     const user = userEvent.setup();
     renderWithProviders(<DrawPage />, {
       route: {
         pathname: '/draw/d1',
-        state: { justJoined: true, createdPassword: 'sekret1' },
+        state: { justJoined: true, justCreated: true },
       },
       path: '/draw/:drawId',
     });
@@ -343,21 +346,60 @@ describe('DrawPage', () => {
     const dialog = await screen.findByRole('dialog', {
       name: 'Wyślij zaproszenie',
     });
-    expect(within(dialog).getByText(/Hasło: sekret1/)).toBeInTheDocument();
+    expect(
+      await within(dialog).findByText(/#\/join\/d1\?k=link-key/),
+    ).toBeInTheDocument();
     expect(
       within(dialog).getByText(/Budżet na prezent: 80 PLN/),
     ).toBeInTheDocument();
+    expect(within(dialog).queryByText(/Hasło/)).not.toBeInTheDocument();
 
     await user.click(
       within(dialog).getByRole('button', { name: 'Kopiuj zaproszenie' }),
     );
     // user-event provides the clipboard.
     expect(await navigator.clipboard.readText()).toMatch(
-      /#\/join\/d1[\s\S]*Hasło: sekret1/,
+      /#\/join\/d1\?k=link-key/,
     );
   });
 
-  it('shares the invite without the password later', async () => {
+  it('gives an old draw its link the first time the owner invites', async () => {
+    vi.mocked(drawService.getInviteKey).mockResolvedValue(null);
+    vi.mocked(drawService.renewInviteKey).mockResolvedValue('fresh-key');
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Zaproś do losowania' }),
+    );
+    const dialog = await screen.findByRole('dialog');
+    expect(
+      await within(dialog).findByText(/#\/join\/d1\?k=fresh-key/),
+    ).toBeInTheDocument();
+  });
+
+  it('lets the owner replace a link that got out', async () => {
+    vi.mocked(drawService.renewInviteKey).mockResolvedValue('new-key');
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Zaproś do losowania' }),
+    );
+    const dialog = await screen.findByRole('dialog');
+    await user.click(
+      await within(dialog).findByRole('button', { name: /Utwórz nowy/ }),
+    );
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Tak, utwórz nowy link' }),
+    );
+    expect(
+      await within(dialog).findByText(/#\/join\/d1\?k=new-key/),
+    ).toBeInTheDocument();
+    expect(drawService.renewInviteKey).toHaveBeenCalledWith('d1');
+  });
+
+  it('shares the invite with the phone share sheet', async () => {
     const share = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'share', {
       value: share,
@@ -376,7 +418,7 @@ describe('DrawPage', () => {
 
     expect(share).toHaveBeenCalledWith({
       title: 'Office party',
-      text: expect.stringContaining('Hasło wyślę ci osobno.'),
+      text: expect.stringContaining('?k=link-key'),
     });
     expect(share.mock.calls[0][0].text).toContain('#/join/d1');
     Reflect.deleteProperty(navigator, 'share');

@@ -78,16 +78,22 @@ describe('draws', () => {
 
     it('validates field sizes', async () => {
       const db = authed(env, OWNER);
-      await assertFails(createDraw(db, 'd1', OWNER, { drawName: 'x'.repeat(81) }));
+      await assertFails(
+        createDraw(db, 'd1', OWNER, { drawName: 'x'.repeat(81) }),
+      );
       await assertFails(createDraw(db, 'd2', OWNER, { budget: -5 }));
       await assertFails(createDraw(db, 'd3', OWNER, { currency: 'BTC' }));
     });
 
     it('owner name and photo must come from their own profile', async () => {
       const db = authed(env, OWNER);
-      await assertFails(createDraw(db, 'd1', OWNER, { ownerName: 'Santa Claus' }));
       await assertFails(
-        createDraw(db, 'd2', OWNER, { ownerPhotoUrl: 'https://evil/photo.png' }),
+        createDraw(db, 'd1', OWNER, { ownerName: 'Santa Claus' }),
+      );
+      await assertFails(
+        createDraw(db, 'd2', OWNER, {
+          ownerPhotoUrl: 'https://evil/photo.png',
+        }),
       );
     });
 
@@ -126,7 +132,7 @@ describe('draws', () => {
       await assertFails(batch.commit());
     });
 
-    it('cannot join under someone else\'s name or photo', async () => {
+    it("cannot join under someone else's name or photo", async () => {
       for (const spoof of [
         { userName: `${OWNER} name` },
         { userPhotoUrl: 'https://evil/photo.png' },
@@ -152,8 +158,13 @@ describe('draws', () => {
     it('cannot join without a password', async () => {
       const db = authed(env, ALICE);
       const batch = writeBatch(db);
-      batch.set(doc(db, `draws/d1/participants/${ALICE}`), newParticipant(ALICE));
-      batch.update(doc(db, 'draws/d1'), { participantUuids: arrayUnion(ALICE) });
+      batch.set(
+        doc(db, `draws/d1/participants/${ALICE}`),
+        newParticipant(ALICE),
+      );
+      batch.update(doc(db, 'draws/d1'), {
+        participantUuids: arrayUnion(ALICE),
+      });
       await assertFails(batch.commit());
     });
 
@@ -245,7 +256,10 @@ describe('draws', () => {
       const db = authed(env, OWNER);
       const batch = writeBatch(db);
       batch.set(doc(db, 'draws/d2'), newDraw(OWNER));
-      batch.set(doc(db, `draws/d2/participants/${OWNER}`), newParticipant(OWNER));
+      batch.set(
+        doc(db, `draws/d2/participants/${OWNER}`),
+        newParticipant(OWNER),
+      );
       batch.set(doc(db, 'draws/d2/joinKeys/1234'), {
         createdDate: serverTimestamp(),
       });
@@ -275,6 +289,93 @@ describe('draws', () => {
       );
       await assertFails(
         setDoc(doc(authed(env, OWNER), 'draws/d1/joinKeys/another-key'), {
+          createdDate: serverTimestamp(),
+        }),
+      );
+    });
+  });
+
+  describe('invite link', () => {
+    const LINK_KEY = 'b'.repeat(64);
+    const NEW_LINK_KEY = 'c'.repeat(64);
+
+    const setInvite = (
+      db: ReturnType<typeof authed>,
+      joinKey: string,
+      retire?: string,
+    ) => {
+      const batch = writeBatch(db);
+      batch.set(doc(db, `draws/d1/joinKeys/${joinKey}`), {
+        createdDate: serverTimestamp(),
+      });
+      batch.set(doc(db, 'draws/d1/invite/link'), {
+        key: 'k'.repeat(22),
+        joinKey,
+        createdDate: serverTimestamp(),
+      });
+      if (retire) batch.delete(doc(db, `draws/d1/joinKeys/${retire}`));
+      return batch.commit();
+    };
+
+    beforeEach(async () => {
+      await createDraw(authed(env, OWNER), 'd1', OWNER);
+    });
+
+    it('owner can make a link, and its key lets people join', async () => {
+      await assertSucceeds(setInvite(authed(env, OWNER), LINK_KEY));
+      await assertSucceeds(joinDraw(authed(env, ALICE), 'd1', ALICE, LINK_KEY));
+    });
+
+    it('participants can read the link, outsiders cannot', async () => {
+      await setInvite(authed(env, OWNER), LINK_KEY);
+      await joinDraw(authed(env, ALICE), 'd1', ALICE);
+      await assertSucceeds(
+        getDoc(doc(authed(env, ALICE), 'draws/d1/invite/link')),
+      );
+      await assertFails(
+        getDoc(doc(authed(env, MALLORY), 'draws/d1/invite/link')),
+      );
+    });
+
+    it('only the owner makes links, and only before the draw', async () => {
+      await joinDraw(authed(env, ALICE), 'd1', ALICE);
+      await assertFails(setInvite(authed(env, ALICE), LINK_KEY));
+      await assertFails(setInvite(authed(env, MALLORY), LINK_KEY));
+
+      await updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
+        status: 'DRAWED',
+        drawDate: serverTimestamp(),
+      });
+      await assertFails(setInvite(authed(env, OWNER), LINK_KEY));
+    });
+
+    it('a new link retires the old one but keeps the password', async () => {
+      await setInvite(authed(env, OWNER), LINK_KEY);
+      await assertSucceeds(
+        setInvite(authed(env, OWNER), NEW_LINK_KEY, LINK_KEY),
+      );
+
+      await assertFails(joinDraw(authed(env, ALICE), 'd1', ALICE, LINK_KEY));
+      await assertSucceeds(
+        joinDraw(authed(env, ALICE), 'd1', ALICE, NEW_LINK_KEY),
+      );
+      await assertSucceeds(joinDraw(authed(env, BOB), 'd1', BOB, JOIN_KEY));
+    });
+
+    it('the password key cannot be deleted', async () => {
+      await setInvite(authed(env, OWNER), LINK_KEY);
+      await assertFails(
+        deleteDoc(doc(authed(env, OWNER), `draws/d1/joinKeys/${JOIN_KEY}`)),
+      );
+      await assertFails(setInvite(authed(env, OWNER), NEW_LINK_KEY, JOIN_KEY));
+    });
+
+    it('a link must point to a key created with it', async () => {
+      const db = authed(env, OWNER);
+      await assertFails(
+        setDoc(doc(db, 'draws/d1/invite/link'), {
+          key: 'k'.repeat(22),
+          joinKey: LINK_KEY,
           createdDate: serverTimestamp(),
         }),
       );

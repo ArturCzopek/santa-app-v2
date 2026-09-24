@@ -19,7 +19,12 @@ import { PROJECT_ID } from '../rules/setup';
 const signInAs = async (sub: string, name: string): Promise<User> => {
   await signOut(auth);
   const credential = GoogleAuthProvider.credential(
-    JSON.stringify({ sub, email: `${sub}@example.com`, email_verified: true, name }),
+    JSON.stringify({
+      sub,
+      email: `${sub}@example.com`,
+      email_verified: true,
+      name,
+    }),
   );
   return (await signInWithCredential(auth, credential)).user;
 };
@@ -53,17 +58,19 @@ describe('DrawService + DrawingService against the emulator', () => {
     const drawId = await drawService.createDraw(newDrawForm, owner);
 
     expect(await drawService.isDrawPasswordValid(drawId, 'secret1')).toBe(true);
-    expect(await drawService.isDrawPasswordValid(drawId, 'wrong-1')).toBe(false);
+    expect(await drawService.isDrawPasswordValid(drawId, 'wrong-1')).toBe(
+      false,
+    );
     await drawService.updateWish(drawId, owner.uid, 'Mountain book');
 
     const alice = await signInAs('alice', 'Ania Test');
-    await expect(drawService.joinToDraw(drawId, alice, 'wrong-1')).rejects.toThrow(
-      'Invalid password',
-    );
+    await expect(
+      drawService.joinToDraw(drawId, alice, 'wrong-1'),
+    ).rejects.toThrow('Invalid password');
     await drawService.joinToDraw(drawId, alice, 'secret1');
-    await expect(drawService.joinToDraw(drawId, alice, 'secret1')).rejects.toThrow(
-      'already a participant',
-    );
+    await expect(
+      drawService.joinToDraw(drawId, alice, 'secret1'),
+    ).rejects.toThrow('already a participant');
 
     const [preview] = await drawService.getDrawPreviews(alice.uid);
     expect(preview).toMatchObject({
@@ -73,9 +80,9 @@ describe('DrawService + DrawingService against the emulator', () => {
       userWishProvided: false,
     });
     await drawService.updateWish(drawId, alice.uid, 'Socks');
-    expect((await drawService.getDrawPreviews(alice.uid))[0].userWishProvided).toBe(
-      true,
-    );
+    expect(
+      (await drawService.getDrawPreviews(alice.uid))[0].userWishProvided,
+    ).toBe(true);
 
     const bob = await signInAs('bob', 'Bob Test');
     await drawService.joinToDraw(drawId, bob, 'secret1');
@@ -112,6 +119,31 @@ describe('DrawService + DrawingService against the emulator', () => {
     });
   });
 
+  it('lets people join with the invite link, until the owner makes a new one', async () => {
+    const owner = await signInAs('owner', 'Olga Owner');
+    const drawId = await drawService.createDraw(newDrawForm, owner);
+    const firstKey = await drawService.getInviteKey(drawId);
+    expect(firstKey).toMatch(/^[\w-]{22}$/);
+    // The link key does not pass as the password for starting the draw.
+    expect(await drawService.isDrawPasswordValid(drawId, firstKey!)).toBe(
+      false,
+    );
+
+    const alice = await signInAs('alice', 'Ania Test');
+    await drawService.joinToDraw(drawId, alice, firstKey!);
+    expect(await drawService.getInviteKey(drawId)).toBe(firstKey);
+
+    await signInAs('owner', 'Olga Owner');
+    const secondKey = await drawService.renewInviteKey(drawId);
+    expect(secondKey).not.toBe(firstKey);
+
+    const bob = await signInAs('bob', 'Bob Test');
+    await expect(
+      drawService.joinToDraw(drawId, bob, firstKey!),
+    ).rejects.toThrow('Invalid password');
+    await drawService.joinToDraw(drawId, bob, secondKey);
+  });
+
   it('keeps outsiders out of participants and results', async () => {
     const owner = await signInAs('owner', 'Olga Owner');
     const drawId = await drawService.createDraw(newDrawForm, owner);
@@ -120,8 +152,12 @@ describe('DrawService + DrawingService against the emulator', () => {
     const draw = await drawService.getDraw(drawId);
     expect(draw).not.toHaveProperty('password');
     await expect(drawService.getParticipants(drawId)).rejects.toThrow();
-    await expect(drawService.isDrawPasswordValid(drawId, 'secret1')).rejects.toThrow();
-    await expect(drawingService.getMyAssignment(drawId, owner.uid)).rejects.toThrow();
+    await expect(
+      drawService.isDrawPasswordValid(drawId, 'secret1'),
+    ).rejects.toThrow();
+    await expect(
+      drawingService.getMyAssignment(drawId, owner.uid),
+    ).rejects.toThrow();
     expect(await drawService.getDrawPreviews(mallory.uid)).toEqual([]);
   });
 });
@@ -151,7 +187,9 @@ describe('MessageService against the emulator', () => {
     const user = await signInAs('late-writer', 'Late Writer');
     const realNow = Date.now();
     // A device a day behind computes yesterday's document id.
-    const clock = vi.spyOn(Date, 'now').mockReturnValue(realNow - 24 * 60 * 60 * 1000);
+    const clock = vi
+      .spyOn(Date, 'now')
+      .mockReturnValue(realNow - 24 * 60 * 60 * 1000);
     try {
       await messageService.sendMessage({
         userUid: user.uid,

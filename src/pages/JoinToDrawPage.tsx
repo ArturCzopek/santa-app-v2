@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Navigate, useParams, useNavigate } from 'react-router';
+import {
+  Navigate,
+  useParams,
+  useNavigate,
+  useSearchParams,
+} from 'react-router';
 import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -46,6 +51,10 @@ const JoinToDrawPage = () => {
   const [password, setPassword] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  // The invite link's key; lets people in without typing the password.
+  const linkKey = useSearchParams()[0].get('k');
+  const [keyRejected, setKeyRejected] = useState(false);
+  const needsPassword = !linkKey || keyRejected;
 
   useEffect(() => {
     const fetchDrawDetails = async () => {
@@ -73,7 +82,7 @@ const JoinToDrawPage = () => {
 
     setPasswordError(null);
 
-    if (!password.trim()) {
+    if (needsPassword && !password.trim()) {
       setPasswordError(t('joinPage.errors.passwordRequired'));
       passwordRef.current?.focus();
       return;
@@ -81,15 +90,25 @@ const JoinToDrawPage = () => {
 
     setJoining(true);
     try {
-      await drawService.joinToDraw(draw.id as string, user, password);
+      await drawService.joinToDraw(
+        draw.id as string,
+        user,
+        needsPassword ? password : (linkKey as string),
+      );
       notify(t('joinPage.success'), 'success');
       navigate(`/draw/${draw.id}`, { state: { justJoined: true } });
     } catch (err: unknown) {
       console.error('Error joining draw:', err);
 
       if (err instanceof Error && err.message.includes('Invalid password')) {
-        setPasswordError(t('joinPage.errors.invalidPassword'));
-        passwordRef.current?.focus();
+        if (needsPassword) {
+          setPasswordError(t('joinPage.errors.invalidPassword'));
+          passwordRef.current?.focus();
+        } else {
+          // A link replaced by a newer one; the password still works.
+          setKeyRejected(true);
+          setPasswordError(t('joinPage.errors.linkExpired'));
+        }
       } else {
         notify(t('joinPage.errors.joinFailed'));
       }
@@ -189,16 +208,18 @@ const JoinToDrawPage = () => {
           <Typography color="text.secondary">{draw.description}</Typography>
         )}
 
-        <Box sx={{ borderTop: `1px dashed ${tokens.paperLine}`, pt: 2.5 }}>
-          <PasswordField
-            label={t('joinPage.passwordLabel')}
-            value={password}
-            onChange={setPassword}
-            error={passwordError}
-            inputRef={passwordRef}
-            helperText={t('joinPage.passwordHint')}
-          />
-        </Box>
+        {needsPassword && (
+          <Box sx={{ borderTop: `1px dashed ${tokens.paperLine}`, pt: 2.5 }}>
+            <PasswordField
+              label={t('joinPage.passwordLabel')}
+              value={password}
+              onChange={setPassword}
+              error={passwordError}
+              inputRef={passwordRef}
+              helperText={t('joinPage.passwordHint')}
+            />
+          </Box>
+        )}
 
         <Button
           type="submit"

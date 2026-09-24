@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -6,11 +6,13 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Skeleton,
   Typography,
 } from '@mui/material';
 import { ContentCopy, IosShare } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNotify } from '../../hooks/useNotify';
+import { drawService } from '../../services/DrawService';
 import { Draw } from '../../models/Draw';
 import { airmailStripes, handFont, tokens } from '../../styles/theme';
 
@@ -18,8 +20,8 @@ interface InviteDrawModalProps {
   open: boolean;
   onClose: () => void;
   draw: Draw;
-  // Known only right after the draw is created: it is stored hashed.
-  password?: string;
+  isOwner: boolean;
+  justCreated?: boolean;
 }
 
 const canShare = () =>
@@ -27,16 +29,67 @@ const canShare = () =>
 
 // The invite as a postcard: a ready message with the link, the budget and
 // how to join, sent with the phone's share sheet or copied for a group chat.
+// The link carries a key that lets people in without the password.
 const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
   open,
   onClose,
   draw,
-  password,
+  isOwner,
+  justCreated = false,
 }) => {
   const { t } = useTranslation();
   const notify = useNotify();
+  const drawId = draw.id ?? '';
+  // undefined while loading; null when there is no key (and we cannot make one).
+  const [inviteKey, setInviteKey] = useState<string | null | undefined>();
+  const [confirmRenew, setConfirmRenew] = useState(false);
+  const [renewing, setRenewing] = useState(false);
+  const canMakeKey = isOwner && draw.status === 'WAITING_FOR_DRAW';
 
-  const inviteLink = `${import.meta.env.VITE_APP_URL}/#/join/${draw.id}`;
+  useEffect(() => {
+    if (!open || !drawId) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        let key = await drawService.getInviteKey(drawId);
+        // Draws from before invite links get one the first time it is needed.
+        if (!key && canMakeKey) key = await drawService.renewInviteKey(drawId);
+        if (!cancelled) setInviteKey(key);
+      } catch (err) {
+        console.error('Error loading the invite key:', err);
+        if (!cancelled) setInviteKey(null);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, drawId, canMakeKey]);
+
+  const handleRenew = async () => {
+    setRenewing(true);
+    try {
+      setInviteKey(await drawService.renewInviteKey(drawId));
+      notify(t('drawPage.inviteModal.renewed'), 'success');
+    } catch (err) {
+      console.error('Error renewing the invite key:', err);
+      notify(t('drawPage.inviteModal.renewFailed'));
+    } finally {
+      setRenewing(false);
+      setConfirmRenew(false);
+    }
+  };
+
+  const handleClose = () => {
+    setConfirmRenew(false);
+    onClose();
+  };
+
+  const loading = inviteKey === undefined;
+  const inviteLink = `${import.meta.env.VITE_APP_URL}/#/join/${drawId}${
+    inviteKey ? `?k=${inviteKey}` : ''
+  }`;
   const message = [
     t('drawPage.inviteModal.message.greeting', { name: draw.drawName }),
     t('drawPage.inviteModal.message.budget', {
@@ -44,10 +97,12 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
       currency: draw.currency,
     }),
     t('drawPage.inviteModal.message.link', { link: inviteLink }),
-    password
-      ? t('drawPage.inviteModal.message.password', { password })
-      : t('drawPage.inviteModal.message.passwordSeparately'),
-    t('drawPage.inviteModal.message.howToJoin'),
+    ...(inviteKey
+      ? []
+      : [t('drawPage.inviteModal.message.passwordSeparately')]),
+    inviteKey
+      ? t('drawPage.inviteModal.message.howToJoin')
+      : t('drawPage.inviteModal.message.howToJoinWithPassword'),
   ].join('\n');
 
   const copy = async (text: string, copied: string) => {
@@ -76,7 +131,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       maxWidth="xs"
       fullWidth
       // Phones need the room for the whole postcard.
@@ -88,7 +143,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
       }}
     >
       <DialogTitle>
-        {password
+        {justCreated
           ? t('drawPage.inviteModal.titleAfterCreate')
           : t('drawPage.inviteButton')}
       </DialogTitle>
@@ -115,21 +170,70 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
             >
               {t('drawPage.inviteModal.postcardTitle')}
             </Typography>
-            <Typography
-              component="p"
-              variant="body2"
-              sx={{ whiteSpace: 'pre-line', mt: 1 }}
-            >
-              {message}
-            </Typography>
+            {loading ? (
+              <Box aria-hidden sx={{ mt: 1 }}>
+                <Skeleton />
+                <Skeleton />
+                <Skeleton width="60%" />
+              </Box>
+            ) : (
+              <Typography
+                component="p"
+                variant="body2"
+                sx={{ whiteSpace: 'pre-line', mt: 1 }}
+              >
+                {message}
+              </Typography>
+            )}
           </Box>
         </Box>
 
-        <Typography sx={{ color: tokens.amber, fontWeight: 700 }}>
-          {password
-            ? t('drawPage.inviteModal.passwordOnlyNow')
-            : t('drawPage.inviteModal.passwordNotIncluded')}
-        </Typography>
+        {!loading && (
+          <Typography sx={{ color: tokens.amber, fontWeight: 700 }}>
+            {inviteKey
+              ? t('drawPage.inviteModal.keyWarning')
+              : t('drawPage.inviteModal.passwordNotIncluded')}
+          </Typography>
+        )}
+
+        {inviteKey && canMakeKey && (
+          <Box>
+            {confirmRenew ? (
+              <>
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  {t('drawPage.inviteModal.renewConfirm')}
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <Button
+                    variant="outlined"
+                    color="inherit"
+                    size="small"
+                    disabled={renewing}
+                    onClick={handleRenew}
+                    sx={{ color: tokens.ink }}
+                  >
+                    {t('drawPage.inviteModal.renewButton')}
+                  </Button>
+                  <Button
+                    size="small"
+                    onClick={() => setConfirmRenew(false)}
+                    sx={{ color: tokens.ink }}
+                  >
+                    {t('common.cancel')}
+                  </Button>
+                </Box>
+              </>
+            ) : (
+              <Button
+                size="small"
+                onClick={() => setConfirmRenew(true)}
+                sx={{ color: tokens.ink, px: 0, textDecoration: 'underline' }}
+              >
+                {t('drawPage.inviteModal.renewLink')}
+              </Button>
+            )}
+          </Box>
+        )}
       </DialogContent>
       <DialogActions
         sx={{
@@ -146,6 +250,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
           <Button
             variant="contained"
             startIcon={<IosShare />}
+            disabled={loading}
             onClick={handleShare}
           >
             {t('drawPage.inviteModal.share')}
@@ -154,6 +259,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
           <Button
             variant="contained"
             startIcon={<ContentCopy />}
+            disabled={loading}
             onClick={() =>
               copy(message, t('drawPage.inviteModal.messageCopied'))
             }
@@ -164,6 +270,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button
             startIcon={<ContentCopy />}
+            disabled={loading}
             onClick={() =>
               copy(inviteLink, t('drawPage.inviteModal.linkCopied'))
             }
@@ -171,7 +278,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
           >
             {t('drawPage.inviteModal.copyLink')}
           </Button>
-          <Button onClick={onClose} sx={{ color: tokens.ink }}>
+          <Button onClick={handleClose} sx={{ color: tokens.ink }}>
             {t('common.close')}
           </Button>
         </Box>

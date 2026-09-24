@@ -65,10 +65,10 @@ const CreatePage = () => {
         user,
       );
       notify(t('createPage.success'), 'success');
-      // The password is hashed, so this is the only moment the invite can
-      // carry it. The owner is a participant too, so the letter editor opens.
+      // The invite opens first; the owner is a participant too, so the
+      // letter editor is open behind it.
       navigate(`/draw/${newDrawUid}`, {
-        state: { justJoined: true, createdPassword: data.password },
+        state: { justJoined: true, justCreated: true },
       });
     } catch (error) {
       console.error('Error creating draw:', error);

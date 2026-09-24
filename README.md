@@ -155,8 +155,14 @@ tests in `tests/rules`).
   Google profile.
 - `draws/{id}/assignments/{uid}` - who `uid` gives a gift to, readable only by
   `uid`, written once when the owner starts the draw.
-- `draws/{id}/joinKeys/{key}` - the password check; the key is
-  `sha256(drawId + ":" + sha256(password))` and is never readable by others.
+- `draws/{id}/joinKeys/{key}` - the join check; the key is
+  `sha256(drawId + ":" + sha256(secret))`, where the secret is the password or
+  the invite link's key, and is never readable by others.
+- `draws/{id}/invite/link` - the invite link's key (128 random bits), readable
+  by participants so they can share the link. The link is
+  `#/join/{id}?k={key}`; the key stays in the URL fragment, so it never reaches
+  the web server. The owner can replace it, which retires the old key; people
+  who already joined stay. The password is still needed to start the draw.
 - `appData/stats`, `messages` - counters that only grow together with real
   draws, and at most one message per user per day.
 

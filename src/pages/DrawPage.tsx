@@ -43,8 +43,8 @@ const DrawPage = () => {
   const navigationState = location.state as {
     // Set by the join and create pages: the letter editor opens.
     justJoined?: boolean;
-    // Set by the create page: the only moment the invite can carry it.
-    createdPassword?: string;
+    // Set by the create page: the invite opens straight away.
+    justCreated?: boolean;
   } | null;
   const justJoined = !!navigationState?.justJoined;
 
@@ -52,13 +52,13 @@ const DrawPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isStartDrawModalOpen, setIsStartDrawModalOpen] = useState(false);
-  const [createdPassword] = useState(navigationState?.createdPassword);
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(!!createdPassword);
+  const [justCreated] = useState(!!navigationState?.justCreated);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(justCreated);
   const [accessDenied, setAccessDenied] = useState(false);
 
-  // Keep the password in memory only, not in the browser history.
+  // A reload should not open the invite again.
   useEffect(() => {
-    if (navigationState?.createdPassword) {
+    if (navigationState?.justCreated) {
       navigate(location.pathname, { replace: true, state: { justJoined } });
     }
   }, [navigationState, navigate, location.pathname, justJoined]);
@@ -210,7 +210,8 @@ const DrawPage = () => {
         open={isInviteModalOpen && isWaiting}
         onClose={() => setIsInviteModalOpen(false)}
         draw={draw}
-        password={createdPassword}
+        isOwner={isOwner}
+        justCreated={justCreated}
       />
     </MainLayout>
   );
