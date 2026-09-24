@@ -14,6 +14,7 @@ import JoinToDrawPage from './pages/JoinToDrawPage';
 import { useAuth } from './hooks/useAuth';
 import CreatePage from './pages/CreatePage';
 import DrawPage from './pages/DrawPage';
+import PrivacyPage from './pages/PrivacyPage';
 
 // Guests go to the login page, which brings them back here after signing in.
 const RequireAuth: React.FC<{ children: React.ReactElement }> = ({
@@ -52,6 +53,8 @@ const AppRoutes = () => {
       <Routes>
         {/* Redirects signed-in users on its own */}
         <Route path="/" element={<LoginPage />} />
+
+        <Route path="/privacy" element={<PrivacyPage />} />
 
         {/*redirection done on page*/}
         <Route path="/join/:drawId" element={<JoinToDrawPage />} />

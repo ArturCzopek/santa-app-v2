@@ -13,7 +13,8 @@ const YouTubeEmbed: React.FC<{ videoId: string; title?: string }> = ({
       border: 0,
       borderRadius: 6,
     }}
-    src={`https://www.youtube.com/embed/${videoId}`}
+    // No cookies until the video is played.
+    src={`https://www.youtube-nocookie.com/embed/${videoId}`}
     title={title}
     loading="lazy"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

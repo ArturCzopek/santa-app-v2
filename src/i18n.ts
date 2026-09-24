@@ -265,6 +265,7 @@ const resources = {
             'This page is open inside another app (e.g. Messenger or Instagram), where Google does not allow signing in. Open it in your regular browser: tap ⋮ or ⋯ in the corner and choose "Open in browser", or copy the link and paste it there.',
         },
         googleNote: 'All you need is a Google account. We use your name and photo so others know who joined.',
+        privacyLink: 'How we use your data.',
         lead: 'One link for the whole group. Everyone writes a letter to Santa, and on draw day opens an envelope with the name of the person they buy a gift for.',
         loginWithGoogle: 'Login with Google',
         title: 'Secret Santa without paper slips in a hat',
@@ -285,6 +286,7 @@ const resources = {
         place: 'Place:',
       },
       footer: {
+        privacy: 'Privacy policy',
         sourceCode: 'Source code on GitHub',
       },
       navbar: {
@@ -293,6 +295,10 @@ const resources = {
         logout: 'Log out',
         showSanta: 'Show Santa!',
         title: 'Santa App',
+      },
+      privacy: {
+        title: 'Privacy policy',
+        updated: 'Last updated {{date}}',
       },
       santaModal: {
         title: 'Ho, ho, ho!',
@@ -569,6 +575,7 @@ const resources = {
             'Ta strona jest otwarta w innej aplikacji (np. Messengerze lub Instagramie), a tam Google nie pozwala się zalogować. Otwórz ją w swojej przeglądarce: stuknij ⋮ lub ⋯ w rogu i wybierz „Otwórz w przeglądarce” albo skopiuj link i wklej go tam.',
         },
         googleNote: 'Wystarczy konto Google. Używamy imienia i zdjęcia, żeby inni wiedzieli, kto dołączył.',
+        privacyLink: 'Jak używamy danych.',
         lead: 'Jeden link dla całej grupy. Wszyscy piszą listy do Mikołaja, a w dniu losowania otwierają koperty z imieniem osoby, dla której kupują prezent.',
         loginWithGoogle: 'Zaloguj przez Google',
         title: 'Tajemniczy Mikołaj bez karteczek w czapce',
@@ -589,6 +596,7 @@ const resources = {
         place: 'Miejsce:',
       },
       footer: {
+        privacy: 'Polityka prywatności',
         sourceCode: 'Kod aplikacji na GitHubie',
       },
       navbar: {
@@ -597,6 +605,10 @@ const resources = {
         logout: 'Wyloguj',
         showSanta: 'Pokaż Mikołaja!',
         title: 'Santa App',
+      },
+      privacy: {
+        title: 'Polityka prywatności',
+        updated: 'Ostatnia zmiana: {{date}}',
       },
       santaModal: {
         title: 'Ho, ho, ho!',

@@ -24,6 +24,7 @@ vi.mock('../../src/services/MessageService', () => ({
 
 import JoinToDrawPage from '../../src/pages/JoinToDrawPage';
 import LoginPage from '../../src/pages/LoginPage';
+import PrivacyPage from '../../src/pages/PrivacyPage';
 import { drawService } from '../../src/services/DrawService';
 
 const draw: Draw = {
@@ -198,5 +199,23 @@ describe('LoginPage', () => {
       screen.getByRole('button', { name: 'Skopiuj link' }),
     ).toBeInTheDocument();
     vi.restoreAllMocks();
+  });
+});
+
+describe('PrivacyPage', () => {
+  it('is linked next to the sign-in button and open to guests', () => {
+    auth.user = null;
+    renderWithProviders(<LoginPage />);
+    expect(
+      screen.getByRole('link', { name: 'Jak używamy danych.' }),
+    ).toHaveAttribute('href', '/privacy');
+
+    renderWithProviders(<PrivacyPage />);
+    expect(
+      screen.getByRole('heading', { name: 'Polityka prywatności' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Kto odpowiada za dane' }),
+    ).toBeInTheDocument();
   });
 });
