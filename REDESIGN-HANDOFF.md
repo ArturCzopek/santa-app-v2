@@ -37,14 +37,12 @@ przejście na losowanie ze `state: { justJoined: true, createdPassword }` – R1
 `createdPassword` w `DrawPage` i otworzyć zaproszenie) · R7 śnieg za treścią, 60 płatków na telefonie, brak przy
 `prefers-reduced-motion` · R8 ciemniejszy `pine` (#2A7549, AA także na `paperShade`), polskie
 teksty MUI (`plPL`), `aria-label` spinnerów, fokus na błędne pole w oknach i na stronie dołączania,
-neutralne płciowo teksty (role „Organizator”/„Uczestnik” zostały).
+neutralne płciowo teksty (role „Organizator”/„Uczestnik” zostały). · R9 zapieczętowana koperta
+(`SealedEnvelope.tsx`, otwarcie pamiętane w `localStorage` per losowanie i osoba), zwinięta lista
+uczestników po losowaniu, „Napisane listy: 4 z 6” dla organizatora.
 
 ## Do zrobienia
 
-- [ ] **R9 – efekt „wow” wyniku** (`src/components/draw/WinnerSection.tsx`): zapieczętowana
-  koperta z lakową pieczęcią „Stuknij, aby otworzyć”; stuknięcie → pęka lak, wysuwa się list
-  (dzisiejsza treść). Bez animacji przy `prefers-reduced-motion`. Po losowaniu lista uczestników
-  zwinięta. Organizator przed losowaniem: postęp „4 z 6 osób napisało list”.
 - [ ] **R10 – zaproszenie jako pocztówka** (`InviteDrawModal.tsx`): główny przycisk „Udostępnij”
   (Web Share API, gotowa wiadomość: link, budżet, jak dołączyć; fallback: kopiuj), ekran/okno
   „Wyślij zaproszenie” zaraz po utworzeniu losowania (wtedy z hasłem).

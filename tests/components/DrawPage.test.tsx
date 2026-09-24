@@ -67,8 +67,16 @@ const renderDrawPage = () =>
     path: '/draw/:drawId',
   });
 
+const openEnvelope = async (user = userEvent.setup()) =>
+  user.click(
+    await screen.findByRole('button', {
+      name: 'Otwórz kopertę z wynikiem losowania',
+    }),
+  );
+
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
   auth.user = fakeUser('owner', 'Olga Owner');
   vi.mocked(drawService.getDraw).mockResolvedValue(waitingDraw);
   vi.mocked(drawService.getParticipants).mockResolvedValue([
@@ -111,6 +119,7 @@ describe('DrawPage', () => {
       await screen.findByRole('heading', { name: 'Twój wynik losowania' }),
     ).toBeInTheDocument();
     expect(drawingService.startDraw).toHaveBeenCalledWith('d1', 'owner');
+    await openEnvelope(user);
     // Regression: the page used to go blank because participants were lost.
     await waitFor(() =>
       expect(screen.getAllByText('Ania Test').length).toBe(2),
@@ -132,7 +141,8 @@ describe('DrawPage', () => {
     expect(
       await screen.findByRole('heading', { name: 'Twój wynik losowania' }),
     ).toBeInTheDocument();
-    expect(screen.getByText('Socks')).toBeInTheDocument();
+    await openEnvelope();
+    expect(await screen.findByText('Socks')).toBeInTheDocument();
     expect(screen.getByText('Mountain book')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Edytuj list' })).toBeEnabled();
   });
@@ -247,5 +257,73 @@ describe('DrawPage', () => {
       await screen.findByText(/Nie udało się zapisać listu/),
     ).toBeInTheDocument();
     expect(wishField).toHaveValue('Coffee');
+  });
+  it('keeps the result sealed until you open the envelope, then remembers it', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
+    const { unmount } = renderDrawPage();
+
+    await screen.findByRole('button', {
+      name: 'Otwórz kopertę z wynikiem losowania',
+    });
+    expect(screen.queryByText('Socks')).not.toBeInTheDocument();
+
+    await openEnvelope();
+    expect(await screen.findByText('Kupujesz prezent dla')).toBeInTheDocument();
+
+    unmount();
+    renderDrawPage();
+    expect(await screen.findByText('Kupujesz prezent dla')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', {
+        name: 'Otwórz kopertę z wynikiem losowania',
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('folds the participant list away after the draw', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    const toggle = await screen.findByRole('button', {
+      name: 'Uczestnicy (2)',
+    });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await user.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('shows the owner how many letters are written before the draw', async () => {
+    vi.mocked(drawService.getParticipants).mockResolvedValue([
+      participant('owner', 'Olga Owner', 'Mountain book'),
+      participant('alice', 'Ania Test'),
+    ]);
+    renderDrawPage();
+
+    expect(
+      await screen.findByText('Napisane listy: 1 z 2'),
+    ).toBeInTheDocument();
+  });
+
+  it('does not show the letter count to other participants', async () => {
+    auth.user = fakeUser('alice', 'Ania Test');
+    renderDrawPage();
+
+    await screen.findByText('Office party');
+    expect(screen.queryByText(/Napisane listy/)).not.toBeInTheDocument();
   });
 });
