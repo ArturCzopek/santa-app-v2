@@ -31,12 +31,16 @@ const DrawCardBase: React.FC<DrawCardBaseProps> = ({
       <Box
         sx={{
           display: 'flex',
+          flexWrap: 'wrap-reverse',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
-          gap: 2,
+          gap: 1.5,
         }}
       >
-        <Typography variant="h2" sx={{ fontSize: '1.35rem', minWidth: 0 }}>
+        <Typography
+          variant="h2"
+          sx={{ fontSize: '1.35rem', minWidth: 0, flex: '1 1 12rem' }}
+        >
           {title}
         </Typography>
         <Postmark

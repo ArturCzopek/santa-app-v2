@@ -30,19 +30,19 @@ export const signedInUser = async (
   await page.goto('/');
   await page.waitForFunction(() => window.__santaTest !== undefined);
   await page.evaluate(([s, n]) => window.__santaTest.signIn(s, n), [sub, name]);
-  await expect(page.getByRole('heading', { name: 'Twoje Losowania' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Twoje losowania' }),
+  ).toBeVisible();
   return { page, name };
 };
 
 // Opens a draw from the list, the way people do it.
 export const openDraw = async (page: Page, drawName: string) => {
-  const backButton = page.getByRole('button', { name: 'Powrót do Losowań' });
+  const backButton = page.getByRole('button', { name: 'Powrót do losowań' });
   if (await backButton.isVisible()) await backButton.click();
-  await expect(page.getByRole('heading', { name: 'Twoje Losowania' })).toBeVisible();
-  await page
-    .locator('div', { has: page.getByRole('heading', { name: drawName }) })
-    .getByRole('button', { name: 'Zobacz szczegóły' })
-    .last()
-    .click();
+  await expect(
+    page.getByRole('heading', { name: 'Twoje losowania' }),
+  ).toBeVisible();
+  await page.getByRole('link', { name: new RegExp(drawName) }).click();
   await expect(page.getByRole('heading', { name: drawName })).toBeVisible();
 };

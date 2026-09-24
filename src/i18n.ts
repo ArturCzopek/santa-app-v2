@@ -52,13 +52,12 @@ const resources = {
       },
       drawCard: {
         budget: 'Budget: {{budget}} {{currency}}',
-        checkResults:
-          'The draw has been completed. Go to draw to check your results!',
+        checkResults: 'The draw took place – open your envelope to see who you buy for.',
         drawDate: 'Draw date: {{drawDate}}',
         drawedStatus: 'Drawn',
-        noWish: "You haven't provided your wish yet! Go to draw to add it.",
+        noWish: 'You have not written your letter to Santa yet.',
         participants: 'Participants: {{count}}',
-        viewDetails: 'View details',
+        viewDetails: 'Open',
         waitingStatus: 'Waiting for Draw',
       },
       drawPage: {
@@ -126,24 +125,21 @@ const resources = {
       },
       drawsPage: {
         createButton: 'Create New Draw',
-        createOwn: 'create your own',
         errors: {
           fetchFailed: 'Failed to fetch draws. Please try again.',
         },
         joinButton: 'Join Draw',
         joinModal: {
           codeRequired: 'Draw code is required',
-          description: 'Enter the draw code shared by the draw creator.',
-          drawCodeLabel: 'Draw Code',
-          proceedButton: 'Proceed to Draw',
+          description: 'Paste the invite link or just the draw code from the organizer.',
+          drawCodeLabel: 'Invite link or draw code',
+          proceedButton: 'Next',
         },
+        emptyTitle: 'No draws yet',
         noDraws:
-          'You are not participating in any draws at the moment. Ask a friend to share a draw with you or',
+          'Create your own draw or ask the organizer for the invite link.',
+        stats: 'Draws in the app: {{count}} · People with an envelope: {{winnersCount}}',
         title: 'Your Draws',
-        totalDrawsPrompt:
-          'and be a participant in one of {{count}} draws that already exist in the app and one of {{winnersCount}} winners!',
-        totalDrawsPromptWithData:
-          'Have fun and be a participant in one of {{count}} draws and one of {{winnersCount}} winners!',
       },
       howItWorks: {
         step1: 'The organizer creates a draw and sends everyone one link.',
@@ -268,14 +264,12 @@ const resources = {
       },
       drawCard: {
         budget: 'Budżet: {{budget}} {{currency}}',
-        checkResults:
-          'Losowanie zostało zakończone. Przejdź do losowania, aby sprawdzić swój wynik!',
+        checkResults: 'Losowanie się odbyło – otwórz kopertę i sprawdź, komu kupujesz prezent.',
         drawDate: 'Data losowania: {{drawDate}}',
         drawedStatus: 'Rozlosowane',
-        noWish:
-          'Nie podałeś jeszcze swojego życzenia! Przejdź do losowania, aby je dodać.',
+        noWish: 'Nie masz jeszcze listu do Mikołaja.',
         participants: 'Uczestnicy: {{count}}',
-        viewDetails: 'Zobacz szczegóły',
+        viewDetails: 'Otwórz',
         waitingStatus: 'Oczekuje na losowanie',
       },
       drawPage: {
@@ -348,7 +342,6 @@ const resources = {
       },
       drawsPage: {
         createButton: 'Stwórz nowe losowanie',
-        createOwn: 'stwórz własne',
         errors: {
           fetchFailed: 'Nie udało się pobrać losowań. Spróbuj ponownie.',
         },
@@ -356,17 +349,15 @@ const resources = {
         joinModal: {
           codeRequired: 'Kod losowania jest wymagany',
           description:
-            'Podaj kod losowania udostępniony Ci przez założyciela losowania.',
-          drawCodeLabel: 'Kod losowania',
-          proceedButton: 'Przejdź do losowania',
+            'Wklej link z zaproszeniem albo sam kod losowania od organizatora.',
+          drawCodeLabel: 'Link albo kod losowania',
+          proceedButton: 'Dalej',
         },
+        emptyTitle: 'Nie masz jeszcze żadnego losowania',
         noDraws:
-          'Obecnie nie uczestniczysz w żadnym losowaniu. Poproś znajomego o udostępnienie losowania lub',
+          'Załóż własne losowanie albo poproś organizatora o link z zaproszeniem.',
+        stats: 'Losowania w aplikacji: {{count}} · Osoby z kopertą: {{winnersCount}}',
         title: 'Twoje losowania',
-        totalDrawsPrompt:
-          'i bądź uczestnikiem jednego z {{count}} losowań istniejących już w aplikacji oraz bądź jednym z {{winnersCount}} rozlosowanych osób!',
-        totalDrawsPromptWithData:
-          'Dołącz do zabawy i bądź uczestnikiem jednego z {{count}} losowań oraz bądź jednym z {{winnersCount}} rozlosowanych osób!',
       },
       howItWorks: {
         step1: 'Organizator zakłada losowanie i wysyła wszystkim jeden link.',

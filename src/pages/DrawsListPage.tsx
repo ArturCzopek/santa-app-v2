@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  CircularProgress,
-  Link,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import { Add, GroupAdd } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import { useTranslation } from 'react-i18next';
@@ -15,26 +9,16 @@ import { drawService } from '../services/DrawService';
 import { DrawPreview } from '../models/Draw';
 import DrawPreviewCard from '../components/draw/DrawPreviewCard';
 import ActionButtons from '../components/common/ActionButtons';
+import PaperCard from '../components/common/PaperCard';
+import HowItWorks from '../components/HowItWorks';
 import JoinDrawModal from '../components/draw/JoinDrawModal';
-import {
-  pageContainerStyles,
-  loadingContainerStyles,
-  errorMessageStyles,
-  emptyStateContainerStyles,
-  emptyStateTextStyles,
-  createLinkStyles,
-  actionButtonsContainerStyles,
-  joinButtonStyles,
-  createButtonStyles,
-  appDataContainerStyles,
-} from '../styles/drawsPageStyles';
 import { appDataService } from '../services/AppDataService';
+import { tokens } from '../styles/theme';
 
 const DrawsListPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const theme = useTheme();
 
   const [drawPreviews, setDrawPreviews] = useState<DrawPreview[]>([]);
   const [totalDrawsCount, setTotalDrawsCount] = useState<number>(0);
@@ -65,98 +49,73 @@ const DrawsListPage = () => {
     fetchData();
   }, [user, t]);
 
-  if (loading) {
-    return (
-      <MainLayout title={t('drawsPage.title')}>
-        <Box sx={loadingContainerStyles}>
-          <CircularProgress color="inherit" />
-        </Box>
-      </MainLayout>
-    );
-  }
-
-  if (error) {
-    return (
-      <MainLayout title={t('drawsPage.title')}>
-        <Typography color="error" sx={errorMessageStyles}>
-          {error}
-        </Typography>
-      </MainLayout>
-    );
-  }
-
   // "one of 1 draws" reads oddly, so the real counts show up once they grow.
   const showStats = totalDrawsCount >= 2 && totalWinnersCounts >= 2;
 
   const actionButtons = [
     {
-      icon: <GroupAdd />,
-      label: t('drawsPage.joinButton'),
-      color: 'success' as const,
-      customStyles: joinButtonStyles(theme),
-      onClick: () => setIsJoinModalOpen(true),
-    },
-    {
       icon: <Add />,
       label: t('drawsPage.createButton'),
       onClick: () => navigate('/create'),
-      color: 'primary' as const,
-      customStyles: createButtonStyles(theme),
+    },
+    {
+      icon: <GroupAdd />,
+      label: t('drawsPage.joinButton'),
+      variant: 'outlined' as const,
+      sx: { color: tokens.snow },
+      onClick: () => setIsJoinModalOpen(true),
     },
   ];
 
   return (
     <MainLayout title={t('drawsPage.title')}>
-      <Box sx={pageContainerStyles}>
-        {drawPreviews.length === 0 ? (
-          <Box sx={emptyStateContainerStyles}>
-            <Typography sx={emptyStateTextStyles(theme)}>
-              {t('drawsPage.noDraws')}{' '}
-              <Link
-                component="span"
-                onClick={() => navigate('/create')}
-                sx={createLinkStyles(theme)}
-              >
-                {t('drawsPage.createOwn')}
-              </Link>
-              {showStats
-                ? ' ' +
-                  t('drawsPage.totalDrawsPrompt', {
-                    count: totalDrawsCount,
-                    winnersCount: totalWinnersCounts,
-                  })
-                : '.'}
-            </Typography>
-          </Box>
-        ) : (
-          <>
-            {showStats && (
-              <Box sx={appDataContainerStyles}>
-                <Typography sx={emptyStateTextStyles(theme)}>
-                  {t('drawsPage.totalDrawsPromptWithData', {
-                    count: totalDrawsCount,
-                    winnersCount: totalWinnersCounts,
-                  })}
-                </Typography>
-              </Box>
-            )}
+      <ActionButtons buttons={actionButtons} containerStyles={{ mb: 4 }} />
 
-            {drawPreviews.map((drawPreview) => (
-              <DrawPreviewCard key={drawPreview.id} drawPreview={drawPreview} />
-            ))}
-          </>
-        )}
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
+          <CircularProgress color="inherit" aria-label={t('common.loading')} />
+        </Box>
+      ) : error ? (
+        <PaperCard>
+          <Typography sx={{ fontWeight: 700 }}>{error}</Typography>
+        </PaperCard>
+      ) : drawPreviews.length === 0 ? (
+        <PaperCard>
+          <Typography variant="h2" sx={{ fontSize: '1.3rem' }}>
+            {t('drawsPage.emptyTitle')}
+          </Typography>
+          <Typography>{t('drawsPage.noDraws')}</Typography>
+          <HowItWorks />
+        </PaperCard>
+      ) : (
+        <Box
+          component="ul"
+          sx={{ listStyle: 'none', m: 0, p: 0, display: 'grid', gap: 2.5 }}
+        >
+          {drawPreviews.map((drawPreview) => (
+            <Box component="li" key={drawPreview.id}>
+              <DrawPreviewCard drawPreview={drawPreview} />
+            </Box>
+          ))}
+        </Box>
+      )}
 
-        <ActionButtons
-          buttons={actionButtons}
-          containerStyles={actionButtonsContainerStyles}
-        />
+      {!loading && showStats && (
+        <Typography
+          variant="body2"
+          sx={{ color: tokens.snowMuted, mt: 4, textAlign: 'center' }}
+        >
+          {t('drawsPage.stats', {
+            count: totalDrawsCount,
+            winnersCount: totalWinnersCounts,
+          })}
+        </Typography>
+      )}
 
-        <JoinDrawModal
-          open={isJoinModalOpen}
-          onClose={() => setIsJoinModalOpen(false)}
-        />
-      </Box>
+      <JoinDrawModal
+        open={isJoinModalOpen}
+        onClose={() => setIsJoinModalOpen(false)}
+      />
     </MainLayout>
   );
 };
