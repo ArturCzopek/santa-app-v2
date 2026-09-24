@@ -6,6 +6,10 @@ name: Deploy
 #
 # Needs the repository secret FIREBASE_SERVICE_ACCOUNT (service account key
 # JSON) next to the existing VITE_FIREBASE_* secrets.
+#
+# Optional staging: with FIREBASE_SERVICE_ACCOUNT_DEV (key of the dev
+# Firebase project) the same migration and rules go to the dev project
+# first; if that fails, production is not touched.
 on:
   push:
     branches: [master]
@@ -34,6 +38,8 @@ jobs:
   deploy:
     needs: checks
     runs-on: ubuntu-latest
+    env:
+      HAS_STAGING: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV != '' }}
     steps:
       - name: Check deployment secrets
         env:
@@ -54,6 +60,23 @@ jobs:
 
       - run: npm ci
 
+      # Staging (dev Firebase project), only when its key is configured.
+      - name: Authenticate to the staging project
+        id: auth-staging
+        if: env.HAS_STAGING == 'true'
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
+
+      - name: Migrate existing draws (staging)
+        if: env.HAS_STAGING == 'true'
+        run: node scripts/migrate.mjs --apply
+
+      - name: Deploy Firestore rules and indexes (staging)
+        if: env.HAS_STAGING == 'true'
+        run: npx firebase deploy --only firestore --project "${{ steps.auth-staging.outputs.project_id }}" --non-interactive
+
+      # Production.
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
         with:

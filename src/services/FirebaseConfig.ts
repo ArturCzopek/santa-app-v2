@@ -21,6 +21,13 @@ const firebaseConfig = {
     : {}),
 };
 
+if (!firebaseConfig.projectId) {
+  throw new Error(
+    'Missing Firebase config (VITE_FIREBASE_*). Locally use npm run dev:emulators, ' +
+      'or create .env.staging from .env.staging.example for npm run dev:staging.',
+  );
+}
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);

@@ -76,6 +76,14 @@ Sign-in opens the emulator's fake Google account picker, where the seeded
 accounts are listed and any number of new test accounts can be added. To be signed in as several people at once,
 use separate incognito windows or browser profiles.
 
+### Staging (dev Firebase project)
+
+For real Google sign-in without touching production: copy
+`.env.staging.example` to `.env.staging`, fill in the dev project's web app
+config and run `npm run dev:staging`. The deploy workflow keeps the dev
+project's rules and data format up to date when the
+`FIREBASE_SERVICE_ACCOUNT_DEV` secret is set.
+
 ### Checks and tests
 
 All need Java (they start the Firebase emulators).
@@ -99,7 +107,10 @@ from the Actions tab, optionally with a release tag.
 
 Required repository secrets: the `VITE_FIREBASE_*` / `VITE_APP_URL` values
 and `FIREBASE_SERVICE_ACCOUNT` - a service account key JSON (Firebase console
--> Project settings -> Service accounts -> Generate new private key).
+-> Project settings -> Service accounts -> Generate new private key). The
+account needs the "Firebase Admin" and "Service Usage Consumer" roles in
+Google Cloud IAM to deploy rules. Optional `FIREBASE_SERVICE_ACCOUNT_DEV`
+(same, for the dev project) enables staging, deployed before production.
 
 ## Security model
 
