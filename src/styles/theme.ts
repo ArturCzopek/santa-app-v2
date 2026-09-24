@@ -1,112 +1,146 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
-const customColors = {
-  gold: '#FFC107',
-  lightGold: '#FFD54F',
-  darkRed: '#B71C1C',
-  darkGreen: 'rgba(0, 43, 0, 0.7)',
-  grayText: '#9E9E9E',
-  lightGray: '#BDBDBD',
-  darkGray: '#1E1E1E',
+// "List do Mikołaja": Christmas mail on a night-spruce ground. Paper surfaces
+// carry navy ink; sealing-wax red is kept for the one main action per screen.
+export const tokens = {
+  spruce: '#0E2A1E',
+  spruceRaised: '#163A2A',
+  spruceLine: '#2C4F3E',
+  snow: '#F5F1E8',
+  snowMuted: '#C9D2C8',
+  paper: '#FBF8F2',
+  paperShade: '#F1EBDF',
+  paperLine: '#DDD3C2',
+  ink: '#1E2A44',
+  inkMuted: '#4F5A73',
+  wax: '#B3202A',
+  waxDark: '#8E1820',
+  stampGold: '#D9A441',
+  pine: '#2E7D4F',
+  amber: '#8A5A00',
 };
 
-const theme = createTheme({
+export const handFont = '"Caveat", "Segoe Print", cursive';
+
+// The red-green-red striped edge of a Christmas airmail envelope.
+export const airmailStripes = `repeating-linear-gradient(135deg, ${tokens.wax} 0 10px, ${tokens.paper} 10px 16px, ${tokens.pine} 16px 26px, ${tokens.paper} 26px 32px)`;
+
+// Old colour names still used by some styles; they map onto the tokens.
+const customColors = {
+  gold: tokens.stampGold,
+  lightGold: '#E8C274',
+  darkRed: tokens.waxDark,
+  darkGreen: tokens.spruceRaised,
+  grayText: tokens.snowMuted,
+  lightGray: tokens.snow,
+  darkGray: tokens.ink,
+};
+
+const focusRing = {
+  outline: `3px solid ${tokens.stampGold}`,
+  outlineOffset: '2px',
+};
+
+const baseTheme = createTheme({
   palette: {
-    primary: { main: '#D32F2F' },
-    secondary: { main: '#004702' },
+    primary: { main: tokens.wax, dark: tokens.waxDark, contrastText: '#FFFFFF' },
+    secondary: { main: tokens.pine, contrastText: '#FFFFFF' },
+    error: { main: '#A61B1B' },
+    warning: { main: tokens.amber },
+    success: { main: tokens.pine },
     background: {
-      default: '#004702',
-      paper: '#FFFFFF',
+      default: tokens.spruce,
+      paper: tokens.paper,
     },
     text: {
       primary: 'rgba(255, 255, 255, 0.95)',
       secondary: 'rgba(255, 255, 255, 0.85)',
     },
-    error: { main: '#F44336' },
-    success: { main: '#4CAF50' },
   },
+  shape: { borderRadius: 10 },
   typography: {
-    fontFamily: '"Nunito", "Lato", "Arial", sans-serif',
-    h1: {
-      fontWeight: 700,
-      fontSize: '2.5rem',
-      color: 'rgba(255, 255, 255, 0.95)',
-    },
-    h2: {
-      fontWeight: 600,
-      fontSize: '2rem',
-      color: 'rgba(255, 255, 255, 0.95)',
-    },
-    h3: {
-      fontWeight: 600,
-      fontSize: '1.8rem',
-      color: 'rgba(255, 255, 255, 0.95)',
-    },
-    h6: {
-      fontWeight: 500,
-      fontSize: '1.1rem',
-      color: 'rgba(255, 255, 255, 0.85)',
-    },
-    button: {
-      textTransform: 'none',
-      fontWeight: 500,
-    },
-    body1: {
-      color: 'rgba(255, 255, 255, 0.9)',
-    },
+    fontFamily: '"Nunito", "Segoe UI", system-ui, sans-serif',
+    h1: { fontWeight: 800, fontSize: '2.25rem', lineHeight: 1.15, letterSpacing: '-0.01em' },
+    h2: { fontWeight: 800, fontSize: '1.625rem', lineHeight: 1.2 },
+    h3: { fontWeight: 700, fontSize: '1.3rem', lineHeight: 1.25 },
+    h4: { fontWeight: 700, fontSize: '1.15rem', lineHeight: 1.3 },
+    h5: { fontWeight: 700, fontSize: '1.05rem' },
+    h6: { fontWeight: 700, fontSize: '1rem' },
+    body1: { fontSize: '1rem', lineHeight: 1.55 },
+    body2: { fontSize: '0.9375rem', lineHeight: 1.5 },
+    button: { textTransform: 'none', fontWeight: 700, fontSize: '1rem' },
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
+        html: { minHeight: '100%' },
         body: {
-          margin: 0,
-          padding: 0,
-          height: '100vh',
-          backgroundColor: '#004702',
+          minHeight: '100dvh',
+          backgroundColor: tokens.spruce,
+          color: tokens.snow,
+          scrollbarColor: `${tokens.spruceLine} ${tokens.spruce}`,
         },
-        html: {
-          height: '100vh',
-          margin: 0,
-        },
+        '::selection': { backgroundColor: tokens.stampGold, color: tokens.ink },
+        ':focus-visible': focusRing,
       },
     },
+    MuiButtonBase: {
+      styleOverrides: { root: { '&.Mui-focusVisible': focusRing } },
+    },
     MuiButton: {
+      defaultProps: { disableElevation: true },
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          padding: '8px 16px',
-          boxShadow: '0 3px 5px rgba(0,0,0,0.2)',
+          minHeight: 44,
+          padding: '10px 20px',
+          borderRadius: 10,
           variants: [
             {
               props: { variant: 'contained', color: 'primary' },
               style: {
-                '&:hover': {
-                  backgroundColor: customColors.darkRed,
-                },
+                boxShadow: '0 6px 16px -8px rgba(142, 24, 32, 0.9)',
+                '&:hover': { backgroundColor: tokens.waxDark },
               },
+            },
+            {
+              props: { variant: 'outlined' },
+              style: { borderWidth: 2, '&:hover': { borderWidth: 2 } },
             },
           ],
         },
+        sizeSmall: { minHeight: 36, padding: '6px 14px', fontSize: '0.9rem' },
       },
+    },
+    MuiIconButton: {
+      styleOverrides: { root: { '&.Mui-focusVisible': focusRing } },
+    },
+    MuiPaper: {
+      styleOverrides: { root: { backgroundImage: 'none' } },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
-          boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+          borderRadius: 10,
+          boxShadow: '0 12px 28px -12px rgba(0, 0, 0, 0.55)',
         },
       },
+    },
+    MuiChip: {
+      styleOverrides: { root: { fontWeight: 700 } },
+    },
+    MuiLink: {
+      styleOverrides: { root: { textUnderlineOffset: '0.2em' } },
     },
   },
 });
 
-// Add the custom colors to the theme
+const theme = responsiveFontSizes(baseTheme, { factor: 2.2 });
+
 const themeWithCustomColors = {
   ...theme,
   customColors,
 };
 
-// Type for the customColors
 declare module '@mui/material/styles' {
   interface Theme {
     customColors: typeof customColors;

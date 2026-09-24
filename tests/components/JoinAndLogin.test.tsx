@@ -76,7 +76,7 @@ describe('JoinToDrawPage', () => {
     renderJoinPage();
 
     await user.type(await screen.findByLabelText(/Hasło/), 'wrong-1');
-    await user.click(screen.getByRole('button', { name: 'Dołącz do Losowania' }));
+    await user.click(screen.getByRole('button', { name: 'Dołącz do losowania' }));
 
     expect(await screen.findByText(/Nieprawidłowe hasło/)).toBeInTheDocument();
     expect(drawService.joinToDraw).toHaveBeenCalledWith('d1', auth.user, 'wrong-1');
@@ -88,7 +88,7 @@ describe('JoinToDrawPage', () => {
     renderJoinPage();
 
     await user.type(await screen.findByLabelText(/Hasło/), 'secret1');
-    await user.click(screen.getByRole('button', { name: 'Dołącz do Losowania' }));
+    await user.click(screen.getByRole('button', { name: 'Dołącz do losowania' }));
 
     expect(await screen.findByText(/Pomyślnie dołączyłeś/)).toBeInTheDocument();
   });
@@ -98,7 +98,7 @@ describe('JoinToDrawPage', () => {
     renderJoinPage();
 
     expect(await screen.findByText(/już się rozpoczęło/)).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Dołącz do Losowania' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Dołącz do losowania' })).toBeNull();
   });
 });
 

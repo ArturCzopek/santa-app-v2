@@ -15,7 +15,7 @@ const App: React.FC = () => {
     <I18nextProvider i18n={i18n}>
       <ThemeProvider theme={theme}>
         <SnowfallEffect/>
-        <div style={{ position: 'relative', height: '100vh' }}>
+        <div style={{ position: 'relative', minHeight: '100dvh' }}>
           <ErrorBoundary>
             <NotifyProvider>
               <AuthProvider>

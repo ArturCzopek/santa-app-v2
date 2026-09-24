@@ -26,14 +26,14 @@ test('a whole Secret Santa: create, invite, join, wishes, draw, results', async 
   // Owner creates the draw.
   const owner = await signedInUser(browser, 'owner', 'Olga Owner', contextOptions);
   await owner.page.getByRole('button', { name: 'Stwórz nowe losowanie' }).click();
-  await owner.page.getByLabel('Nazwa Losowania').fill('Wigilia E2E');
+  await owner.page.getByLabel('Nazwa losowania').fill('Wigilia E2E');
   await owner.page.getByLabel('Opis').fill('Prezenty do 80 zł');
   await owner.page.getByLabel('Budżet').fill('80');
   await owner.page.getByLabel('Hasło', { exact: true }).fill('abc12');
-  await owner.page.getByRole('button', { name: 'Stwórz Losowanie' }).click();
+  await owner.page.getByRole('button', { name: 'Stwórz losowanie' }).click();
   await expect(owner.page.getByText(/przynajmniej 6 znaków/)).toBeVisible();
   await owner.page.getByLabel('Hasło', { exact: true }).fill('sekret1');
-  await owner.page.getByRole('button', { name: 'Stwórz Losowanie' }).click();
+  await owner.page.getByRole('button', { name: 'Stwórz losowanie' }).click();
   await owner.page.waitForURL(/#\/draw\//, { timeout: 10_000 });
   const drawId = owner.page.url().split('/draw/')[1];
 
@@ -53,11 +53,11 @@ test('a whole Secret Santa: create, invite, join, wishes, draw, results', async 
     await expect(joiner.page.getByText('Utworzone przez Olga Owner')).toBeVisible();
     if (sub === 'alice') {
       await joiner.page.getByLabel('Hasło', { exact: true }).fill('zlehaslo');
-      await joiner.page.getByRole('button', { name: 'Dołącz do Losowania' }).click();
+      await joiner.page.getByRole('button', { name: 'Dołącz do losowania' }).click();
       await expect(joiner.page.getByText(/Nieprawidłowe hasło/)).toBeVisible();
     }
     await joiner.page.getByLabel('Hasło', { exact: true }).fill('sekret1');
-    await joiner.page.getByRole('button', { name: 'Dołącz do Losowania' }).click();
+    await joiner.page.getByRole('button', { name: 'Dołącz do losowania' }).click();
     await joiner.page.waitForURL(/#\/draw\//, { timeout: 10_000 });
     await expect(joiner.page.getByText('Olga Owner').last()).toBeVisible();
     joiners.push(joiner);
@@ -71,14 +71,14 @@ test('a whole Secret Santa: create, invite, join, wishes, draw, results', async 
   // Owner starts the draw (refreshing the page to see everyone who joined).
   await openDraw(owner.page, 'Wigilia E2E');
   await expect(owner.page.getByText('Bartek Test')).toBeVisible();
-  await owner.page.getByRole('button', { name: 'Rozpocznij Losowanie' }).click();
+  await owner.page.getByRole('button', { name: 'Rozpocznij losowanie' }).click();
   const dialog = owner.page.getByRole('dialog');
   await dialog.getByLabel('Hasło', { exact: true }).fill('zlehaslo');
   await dialog.getByRole('button', { name: 'Losuj' }).click();
   await expect(dialog.getByText('Nieprawidłowe hasło')).toBeVisible();
   await dialog.getByLabel('Hasło', { exact: true }).fill('sekret1');
   await dialog.getByRole('button', { name: 'Losuj' }).click();
-  await expect(owner.page.getByRole('heading', { name: 'Twój Los' })).toBeVisible();
+  await expect(owner.page.getByRole('heading', { name: 'Twój los' })).toBeVisible();
   // Participants are still listed (the result may show one of them again).
   await expect(owner.page.getByText('Bartek Test').last()).toBeVisible();
   await expect(owner.page.getByText('Ania Test').last()).toBeVisible();
@@ -89,7 +89,7 @@ test('a whole Secret Santa: create, invite, join, wishes, draw, results', async 
   for (const person of everyone) {
     await openDraw(person.page, 'Wigilia E2E');
     const result = person.page
-      .getByRole('heading', { name: 'Twój Los' })
+      .getByRole('heading', { name: 'Twój los' })
       .locator('xpath=..');
     await expect(result).toBeVisible();
     const text = await result.innerText();
@@ -104,22 +104,22 @@ test('a whole Secret Santa: create, invite, join, wishes, draw, results', async 
   const ownerSanta = [...recipients].find(([, to]) => to === 'Olga Owner')![0];
   const santaPage = everyone.find((p) => p.name === ownerSanta)!.page;
   await expect(
-    santaPage.getByRole('heading', { name: 'Twój Los' }).locator('xpath=..'),
+    santaPage.getByRole('heading', { name: 'Twój los' }).locator('xpath=..'),
   ).toContainText('Książka o górach');
 });
 
 const createDraw = async (page: Page, name: string) => {
   await page.getByRole('button', { name: 'Stwórz nowe losowanie' }).click();
-  await page.getByLabel('Nazwa Losowania').fill(name);
+  await page.getByLabel('Nazwa losowania').fill(name);
   await page.getByLabel('Opis').fill('x');
   await page.getByLabel('Hasło', { exact: true }).fill('sekret1');
-  await page.getByRole('button', { name: 'Stwórz Losowanie' }).click();
+  await page.getByRole('button', { name: 'Stwórz losowanie' }).click();
   await page.waitForURL(/#\/draw\//, { timeout: 10_000 });
   return page.url().split('/draw/')[1];
 };
 
 // Only the draw page has this section (the list also shows the draw name).
-const wishHeading = (page: Page) => page.getByRole('heading', { name: 'Twoje Życzenie' });
+const wishHeading = (page: Page) => page.getByRole('heading', { name: 'Twoje życzenie' });
 
 test('reloading a draw page keeps you on it', async ({ browser }) => {
   const owner = await signedInUser(browser, 'owner', 'Olga Owner');

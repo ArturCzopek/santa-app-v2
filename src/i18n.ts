@@ -191,7 +191,7 @@ const resources = {
   pl: {
     translation: {
       common: {
-        backToDraws: 'Powrót do Losowań',
+        backToDraws: 'Powrót do losowań',
         cancel: 'Anuluj',
         close: 'Zamknij',
         joining: 'Dołączanie...',
@@ -206,10 +206,10 @@ const resources = {
       },
       createPage: {
         budget: 'Budżet',
-        createButton: 'Stwórz Losowanie',
+        createButton: 'Stwórz losowanie',
         currency: 'Waluta',
         description: 'Opis',
-        drawName: 'Nazwa Losowania',
+        drawName: 'Nazwa losowania',
         errors: {
           createFailed: 'Nie udało się utworzyć losowania. Spróbuj ponownie.',
         },
@@ -218,7 +218,7 @@ const resources = {
           'Zapamiętaj hasło! Musisz je podać innym osobom, aby mogły dołączyć do losowania. Nie ma opcji zmiany ani podglądnięcia hasła później.',
         success:
           'Stworzono losowanie. Nie zapomnij o wpisaniu życzenia dla mikołaja!',
-        title: 'Stwórz Nowe Losowanie',
+        title: 'Nowe losowanie',
         validation: {
           budgetMustBeNumber: 'Budżet musi być liczbą',
           budgetPositive: 'Budżet musi być większy niż 0',
@@ -281,11 +281,11 @@ const resources = {
           drawButton: 'Losuj',
           incorrectPassword: 'Nieprawidłowe hasło',
         },
-        startDrawButton: 'Rozpocznij Losowanie',
+        startDrawButton: 'Rozpocznij losowanie',
         title: 'Losowanie',
         winnerSection: {
           noWishProvided: 'Brak życzenia',
-          title: 'Twój Los',
+          title: 'Twój los',
         },
         wishSection: {
           editButton: 'Edytuj życzenie',
@@ -293,7 +293,7 @@ const resources = {
             'Nie podałeś jeszcze swojego życzenia! Zrób to, zanim losowanie się odbędzie.',
           saveButton: 'Zapisz życzenie',
           saveSuccess: 'Twoje życzenie zostało zapisane pomyślnie!',
-          title: 'Twoje Życzenie',
+          title: 'Twoje życzenie',
           wishLabel: 'Życzenie',
           wishPlaceholder: 'Wpisz swoje życzenie tutaj...',
         },
@@ -314,7 +314,7 @@ const resources = {
         },
         noDraws:
           'Obecnie nie uczestniczysz w żadnym losowaniu. Poproś znajomego o udostępnienie losowania lub',
-        title: 'Twoje Losowania',
+        title: 'Twoje losowania',
         totalDrawsPrompt:
           'i bądź uczestnikiem jednego z {{count}} losowań istniejących już w aplikacji oraz bądź jednym z {{winnersCount}} rozlosowanych osób!',
         totalDrawsPromptWithData:
@@ -336,13 +336,13 @@ const resources = {
           passwordRequired: 'Hasło jest wymagane aby dołączyć do losowania',
         },
         loginRequired: 'Musisz się zalogować, aby dołączyć do tego losowania',
-        joinButton: 'Dołącz do Losowania',
+        joinButton: 'Dołącz do losowania',
         passwordLabel: 'Podaj hasło, aby dołączyć do losowania',
         passwordPlaceholder: 'Wprowadź hasło do losowania',
         success:
           'Pomyślnie dołączyłeś do losowania! Przekierowywanie do strony losowania...',
-        title: 'Dołącz do Losowania',
-        viewDraw: 'Zobacz Losowanie',
+        title: 'Dołącz do losowania',
+        viewDraw: 'Zobacz losowanie',
       },
       loginPage: {
         errors: {

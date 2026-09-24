@@ -91,12 +91,12 @@ describe('DrawPage', () => {
     const user = userEvent.setup();
     renderDrawPage();
 
-    await user.click(await screen.findByRole('button', { name: 'Rozpocznij Losowanie' }));
+    await user.click(await screen.findByRole('button', { name: 'Rozpocznij losowanie' }));
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'secret1');
     await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
 
-    expect(await screen.findByText('Twój Los')).toBeInTheDocument();
+    expect(await screen.findByText('Twój los')).toBeInTheDocument();
     expect(drawingService.startDraw).toHaveBeenCalledWith('d1', 'owner');
     // Regression: the page used to go blank because participants were lost.
     await waitFor(() => expect(screen.getAllByText('Ania Test').length).toBe(2));
@@ -112,7 +112,7 @@ describe('DrawPage', () => {
     vi.mocked(drawingService.getMyAssignment).mockResolvedValue({ toUuid: 'alice' });
     renderDrawPage();
 
-    expect(await screen.findByText('Twój Los')).toBeInTheDocument();
+    expect(await screen.findByText('Twój los')).toBeInTheDocument();
     expect(screen.getByText('Socks')).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Wpisz swoje życzenie/)).toHaveValue('Mountain book');
     expect(screen.getByRole('button', { name: 'Edytuj życzenie' })).toBeEnabled();
@@ -123,7 +123,7 @@ describe('DrawPage', () => {
     const user = userEvent.setup();
     renderDrawPage();
 
-    await user.click(await screen.findByRole('button', { name: 'Rozpocznij Losowanie' }));
+    await user.click(await screen.findByRole('button', { name: 'Rozpocznij losowanie' }));
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'wrong-1');
     await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
@@ -140,7 +140,7 @@ describe('DrawPage', () => {
     const user = userEvent.setup();
     renderDrawPage();
 
-    await user.click(await screen.findByRole('button', { name: 'Rozpocznij Losowanie' }));
+    await user.click(await screen.findByRole('button', { name: 'Rozpocznij losowanie' }));
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'secret1');
     await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
@@ -156,14 +156,14 @@ describe('DrawPage', () => {
     renderDrawPage();
 
     expect(await screen.findByText('Office party')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Rozpocznij Losowanie' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Rozpocznij losowanie' })).toBeNull();
   });
 
   it('denies access to users outside the draw', async () => {
     auth.user = fakeUser('mallory', 'Mallory');
     renderDrawPage();
 
-    expect(await screen.findByText(/Powrót do Losowań/)).toBeInTheDocument();
+    expect(await screen.findByText(/Powrót do losowań/)).toBeInTheDocument();
     expect(screen.queryByText('Office party')).toBeNull();
     expect(drawService.getParticipants).not.toHaveBeenCalled();
   });
