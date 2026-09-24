@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   GoogleAuthProvider,
   signInWithCredential,
@@ -145,5 +145,24 @@ describe('MessageService against the emulator', () => {
         message: 'Spam',
       }),
     ).rejects.toThrow();
+  });
+
+  it('sends when the device clock is on the other side of midnight', async () => {
+    const user = await signInAs('late-writer', 'Late Writer');
+    const realNow = Date.now();
+    // A device a day behind computes yesterday's document id.
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(realNow - 24 * 60 * 60 * 1000);
+    try {
+      await messageService.sendMessage({
+        userUid: user.uid,
+        userName: 'Late Writer',
+        message: 'Sent at 23:59:59',
+      });
+    } finally {
+      clock.mockRestore();
+    }
+
+    // Stored under the server's today, so the daily limit still holds.
+    expect(await messageService.canUserSendMessageToday(user.uid)).toBe(false);
   });
 });
