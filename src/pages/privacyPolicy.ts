@@ -16,7 +16,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
       heading: 'Kto odpowiada za dane',
       paragraphs: [
         'Administratorem danych jest Artur Czopek, autor Santa App. To prywatny, niekomercyjny projekt: aplikacja jest bezpłatna i nie wyświetla reklam.',
-        'Kontakt: przycisk „Zostaw wiadomość!” po zalogowaniu albo zgłoszenie w repozytorium aplikacji na GitHubie (link w stopce).',
+        'Kontakt: arturcz32@gmail.com, przycisk „Zostaw wiadomość!” po zalogowaniu albo zgłoszenie w repozytorium aplikacji na GitHubie (link w stopce).',
       ],
     },
     {
@@ -65,7 +65,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
       heading: 'Who is responsible for the data',
       paragraphs: [
         'The data controller is Artur Czopek, the author of Santa App. It is a private, non-commercial project: the app is free and shows no ads.',
-        'Contact: the "Leave a message!" button after signing in, or an issue in the app’s GitHub repository (link in the footer).',
+        'Contact: arturcz32@gmail.com, the "Leave a message!" button after signing in, or an issue in the app’s GitHub repository (link in the footer).',
       ],
     },
     {
