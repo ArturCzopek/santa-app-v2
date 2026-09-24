@@ -125,6 +125,10 @@ describe('DrawPage', () => {
       expect(screen.getAllByText('Ania Test').length).toBe(2),
     );
     expect(screen.getByText('Socks')).toBeInTheDocument();
+    // The list folds away once the draw is done, also without a reload.
+    expect(
+      screen.getByRole('button', { name: 'Uczestnicy (2)' }),
+    ).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('still shows your own wish, editable, after the draw', async () => {

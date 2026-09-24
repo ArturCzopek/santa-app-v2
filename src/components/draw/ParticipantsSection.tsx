@@ -25,7 +25,7 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
   // Whether someone wrote a letter matters only until the draw; after it
   // the result matters, so the list starts folded away.
   const showWishStatus = draw.status === 'WAITING_FOR_DRAW';
-  const [expanded, setExpanded] = useState(showWishStatus);
+  const [expanded, setExpanded] = useState(false);
   const listId = useId();
   const isOwner = !!user && user.uid === draw.ownerUuid;
   const lettersWritten = draw.participants.filter((p) => !!p.wish).length;

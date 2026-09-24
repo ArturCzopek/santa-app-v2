@@ -36,6 +36,27 @@ export const signedInUser = async (
   return { page, name };
 };
 
+// A person who has not signed in yet, e.g. opening a link from a chat.
+export const guest = async (
+  browser: Browser,
+  contextOptions: Parameters<Browser['newContext']>[0] = {},
+) => (await browser.newContext(contextOptions)).newPage();
+
+// Signs in on the page where the person already is.
+export const signInHere = async (page: Page, sub: string, name: string) => {
+  await page.waitForFunction(() => window.__santaTest !== undefined);
+  await page.evaluate(([s, n]) => window.__santaTest.signIn(s, n), [sub, name]);
+};
+
+// On phones the layout viewport grows to fit wide content, so compare with
+// the device width rather than window.innerWidth.
+export const expectNoHorizontalScroll = async (page: Page) => {
+  const pageWidth = await page.evaluate(
+    () => document.documentElement.scrollWidth,
+  );
+  expect(pageWidth).toBeLessThanOrEqual(page.viewportSize()!.width);
+};
+
 // Opens a draw from the list, the way people do it.
 export const openDraw = async (page: Page, drawName: string) => {
   const backButton = page.getByRole('button', { name: 'Powrót do losowań' });

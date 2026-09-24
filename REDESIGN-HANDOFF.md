@@ -41,18 +41,13 @@ neutralne płciowo teksty (role „Organizator”/„Uczestnik” zostały). · 
 (`SealedEnvelope.tsx`, otwarcie pamiętane w `localStorage` per losowanie i osoba), zwinięta lista
 uczestników po losowaniu, „Napisane listy: 4 z 6” dla organizatora. · R10 zaproszenie jako pocztówka: gotowa wiadomość,
 „Udostępnij” (Web Share API) albo „Kopiuj zaproszenie”, po utworzeniu okno „Wyślij zaproszenie” z hasłem
-(hasło tylko w pamięci, usuwane z historii przeglądarki).
+(hasło tylko w pamięci, usuwane z historii przeglądarki). · R11 E2E na nowy wygląd (link z okna zaproszenia,
+gość otwiera `/join/…` przed zalogowaniem, projekt „mobile” włączony, szerokość sprawdzana także po
+zalogowaniu); przy okazji lista uczestników zwija się też zaraz po losowaniu bez przeładowania.
+Lokalnie w chmurze Claude: Playwright potrzebuje `launchOptions.executablePath: '/opt/pw-browsers/chromium'`.
 
 ## Do zrobienia
 
-- [ ] **R11 – E2E** (`e2e/draw.spec.ts`, `e2e/helpers.ts`): **od R3 nieuruchamiane** – na pewno
-  do poprawy: po dołączeniu edytor listu jest już otwarty (przycisk „Zapisz list”, pole
-  „Co chcesz dostać?”, zamiast „Edytuj życzenie”/„Zapisz życzenie”/placeholder „Wpisz swoje
-  życzenie”), nagłówek wyniku to „Twój wynik losowania” (nie „Twój los”), komunikat zapisu
-  „List zapisany”, nagłówek sekcji „Twój list do Mikołaja”, formularz tworzenia z R6.
-  Dopisać: link brany z okna zaproszenia, gość otwiera `/join/…` przed zalogowaniem → po
-  zalogowaniu wraca na dołączanie, zdjąć `fixme` z projektu „mobile”, test szerokości także
-  po zalogowaniu.
 - [ ] **R12 – zakończenie**: skill Impeccable (`/plugin marketplace add pbakaus/impeccable`,
   potem `/impeccable critique src` i `/impeccable audit`); cel ≥ 30/40 (start: 20/40).
   Detektor: `impeccable detect --json src`. Napisać `DESIGN.md` z gotowego systemu.
