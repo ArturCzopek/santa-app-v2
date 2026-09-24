@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Navbar from '../navbar/Navbar';
+import Footer from './Footer';
 import {
   mainContainerStyles,
   mainContentStyles,
@@ -9,24 +10,22 @@ import {
 
 interface MainLayoutProps {
   children: React.ReactNode;
-  title: string;
+  title?: string;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children, title }) => {
-  const theme = useTheme();
-
-  return (
-    <Box sx={mainContainerStyles(theme)}>
-      <Navbar />
-      <Box sx={mainContentStyles(theme)}>
-        <Typography variant="h1" component="h1" sx={pageTitleStyles(theme)}>
+const MainLayout: React.FC<MainLayoutProps> = ({ children, title }) => (
+  <Box sx={mainContainerStyles}>
+    <Navbar />
+    <Box component="main" sx={mainContentStyles}>
+      {title && (
+        <Typography variant="h1" sx={pageTitleStyles}>
           {title}
         </Typography>
-
-        {children}
-      </Box>
+      )}
+      {children}
     </Box>
-  );
-};
+    <Footer />
+  </Box>
+);
 
 export default MainLayout;

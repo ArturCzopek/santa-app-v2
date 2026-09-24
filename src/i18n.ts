@@ -177,9 +177,13 @@ const resources = {
         sendError: 'Error sending message. Please try again.',
         sendSuccess: 'Message sent successfully!',
       },
+      footer: {
+        sourceCode: 'Source code on GitHub',
+      },
       navbar: {
-        checkApp: 'Check the app',
+        accountMenu: 'Account menu: {{name}}',
         leaveMessage: 'Leave a message!',
+        logout: 'Log out',
         showSanta: 'Show Santa!',
         title: 'Santa App',
       },
@@ -370,9 +374,13 @@ const resources = {
         sendError: 'Błąd podczas wysyłania wiadomości. Spróbuj ponownie.',
         sendSuccess: 'Wiadomość wysłana pomyślnie!',
       },
+      footer: {
+        sourceCode: 'Kod aplikacji na GitHubie',
+      },
       navbar: {
-        checkApp: 'Sprawdź aplikację',
+        accountMenu: 'Menu konta: {{name}}',
         leaveMessage: 'Zostaw wiadomość!',
+        logout: 'Wyloguj',
         showSanta: 'Pokaż Mikołaja!',
         title: 'Santa App',
       },

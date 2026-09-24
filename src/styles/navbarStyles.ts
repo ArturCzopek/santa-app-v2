@@ -1,53 +1,61 @@
 import { SxProps, Theme } from '@mui/material';
+import { airmailStripes, handFont, tokens } from './theme';
 
-export const appBarStyles = (theme: Theme): SxProps<Theme> => ({
-  backgroundColor: theme.palette.primary.main,
+export const appBarStyles: SxProps<Theme> = {
+  backgroundColor: tokens.spruce,
+  color: tokens.snow,
   boxShadow: 'none',
-});
-
-export const titleStyles = (theme: Theme): SxProps<Theme> => ({
-  flexGrow: 1,
-  color: theme.palette.common.white,
-  fontWeight: 'bold',
-  cursor: 'pointer',
-});
-
-export const navItemContainerStyles: SxProps<Theme> = {
-  display: 'flex',
-  alignItems: 'center',
+  // The striped edge of an airmail envelope under the bar.
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: -5,
+    height: 5,
+    background: airmailStripes,
+  },
 };
 
-export const dividerStyles: SxProps<Theme> = {
-  mx: 1,
-  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+export const brandStyles: SxProps<Theme> = {
+  fontFamily: handFont,
+  fontWeight: 700,
+  fontSize: { xs: '1.75rem', sm: '2rem' },
+  lineHeight: 1,
+  color: tokens.snow,
+  borderRadius: 1,
+  px: 0.5,
+  whiteSpace: 'nowrap',
 };
 
-export const userNameStyles = (theme: Theme): SxProps<Theme> => ({
-  mx: 2,
-  color: theme.palette.common.white,
-});
+export const navButtonStyles: SxProps<Theme> = {
+  color: tokens.snow,
+  px: { xs: 1, sm: 1.5 },
+  whiteSpace: 'nowrap',
+  '&:hover': { backgroundColor: 'rgba(245, 241, 232, 0.08)' },
+};
 
-export const logoutButtonStyles = (theme: Theme): SxProps<Theme> => ({
-  color: theme.palette.common.white,
-  '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-});
+export const accountButtonStyles: SxProps<Theme> = {
+  gap: 1,
+  borderRadius: 999,
+  p: 0.5,
+  pr: { xs: 0.5, md: 1.5 },
+  color: tokens.snow,
+  '&:hover': { backgroundColor: 'rgba(245, 241, 232, 0.08)' },
+};
 
-export const navbarItemStyles = (theme: Theme): SxProps<Theme> => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: '8px 12px',
-  cursor: 'pointer',
-  color: theme.palette.common.white,
-  '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  borderRadius: '4px',
-});
+export const accountNameStyles: SxProps<Theme> = {
+  display: { xs: 'none', md: 'inline' },
+  fontWeight: 700,
+  maxWidth: 180,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+};
 
-export const iconContainerStyles: SxProps<Theme> = {
-  mr: 1,
-  display: 'flex',
-  alignItems: 'center',
+export const accountMenuPaperStyles: SxProps<Theme> = {
+  mt: 1,
+  minWidth: 220,
+  color: tokens.ink,
+  '& .MuiListItemIcon-root': { color: tokens.inkMuted },
 };
