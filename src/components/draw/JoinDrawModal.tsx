@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -30,12 +30,14 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
 
   const [drawCode, setDrawCode] = useState('');
   const [error, setError] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleJoinDraw = (event: React.FormEvent) => {
     event.preventDefault();
     const drawId = drawIdFrom(drawCode);
     if (!drawId) {
       setError(t('drawsPage.joinModal.codeRequired'));
+      inputRef.current?.focus();
       return;
     }
 
@@ -67,6 +69,7 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
           label={t('drawsPage.joinModal.drawCodeLabel')}
           fullWidth
           autoFocus
+          inputRef={inputRef}
           value={drawCode}
           onChange={(e) => {
             setDrawCode(e.target.value);

@@ -1,4 +1,5 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
+import { plPL } from '@mui/material/locale';
 
 // "List do Mikołaja": Christmas mail on a night-spruce ground. Paper surfaces
 // carry navy ink; sealing-wax red is kept for the one main action per screen.
@@ -16,7 +17,7 @@ export const tokens = {
   wax: '#B3202A',
   waxDark: '#8E1820',
   stampGold: '#D9A441',
-  pine: '#2E7D4F',
+  pine: '#2A7549',
   amber: '#8A5A00',
 };
 
@@ -172,7 +173,10 @@ const baseTheme = createTheme({
   },
 });
 
-const theme = responsiveFontSizes(baseTheme, { factor: 2.2 });
+// Polish texts inside MUI components, e.g. the alert close button.
+const theme = responsiveFontSizes(createTheme(baseTheme, plPL), {
+  factor: 2.2,
+});
 
 const themeWithCustomColors = {
   ...theme,

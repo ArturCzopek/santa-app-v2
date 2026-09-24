@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -33,11 +33,13 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isChecking, setIsChecking] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleConfirm = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!password) {
       setError(t('createPage.validation.passwordRequired'));
+      inputRef.current?.focus();
       return;
     }
 
@@ -45,6 +47,7 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
     try {
       if (!(await drawService.isDrawPasswordValid(drawId, password))) {
         setError(t('drawPage.startDraw.incorrectPassword'));
+        inputRef.current?.focus();
         return;
       }
     } finally {
@@ -93,6 +96,7 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
           }}
           error={error}
           autoFocus
+          inputRef={inputRef}
         />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>

@@ -7,6 +7,7 @@ import {
   useLocation,
 } from 'react-router';
 import { Box, CircularProgress } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import LoginPage from './pages/LoginPage';
 import DrawsListPage from './pages/DrawsListPage';
 import JoinToDrawPage from './pages/JoinToDrawPage';
@@ -26,6 +27,7 @@ const RequireAuth: React.FC<{ children: React.ReactElement }> = ({
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();
+  const { t } = useTranslation();
 
   // Deciding on redirects before Firebase restores the session would send
   // signed-in users away from the page they reloaded or opened from a link.
@@ -40,7 +42,7 @@ const AppRoutes = () => {
           color: 'white',
         }}
       >
-        <CircularProgress color="inherit" />
+        <CircularProgress color="inherit" aria-label={t('common.loading')} />
       </Box>
     );
   }

@@ -275,7 +275,7 @@ const resources = {
         waitingStatus: 'Oczekuje na losowanie',
       },
       drawPage: {
-        drawSuccessMessage: 'Gotowe! Każdy może już otworzyć swoją kopertę.',
+        drawSuccessMessage: 'Gotowe! Wszyscy mogą już otworzyć swoje koperty.',
         drawnOn: 'Rozlosowano {{date}}',
         errors: {
           accessDenied: "Odmowa dostępu. Nie jesteś uczestnikiem tego losowania.",
@@ -283,11 +283,10 @@ const resources = {
             'Losowanie nie zostało znalezione lub nie masz do niego dostępu.',
           fetchFailed:
             'Nie udało się pobrać szczegółów losowania. Spróbuj ponownie.',
-          redirecting: "Za kilka sekund zostaniesz przekierowany do swoich losowań.",
+          redirecting: 'Za kilka sekund wrócisz do listy swoich losowań.',
           startDrawFailed:
             'Nie udało się przeprowadzić losowania. Odśwież stronę i spróbuj ponownie.',
-          wishUpdateFailed:
-            'Nie udało się zaktualizować twojego życzenia. Spróbuj ponownie.',
+          wishUpdateFailed: 'Nie udało się zapisać listu. Spróbuj ponownie.',
         },
         inviteButton: 'Zaproś do losowania',
         inviteModal: {
@@ -311,7 +310,7 @@ const resources = {
         },
         startDraw: {
           confirmationText:
-            'Czy na pewno chcesz wylosować pary? Od tej akcji nie będzie odwrotu.\nAby potwierdzić losowanie, podaj hasło, które zostało utworzone na początku tworzenia losowania.',
+            'Czy na pewno chcesz wylosować pary? Tego nie da się cofnąć.\nAby potwierdzić, wpisz hasło ustalone przy tworzeniu losowania.',
           drawButton: 'Losuj',
           incorrectPassword: 'Nieprawidłowe hasło',
           withoutWish_one: 'Jedna osoba nie napisała jeszcze listu: {{names}}. Jej Mikołaj będzie musiał zgadywać.',
@@ -363,7 +362,7 @@ const resources = {
       },
       howItWorks: {
         step1: 'Organizator zakłada losowanie i wysyła wszystkim jeden link.',
-        step2: 'Każdy dołącza i pisze list do Mikołaja: co chciałby dostać.',
+        step2: 'Wszyscy dołączają i piszą listy do Mikołaja: co chcą dostać.',
         step3: 'Organizator losuje pary. Otwierasz swoją kopertę i widzisz, komu kupujesz prezent – nikt inny tego nie wie.',
         title: 'Jak to działa?',
       },
@@ -381,7 +380,7 @@ const resources = {
           invalidPassword: 'Nieprawidłowe hasło. Spróbuj ponownie.',
           joinFailed: 'Nie udało się dołączyć do losowania. Spróbuj ponownie.',
           loginRequired: 'Musisz się zalogować, aby dołączyć do tego losowania',
-          passwordRequired: 'Hasło jest wymagane aby dołączyć do losowania',
+          passwordRequired: 'Wpisz hasło, żeby dołączyć do losowania',
         },
         loginRequired: 'Ktoś zaprasza cię do Tajemniczego Mikołaja. Musisz się zalogować, żeby zobaczyć szczegóły i dołączyć.',
         joinButton: 'Dołącz do losowania',
@@ -406,14 +405,14 @@ const resources = {
             'Ta strona jest otwarta w innej aplikacji (np. Messengerze lub Instagramie), a tam Google nie pozwala się zalogować. Otwórz ją w swojej przeglądarce: stuknij ⋮ lub ⋯ w rogu i wybierz „Otwórz w przeglądarce” albo skopiuj link i wklej go tam.',
         },
         googleNote: 'Wystarczy konto Google. Używamy imienia i zdjęcia, żeby inni wiedzieli, kto dołączył.',
-        lead: 'Jeden link dla całej grupy. Każdy pisze list do Mikołaja, a w dniu losowania otwiera kopertę z imieniem osoby, której kupuje prezent.',
+        lead: 'Jeden link dla całej grupy. Wszyscy piszą listy do Mikołaja, a w dniu losowania otwierają koperty z imieniem osoby, dla której kupują prezent.',
         loginWithGoogle: 'Zaloguj przez Google',
         title: 'Tajemniczy Mikołaj bez karteczek w czapce',
         videoTitle: 'Na rozgrzewkę',
       },
       messages: {
         alreadySentToday:
-          'Wysłałeś już wiadomość dzisiaj. Możesz wysłać kolejną wiadomość jutro.',
+          'Dzisiejsza wiadomość już do mnie dotarła. Kolejną możesz wysłać jutro.',
         description:
           'Masz jakiś feedback? Coś nie działa? A może po prostu chcesz się skontaktować? To jest dobre miejsce, możesz wpisać i wysłać do mnie wiadomość. Obiecuję, że odpiszę :)',
         messageLabel: 'Wiadomość',

@@ -244,7 +244,7 @@ describe('DrawPage', () => {
     await user.click(screen.getByRole('button', { name: 'Zapisz list' }));
 
     expect(
-      await screen.findByText(/Nie udało się zaktualizować/),
+      await screen.findByText(/Nie udało się zapisać listu/),
     ).toBeInTheDocument();
     expect(wishField).toHaveValue('Coffee');
   });

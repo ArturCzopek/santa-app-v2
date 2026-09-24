@@ -143,7 +143,7 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
 
           {isLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <CircularProgress size={24} />
+              <CircularProgress size={24} aria-label={t('common.loading')} />
             </Box>
           ) : !canSendToday ? (
             <Alert severity="info">{t('messages.alreadySentToday')}</Alert>

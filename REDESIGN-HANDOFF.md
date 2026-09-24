@@ -35,14 +35,12 @@ papierze (list do Mikołaja, znaczki, stemple, okna jako formularze) · R4 logow
 jako pocztówka · R5 lista losowań jako koperty · R6 formularz tworzenia na papierze (po utworzeniu
 przejście na losowanie ze `state: { justJoined: true, createdPassword }` – R10 ma odczytać
 `createdPassword` w `DrawPage` i otworzyć zaproszenie) · R7 śnieg za treścią, 60 płatków na telefonie, brak przy
-`prefers-reduced-motion`.
+`prefers-reduced-motion` · R8 ciemniejszy `pine` (#2A7549, AA także na `paperShade`), polskie
+teksty MUI (`plPL`), `aria-label` spinnerów, fokus na błędne pole w oknach i na stronie dołączania,
+neutralne płciowo teksty (role „Organizator”/„Uczestnik” zostały).
 
 ## Do zrobienia
 
-- [ ] **R8 – dostępność i język**: kontrast AA wszędzie (sprawdzić stemple na ciemnym tle),
-  polskie `aria-label`, fokus na pierwsze błędne pole, formy neutralne płciowo w pozostałych
-  tekstach i18n (np. `messages.alreadySentToday` „Wysłałeś…”, `drawPage.errors.accessDenied`
-  „Nie jesteś…” jest OK).
 - [ ] **R9 – efekt „wow” wyniku** (`src/components/draw/WinnerSection.tsx`): zapieczętowana
   koperta z lakową pieczęcią „Stuknij, aby otworzyć”; stuknięcie → pęka lak, wysuwa się list
   (dzisiejsza treść). Bez animacji przy `prefers-reduced-motion`. Po losowaniu lista uczestników

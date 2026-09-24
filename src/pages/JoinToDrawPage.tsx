@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navigate, useParams, useNavigate } from 'react-router';
 import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
@@ -45,6 +45,7 @@ const JoinToDrawPage = () => {
   const [joining, setJoining] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchDrawDetails = async () => {
@@ -74,6 +75,7 @@ const JoinToDrawPage = () => {
 
     if (!password.trim()) {
       setPasswordError(t('joinPage.errors.passwordRequired'));
+      passwordRef.current?.focus();
       return;
     }
 
@@ -87,6 +89,7 @@ const JoinToDrawPage = () => {
 
       if (err instanceof Error && err.message.includes('Invalid password')) {
         setPasswordError(t('joinPage.errors.invalidPassword'));
+        passwordRef.current?.focus();
       } else {
         notify(t('joinPage.errors.joinFailed'));
       }
@@ -192,6 +195,7 @@ const JoinToDrawPage = () => {
             value={password}
             onChange={setPassword}
             error={passwordError}
+            inputRef={passwordRef}
             helperText={t('joinPage.passwordHint')}
           />
         </Box>
