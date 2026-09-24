@@ -48,22 +48,31 @@ service cloud.firestore {
       return value is string && value.size() <= maxSize;
     }
 
+    // Fields the owner fills in; the event ones are optional (older draws
+    // do not have them).
+    function hasValidDetails(d) {
+      return isString(d.drawName, 80) && d.drawName.size() > 0
+        && isString(d.description, 1000)
+        && (d.budget is int || d.budget is float) && d.budget > 0 && d.budget <= 1000000
+        && d.currency in ['PLN', 'EUR', 'USD', 'GBP']
+        && isString(d.get('eventDate', ''), 10)
+        && d.get('eventDate', '').matches('^([0-9]{4}-[0-9]{2}-[0-9]{2})?$')
+        && isString(d.get('eventPlace', ''), 200);
+    }
+
     function isValidNewDraw(drawId) {
       let d = request.resource.data;
       return d.keys().hasOnly([
           'createdDate', 'ownerUuid', 'ownerName', 'ownerPhotoUrl', 'budget',
           'currency', 'drawName', 'description', 'participantUuids', 'status',
-          'drawDate'
+          'drawDate', 'eventDate', 'eventPlace'
         ])
         && d.ownerUuid == request.auth.uid
         && d.participantUuids == [request.auth.uid]
         && d.status == 'WAITING_FOR_DRAW'
         && d.drawDate == null
         && d.createdDate == request.time
-        && isString(d.drawName, 80) && d.drawName.size() > 0
-        && isString(d.description, 1000)
-        && (d.budget is int || d.budget is float) && d.budget > 0 && d.budget <= 1000000
-        && d.currency in ['PLN', 'EUR', 'USD', 'GBP']
+        && hasValidDetails(d)
         && d.ownerName == tokenName()
         && d.ownerPhotoUrl == tokenPicture()
         && existsAfter(participantPath(drawId, request.auth.uid));

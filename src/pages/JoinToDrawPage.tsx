@@ -15,6 +15,7 @@ import HowItWorks from '../components/HowItWorks';
 import InAppBrowserNotice from '../components/InAppBrowserNotice';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import PasswordField from '../components/form/PasswordField';
+import EventDetails from '../components/draw/EventDetails';
 import { drawService } from '../services/DrawService';
 import { useAuth } from '../hooks/useAuth';
 import { useNotify } from '../hooks/useNotify';
@@ -203,6 +204,8 @@ const JoinToDrawPage = () => {
             })}
           </Typography>
         </Box>
+
+        <EventDetails eventDate={draw.eventDate} eventPlace={draw.eventPlace} />
 
         {draw.description && (
           <Typography color="text.secondary">{draw.description}</Typography>

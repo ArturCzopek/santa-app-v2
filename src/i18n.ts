@@ -26,8 +26,11 @@ const resources = {
         createButton: 'Create draw',
         currency: 'Currency',
         description: 'Description (optional)',
-        descriptionHint: 'For example the date of the gift exchange or what gifts you have in mind.',
+        descriptionHint: 'For example gift ideas or your own rules.',
         drawName: 'Draw name',
+        eventDate: 'Gift exchange date (optional)',
+        eventPlace: 'Place (optional)',
+        eventPlaceHint: 'E.g. at grandma’s, 6 pm.',
         errors: {
           createFailed: 'Failed to create the draw. Please try again.',
         },
@@ -47,6 +50,8 @@ const resources = {
           descriptionTooLong: 'Description can have at most 1000 characters',
           drawNameRequired: 'Draw name is required',
           drawNameTooLong: 'Draw name can have at most 80 characters',
+          eventDateInvalid: 'Pick a date from the calendar',
+          eventPlaceTooLong: 'Place can have at most 200 characters',
           passwordRequired: 'Password is required',
           passwordTooShort: 'Password must be at least 6 characters',
         },
@@ -81,6 +86,7 @@ const resources = {
           linkCopied: 'Link copied.',
           message: {
             budget: 'Gift budget: {{budget}} {{currency}}.',
+            event: 'Gift exchange: {{when}}.',
             greeting: 'Join our Secret Santa "{{name}}"!',
             howToJoin:
               'Open the link, sign in with Google and write your letter to Santa.',
@@ -226,6 +232,10 @@ const resources = {
         sendError: 'Error sending message. Please try again.',
         sendSuccess: 'Message sent successfully!',
       },
+      event: {
+        date: 'Gift exchange:',
+        place: 'Place:',
+      },
       footer: {
         sourceCode: 'Source code on GitHub',
       },
@@ -265,8 +275,11 @@ const resources = {
         createButton: 'Stwórz losowanie',
         currency: 'Waluta',
         description: 'Opis (opcjonalnie)',
-        descriptionHint: 'Na przykład termin wręczania prezentów albo pomysły na upominki.',
+        descriptionHint: 'Na przykład pomysły na upominki albo wasze zasady.',
         drawName: 'Nazwa losowania',
+        eventDate: 'Data wręczenia prezentów (opcjonalnie)',
+        eventPlace: 'Miejsce (opcjonalnie)',
+        eventPlaceHint: 'Np. u babci Krysi, godz. 18:00.',
         errors: {
           createFailed: 'Nie udało się utworzyć losowania. Spróbuj ponownie.',
         },
@@ -286,6 +299,8 @@ const resources = {
           descriptionTooLong: 'Opis może mieć najwyżej 1000 znaków',
           drawNameRequired: 'Nazwa losowania jest wymagana',
           drawNameTooLong: 'Nazwa losowania może mieć najwyżej 80 znaków',
+          eventDateInvalid: 'Wybierz datę z kalendarza',
+          eventPlaceTooLong: 'Miejsce może mieć najwyżej 200 znaków',
           passwordRequired: 'Hasło jest wymagane',
           passwordTooShort: 'Hasło musi mieć przynajmniej 6 znaków',
         },
@@ -322,6 +337,7 @@ const resources = {
           linkCopied: 'Link skopiowany.',
           message: {
             budget: 'Budżet na prezent: {{budget}} {{currency}}.',
+            event: 'Wręczenie prezentów: {{when}}.',
             greeting: 'Dołącz do naszego Tajemniczego Mikołaja „{{name}}”!',
             howToJoin:
               'Otwórz link, zaloguj się kontem Google i napisz list do Mikołaja.',
@@ -471,6 +487,10 @@ const resources = {
         send: 'Wyślij',
         sendError: 'Błąd podczas wysyłania wiadomości. Spróbuj ponownie.',
         sendSuccess: 'Wiadomość wysłana pomyślnie!',
+      },
+      event: {
+        date: 'Wręczenie:',
+        place: 'Miejsce:',
       },
       footer: {
         sourceCode: 'Kod aplikacji na GitHubie',

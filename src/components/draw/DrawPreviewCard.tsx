@@ -8,6 +8,7 @@ import {
 import { Link as RouterLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import DrawCardBase from './DrawCardBase';
+import EventDetails from './EventDetails';
 import { DrawPreview } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
 
@@ -44,6 +45,11 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
         status={drawPreview.status}
         airmail={drawn}
       >
+        <EventDetails
+          eventDate={drawPreview.eventDate}
+          eventPlace={drawPreview.eventPlace}
+        />
+
         <Typography color="text.secondary">
           {t('drawCard.participants', { count: drawPreview.participantsCount })}
         </Typography>

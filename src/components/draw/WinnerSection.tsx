@@ -8,6 +8,7 @@ import { drawingService } from '../../services/DrawingService';
 import PaperCard from '../common/PaperCard';
 import StampAvatar from '../common/StampAvatar';
 import SectionHeading from './SectionHeading';
+import EventDetails from './EventDetails';
 import SealedEnvelope, { ENVELOPE_OPENING_MS } from './SealedEnvelope';
 import { handFont, tokens } from '../../styles/theme';
 
@@ -144,6 +145,11 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
                 </Typography>
               </Box>
             </Box>
+
+            <EventDetails
+              eventDate={draw.eventDate}
+              eventPlace={draw.eventPlace}
+            />
 
             <Box
               sx={{

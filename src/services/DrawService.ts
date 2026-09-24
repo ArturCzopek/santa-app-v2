@@ -14,7 +14,12 @@ import {
   WriteBatch,
 } from 'firebase/firestore';
 import { db } from './FirebaseConfig';
-import { Draw, DrawPreview, Participant } from '../models/Draw';
+import {
+  Draw,
+  DrawDetails,
+  DrawPreview,
+  Participant,
+} from '../models/Draw';
 import { User } from 'firebase/auth';
 import { PasswordUtils } from './PasswordUtils';
 import { appDataService } from './AppDataService';
@@ -65,13 +70,7 @@ class DrawService {
   }
 
   async createDraw(
-    formData: {
-      drawName: string;
-      description: string;
-      budget: number;
-      currency: string;
-      password: string;
-    },
+    formData: DrawDetails & { password: string },
     currentUser: User,
   ): Promise<string> {
     if (!currentUser) {
@@ -89,6 +88,8 @@ class DrawService {
       currency: formData.currency,
       drawName: formData.drawName,
       description: formData.description,
+      eventDate: formData.eventDate,
+      eventPlace: formData.eventPlace,
       participantUuids: [currentUser.uid], // Owner is the first participant
       status: 'WAITING_FOR_DRAW',
       drawDate: null,
@@ -141,6 +142,8 @@ class DrawService {
             drawName: data.drawName,
             description: data.description,
             status: data.status,
+            eventDate: data.eventDate ?? '',
+            eventPlace: data.eventPlace ?? '',
             participantsCount: data.participantUuids?.length || 0,
             userWishProvided: !!ownParticipant.data()?.wish,
           } as DrawPreview;

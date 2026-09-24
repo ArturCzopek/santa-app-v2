@@ -423,4 +423,26 @@ describe('DrawPage', () => {
     expect(share.mock.calls[0][0].text).toContain('#/join/d1');
     Reflect.deleteProperty(navigator, 'share');
   });
+  it('shows when and where the gifts are exchanged, also in the invite', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      eventDate: '2026-12-24',
+      eventPlace: 'U babci',
+    });
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    expect(await screen.findByText('24 grudnia 2026')).toBeInTheDocument();
+    expect(screen.getByText('U babci')).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Zaproś do losowania' }),
+    );
+    const dialog = await screen.findByRole('dialog');
+    expect(
+      await within(dialog).findByText(
+        /Wręczenie prezentów: 24 grudnia 2026, U babci\./,
+      ),
+    ).toBeInTheDocument();
+  });
 });

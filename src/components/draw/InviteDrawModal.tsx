@@ -13,6 +13,7 @@ import { ContentCopy, IosShare } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNotify } from '../../hooks/useNotify';
 import { drawService } from '../../services/DrawService';
+import { eventSummary } from './EventDetails';
 import { Draw } from '../../models/Draw';
 import { airmailStripes, handFont, tokens } from '../../styles/theme';
 
@@ -37,7 +38,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
   isOwner,
   justCreated = false,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const notify = useNotify();
   const drawId = draw.id ?? '';
   // undefined while loading; null when there is no key (and we cannot make one).
@@ -90,12 +91,16 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
   const inviteLink = `${import.meta.env.VITE_APP_URL}/#/join/${drawId}${
     inviteKey ? `?k=${inviteKey}` : ''
   }`;
+  const event = eventSummary(draw.eventDate, draw.eventPlace, i18n.language);
   const message = [
     t('drawPage.inviteModal.message.greeting', { name: draw.drawName }),
     t('drawPage.inviteModal.message.budget', {
       budget: draw.budget,
       currency: draw.currency,
     }),
+    ...(event
+      ? [t('drawPage.inviteModal.message.event', { when: event })]
+      : []),
     t('drawPage.inviteModal.message.link', { link: inviteLink }),
     ...(inviteKey
       ? []

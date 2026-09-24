@@ -40,6 +40,8 @@ const newDrawForm = {
   description: 'Gifts!',
   budget: 80,
   currency: 'PLN',
+  eventDate: '2026-12-24',
+  eventPlace: 'At grandma’s',
   password: 'secret1',
 };
 
@@ -76,6 +78,8 @@ describe('DrawService + DrawingService against the emulator', () => {
     expect(preview).toMatchObject({
       id: drawId,
       drawName: 'Office party',
+      eventDate: '2026-12-24',
+      eventPlace: 'At grandma’s',
       participantsCount: 2,
       userWishProvided: false,
     });

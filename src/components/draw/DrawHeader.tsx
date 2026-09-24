@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { pl, enUS } from 'date-fns/locale';
 import { Timestamp } from 'firebase/firestore';
 import Postmark from '../common/Postmark';
+import EventDetails from './EventDetails';
 import { Draw } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
 
@@ -66,6 +67,12 @@ const DrawHeader: React.FC<{ draw: Draw }> = ({ draw }) => {
           </Typography>
         )}
       </Box>
+
+      <EventDetails
+        onDark
+        eventDate={draw.eventDate}
+        eventPlace={draw.eventPlace}
+      />
 
       {draw.description && (
         <Typography sx={{ color: tokens.snowMuted, maxWidth: '65ch' }}>

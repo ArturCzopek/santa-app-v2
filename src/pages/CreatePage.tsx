@@ -3,8 +3,9 @@ import { useForm, Controller } from 'react-hook-form';
 import { Box, Typography } from '@mui/material';
 import MainLayout from '../components/layout/MainLayout';
 import PaperCard from '../components/common/PaperCard';
-import FormTextField from '../components/form/FormTextField';
-import FormSelect from '../components/form/FormSelect';
+import DrawDetailsFields, {
+  cleanDrawDetails,
+} from '../components/draw/DrawDetailsFields';
 import FormActions from '../components/form/FormActions';
 import PasswordField from '../components/form/PasswordField';
 import { useTranslation } from 'react-i18next';
@@ -14,24 +15,9 @@ import { useAuth } from '../hooks/useAuth';
 import { useNotify } from '../hooks/useNotify';
 import { MIN_PASSWORD_LENGTH } from '../services/PasswordUtils';
 import { tokens } from '../styles/theme';
+import { DrawDetails } from '../models/Draw';
 
-// Same limits as the Firestore rules.
-const DRAW_NAME_MAX_LENGTH = 80;
-const DESCRIPTION_MAX_LENGTH = 1000;
-const BUDGET_MAX = 1_000_000;
-
-const currencyOptions = ['PLN', 'EUR', 'USD', 'GBP'].map((value) => ({
-  value,
-  label: value,
-}));
-
-type FormData = {
-  drawName: string;
-  description: string;
-  budget: number;
-  currency: string;
-  password: string;
-};
+type FormData = DrawDetails & { password: string };
 
 const CreatePage = () => {
   const { t } = useTranslation();
@@ -46,6 +32,8 @@ const CreatePage = () => {
       description: '',
       budget: 50,
       currency: 'PLN',
+      eventDate: '',
+      eventPlace: '',
       password: '',
     },
   });
@@ -57,11 +45,7 @@ const CreatePage = () => {
     setIsSubmitting(true);
     try {
       const newDrawUid = await drawService.createDraw(
-        {
-          ...data,
-          drawName: data.drawName.trim(),
-          description: data.description.trim(),
-        },
+        { ...cleanDrawDetails(data), password: data.password },
         user,
       );
       notify(t('createPage.success'), 'success');
@@ -89,83 +73,7 @@ const CreatePage = () => {
       </Box>
 
       <PaperCard airmail onSubmit={handleSubmit(onSubmit)}>
-        <FormTextField
-          name="drawName"
-          control={control}
-          label={t('createPage.drawName')}
-          fullWidth
-          autoComplete="off"
-          slotProps={{ htmlInput: { maxLength: DRAW_NAME_MAX_LENGTH } }}
-          rules={{
-            validate: (value) =>
-              value.trim().length > 0 ||
-              t('createPage.validation.drawNameRequired'),
-            maxLength: {
-              value: DRAW_NAME_MAX_LENGTH,
-              message: t('createPage.validation.drawNameTooLong'),
-            },
-          }}
-        />
-
-        <FormTextField
-          name="description"
-          control={control}
-          label={t('createPage.description')}
-          helperText={t('createPage.descriptionHint')}
-          fullWidth
-          multiline
-          minRows={3}
-          slotProps={{ htmlInput: { maxLength: DESCRIPTION_MAX_LENGTH } }}
-          rules={{
-            maxLength: {
-              value: DESCRIPTION_MAX_LENGTH,
-              message: t('createPage.validation.descriptionTooLong'),
-            },
-          }}
-        />
-
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-          <FormTextField
-            name="budget"
-            control={control}
-            label={t('createPage.budget')}
-            type="number"
-            sx={{ flex: 1, minWidth: 0 }}
-            slotProps={{
-              htmlInput: { min: 1, max: BUDGET_MAX, inputMode: 'decimal' },
-            }}
-            rules={{
-              required: t('createPage.validation.budgetRequired'),
-              validate: {
-                isNumber: (value) =>
-                  !isNaN(Number(value)) ||
-                  t('createPage.validation.budgetMustBeNumber'),
-                positive: (value) =>
-                  Number(value) > 0 ||
-                  t('createPage.validation.budgetPositive'),
-                notTooHigh: (value) =>
-                  Number(value) <= BUDGET_MAX ||
-                  t('createPage.validation.budgetTooHigh'),
-              },
-            }}
-          />
-
-          <Box sx={{ width: { xs: 104, sm: 120 }, flexShrink: 0 }}>
-            <FormSelect
-              name="currency"
-              control={control}
-              label={t('createPage.currency')}
-              options={currencyOptions}
-              rules={{
-                required: t('createPage.validation.currencyRequired'),
-                maxLength: {
-                  value: 3,
-                  message: t('createPage.validation.currencyTooLong'),
-                },
-              }}
-            />
-          </Box>
-        </Box>
+        <DrawDetailsFields control={control} />
 
         <Box sx={{ borderTop: `1px dashed ${tokens.paperLine}`, pt: 2.5 }}>
           <Controller

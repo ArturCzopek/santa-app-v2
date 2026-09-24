@@ -85,6 +85,23 @@ describe('draws', () => {
       await assertFails(createDraw(db, 'd3', OWNER, { currency: 'BTC' }));
     });
 
+    it('accepts an optional gift exchange date and place', async () => {
+      const db = authed(env, OWNER);
+      await assertSucceeds(
+        createDraw(db, 'd1', OWNER, {
+          eventDate: '2026-12-24',
+          eventPlace: 'At grandma’s, 6 pm',
+        }),
+      );
+      await assertSucceeds(
+        createDraw(db, 'd2', OWNER, { eventDate: '', eventPlace: '' }),
+      );
+      await assertFails(createDraw(db, 'd3', OWNER, { eventDate: 'tomorrow' }));
+      await assertFails(
+        createDraw(db, 'd4', OWNER, { eventPlace: 'x'.repeat(201) }),
+      );
+    });
+
     it('owner name and photo must come from their own profile', async () => {
       const db = authed(env, OWNER);
       await assertFails(
