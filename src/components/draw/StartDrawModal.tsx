@@ -156,7 +156,6 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
             setError('');
           }}
           error={error}
-          autoFocus
           inputRef={inputRef}
         />
         <Button

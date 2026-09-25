@@ -71,6 +71,7 @@ const resources = {
         waitingStatus: 'Waiting for Draw',
       },
       drawPage: {
+        description: { less: 'Show less', more: 'Show the whole description' },
         drawnOn: 'Drawn on {{date}}',
         drawDone: {
           copied: 'Message copied. Paste it in your chat.',
@@ -421,6 +422,7 @@ const resources = {
         waitingStatus: 'Oczekuje na losowanie',
       },
       drawPage: {
+        description: { less: 'Zwiń opis', more: 'Pokaż cały opis' },
         drawnOn: 'Rozlosowano {{date}}',
         drawDone: {
           copied: 'Wiadomość skopiowana. Wklej ją na czacie.',

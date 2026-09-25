@@ -168,6 +168,47 @@ describe('DrawPage', () => {
     ).toBeInTheDocument();
   });
 
+  describe('the one red action follows the next step', () => {
+    const containedButtons = () =>
+      screen
+        .getAllByRole('button')
+        .filter((button) => button.classList.contains('MuiButton-contained'))
+        .map((button) => button.textContent);
+
+    it('is "Napisz list" while your letter is missing, and opens the editor', async () => {
+      vi.mocked(drawService.getParticipants).mockResolvedValue([
+        participant('owner', 'Olga Owner'),
+        participant('alice', 'Ania Test', 'Socks'),
+      ]);
+      const user = userEvent.setup();
+      renderDrawPage();
+
+      await screen.findByText('Office party');
+      expect(containedButtons()).toEqual(['Napisz list']);
+      await user.click(screen.getByRole('button', { name: 'Napisz list' }));
+      expect(
+        await screen.findByLabelText('Co chcesz dostać?'),
+      ).toHaveFocus();
+      expect(containedButtons()).toEqual(['Zapisz list']);
+    });
+
+    it('is "Rozpocznij losowanie" for the owner once every letter is in', async () => {
+      renderDrawPage();
+      await screen.findByText('Office party');
+      expect(containedButtons()).toEqual(['Rozpocznij losowanie']);
+    });
+
+    it('is the invite while letters are still missing', async () => {
+      vi.mocked(drawService.getParticipants).mockResolvedValue([
+        participant('owner', 'Olga Owner', 'Mountain book'),
+        participant('alice', 'Ania Test'),
+      ]);
+      renderDrawPage();
+      await screen.findByText('Office party');
+      expect(containedButtons()).toEqual(['Zaproś do losowania']);
+    });
+  });
+
   it('tells a participant that the organizer starts the draw', async () => {
     auth.user = fakeUser('alice', 'Ania Test');
     renderDrawPage();

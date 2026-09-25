@@ -15,15 +15,23 @@ interface UserWishSectionProps {
   // The user's own letter ('' when not written yet).
   savedWish: string;
   onWishSaved: (wish: string) => void;
-  // Opens the editor right away, e.g. after joining.
-  startEditing?: boolean;
+  // The page decides when the editor is open, e.g. right after joining or
+  // from "Napisz list" in its action row.
+  isEditing: boolean;
+  onEditingChange: (editing: boolean) => void;
+  // The page shows "Napisz list" as its main action, so the card does not.
+  writeButtonInRow?: boolean;
 }
+
+export const LETTER_SECTION_ID = 'your-letter';
 
 const UserWishSection: React.FC<UserWishSectionProps> = ({
   draw,
   savedWish,
   onWishSaved,
-  startEditing = false,
+  isEditing,
+  onEditingChange,
+  writeButtonInRow = false,
 }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -35,15 +43,16 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
 
   const hasWish = savedWish !== '';
 
-  const [isEditing, setIsEditing] = useState(startEditing);
   // Draft edited in the text field; the saved wish comes from the page.
-  const [wish, setWish] = useState(startEditing ? savedWish : '');
+  const [wish, setWish] = useState(savedWish);
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleEditClick = () => {
-    setWish(savedWish);
-    setIsEditing(true);
-  };
+  // Each time the editor opens it starts from the saved letter.
+  const [wasEditing, setWasEditing] = useState(isEditing);
+  if (isEditing !== wasEditing) {
+    setWasEditing(isEditing);
+    if (isEditing) setWish(savedWish);
+  }
 
   const handleSave = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -54,7 +63,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
       const text = wish.trim();
       await drawService.updateWish(draw.id || '', user.uid, text);
 
-      setIsEditing(false);
+      onEditingChange(false);
       notify(t('drawPage.wishSection.saveSuccess'), 'success');
       onWishSaved(text);
     } catch (error) {
@@ -65,8 +74,10 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     }
   };
 
+  const showWriteButton = hasWish || !writeButtonInRow;
+
   return (
-    <Box component="section">
+    <Box component="section" id={LETTER_SECTION_ID}>
       <SectionHeading>{t('drawPage.wishSection.title')}</SectionHeading>
 
       <PaperCard onSubmit={isEditing ? handleSave : undefined}>
@@ -97,46 +108,48 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
           </Typography>
         )}
 
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'flex-end',
-            gap: 1.5,
-          }}
-        >
-          {isEditing ? (
-            <>
+        {(isEditing || showWriteButton) && (
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'flex-end',
+              gap: 1.5,
+            }}
+          >
+            {isEditing ? (
+              <>
+                <Button
+                  variant="text"
+                  onClick={() => onEditingChange(false)}
+                  sx={{ color: tokens.ink }}
+                >
+                  {t('common.cancel')}
+                </Button>
+                <Button type="submit" variant="contained" disabled={isSaving}>
+                  {isSaving
+                    ? t('common.saving')
+                    : t('drawPage.wishSection.saveButton')}
+                </Button>
+              </>
+            ) : (
               <Button
-                variant="text"
-                onClick={() => setIsEditing(false)}
-                sx={{ color: tokens.ink }}
+                variant={hasWish ? 'outlined' : 'contained'}
+                startIcon={<Edit />}
+                onClick={() => onEditingChange(true)}
+                sx={
+                  hasWish
+                    ? { color: tokens.ink, borderColor: tokens.ink }
+                    : undefined
+                }
               >
-                {t('common.cancel')}
+                {hasWish
+                  ? t('drawPage.wishSection.editButton')
+                  : t('drawPage.wishSection.writeButton')}
               </Button>
-              <Button type="submit" variant="contained" disabled={isSaving}>
-                {isSaving
-                  ? t('common.saving')
-                  : t('drawPage.wishSection.saveButton')}
-              </Button>
-            </>
-          ) : (
-            <Button
-              variant={hasWish ? 'outlined' : 'contained'}
-              startIcon={<Edit />}
-              onClick={handleEditClick}
-              sx={
-                hasWish
-                  ? { color: tokens.ink, borderColor: tokens.ink }
-                  : undefined
-              }
-            >
-              {hasWish
-                ? t('drawPage.wishSection.editButton')
-                : t('drawPage.wishSection.writeButton')}
-            </Button>
-          )}
-        </Box>
+            )}
+          </Box>
+        )}
       </PaperCard>
     </Box>
   );

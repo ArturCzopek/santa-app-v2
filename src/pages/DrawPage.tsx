@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowBack,
   DeleteOutlined,
+  Edit,
   EditOutlined,
   KeyOutlined,
   Campaign,
@@ -82,6 +83,9 @@ const DrawPage = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [exclusions, setExclusions] = useState<Exclusion[]>([]);
   const [myWish, setMyWish] = useState('');
+  // null until someone opens or closes the letter editor; right after
+  // joining it starts open.
+  const [editingLetter, setEditingLetter] = useState<boolean | null>(null);
   const [confirming, setConfirming] = useState<'delete' | 'leave' | null>(null);
 
   // A reload should not open the invite again.
@@ -132,6 +136,20 @@ const DrawPage = () => {
   const showStartButton =
     isOwner && isWaiting && (draw?.participantUuids.length ?? 0) >= 2;
   const hasLetter = myWish.trim() !== '';
+  const allLettersWritten =
+    !!draw && draw.participants.every((participant) => participant.hasWish);
+  const isEditingLetter = editingLetter ?? (justJoined && isWaiting);
+  // The one next step: your own letter first; then, for the owner with
+  // every letter in, the draw; otherwise getting everyone in.
+  const mainAction: 'write' | 'start' | 'invite' | null = !isWaiting
+    ? null
+    : !hasLetter
+      ? isEditingLetter
+        ? null
+        : 'write'
+      : showStartButton && allLettersWritten
+        ? 'start'
+        : 'invite';
 
   // After the draw everyone needs their result, so the draw stays as it is.
   const options: DrawOption[] = !isWaiting
@@ -260,19 +278,38 @@ const DrawPage = () => {
                 '& > *': { flex: { xs: '1 1 100%', sm: '0 0 auto' } },
               }}
             >
-              {/* Wax is for the one main action: until your letter is
-                  written, that is "Napisz list" below. */}
+              {/* Wax marks the one next step, and it comes first. */}
+              {mainAction === 'write' && (
+                <Button
+                  variant="contained"
+                  startIcon={<Edit />}
+                  onClick={() => setEditingLetter(true)}
+                >
+                  {t('drawPage.wishSection.writeButton')}
+                </Button>
+              )}
+
+              {mainAction === 'start' && (
+                <Button
+                  variant="contained"
+                  startIcon={<PlayArrow />}
+                  onClick={() => setIsStartDrawModalOpen(true)}
+                >
+                  {t('drawPage.startDrawButton')}
+                </Button>
+              )}
+
               <Button
-                variant={hasLetter ? 'contained' : 'outlined'}
-                color={hasLetter ? 'primary' : 'inherit'}
+                variant={mainAction === 'invite' ? 'contained' : 'outlined'}
+                color={mainAction === 'invite' ? 'primary' : 'inherit'}
                 startIcon={<PersonAdd />}
                 onClick={() => setIsInviteModalOpen(true)}
-                sx={hasLetter ? undefined : { color: tokens.snow }}
+                sx={mainAction === 'invite' ? undefined : { color: tokens.snow }}
               >
                 {t('drawPage.inviteButton')}
               </Button>
 
-              {showStartButton && (
+              {showStartButton && mainAction !== 'start' && (
                 <Button
                   variant="outlined"
                   color="inherit"
@@ -320,7 +357,9 @@ const DrawPage = () => {
               ),
             });
           }}
-          startEditing={justJoined && isWaiting}
+          isEditing={isEditingLetter}
+          onEditingChange={setEditingLetter}
+          writeButtonInRow={isWaiting}
         />
 
         <ParticipantsSection draw={draw} />

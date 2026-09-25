@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Button, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { pl, enUS } from 'date-fns/locale';
@@ -13,6 +13,54 @@ const toDate = (date: Date | Timestamp) =>
   (date as Timestamp).seconds !== undefined
     ? new Date((date as Timestamp).seconds * 1000)
     : new Date(date as Date);
+
+// Long descriptions fold to two lines on phones, so the actions and your
+// letter stay near the top of the screen.
+const LONG_DESCRIPTION = 120;
+
+const Description: React.FC<{ text: string }> = ({ text }) => {
+  const { t } = useTranslation();
+  const [expanded, setExpanded] = useState(false);
+  const foldable = text.length > LONG_DESCRIPTION;
+  const folded = foldable && !expanded;
+
+  return (
+    <Box>
+      <Typography
+        sx={{
+          color: tokens.snowMuted,
+          maxWidth: '65ch',
+          whiteSpace: 'pre-line',
+          ...(folded && {
+            display: { xs: '-webkit-box', sm: 'block' },
+            WebkitLineClamp: { xs: 2, sm: 'none' },
+            WebkitBoxOrient: 'vertical',
+            overflow: { xs: 'hidden', sm: 'visible' },
+          }),
+        }}
+      >
+        {text}
+      </Typography>
+      {foldable && (
+        <Button
+          color="inherit"
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+          sx={{
+            display: { sm: 'none' },
+            color: tokens.snow,
+            px: 0,
+            textDecoration: 'underline',
+          }}
+        >
+          {expanded
+            ? t('drawPage.description.less')
+            : t('drawPage.description.more')}
+        </Button>
+      )}
+    </Box>
+  );
+};
 
 // The draw name is the page title; status, budget and organizer sit under it.
 const DrawHeader: React.FC<{ draw: Draw }> = ({ draw }) => {
@@ -74,11 +122,7 @@ const DrawHeader: React.FC<{ draw: Draw }> = ({ draw }) => {
         eventPlace={draw.eventPlace}
       />
 
-      {draw.description && (
-        <Typography sx={{ color: tokens.snowMuted, maxWidth: '65ch' }}>
-          {draw.description}
-        </Typography>
-      )}
+      {draw.description && <Description text={draw.description} />}
     </Box>
   );
 };
