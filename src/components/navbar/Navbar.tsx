@@ -23,6 +23,7 @@ import {
   accountButtonStyles,
   accountNameStyles,
   accountMenuPaperStyles,
+  accountAvatarStyles,
 } from '../../styles/navbarStyles';
 import MessageModal from '../MessageModal';
 import ShowSantaModal from '../ShowSantaModal';
@@ -97,7 +98,7 @@ const Navbar = () => {
                 <Avatar
                   src={user.photoURL || undefined}
                   alt=""
-                  sx={{ width: 34, height: 34, fontSize: '1rem' }}
+                  sx={accountAvatarStyles}
                 >
                   {userName.charAt(0).toUpperCase()}
                 </Avatar>

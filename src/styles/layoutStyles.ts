@@ -33,11 +33,18 @@ export const pageTitleStyles: SxProps<Theme> = {
 };
 
 export const footerStyles: SxProps<Theme> = {
-  py: 3,
+  py: 2,
   px: 2,
   textAlign: 'center',
   color: tokens.snowMuted,
   fontSize: '0.875rem',
   position: 'relative',
   zIndex: 1,
+};
+
+// Tall enough to tap on a phone, though the text stays small.
+export const footerLinkStyles: SxProps<Theme> = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  minHeight: 44,
 };

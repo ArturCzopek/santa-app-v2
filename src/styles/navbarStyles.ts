@@ -25,6 +25,7 @@ export const brandStyles: SxProps<Theme> = {
   color: tokens.snow,
   borderRadius: 1,
   px: 0.5,
+  minHeight: 44,
   whiteSpace: 'nowrap',
 };
 
@@ -38,8 +39,8 @@ export const navButtonStyles: SxProps<Theme> = {
 export const accountButtonStyles: SxProps<Theme> = {
   gap: 1,
   borderRadius: 999,
-  p: 0.5,
-  pr: { xs: 0.5, md: 1.5 },
+  p: '5px',
+  pr: { xs: '5px', md: 1.5 },
   color: tokens.snow,
   '&:hover': { backgroundColor: 'rgba(245, 241, 232, 0.08)' },
 };
@@ -58,4 +59,14 @@ export const accountMenuPaperStyles: SxProps<Theme> = {
   minWidth: 220,
   color: tokens.ink,
   '& .MuiListItemIcon-root': { color: tokens.inkMuted },
+};
+
+// The initial on a gold stamp when there is no Google photo.
+export const accountAvatarStyles: SxProps<Theme> = {
+  width: 34,
+  height: 34,
+  fontSize: '1rem',
+  fontWeight: 800,
+  bgcolor: tokens.stampGold,
+  color: tokens.ink,
 };
