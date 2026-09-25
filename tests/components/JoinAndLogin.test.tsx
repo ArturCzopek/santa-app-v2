@@ -184,20 +184,33 @@ describe('LoginPage', () => {
     expect(
       screen.getByRole('button', { name: /Zaloguj przez Google/ }),
     ).toBeInTheDocument();
-    expect(screen.queryByText(/otwarta w innej aplikacji/)).toBeNull();
+    expect(
+      screen.queryByRole('heading', { name: 'Otwórz tę stronę w przeglądarce' }),
+    ).toBeNull();
   });
 
-  it('tells people inside Messenger & co. to open the page in their browser', () => {
+  it('inside Messenger & co. puts opening the page in a browser first', () => {
     auth.user = null;
     vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(
       'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 [FBAN/MessengerForiOS;FBAV/470.0.0.37.109]',
     );
     renderWithProviders(<LoginPage />);
 
-    expect(screen.getByText(/otwarta w innej aplikacji/)).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Skopiuj link' }),
-    ).toBeInTheDocument();
+    const heading = screen.getByRole('heading', {
+      name: 'Otwórz tę stronę w przeglądarce',
+    });
+    const copy = screen.getByRole('button', { name: 'Kopiuj link' });
+    const google = screen.getByRole('button', { name: /Zaloguj przez Google/ });
+    // Copying the link is the main action; Google comes after, as a fallback.
+    expect(heading.compareDocumentPosition(google)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(copy).toHaveClass('MuiButton-contained');
+    expect(google).toHaveClass('MuiButton-outlined');
+    // The address stays on screen, in case copying is not allowed.
+    expect(screen.getByLabelText('Adres tej strony')).toHaveValue(
+      window.location.href,
+    );
     vi.restoreAllMocks();
   });
 });

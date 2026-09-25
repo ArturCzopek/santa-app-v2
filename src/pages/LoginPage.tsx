@@ -5,9 +5,7 @@ import { Location, Navigate, useLocation } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
 import MainLayout from '../components/layout/MainLayout';
 import PaperCard from '../components/common/PaperCard';
-import HowItWorks from '../components/HowItWorks';
-import InAppBrowserNotice from '../components/InAppBrowserNotice';
-import GoogleSignInButton from '../components/GoogleSignInButton';
+import SignInCard from '../components/SignInCard';
 import YouTubeEmbed from '../components/YouTubeEmbed';
 import SectionHeading from '../components/draw/SectionHeading';
 import { tokens } from '../styles/theme';
@@ -42,11 +40,7 @@ const LoginPage = () => {
           </Typography>
         </Box>
 
-        <PaperCard airmail>
-          <HowItWorks />
-          <InAppBrowserNotice />
-          <GoogleSignInButton />
-        </PaperCard>
+        <SignInCard />
 
         <Box component="section">
           <SectionHeading>{t('loginPage.videoTitle')}</SectionHeading>

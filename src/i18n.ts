@@ -264,10 +264,19 @@ const resources = {
         },
         inAppBrowser: {
           copyFailed: 'Could not copy the link. Copy this address: {{url}}',
+          copyFailedSelect:
+            'Could not copy. Select the address in the field below and copy it.',
           copyLink: 'Copy link',
+          googleMayFail:
+            'Inside Messenger or Instagram signing in with Google usually fails. Open the page in your browser first.',
           linkCopied: 'Link copied. Paste it into your browser.',
-          message:
-            'This page is open inside another app (e.g. Messenger or Instagram), where Google does not allow signing in. Open it in your regular browser: tap ⋮ or ⋯ in the corner and choose "Open in browser", or copy the link and paste it there.',
+          linkLabel: 'Address of this page',
+          or: 'or',
+          step1: 'Tap the menu in the corner of the screen:',
+          step2: 'Choose "Open in browser" (or "Open in Chrome" / "in Safari").',
+          step3: 'No such option? Copy the link and paste it into your browser.',
+          title: 'Open this page in your browser',
+          why: 'It is open inside another app (e.g. Messenger or Instagram), and Google does not allow signing in there.',
         },
         googleNote: 'All you need is a Google account. We use your name and photo so others know who joined.',
         privacyLink: 'How we use your data.',
@@ -579,10 +588,19 @@ const resources = {
         },
         inAppBrowser: {
           copyFailed: 'Nie udało się skopiować linku. Skopiuj ten adres: {{url}}',
-          copyLink: 'Skopiuj link',
-          linkCopied: 'Skopiowano link. Wklej go w swojej przeglądarce.',
-          message:
-            'Ta strona jest otwarta w innej aplikacji (np. Messengerze lub Instagramie), a tam Google nie pozwala się zalogować. Otwórz ją w swojej przeglądarce: stuknij ⋮ lub ⋯ w rogu i wybierz „Otwórz w przeglądarce” albo skopiuj link i wklej go tam.',
+          copyFailedSelect:
+            'Nie udało się skopiować. Zaznacz adres w polu poniżej i skopiuj go.',
+          copyLink: 'Kopiuj link',
+          googleMayFail:
+            'W Messengerze i Instagramie logowanie przez Google zwykle się nie udaje. Najpierw otwórz stronę w przeglądarce.',
+          linkCopied: 'Link skopiowany. Wklej go w swojej przeglądarce.',
+          linkLabel: 'Adres tej strony',
+          or: 'lub',
+          step1: 'Stuknij menu w rogu ekranu:',
+          step2: 'Wybierz „Otwórz w przeglądarce” (albo „Otwórz w Chrome” / „w Safari”).',
+          step3: 'Nie ma takiej opcji? Skopiuj link i wklej go w przeglądarce.',
+          title: 'Otwórz tę stronę w przeglądarce',
+          why: 'Jest otwarta w innej aplikacji (np. Messengerze albo Instagramie), a tam Google nie pozwala się zalogować.',
         },
         googleNote: 'Wystarczy konto Google. Używamy imienia i zdjęcia, żeby inni wiedzieli, kto dołączył.',
         privacyLink: 'Jak używamy danych.',

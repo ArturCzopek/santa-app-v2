@@ -11,9 +11,7 @@ import { useTranslation } from 'react-i18next';
 import MainLayout from '../components/layout/MainLayout';
 import PaperCard from '../components/common/PaperCard';
 import StampAvatar from '../components/common/StampAvatar';
-import HowItWorks from '../components/HowItWorks';
-import InAppBrowserNotice from '../components/InAppBrowserNotice';
-import GoogleSignInButton from '../components/GoogleSignInButton';
+import SignInCard from '../components/SignInCard';
 import PasswordField from '../components/form/PasswordField';
 import EventDetails from '../components/draw/EventDetails';
 import { drawService } from '../services/DrawService';
@@ -125,11 +123,7 @@ const JoinToDrawPage = () => {
           title={t('joinPage.title')}
           lead={t('joinPage.loginRequired')}
         />
-        <PaperCard airmail>
-          <HowItWorks />
-          <InAppBrowserNotice />
-          <GoogleSignInButton />
-        </PaperCard>
+        <SignInCard />
       </MainLayout>
     );
   }
