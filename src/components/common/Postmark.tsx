@@ -14,7 +14,8 @@ const inks = {
   done: { paper: tokens.pine, dark: tokens.pineOnDark },
 };
 
-// A double-ringed rubber stamp, slightly askew, for the draw status.
+// A double-ringed rubber stamp, slightly askew, for the draw status. Big
+// and in sentence case so it stays easy to read, also for older eyes.
 const Postmark: React.FC<PostmarkProps> = ({ label, tone, onDark = false }) => {
   const ink = inks[tone][onDark ? 'dark' : 'paper'];
 
@@ -32,13 +33,12 @@ const Postmark: React.FC<PostmarkProps> = ({ label, tone, onDark = false }) => {
         borderRadius: '6px',
         outline: `1px solid ${ink}`,
         outlineOffset: '2px',
-        fontSize: '0.75rem',
+        fontSize: '0.875rem',
         fontWeight: 800,
-        letterSpacing: '0.06em',
-        textTransform: 'uppercase',
+        letterSpacing: '0.02em',
         lineHeight: 1.4,
         whiteSpace: 'nowrap',
-        transform: 'rotate(-3deg)',
+        transform: 'rotate(-2deg)',
       }}
     >
       {label}

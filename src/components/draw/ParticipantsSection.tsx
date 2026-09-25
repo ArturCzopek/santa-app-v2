@@ -67,11 +67,13 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
               </Typography>
             )}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {participant.userUuid === draw.ownerUuid
-              ? t('drawPage.participantsSection.owner')
-              : t('drawPage.participantsSection.participant')}
-          </Typography>
+          {/* Only the organizer's role says something; "Uczestnik" on every
+              row was noise. */}
+          {participant.userUuid === draw.ownerUuid && (
+            <Typography variant="body2" color="text.secondary">
+              {t('drawPage.participantsSection.owner')}
+            </Typography>
+          )}
         </Box>
         {showWishStatus && (
           <Typography

@@ -165,7 +165,15 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
                   name: winner.userName,
                 })}
               </Typography>
-              <Typography sx={{ whiteSpace: 'pre-line' }}>
+              {/* The part the Santa actually needs, so not the quietest. */}
+              <Typography
+                sx={{
+                  whiteSpace: 'pre-line',
+                  fontSize: '1.125rem',
+                  lineHeight: 1.6,
+                  color: tokens.ink,
+                }}
+              >
                 {winnerWish || t('drawPage.winnerSection.noWishProvided')}
               </Typography>
             </Box>

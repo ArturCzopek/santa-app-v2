@@ -68,7 +68,7 @@ const resources = {
         noWish: 'You have not written your letter to Santa yet.',
         participants: 'Participants: {{count}}',
         viewDetails: 'Open',
-        waitingStatus: 'Waiting for Draw',
+        waitingStatus: 'Waiting for the draw',
       },
       drawPage: {
         description: { less: 'Show less', more: 'Show the whole description' },
@@ -197,13 +197,13 @@ const resources = {
         participantsSection: {
           noWish: 'No letter yet',
           owner: 'Organizer',
-          participant: 'Participant',
           lettersProgress: 'Letters written: {{done}} of {{total}}',
           title: 'Participants ({{count}})',
           wishProvided: 'Letter ready',
           you: '(you)',
         },
         startDraw: {
+          passwordLabel: 'Draw password',
           allExclusionsSet: 'Are these all the pairs who should not draw each other?',
           editExclusions: 'Change the exclusions',
           exclusions: 'Exclusions: {{pairs}}.',
@@ -550,13 +550,13 @@ const resources = {
         participantsSection: {
           noWish: 'Bez listu',
           owner: 'Organizator',
-          participant: 'Uczestnik',
           lettersProgress: 'Napisane listy: {{done}} z {{total}}',
           title: 'Uczestnicy ({{count}})',
           wishProvided: 'List gotowy',
           you: '(ty)',
         },
         startDraw: {
+          passwordLabel: 'Hasło losowania',
           allExclusionsSet: 'Czy to wszystkie pary, które nie powinny się wylosować?',
           editExclusions: 'Zmień wykluczenia',
           exclusions: 'Wykluczenia: {{pairs}}.',

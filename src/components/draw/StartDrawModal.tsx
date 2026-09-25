@@ -149,7 +149,7 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
         </Box>
 
         <PasswordField
-          label={t('createPage.password')}
+          label={t('drawPage.startDraw.passwordLabel')}
           value={password}
           onChange={(value) => {
             setPassword(value);
