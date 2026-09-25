@@ -62,6 +62,7 @@ const resources = {
       drawCard: {
         budget: 'Budget: {{budget}} {{currency}}',
         checkResults: 'The draw took place – open your envelope to see who you buy for.',
+        envelopeOpened: 'Envelope opened. Look again whenever you want to reread the letter.',
         drawDate: 'Draw date: {{drawDate}}',
         drawedStatus: 'Drawn',
         noWish: 'You have not written your letter to Santa yet.',
@@ -70,8 +71,29 @@ const resources = {
         waitingStatus: 'Waiting for Draw',
       },
       drawPage: {
-        drawSuccessMessage: 'Done! Everyone can now open their envelope.',
         drawnOn: 'Drawn on {{date}}',
+        drawDone: {
+          copied: 'Message copied. Paste it in your chat.',
+          copyMessage: 'Copy message',
+          description: 'Let everyone know they can open their envelopes now.',
+          message: {
+            done: 'The draw "{{name}}" has taken place!',
+            open: 'Open your envelope to see who you buy a gift for: {{link}}',
+            secret: 'Shh… keep your result to yourself.',
+          },
+          notifyButton: 'Let everyone know',
+          postcardTitle: 'The envelopes are here!',
+          title: 'Done! The pairs are drawn',
+        },
+        status: {
+          ownerNeedsPeople:
+            'Invite the others – the draw needs at least two people.',
+          ownerReady: 'All letters are written – you can start the draw.',
+          ownerWaitingLetters:
+            'Letters written: {{done}} of {{total}}. You can start the draw now or wait for the rest.',
+          participant:
+            '{{owner}} will start the draw once everyone has joined. Then come back here for your envelope.',
+        },
         errors: {
           accessDenied: "Access denied. You are not a participant in this draw.",
           drawNotFound: "Draw not found or you don't have access to it.",
@@ -379,6 +401,7 @@ const resources = {
       drawCard: {
         budget: 'Budżet: {{budget}} {{currency}}',
         checkResults: 'Losowanie się odbyło – otwórz kopertę i sprawdź, komu kupujesz prezent.',
+        envelopeOpened: 'Koperta otwarta. Zajrzyj, jeśli chcesz jeszcze raz przeczytać list.',
         drawDate: 'Data losowania: {{drawDate}}',
         drawedStatus: 'Rozlosowane',
         noWish: 'Nie masz jeszcze listu do Mikołaja.',
@@ -387,8 +410,29 @@ const resources = {
         waitingStatus: 'Oczekuje na losowanie',
       },
       drawPage: {
-        drawSuccessMessage: 'Gotowe! Wszyscy mogą już otworzyć swoje koperty.',
         drawnOn: 'Rozlosowano {{date}}',
+        drawDone: {
+          copied: 'Wiadomość skopiowana. Wklej ją na czacie.',
+          copyMessage: 'Kopiuj wiadomość',
+          description: 'Daj znać wszystkim, że mogą już otworzyć swoje koperty.',
+          message: {
+            done: 'Losowanie „{{name}}” już się odbyło!',
+            open: 'Otwórz swoją kopertę i sprawdź, komu kupujesz prezent: {{link}}',
+            secret: 'Ciii… wynik zostaw dla siebie.',
+          },
+          notifyButton: 'Daj znać wszystkim',
+          postcardTitle: 'Koperty już czekają!',
+          title: 'Gotowe! Pary wylosowane',
+        },
+        status: {
+          ownerNeedsPeople:
+            'Zaproś pozostałe osoby – losować można, gdy są co najmniej dwie.',
+          ownerReady: 'Wszystkie listy gotowe – możesz rozpocząć losowanie.',
+          ownerWaitingLetters:
+            'Napisane listy: {{done}} z {{total}}. Możesz rozpocząć losowanie już teraz albo poczekać na resztę.',
+          participant:
+            '{{owner}} rozpocznie losowanie, gdy wszyscy dołączą. Wtedy zajrzyj tu po swoją kopertę.',
+        },
         errors: {
           accessDenied: "Odmowa dostępu. Nie jesteś uczestnikiem tego losowania.",
           drawNotFound:

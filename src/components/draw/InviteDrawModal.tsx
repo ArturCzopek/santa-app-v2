@@ -6,16 +6,19 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Skeleton,
+  SxProps,
+  Theme,
   Typography,
 } from '@mui/material';
 import { ContentCopy, IosShare } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNotify } from '../../hooks/useNotify';
+import { useShareMessage } from '../../hooks/useShareMessage';
 import { drawService } from '../../services/DrawService';
 import { eventSummary } from './EventDetails';
+import Postcard from '../common/Postcard';
 import { Draw } from '../../models/Draw';
-import { airmailStripes, handFont, tokens } from '../../styles/theme';
+import { tokens } from '../../styles/theme';
 
 interface InviteDrawModalProps {
   open: boolean;
@@ -25,8 +28,23 @@ interface InviteDrawModalProps {
   justCreated?: boolean;
 }
 
-const canShare = () =>
-  typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+// Phones need the room for the whole postcard.
+export const postcardDialogSx: SxProps<Theme> = {
+  '& .MuiDialog-paper': {
+    m: { xs: 2, sm: 4 },
+    width: { xs: 'calc(100% - 32px)', sm: 'calc(100% - 64px)' },
+  },
+};
+
+export const postcardActionsSx: SxProps<Theme> = {
+  px: 3,
+  pb: 2,
+  pt: 0,
+  flexDirection: 'column',
+  alignItems: 'stretch',
+  gap: 1,
+  '& > :not(style) ~ :not(style)': { ml: 0 },
+};
 
 // The invite as a postcard: a ready message with the link, the budget and
 // how to join, sent with the phone's share sheet or copied for a group chat.
@@ -40,6 +58,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
 }) => {
   const { t, i18n } = useTranslation();
   const notify = useNotify();
+  const { canShare, share, copy } = useShareMessage();
   const drawId = draw.id ?? '';
   // undefined while loading; null when there is no key (and we cannot make one).
   const [inviteKey, setInviteKey] = useState<string | null | undefined>();
@@ -92,6 +111,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
     inviteKey ? `?k=${inviteKey}` : ''
   }`;
   const event = eventSummary(draw.eventDate, draw.eventPlace, i18n.language);
+  const postcardTitle = t('drawPage.inviteModal.postcardTitle');
   const message = [
     t('drawPage.inviteModal.message.greeting', { name: draw.drawName }),
     t('drawPage.inviteModal.message.budget', {
@@ -109,29 +129,9 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
       ? t('drawPage.inviteModal.message.howToJoin')
       : t('drawPage.inviteModal.message.howToJoinWithPassword'),
   ].join('\n');
-
-  const copy = async (text: string, copied: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      notify(copied, 'success');
-    } catch (err) {
-      console.error('Failed to copy:', err);
-      notify(t('loginPage.inAppBrowser.copyFailed', { url: inviteLink }));
-    }
-  };
-
-  const handleShare = async () => {
-    try {
-      await navigator.share({ title: draw.drawName, text: message });
-    } catch (err) {
-      // Closing the share sheet is not an error.
-      if (err instanceof Error && err.name === 'AbortError') return;
-      console.error('Failed to share:', err);
-      copy(message, t('drawPage.inviteModal.messageCopied'));
-    }
-  };
-
-  const share = canShare();
+  // What is sent is what the postcard shows, greeting included.
+  const sentText = `${postcardTitle}\n${message}`;
+  const messageCopied = t('drawPage.inviteModal.messageCopied');
 
   return (
     <Dialog
@@ -139,13 +139,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
       onClose={handleClose}
       maxWidth="xs"
       fullWidth
-      // Phones need the room for the whole postcard.
-      sx={{
-        '& .MuiDialog-paper': {
-          m: { xs: 2, sm: 4 },
-          width: { xs: 'calc(100% - 32px)', sm: 'calc(100% - 64px)' },
-        },
-      }}
+      sx={postcardDialogSx}
     >
       <DialogTitle>
         {justCreated
@@ -155,43 +149,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Typography>{t('drawPage.inviteModal.description')}</Typography>
 
-        <Box
-          sx={{
-            p: '6px',
-            borderRadius: '10px',
-            background: airmailStripes,
-          }}
-        >
-          <Box
-            sx={{
-              borderRadius: '5px',
-              backgroundColor: '#FFFFFF',
-              p: { xs: 1.5, sm: 2 },
-              overflowWrap: 'anywhere',
-            }}
-          >
-            <Typography
-              sx={{ fontFamily: handFont, fontSize: '1.4rem', lineHeight: 1.1 }}
-            >
-              {t('drawPage.inviteModal.postcardTitle')}
-            </Typography>
-            {loading ? (
-              <Box aria-hidden sx={{ mt: 1 }}>
-                <Skeleton />
-                <Skeleton />
-                <Skeleton width="60%" />
-              </Box>
-            ) : (
-              <Typography
-                component="p"
-                variant="body2"
-                sx={{ whiteSpace: 'pre-line', mt: 1 }}
-              >
-                {message}
-              </Typography>
-            )}
-          </Box>
-        </Box>
+        <Postcard title={postcardTitle} message={loading ? null : message} />
 
         {!loading && (
           <Typography sx={{ color: tokens.amber, fontWeight: 700 }}>
@@ -247,23 +205,15 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
           </Box>
         )}
       </DialogContent>
-      <DialogActions
-        sx={{
-          px: 3,
-          pb: 2,
-          pt: 0,
-          flexDirection: 'column',
-          alignItems: 'stretch',
-          gap: 1,
-          '& > :not(style) ~ :not(style)': { ml: 0 },
-        }}
-      >
-        {share ? (
+      <DialogActions sx={postcardActionsSx}>
+        {canShare ? (
           <Button
             variant="contained"
             startIcon={<IosShare />}
             disabled={loading}
-            onClick={handleShare}
+            onClick={() =>
+              share(draw.drawName, sentText, messageCopied, inviteLink)
+            }
           >
             {t('drawPage.inviteModal.share')}
           </Button>
@@ -272,9 +222,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
             variant="contained"
             startIcon={<ContentCopy />}
             disabled={loading}
-            onClick={() =>
-              copy(message, t('drawPage.inviteModal.messageCopied'))
-            }
+            onClick={() => copy(sentText, messageCopied, inviteLink)}
           >
             {t('drawPage.inviteModal.copyMessage')}
           </Button>
@@ -284,7 +232,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
             startIcon={<ContentCopy />}
             disabled={loading}
             onClick={() =>
-              copy(inviteLink, t('drawPage.inviteModal.linkCopied'))
+              copy(inviteLink, t('drawPage.inviteModal.linkCopied'), inviteLink)
             }
             sx={{ color: tokens.ink, whiteSpace: 'nowrap' }}
           >

@@ -6,6 +6,7 @@ import {
   ArrowBack,
   DeleteOutlined,
   EditOutlined,
+  Campaign,
   Logout,
   PlayArrow,
   PersonAdd,
@@ -16,6 +17,8 @@ import ParticipantsSection from '../components/draw/ParticipantsSection';
 import WinnerSection from '../components/draw/WinnerSection';
 import StartDrawModal from '../components/draw/StartDrawModal';
 import InviteDrawModal from '../components/draw/InviteDrawModal';
+import DrawDoneModal from '../components/draw/DrawDoneModal';
+import DrawStatus from '../components/draw/DrawStatus';
 import EditDrawModal from '../components/draw/EditDrawModal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import ExclusionsSection, {
@@ -71,6 +74,7 @@ const DrawPage = () => {
   const [isStartDrawModalOpen, setIsStartDrawModalOpen] = useState(false);
   const [justCreated] = useState(!!navigationState?.justCreated);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(justCreated);
+  const [isDrawDoneOpen, setIsDrawDoneOpen] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [exclusions, setExclusions] = useState<Exclusion[]>([]);
@@ -194,7 +198,8 @@ const DrawPage = () => {
         drawDate: updatedDraw.drawDate,
       });
       setIsStartDrawModalOpen(false);
-      notify(t('drawPage.drawSuccessMessage'), 'success');
+      // The envelopes are ready; the organizer tells the group.
+      setIsDrawDoneOpen(true);
     } catch (err) {
       console.error('Error starting draw:', err);
       notify(t('drawPage.errors.startDrawFailed'));
@@ -236,6 +241,7 @@ const DrawPage = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <BackToDraws />
           <DrawHeader draw={draw} />
+          {isWaiting && <DrawStatus draw={draw} isOwner={isOwner} />}
 
           {isWaiting && (
             <Box
@@ -272,6 +278,22 @@ const DrawPage = () => {
 
               <DrawOptionsMenu options={options} />
             </Box>
+          )}
+
+          {/* After the draw the organizer can tell the group again. */}
+          {isOwner && !isWaiting && (
+            <Button
+              variant="outlined"
+              color="inherit"
+              startIcon={<Campaign />}
+              onClick={() => setIsDrawDoneOpen(true)}
+              sx={{
+                color: tokens.snow,
+                alignSelf: { xs: 'stretch', sm: 'flex-start' },
+              }}
+            >
+              {t('drawPage.drawDone.notifyButton')}
+            </Button>
           )}
         </Box>
 
@@ -347,6 +369,14 @@ const DrawPage = () => {
         onClose={() => setConfirming(null)}
         onConfirm={handleDeleteOrLeave}
       />
+
+      {isOwner && (
+        <DrawDoneModal
+          open={isDrawDoneOpen && !isWaiting}
+          onClose={() => setIsDrawDoneOpen(false)}
+          draw={draw}
+        />
+      )}
 
       <InviteDrawModal
         open={isInviteModalOpen && isWaiting}

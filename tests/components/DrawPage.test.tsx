@@ -132,10 +132,19 @@ describe('DrawPage', () => {
     await user.type(within(dialog).getByLabelText(/Hasło/), 'secret1');
     await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
 
+    // The owner gets a ready message telling everyone the envelopes are here.
+    const done = await screen.findByRole('dialog', {
+      name: 'Gotowe! Pary wylosowane',
+    });
+    expect(drawingService.startDraw).toHaveBeenCalledWith('d1', 'owner');
+    expect(within(done).getByText(/Koperty już czekają!/)).toBeInTheDocument();
+    expect(
+      within(done).getByText(/Otwórz swoją kopertę.*#\/draw\/d1/),
+    ).toBeInTheDocument();
+    await user.click(within(done).getByRole('button', { name: 'Zamknij' }));
     expect(
       await screen.findByRole('heading', { name: 'Twój wynik losowania' }),
     ).toBeInTheDocument();
-    expect(drawingService.startDraw).toHaveBeenCalledWith('d1', 'owner');
     await openEnvelope(user);
     // Regression: the page used to go blank because participants were lost.
     await waitFor(() =>
@@ -146,6 +155,24 @@ describe('DrawPage', () => {
     expect(
       screen.getByRole('button', { name: 'Uczestnicy (2)' }),
     ).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('says what the draw is waiting for and who acts next', async () => {
+    renderDrawPage();
+    // Both people in the default draw have written their letter.
+    expect(
+      await screen.findByText(
+        'Wszystkie listy gotowe – możesz rozpocząć losowanie.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('tells a participant that the organizer starts the draw', async () => {
+    auth.user = fakeUser('alice', 'Ania Test');
+    renderDrawPage();
+    expect(
+      await screen.findByText(/Olga Owner rozpocznie losowanie/),
+    ).toBeInTheDocument();
   });
 
   it('still shows your own wish, editable, after the draw', async () => {

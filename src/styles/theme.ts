@@ -18,6 +18,8 @@ export const tokens = {
   waxDark: '#8E1820',
   stampGold: '#D9A441',
   pine: '#2A7549',
+  // "Done" on the spruce ground, where pine is too dark (8.6:1 on spruce).
+  pineOnDark: '#8FD1A6',
   amber: '#8A5A00',
 };
 

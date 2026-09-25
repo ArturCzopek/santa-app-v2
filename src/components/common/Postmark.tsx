@@ -11,7 +11,7 @@ interface PostmarkProps {
 
 const inks = {
   waiting: { paper: tokens.amber, dark: tokens.stampGold },
-  done: { paper: tokens.pine, dark: '#8FD1A6' },
+  done: { paper: tokens.pine, dark: tokens.pineOnDark },
 };
 
 // A double-ringed rubber stamp, slightly askew, for the draw status.

@@ -11,6 +11,10 @@ import StampAvatar from '../common/StampAvatar';
 import SectionHeading from './SectionHeading';
 import EventDetails from './EventDetails';
 import SealedEnvelope, { ENVELOPE_OPENING_MS } from './SealedEnvelope';
+import {
+  rememberEnvelopeOpened,
+  wasEnvelopeOpened,
+} from '../../services/envelope';
 import { handFont, tokens } from '../../styles/theme';
 
 interface WinnerSectionProps {
@@ -22,26 +26,6 @@ const letterOut = keyframes`
   to { transform: none; opacity: 1; }
 `;
 
-// Opening the envelope is a one-time moment; later visits show the letter.
-const openedKey = (drawId: string, uid: string) =>
-  `santa-app.envelope-opened.${drawId}.${uid}`;
-
-const wasOpened = (key: string) => {
-  try {
-    return localStorage.getItem(key) === '1';
-  } catch {
-    return false;
-  }
-};
-
-const rememberOpened = (key: string) => {
-  try {
-    localStorage.setItem(key, '1');
-  } catch {
-    // Private mode: the envelope is sealed again next time, which is fine.
-  }
-};
-
 type EnvelopeState = 'sealed' | 'opening' | 'justOpened' | 'open';
 
 const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
@@ -52,9 +36,9 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)', {
     noSsr: true,
   });
-  const storageKey = openedKey(draw.id ?? '', user?.uid ?? '');
+  // Opening the envelope is a one-time moment; later visits show the letter.
   const [envelope, setEnvelope] = useState<EnvelopeState>(() =>
-    wasOpened(storageKey) ? 'open' : 'sealed',
+    wasEnvelopeOpened(draw.id ?? '', user?.uid ?? '') ? 'open' : 'sealed',
   );
   const letterRef = useRef<HTMLDivElement>(null);
 
@@ -93,7 +77,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
   }, [envelope]);
 
   const openEnvelope = () => {
-    rememberOpened(storageKey);
+    rememberEnvelopeOpened(draw.id ?? '', user?.uid ?? '');
     setEnvelope(reducedMotion ? 'justOpened' : 'opening');
   };
 

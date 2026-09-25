@@ -133,6 +133,13 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
   await expect(dialog.getByText('Nieprawidłowe hasło')).toBeVisible();
   await dialog.getByLabel('Hasło do rozpoczęcia losowania').fill('sekret1');
   await dialog.getByRole('button', { name: 'Losuj' }).click();
+  // A ready message for the group: the envelopes are here.
+  const done = owner.page.getByRole('dialog', {
+    name: 'Gotowe! Pary wylosowane',
+  });
+  await expect(done.getByText('Koperty już czekają!')).toBeVisible();
+  await expectNoHorizontalScroll(owner.page);
+  await done.getByRole('button', { name: 'Zamknij' }).click();
   await expect(
     owner.page.getByRole('heading', { name: 'Twój wynik losowania' }),
   ).toBeVisible();

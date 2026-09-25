@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography, Box, ButtonBase } from '@mui/material';
 import {
   ArrowForward,
+  DraftsOutlined,
   HourglassEmpty,
   MarkEmailUnread,
 } from '@mui/icons-material';
@@ -11,6 +12,8 @@ import DrawCardBase from './DrawCardBase';
 import EventDetails from './EventDetails';
 import { DrawPreview } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
+import { useAuth } from '../../hooks/useAuth';
+import { wasEnvelopeOpened } from '../../services/envelope';
 
 interface DrawPreviewCardProps {
   drawPreview: DrawPreview;
@@ -19,8 +22,12 @@ interface DrawPreviewCardProps {
 // The whole envelope is the link to the draw.
 const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const drawn = drawPreview.status === 'DRAWED';
   const missingWish = !drawn && !drawPreview.userWishProvided;
+  // Once opened, the card stops asking to open the envelope.
+  const opened =
+    drawn && !!user && wasEnvelopeOpened(drawPreview.id ?? '', user.uid);
 
   return (
     <ButtonBase
@@ -61,11 +68,21 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
               alignItems: 'center',
               gap: 1,
               fontWeight: 700,
-              color: drawn ? tokens.wax : tokens.amber,
+              color: opened ? tokens.ink : drawn ? tokens.wax : tokens.amber,
             }}
           >
-            {drawn ? <MarkEmailUnread /> : <HourglassEmpty />}
-            {drawn ? t('drawCard.checkResults') : t('drawCard.noWish')}
+            {opened ? (
+              <DraftsOutlined aria-hidden />
+            ) : drawn ? (
+              <MarkEmailUnread aria-hidden />
+            ) : (
+              <HourglassEmpty aria-hidden />
+            )}
+            {opened
+              ? t('drawCard.envelopeOpened')
+              : drawn
+                ? t('drawCard.checkResults')
+                : t('drawCard.noWish')}
           </Typography>
         )}
 
