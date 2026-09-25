@@ -6,6 +6,7 @@ import {
   ArrowBack,
   DeleteOutlined,
   EditOutlined,
+  KeyOutlined,
   Campaign,
   Logout,
   PlayArrow,
@@ -20,6 +21,7 @@ import InviteDrawModal from '../components/draw/InviteDrawModal';
 import DrawDoneModal from '../components/draw/DrawDoneModal';
 import DrawStatus from '../components/draw/DrawStatus';
 import EditDrawModal from '../components/draw/EditDrawModal';
+import SetPasswordModal from '../components/draw/SetPasswordModal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import ExclusionsSection, {
   currentExclusions,
@@ -77,6 +79,7 @@ const DrawPage = () => {
   const [isDrawDoneOpen, setIsDrawDoneOpen] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [exclusions, setExclusions] = useState<Exclusion[]>([]);
   const [myWish, setMyWish] = useState('');
   const [confirming, setConfirming] = useState<'delete' | 'leave' | null>(null);
@@ -139,6 +142,11 @@ const DrawPage = () => {
             label: t('drawPage.options.edit'),
             icon: <EditOutlined fontSize="small" />,
             onClick: () => setIsEditModalOpen(true),
+          },
+          {
+            label: t('drawPage.password.menu'),
+            icon: <KeyOutlined fontSize="small" />,
+            onClick: () => setIsPasswordModalOpen(true),
           },
           {
             label: t('drawPage.options.delete'),
@@ -334,6 +342,7 @@ const DrawPage = () => {
           draw={draw}
           exclusions={currentExclusions(draw, exclusions)}
           onEditExclusions={goToExclusions}
+          onForgotPassword={() => setIsPasswordModalOpen(true)}
           withoutWish={draw.participants
             .filter((p) => !p.hasWish)
             .map((p) => p.userName)}
@@ -346,6 +355,14 @@ const DrawPage = () => {
           onClose={() => setIsEditModalOpen(false)}
           draw={draw}
           onSaved={(details) => setDraw({ ...draw, ...details })}
+        />
+      )}
+
+      {isOwner && isWaiting && (
+        <SetPasswordModal
+          open={isPasswordModalOpen}
+          onClose={() => setIsPasswordModalOpen(false)}
+          drawId={draw.id ?? ''}
         />
       )}
 

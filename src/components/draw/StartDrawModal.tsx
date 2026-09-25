@@ -27,6 +27,7 @@ interface StartDrawModalProps {
   // Current exclusions (people still in the draw).
   exclusions: Exclusion[];
   onEditExclusions: () => void;
+  onForgotPassword: () => void;
 }
 
 const StartDrawModal: React.FC<StartDrawModalProps> = ({
@@ -37,6 +38,7 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
   withoutWish = [],
   exclusions,
   onEditExclusions,
+  onForgotPassword,
 }) => {
   const drawId = draw.id ?? '';
   const possible = isDrawPossible(draw.participantUuids, exclusions);
@@ -157,6 +159,21 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
           autoFocus
           inputRef={inputRef}
         />
+        <Button
+          onClick={() => {
+            handleClose();
+            onForgotPassword();
+          }}
+          sx={{
+            alignSelf: 'flex-start',
+            color: tokens.ink,
+            px: 0,
+            mt: -1,
+            textDecoration: 'underline',
+          }}
+        >
+          {t('drawPage.password.forgot')}
+        </Button>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
         <Button onClick={handleClose} sx={{ color: tokens.ink }}>

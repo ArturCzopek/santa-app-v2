@@ -22,6 +22,7 @@ vi.mock('../../src/services/DrawService', () => ({
     isDrawPasswordValid: vi.fn(),
     getInviteKey: vi.fn(),
     updateDrawDetails: vi.fn(),
+    setDrawPassword: vi.fn(),
     deleteDraw: vi.fn(),
     getExclusions: vi.fn(),
     addExclusion: vi.fn(),
@@ -517,6 +518,39 @@ describe('DrawPage', () => {
     expect(
       await screen.findByRole('heading', { name: 'Wigilia' }),
     ).toBeInTheDocument();
+  });
+
+  it('lets the owner set a new password, also from the start dialog', async () => {
+    vi.mocked(drawService.setDrawPassword).mockResolvedValue();
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Rozpocznij losowanie' }),
+    );
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', {
+        name: 'Nie pamiętasz hasła? Ustaw nowe',
+      }),
+    );
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Ustaw nowe hasło',
+    });
+    await user.type(within(dialog).getByLabelText(/Nowe hasło/), 'abc');
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Zapisz hasło' }),
+    );
+    expect(
+      await within(dialog).findByText(/przynajmniej 6 znaków/),
+    ).toBeInTheDocument();
+    expect(drawService.setDrawPassword).not.toHaveBeenCalled();
+
+    await user.type(within(dialog).getByLabelText(/Nowe hasło/), '123');
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Zapisz hasło' }),
+    );
+    expect(drawService.setDrawPassword).toHaveBeenCalledWith('d1', 'abc123');
+    expect(await screen.findByText('Nowe hasło zapisane.')).toBeInTheDocument();
   });
 
   describe('gift exchange date', () => {

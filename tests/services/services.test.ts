@@ -123,6 +123,38 @@ describe('DrawService + DrawingService against the emulator', () => {
     });
   });
 
+  it('lets the owner set a new password; the invite link keeps working', async () => {
+    const owner = await signInAs('owner', 'Olga Owner');
+    const drawId = await drawService.createDraw(newDrawForm, owner);
+    const linkKey = await drawService.getInviteKey(drawId);
+
+    await drawService.setDrawPassword(drawId, 'nowe-haslo');
+    expect(await drawService.isDrawPasswordValid(drawId, 'secret1')).toBe(
+      false,
+    );
+    expect(await drawService.isDrawPasswordValid(drawId, 'nowe-haslo')).toBe(
+      true,
+    );
+    // Setting the same password again changes nothing.
+    await drawService.setDrawPassword(drawId, 'nowe-haslo');
+    expect(await drawService.isDrawPasswordValid(drawId, 'nowe-haslo')).toBe(
+      true,
+    );
+
+    const alice = await signInAs('alice', 'Ania Test');
+    await expect(
+      drawService.joinToDraw(drawId, alice, 'secret1'),
+    ).rejects.toThrow('Invalid password');
+    await drawService.joinToDraw(drawId, alice, 'nowe-haslo');
+    const bob = await signInAs('bob', 'Bob Test');
+    await drawService.joinToDraw(drawId, bob, linkKey!);
+
+    // Only the owner can change it.
+    await expect(
+      drawService.setDrawPassword(drawId, 'przejete'),
+    ).rejects.toThrow();
+  });
+
   it('lets people join with the invite link, until the owner makes a new one', async () => {
     const owner = await signInAs('owner', 'Olga Owner');
     const drawId = await drawService.createDraw(newDrawForm, owner);

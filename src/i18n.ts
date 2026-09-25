@@ -39,7 +39,7 @@ const resources = {
         passwordHint:
           'At least 6 characters. People without the invite link can also join with it.',
         passwordNote:
-          'Write the password down! You need it to start the draw, and it cannot be viewed or changed later.',
+          'Write the password down! You need it to start the draw. It cannot be viewed later, though you can set a new one (More → Set a new password).',
         success: 'Draw created. Now write your letter to Santa!',
         title: 'New draw',
         validation: {
@@ -84,6 +84,17 @@ const resources = {
           notifyButton: 'Let everyone know',
           postcardTitle: 'The envelopes are here!',
           title: 'Done! The pairs are drawn',
+        },
+        password: {
+          failed: 'Could not save the password. Please try again.',
+          forgot: 'Forgot the password? Set a new one',
+          hint: 'At least 6 characters. Write it down!',
+          label: 'New password',
+          menu: 'Set a new password',
+          save: 'Save password',
+          saved: 'New password saved.',
+          text: 'The new password replaces the old one: you need it to start the draw, and people without the invite link join with it. Everyone who joined stays, and the invite link keeps working.',
+          title: 'Set a new password',
         },
         status: {
           ownerNeedsPeople:
@@ -378,7 +389,7 @@ const resources = {
         passwordHint:
           'Co najmniej 6 znaków. Osoby bez linku z zaproszenia też dołączą tym hasłem.',
         passwordNote:
-          'Zapisz hasło! Bez niego nie rozpoczniesz losowania, a później nie da się go podejrzeć ani zmienić.',
+          'Zapisz hasło! Bez niego nie rozpoczniesz losowania. Później nie da się go podejrzeć, ale możesz ustawić nowe (Więcej → Ustaw nowe hasło).',
         success: 'Losowanie utworzone. Teraz napisz swój list do Mikołaja!',
         title: 'Nowe losowanie',
         validation: {
@@ -423,6 +434,17 @@ const resources = {
           notifyButton: 'Daj znać wszystkim',
           postcardTitle: 'Koperty już czekają!',
           title: 'Gotowe! Pary wylosowane',
+        },
+        password: {
+          failed: 'Nie udało się zapisać hasła. Spróbuj ponownie.',
+          forgot: 'Nie pamiętasz hasła? Ustaw nowe',
+          hint: 'Co najmniej 6 znaków. Zapisz je!',
+          label: 'Nowe hasło',
+          menu: 'Ustaw nowe hasło',
+          save: 'Zapisz hasło',
+          saved: 'Nowe hasło zapisane.',
+          text: 'Nowe hasło zastąpi stare: będzie potrzebne do rozpoczęcia losowania, a osoby bez linku z zaproszenia dołączą z nim. Wszyscy, którzy już dołączyli, zostają, a link z zaproszenia działa dalej.',
+          title: 'Ustaw nowe hasło',
         },
         status: {
           ownerNeedsPeople:

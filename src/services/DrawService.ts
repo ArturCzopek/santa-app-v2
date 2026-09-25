@@ -309,6 +309,29 @@ class DrawService {
     return joinKeyDoc.exists() && invite.data()?.joinKey !== joinKey;
   }
 
+  // Owner only, before the draw. Replaces the password: every join key
+  // except the current invite link's is removed and the new one added in
+  // the same batch. People who already joined stay.
+  async setDrawPassword(drawId: string, password: string): Promise<void> {
+    const newKey = await PasswordUtils.joinKey(drawId, password);
+    const [keys, invite] = await Promise.all([
+      getDocs(collection(this.drawsCollection, drawId, 'joinKeys')),
+      getDoc(this.inviteRef(drawId)),
+    ]);
+    const linkKey = invite.data()?.joinKey;
+
+    const batch = writeBatch(db);
+    keys.docs
+      .filter((key) => key.id !== linkKey && key.id !== newKey)
+      .forEach((key) => batch.delete(key.ref));
+    if (!keys.docs.some((key) => key.id === newKey)) {
+      batch.set(this.joinKeyRef(drawId, newKey), {
+        createdDate: serverTimestamp(),
+      });
+    }
+    await batch.commit();
+  }
+
   // The secret is the draw password or the key from the invite link; both
   // are checked the same way.
   async joinToDraw(drawId: string, user: User, secret: string): Promise<void> {

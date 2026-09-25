@@ -197,6 +197,9 @@ service cloud.firestore {
       // password one is created together with the draw, the link one with
       // the invite document. Only the owner may read them: to confirm
       // starting the draw, and to find them all when deleting the draw.
+      // Before the draw the owner may add keys and remove any key except
+      // the current invite link's: a new link retires the old one's key,
+      // and a new password replaces the old password's key.
       match /joinKeys/{joinKey} {
         allow read: if signedIn()
           && get(drawPath(drawId)).data.ownerUuid == request.auth.uid;
@@ -204,19 +207,13 @@ service cloud.firestore {
         allow create: if signedIn()
           && joinKey.matches('^[0-9a-f]{64}$')
           && request.resource.data.keys().hasOnly(['createdDate'])
-          && (
-            (!exists(drawPath(drawId))
-              && getAfter(drawPath(drawId)).data.ownerUuid == request.auth.uid)
-            || (isOwnerBeforeDraw(drawId)
-              && getAfter(invitePath(drawId)).data.joinKey == joinKey)
-          );
+          && isOwnerBeforeDraw(drawId);
 
-        // A new invite link retires the key of the old one.
         allow delete: if signedIn()
           && (isDeletingDraw(drawId)
             || (isOwnerBeforeDraw(drawId)
-              && get(invitePath(drawId)).data.joinKey == joinKey
-              && getAfter(invitePath(drawId)).data.joinKey != joinKey));
+              && (!existsAfter(invitePath(drawId))
+                || getAfter(invitePath(drawId)).data.joinKey != joinKey)));
       }
 
       // The invite link's key, in readable form so that participants can

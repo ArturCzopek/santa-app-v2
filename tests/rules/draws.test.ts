@@ -359,20 +359,38 @@ describe('draws', () => {
       );
     });
 
-    it('only the owner can list keys, and nobody can add one later', async () => {
+    it('only the owner can list and add keys, and only before the draw', async () => {
+      const key = 'e'.repeat(64);
       await assertSucceeds(
         getDocs(collection(authed(env, OWNER), 'draws/d1/joinKeys')),
       );
       await assertFails(
         getDocs(collection(authed(env, ALICE), 'draws/d1/joinKeys')),
       );
+      for (const person of [ALICE, MALLORY]) {
+        await assertFails(
+          setDoc(doc(authed(env, person), `draws/d1/joinKeys/${key}`), {
+            createdDate: serverTimestamp(),
+          }),
+        );
+      }
       await assertFails(
-        setDoc(doc(authed(env, MALLORY), 'draws/d1/joinKeys/my-key'), {
+        setDoc(doc(authed(env, OWNER), 'draws/d1/joinKeys/another-key'), {
           createdDate: serverTimestamp(),
         }),
       );
+      await assertSucceeds(
+        setDoc(doc(authed(env, OWNER), `draws/d1/joinKeys/${key}`), {
+          createdDate: serverTimestamp(),
+        }),
+      );
+
+      await updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
+        status: 'DRAWED',
+        drawDate: serverTimestamp(),
+      });
       await assertFails(
-        setDoc(doc(authed(env, OWNER), 'draws/d1/joinKeys/another-key'), {
+        setDoc(doc(authed(env, OWNER), `draws/d1/joinKeys/${'f'.repeat(64)}`), {
           createdDate: serverTimestamp(),
         }),
       );
@@ -641,12 +659,34 @@ describe('draws', () => {
       await assertSucceeds(joinDraw(authed(env, BOB), 'd1', BOB, JOIN_KEY));
     });
 
-    it('the password key cannot be deleted', async () => {
+    it('the owner can replace the password; the link keeps working', async () => {
+      const NEW_PASSWORD_KEY = 'd'.repeat(64);
+      await setInvite(authed(env, OWNER), LINK_KEY);
+
+      const db = authed(env, OWNER);
+      const batch = writeBatch(db);
+      batch.delete(doc(db, `draws/d1/joinKeys/${JOIN_KEY}`));
+      batch.set(doc(db, `draws/d1/joinKeys/${NEW_PASSWORD_KEY}`), {
+        createdDate: serverTimestamp(),
+      });
+      await assertSucceeds(batch.commit());
+
+      await assertFails(joinDraw(authed(env, ALICE), 'd1', ALICE, JOIN_KEY));
+      await assertSucceeds(
+        joinDraw(authed(env, ALICE), 'd1', ALICE, NEW_PASSWORD_KEY),
+      );
+      await assertSucceeds(joinDraw(authed(env, BOB), 'd1', BOB, LINK_KEY));
+    });
+
+    it('the current link key and other people cannot remove keys', async () => {
       await setInvite(authed(env, OWNER), LINK_KEY);
       await assertFails(
-        deleteDoc(doc(authed(env, OWNER), `draws/d1/joinKeys/${JOIN_KEY}`)),
+        deleteDoc(doc(authed(env, OWNER), `draws/d1/joinKeys/${LINK_KEY}`)),
       );
-      await assertFails(setInvite(authed(env, OWNER), NEW_LINK_KEY, JOIN_KEY));
+      await joinDraw(authed(env, ALICE), 'd1', ALICE);
+      await assertFails(
+        deleteDoc(doc(authed(env, ALICE), `draws/d1/joinKeys/${JOIN_KEY}`)),
+      );
     });
 
     it('a link must point to a key created with it', async () => {
