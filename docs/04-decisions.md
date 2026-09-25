@@ -37,7 +37,7 @@ that block third-party cookies lose the result of the redirect. So the app detec
 browsers and tells people, in plain Polish, how to open the page in their real browser, with
 a "Skopiuj link" button. Sign-in by e-mail link (D4) would avoid the problem entirely.
 
-## D6. The password is stored only as a hash, and is needed to start the draw, Accepted
+## D6. The password is stored only as a hash, and is needed to start the draw, Accepted (amended by D21)
 The password guards the two important moments: joining without the link, and starting the
 draw. Storing only `sha256(drawId + ":" + sha256(password))` means nobody, the app
 included, can show it again, so the create form says in bold that it must be written down.
@@ -119,3 +119,38 @@ The same mechanism drives the end-to-end tests. See the [README](../README.md#te
 "Zostaw wiadomość" is for feedback without giving out an e-mail address. One message per
 person per day keeps it from being abused without a server. Reading them in an admin page
 in the app is planned; until then they are read in the Firebase console.
+
+## D21. The organizer can set a new password, Accepted
+Needing the password weeks later to start the draw (D6) turned a forgotten password into a
+draw that could never start: the only way out was deleting it and collecting everyone's
+letters again. The organizer is already signed in as the owner, so before the draw they can
+set a new one ("Więcej" -> "Ustaw nowe hasło", or from the start dialog). The old password's
+key is removed and the new one added in one batch; the invite link and everyone who joined
+stay. The password still guards starting the draw and joining without the link.
+
+## D22. Inside chat apps, getting into a real browser comes first, Accepted
+Refines D5. The in-app browser notice used to sit under "Jak to działa?" and above an active
+red Google button that was bound to fail, and the address to copy by hand appeared in a
+snackbar for six seconds. Now the page leads with "Otwórz tę stronę w przeglądarce": three
+steps with the real menu icons, "Kopiuj link" as the one red action, and the address in a
+field that stays on screen. The Google button stays, secondary, in case the detection is
+wrong. Opening Chrome directly with an Android `intent://` link was left out: with hash routes
+the page's own `#` collides with the intent syntax, and it could not be tested on a real
+phone.
+
+## D23. The organizer announces the draw, with a ready message, Accepted
+Without a server the app cannot tell anyone that the draw has happened (D1). So right after
+the draw the organizer gets a postcard "Koperty już czekają!" with a ready message for the
+group chat, and "Daj znać wszystkim" opens it again later. Before the draw a status line on
+the draw page says who acts next, so the weeks of waiting are not silent.
+
+## D24. The red action is the next step, chosen from the draw's state, Accepted
+Refines D15. On the draw page before the draw the red button comes first in the action row
+and follows the state: "Napisz list" while your own letter is missing, "Rozpocznij
+losowanie" for the organizer once every letter is in, otherwise "Zaproś do losowania".
+
+## D25. A letter being written is kept in the browser until it is saved, Accepted
+Chat apps' browsers often reload the page after switching apps, which lost a half-written
+letter. The draft is kept in `localStorage` per draw and person until it is saved or
+discarded, comes back with "Przywrócono niezapisany szkic", and "Anuluj" asks before
+throwing changes away. Like D13, this is a per-device convenience, not shared state.

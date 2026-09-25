@@ -46,8 +46,9 @@ Everything is designed for that path first.
 | Hasło do rozpoczęcia losowania | yes | At least 6 characters |
 
 The password matters more than it looks: **the organizer needs it to start the draw**, and it
-cannot be viewed or changed later (the app only stores a hash of it). The form says so in a
-bold note above the field. People who do not have the invite link can also join with it.
+cannot be viewed later (the app only stores a hash of it). The form says so in a bold note
+above the field. People who do not have the invite link can also join with it. A forgotten
+password is not the end: the organizer can set a new one (see [Changing your mind](#changing-your-mind)).
 
 After **Stwórz losowanie** the organizer lands on the new draw with the invite already open.
 
@@ -70,20 +71,25 @@ Any participant can open the invite and pass it on, but only the organizer can r
 
 Opening the link shows *Zaproszenie do losowania*:
 
-- Not signed in: what Secret Santa is (*Jak to działa?* in three steps) and
-  **Zaloguj przez Google**. After signing in the person comes back to this same invite.
+- Not signed in: "Masz zaproszenie do Tajemniczego Mikołaja", what Secret Santa is (*Jak to
+  działa?* in three steps) and **Zaloguj przez Google**. After signing in the person comes
+  back to this same invite.
 - Signed in: a postcard from the organizer (*Od: …*) with the draw's name, budget, date, place
   and description, and **Dołącz do losowania**. With the invite link that is all; with a
   plain link the password field appears.
 
 After joining, the person lands on the draw page with the letter editor already open.
 
-Other ways in: **Dołącz do losowania** on *Twoje losowania* accepts a pasted link or just the
-draw's code. Someone who already joined and opens the link again goes straight to the draw.
+Other ways in: **Dołącz do losowania** on *Twoje losowania* accepts a pasted invite link.
+Someone who already joined and opens the link again goes straight to the draw; someone who
+opens a draw they are not in gets **Dołącz do tego losowania**.
 
 **Opened inside Messenger or Instagram?** Google does not allow signing in inside those
-built-in browsers. The app detects them and explains how to open the page in the phone's
-real browser (the ⋮ / ⋯ menu -> "Otwórz w przeglądarce"), with a **Skopiuj link** button.
+built-in browsers, and that is where most invites are opened. There the page leads with
+*Otwórz tę stronę w przeglądarce*: three short steps with the real menu icons, **Kopiuj link**
+as the main button, and the page's address in a field that stays on screen in case copying
+is not allowed. *Jak to działa?* and the Google button follow, the button marked as usually
+failing there.
 
 ### 4. Everybody writes a letter to Santa
 
@@ -95,6 +101,8 @@ who draws you, and only after the draw.
   does not (*Bez listu*). The organizer also sees the count: *Napisane listy: 4 z 6*.
 - The letter **stays editable after the draw**, so a late or changed wish still reaches the
   Santa, who always sees the current version.
+- A letter being written is kept in the browser until it is saved, so a reload does not lose
+  it (*Przywrócono niezapisany szkic*), and *Anuluj* asks before throwing changes away.
 
 ### 5. The organizer sets exclusions (optional)
 
@@ -103,22 +111,34 @@ buy gifts together anyway. Only the organizer sees this section, and only before
 
 - A pair works both ways: *Ania ↔ Bartek* means neither draws the other, and it is the same
   pair as *Bartek ↔ Ania*.
-- The two fields never offer the same person twice or a pair that is already on the list.
+- The two fields (*Pierwsza osoba*, *Druga osoba*) never offer the same person twice or a pair
+  that is already on the list, whichever field you start from.
 - A pair that would make the draw impossible (e.g. in a group of two) is refused with an
   explanation; if people leave and the draw becomes impossible, the app names the pairs to
   remove.
 
 ### 6. The organizer starts the draw
 
+While the draw waits, a line under its name says who acts next: participants read that the
+organizer starts it once everyone has joined; the organizer sees whether letters are still
+missing or all are in. The red button is always the next step: *Napisz list* while your own
+letter is missing, *Rozpocznij losowanie* for the organizer once every letter is in, otherwise
+*Zaproś do losowania*.
+
 **Rozpocznij losowanie** appears once there are at least two people. The dialog shows:
 
 - who has not written a letter yet (their Santa will have to guess),
 - the current exclusions, with a link to change them,
-- the password field (the one from step 1),
+- the password field (the one from step 1), with *Nie pamiętasz hasła? Ustaw nowe*,
 - **Losuj**, which cannot be undone.
 
 The draw makes one gift circle through everyone when it can (A -> B -> C -> A), never
 pairing anyone with themselves or with someone they are excluded with.
+
+Right after it the organizer gets *Gotowe! Pary wylosowane*: a postcard *Koperty już czekają!*
+with a ready message for the group (link, budget, date and place), to share or copy. Nothing
+else tells people the draw has happened, so this is the moment to send it. *Daj znać
+wszystkim* on the draw page opens it again later.
 
 ### 7. Everybody opens their envelope
 
@@ -142,6 +162,7 @@ caveat for a technically skilled organizer, see [D3](04-decisions.md#d3-the-pair
 | What | Who | When | Where |
 |---|---|---|---|
 | Edit name, description, budget, date, place | Organizer | Before the draw | *Więcej* -> *Edytuj losowanie* |
+| Set a new password (people who joined stay, the invite link keeps working) | Organizer | Before the draw | *Więcej* -> *Ustaw nowe hasło*, or from the start dialog |
 | Delete the draw (with all letters) | Organizer | Before the draw | *Więcej* -> *Usuń losowanie* |
 | Leave the draw (the letter is deleted) | Participant | Before the draw | *Więcej* -> *Opuść losowanie* |
 | Edit your letter | Everyone | Any time | *Edytuj list* |
@@ -151,8 +172,9 @@ After the draw nothing about the draw itself changes, so everyone's result stays
 ## Everything else
 
 - **Twoje losowania** lists your draws as envelopes: waiting ones say whether you still owe a
-  letter, drawn ones (with the striped airmail edge) say "otwórz kopertę". Once there are a
-  few draws in the app, a line at the bottom shows the app-wide counts.
+  letter, drawn ones (with the striped airmail edge) say "otwórz kopertę" until you have
+  opened yours, then "Koperta otwarta". Once there are a few draws in the app, a line at the
+  bottom shows the app-wide counts.
 - **Pokaż Mikołaja!** in the top bar plays a random Santa video. It is the app's humour and
   stays on purpose, like the "Dubstep Santa" video on the login page (*Na rozgrzewkę*).
 - **Zostaw wiadomość!** (signed-in people only) sends a message to the author, at most one a
@@ -172,6 +194,7 @@ After the draw nothing about the draw itself changes, so everyone's result stays
 | Draw | `#/draw/{id}` | Before: write your letter, invite. After: open your envelope |
 | Privacy | `#/privacy` | Read how data is used |
 
-On the draw page the order is always: the draw's name and details, the main actions,
+On the draw page the order is always: the draw's name and details, the status line (before
+the draw), the main actions,
 **your result** (after the draw), **your letter**, the participants, and the exclusions
 (organizer only).

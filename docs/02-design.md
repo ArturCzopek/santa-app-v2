@@ -26,9 +26,10 @@ envelope, the postcard, the letter being written, the new draw form.
 ## One main action per screen
 
 Sealing-wax red is kept for **the single thing to do next**. Everything else is outlined or
-a plain text button. On the draw page before the draw that is **Napisz list** while your
-letter is missing, and **Zaproś do losowania** once it is written. After the draw it is the
-envelope itself.
+a plain text button. On the draw page before the draw it is the next step, first in the row:
+**Napisz list** while your letter is missing, **Rozpocznij losowanie** for the organizer
+once every letter is in, otherwise **Zaproś do losowania**. After the draw it is the envelope
+itself. Inside Messenger it is **Kopiuj link**, because signing in cannot work there.
 
 The rest follows the same thinking:
 
@@ -41,7 +42,8 @@ The rest follows the same thinking:
 ## Screen by screen
 
 **Login** (`#/`). A first-time visitor usually arrives from a link and has never heard of
-the app. The page answers "what is this?" before asking for anything: a plain headline
+the app. Inside a chat app's browser the page first gets them out of it ("Otwórz tę stronę w
+przeglądarce"), since Google refuses to sign in there. The page answers "what is this?" before asking for anything: a plain headline
 ("Tajemniczy Mikołaj bez karteczek w czapce"), three numbered steps in handwriting, and only
 then **Zaloguj przez Google**, with a note on what the Google account is used for.
 
@@ -57,14 +59,18 @@ bold note with a key icon above the field, because a hint under it was easy to m
 forgotten password means the draw can never start.
 
 **Draw** (`#/draw/…`). The draw's name is the page title, with its postmark, budget,
-organizer, date and place under it. Then, top to bottom: the main actions, your result,
-your letter, the participants (folded away after the draw), and the exclusions for the
-organizer.
+organizer, date and place under it (a long description folds on phones). Before the draw a
+status line says who acts next. Then, top to bottom: the main actions, your result, your
+letter, the participants (folded away after the draw), and the exclusions for the
+organizer. Right after the draw the organizer gets a postcard "Koperty już czekają!" to send
+to the group: the app has no way to notify anyone itself, so it hands the organizer the
+message at the moment it matters.
 
 **The result.** The emotional peak. A sealed envelope addressed to you fills the width of the
 phone; tapping it cracks the wax seal, lifts the flap and slides the letter out: *Kupujesz
 prezent dla* and the name in large handwriting, the budget as a line of its own, then the
-recipient's letter. It opens once; later visits go straight to the letter.
+recipient's letter, set larger than the rest because it is what the giver needs. It opens
+once; later visits go straight to the letter, and the list says "Koperta otwarta".
 
 ## Words
 
@@ -88,8 +94,9 @@ recipient's letter. It opens once; later visits go straight to the letter.
 
 ## Motion
 
-- **Snow** falls behind the content, never over text: 150 flakes on a computer, 60 on a
-  phone, none for people who turn on "reduce motion" in their system.
+- **Snow** falls behind the content: 150 flakes on a computer, 60 on a phone, only faintly
+  over the content column so it does not drift across text at full strength, and none for
+  people who turn on "reduce motion" in their system.
 - **The envelope** takes about a second to open (seal, flap, letter). With reduced motion
   the letter simply appears.
 - Everything else moves only as feedback (hover, focus, fold), under 200 ms.
@@ -102,7 +109,9 @@ For mixed ages on small phones:
 - The focus ring for keyboard users is gold on the dark ground and **navy on paper**, where
   gold would be too faint.
 - `lang="pl"`, Polish labels for every icon button, headings in order, real buttons and
-  links.
+  links, and "Przejdź do treści" before the navbar.
+- Postmarks are 14 px in sentence case, not small capitals; only the organizer's row in the
+  participants list carries a role.
 - After a failed submit, focus moves to the first field to fix; after the envelope opens,
   to the letter.
 - Decorative stamps, seals and flaps are hidden from screen readers.

@@ -219,7 +219,8 @@ tests in `tests/rules`).
   `uid`, written once when the owner starts the draw.
 - `draws/{id}/joinKeys/{key}` - the join check; the key is
   `sha256(drawId + ":" + sha256(secret))`, where the secret is the password or
-  the invite link's key, and is never readable by others.
+  the invite link's key, and is never readable by others. Before the draw the
+  owner can replace the password's key with a new one ("Ustaw nowe hasło").
 - `draws/{id}/invite/link` - the invite link's key (128 random bits), readable
   by participants so they can share the link. The link is
   `#/join/{id}?k={key}`; the key stays in the URL fragment, so it never reaches

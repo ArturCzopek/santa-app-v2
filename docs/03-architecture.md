@@ -39,7 +39,7 @@ it has different readers:
 | `…/letters/{uid}` | The letter to Santa | The author; after the draw also the one person who drew the author |
 | `…/exclusions/{a}_{b}` | A pair who must not draw each other (`a < b`) | The owner, before the draw |
 | `…/assignments/{uid}` | `toUuid`: whom `uid` buys for | Only `uid` |
-| `…/joinKeys/{key}` | Proof of the password or of the invite link's key (a hash, never the secret) | The owner, to confirm the password when starting the draw |
+| `…/joinKeys/{key}` | Proof of the password or of the invite link's key (a hash, never the secret) | The owner, to confirm the password when starting the draw; before the draw the owner may add keys and remove any but the current invite link's |
 | `…/invite/link` | The invite link's key | Participants |
 | `appData/stats` | App-wide counters of draws and results | Everyone signed in |
 | `messages/{uid}_{date}` | Messages to the author, one per person per day | The author of the message (the app owner reads them in the Firebase console) |
@@ -90,10 +90,16 @@ so whoever has the link still cannot start the draw). Then the owner's browser:
 From then on no browser holds the whole result. The trade-off is that the owner's browser
 had it for a moment ([D3](04-decisions.md#d3-the-pairs-are-drawn-in-the-organizers-browser-accepted)).
 
+**Setting a new password** (`SetPasswordModal` -> `DrawService.setDrawPassword`). In one batch
+the owner removes every join key except the current invite link's and adds the key of the
+new password, so the old password stops working, the new one starts the draw and lets
+people join, and the link and everyone who joined stay.
+
 **Opening the result** (`WinnerSection`, `SealedEnvelope`). The app reads
 `assignments/{me}` and then the recipient's letter, which the rules allow only because of
 that assignment. Whether the envelope was opened is remembered in the browser's
-`localStorage`, per draw and person.
+`localStorage`, per draw and person (`services/envelope.ts`), and so is a letter being
+written until it is saved (`services/letterDraft.ts`).
 
 ## Where things are in the code
 

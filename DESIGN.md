@@ -16,8 +16,8 @@ What we avoid: a pile of identical dark cards with coloured status chips.
 ## Colours
 
 All colours live in `tokens` in `src/styles/theme.ts`. Do not write hex values in
-components. The only exceptions are the light postmark green `#8FD1A6` in `Postmark.tsx`
-and the wax highlight in `SealedEnvelope.tsx`.
+components. The only exceptions are the wax highlight in `SealedEnvelope.tsx` and the
+brighter white of the card in `Postcard.tsx`.
 
 | Token | Hex | Use | Contrast |
 | --- | --- | --- | --- |
@@ -30,10 +30,11 @@ and the wax highlight in `SealedEnvelope.tsx`.
 | `paperLine` | `#DDD3C2` | dashed rules on paper | decorative |
 | `ink` | `#1E2A44` | text on paper | 13.5 on paper |
 | `inkMuted` | `#4F5A73` | secondary text on paper | 6.5 on paper, 5.8 on shade |
-| `wax` | `#B3202A` | **one** main action per screen, seals (on the draw page: "Napisz list" until your letter exists, then "Zaproś") | white on wax 6.7 |
+| `wax` | `#B3202A` | **one** main action per screen, seals (on the draw page it is the next step: "Napisz list" while your letter is missing, "Rozpocznij losowanie" for the owner once every letter is in, otherwise "Zaproś") | white on wax 6.7 |
 | `waxDark` | `#8E1820` | hover of the main action | – |
 | `stampGold` | `#D9A441` | focus ring and postmarks on the ground | 6.8 on spruce |
 | `pine` | `#2A7549` | "done" states on paper, stripes | 4.7 on shade, 5.3 on paper |
+| `pineOnDark` | `#8FD1A6` | "done" states on the ground (postmark, status line) | 8.6 on spruce |
 | `amber` | `#8A5A00` | "waiting" states and warnings on paper | 5.0 on shade, 5.6 on paper |
 
 Rules:
@@ -69,10 +70,14 @@ Rules:
 | --- | --- |
 | `PaperCard` | A sheet of writing paper. `airmail` adds the red-white-green striped edge. Use `airmail` once per screen, for the thing that matters most (the letter being written, the envelope, the postcard, the create form). With `onSubmit` it renders a `<form>`. |
 | `airmailStripes` | The striped edge itself; also under the navbar and around the postcard. |
-| `Postmark` | Draw status as a slightly tilted double-ring stamp. `tone` = `waiting` / `done`, `onDark` for the ground. |
+| `Postmark` | Draw status as a double-ring stamp tilted 2°, 14 px in sentence case (no capitals, so it stays readable). `tone` = `waiting` / `done`, `onDark` for the ground. |
 | `StampAvatar` | A person as a perforated postage stamp with their photo or initial. |
 | `SealedEnvelope` | The draw result before it is opened. The whole envelope is one button. |
-| `InviteDrawModal` | The invite as a postcard with a ready message; "Udostępnij" uses the Web Share API, with "Kopiuj zaproszenie" as the fallback. |
+| `Postcard` | A ready message on an airmail card: exactly the text that is sent (its greeting included). Used by the invite and by `DrawDoneModal`; `useShareMessage` sends it with the share sheet or copies it. |
+| `InviteDrawModal` | The invite as a postcard; "Udostępnij" uses the Web Share API, with "Kopiuj zaproszenie" as the fallback. |
+| `DrawDoneModal` | Right after the draw: "Koperty już czekają!" with a ready message for the group; reopened with "Daj znać wszystkim". |
+| `DrawStatus` | One line under the draw's name before the draw: who acts next. |
+| `SignInCard`, `OpenInBrowserCard` | What a guest sees. Inside Messenger & co. the "open in your browser" card comes first, with "Kopiuj link" as the red action and the address in a field; the Google button becomes secondary. |
 | `PasswordField`, `FormTextField`, `FormSelect`, `FormActions` | Form parts on paper: white inputs with a warm grey outline, a navy focus outline, errors under the field. |
 | `SectionHeading` | Section title on the ground. After the draw the participants heading is a toggle (`aria-expanded`). |
 | `HowItWorks` | The three steps with handwritten numbers, for first-time visitors. |
@@ -80,7 +85,8 @@ Rules:
 ## Motion
 
 - Snow (`SnowfallEffect`) falls behind the content: 150 flakes, 60 on phones, none with
-  `prefers-reduced-motion`.
+  `prefers-reduced-motion`, and only at 35 % over the 640 px content column (a CSS mask),
+  so it stays faint behind text; on phones the whole screen is that column.
 - Opening the envelope takes about 1.1 s: the seal cracks (400 ms), the flap lifts
   (450 ms, from 250 ms), then the letter slides up (450 ms). With reduced motion the
   letter just appears. The envelope stays open on later visits (`localStorage`).
@@ -96,6 +102,9 @@ Rules:
 - After a failed submit, focus goes to the first field that needs fixing. After the
   envelope opens, focus goes to the letter.
 - Decorative stamps, seals and flaps are `aria-hidden`.
+- "Przejdź do treści" comes first for keyboard users; it moves focus to `<main>` (a button,
+  not an `#anchor`, because the URL hash holds the route).
+- Under a wrong password the field keeps its hint below the error.
 
 ## Words
 

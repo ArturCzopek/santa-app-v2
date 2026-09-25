@@ -22,7 +22,7 @@ const DrawStatus: React.FC<{ draw: Draw; isOwner: boolean }> = ({
       ? t('drawPage.status.ownerNeedsPeople')
       : ready
         ? t('drawPage.status.ownerReady')
-        : t('drawPage.status.ownerWaitingLetters', { done, total });
+        : t('drawPage.status.ownerWaitingLetters');
 
   return (
     <Typography

@@ -105,7 +105,7 @@ const resources = {
             'Invite the others – the draw needs at least two people.',
           ownerReady: 'All letters are written – you can start the draw.',
           ownerWaitingLetters:
-            'Letters written: {{done}} of {{total}}. You can start the draw now or wait for the rest.',
+            'Some letters have not arrived yet. You can start the draw now or wait for the rest.',
           participant:
             '{{owner}} will start the draw once everyone has joined. Then come back here for your envelope.',
         },
@@ -463,7 +463,7 @@ const resources = {
             'Zaproś pozostałe osoby – losować można, gdy są co najmniej dwie.',
           ownerReady: 'Wszystkie listy gotowe – możesz rozpocząć losowanie.',
           ownerWaitingLetters:
-            'Napisane listy: {{done}} z {{total}}. Możesz rozpocząć losowanie już teraz albo poczekać na resztę.',
+            'Część listów jeszcze nie dotarła. Możesz rozpocząć losowanie już teraz albo poczekać na resztę.',
           participant:
             '{{owner}} rozpocznie losowanie, gdy wszyscy dołączą. Wtedy zajrzyj tu po swoją kopertę.',
         },
