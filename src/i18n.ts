@@ -136,7 +136,7 @@ const resources = {
               'Open the link, sign in with Google and write your letter to Santa.',
             howToJoinWithPassword:
               'Sign in with Google, type the password and write your letter to Santa.',
-            link: 'Join here: {{link}}',
+            link: 'Draw link: {{link}}',
             passwordSeparately: 'I will send you the password separately.',
           },
           messageCopied: 'Invite copied. Paste it in your chat.',
@@ -441,7 +441,7 @@ const resources = {
               'Otwórz link, zaloguj się kontem Google i napisz list do Mikołaja.',
             howToJoinWithPassword:
               'Zaloguj się kontem Google, wpisz hasło i napisz list do Mikołaja.',
-            link: 'Dołącz tutaj: {{link}}',
+            link: 'Link do losowania: {{link}}',
             passwordSeparately: 'Hasło wyślę ci osobno.',
           },
           messageCopied: 'Zaproszenie skopiowane. Wklej je na czacie.',
