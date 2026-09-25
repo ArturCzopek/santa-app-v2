@@ -30,9 +30,9 @@ and the wax highlight in `SealedEnvelope.tsx`.
 | `paperLine` | `#DDD3C2` | dashed rules on paper | decorative |
 | `ink` | `#1E2A44` | text on paper | 13.5 on paper |
 | `inkMuted` | `#4F5A73` | secondary text on paper | 6.5 on paper, 5.8 on shade |
-| `wax` | `#B3202A` | **one** main action per screen, seals | white on wax 6.7 |
+| `wax` | `#B3202A` | **one** main action per screen, seals (on the draw page: "Napisz list" until your letter exists, then "Zaproś") | white on wax 6.7 |
 | `waxDark` | `#8E1820` | hover of the main action | – |
-| `stampGold` | `#D9A441` | focus ring, postmarks on the ground | 6.8 on spruce |
+| `stampGold` | `#D9A441` | focus ring and postmarks on the ground | 6.8 on spruce |
 | `pine` | `#2A7549` | "done" states on paper, stripes | 4.7 on shade, 5.3 on paper |
 | `amber` | `#8A5A00` | "waiting" states and warnings on paper | 5.0 on shade, 5.6 on paper |
 
@@ -40,7 +40,8 @@ Rules:
 - Text on the ground is `snow`/`snowMuted`; text on paper is `ink`/`inkMuted`. Never put
   `wax` or `pine` text on the ground (below 3:1).
 - Every text pair must reach WCAG AA (4.5:1). Check new pairs before using them.
-- `stampGold` on paper is only 2.1:1, so use it on the ground only.
+- `stampGold` on paper is only 2.1:1, so use it on the ground only. Paper surfaces set
+  `onPaper` (`--focus-ring: ink`), which turns the focus ring navy there.
 
 ## Type
 
@@ -59,7 +60,7 @@ Rules:
   lead, then paper cards. Sections have a `SectionHeading` on the ground above the paper.
 - Phones from 360 px: `document.documentElement.scrollWidth` must equal the viewport
   width (the E2E tests check this on every step).
-- Buttons are at least 44 px tall. In forms the main action is on the right; on phones
+- Buttons and standalone links (navbar, footer) are at least 44 px tall. In forms the main action is on the right; on phones
   the buttons take the full width with the main action on top (`FormActions`).
 
 ## Building blocks
@@ -89,7 +90,9 @@ Rules:
 
 - `lang="pl"`, MUI texts from `plPL`, every icon-only button and spinner has a Polish
   `aria-label`.
-- The focus ring is 3 px `stampGold` with a 2 px offset, on every control.
+- The focus ring is 3 px with a 2 px offset, on every control: `stampGold` on the ground,
+  `ink` on paper (`PaperCard`, dialogs, menus and the sealed envelope set `onPaper`). A new
+  paper surface must spread `onPaper` into its styles.
 - After a failed submit, focus goes to the first field that needs fixing. After the
   envelope opens, focus goes to the letter.
 - Decorative stamps, seals and flaps are `aria-hidden`.
