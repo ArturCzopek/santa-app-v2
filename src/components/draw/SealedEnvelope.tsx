@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, ButtonBase, Typography } from '@mui/material';
 import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
-import { airmailStripes, handFont, tokens } from '../../styles/theme';
+import { airmailStripes, handFont, onPaper, tokens } from '../../styles/theme';
 
 // How long the seal and flap take; the letter slides out afterwards.
 export const ENVELOPE_OPENING_MS = 700;
@@ -85,6 +85,9 @@ const SealedEnvelope: React.FC<SealedEnvelopeProps> = ({
           textAlign: 'left',
           perspective: '900px',
           '&:hover .seal': { transform: 'translate(-50%, -50%) scale(1.04)' },
+          // Inside the striped edge, on the paper, where ink reads best.
+          ...onPaper,
+          '&.Mui-focusVisible': { outlineOffset: '-8px' },
         }}
       >
         {/* The flap, folded down over the front. */}

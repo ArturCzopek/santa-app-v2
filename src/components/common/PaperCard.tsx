@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Box, SxProps, Theme } from '@mui/material';
-import { airmailStripes, tokens } from '../../styles/theme';
+import { airmailStripes, onPaper, tokens } from '../../styles/theme';
 
 interface PaperCardProps {
   children: ReactNode;
@@ -13,6 +13,7 @@ interface PaperCardProps {
 }
 
 const paperSx: SxProps<Theme> = {
+  ...onPaper,
   width: '100%',
   boxSizing: 'border-box',
   display: 'flex',

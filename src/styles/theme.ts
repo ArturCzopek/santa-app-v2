@@ -26,21 +26,15 @@ export const handFont = '"Caveat", "Segoe Print", cursive';
 // The red-green-red striped edge of a Christmas airmail envelope.
 export const airmailStripes = `repeating-linear-gradient(135deg, ${tokens.wax} 0 10px, ${tokens.paper} 10px 16px, ${tokens.pine} 16px 26px, ${tokens.paper} 26px 32px)`;
 
-// Old colour names still used by some styles; they map onto the tokens.
-const customColors = {
-  gold: tokens.stampGold,
-  lightGold: '#E8C274',
-  darkRed: tokens.waxDark,
-  darkGreen: tokens.spruceRaised,
-  grayText: tokens.snowMuted,
-  lightGray: tokens.snow,
-  darkGray: tokens.ink,
-};
-
+// Gold shows on the spruce ground but not on paper (2.1:1), so paper
+// surfaces switch the ring to ink through this variable.
 const focusRing = {
-  outline: `3px solid ${tokens.stampGold}`,
+  outline: `3px solid var(--focus-ring, ${tokens.stampGold})`,
   outlineOffset: '2px',
 };
+
+// Set on every paper surface: cards, dialogs, menus.
+export const onPaper = { '--focus-ring': tokens.ink };
 
 const baseTheme = createTheme({
   palette: {
@@ -123,6 +117,7 @@ const baseTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
+          ...onPaper,
           borderRadius: 12,
           color: tokens.ink,
           boxShadow: '0 24px 48px -16px rgba(0, 0, 0, 0.6)',
@@ -154,7 +149,7 @@ const baseTheme = createTheme({
       styleOverrides: { root: { fontSize: '0.875rem', marginLeft: 2 } },
     },
     MuiMenu: {
-      styleOverrides: { paper: { color: tokens.ink } },
+      styleOverrides: { paper: { ...onPaper, color: tokens.ink } },
     },
     MuiCard: {
       styleOverrides: {
@@ -178,15 +173,4 @@ const theme = responsiveFontSizes(createTheme(baseTheme, plPL), {
   factor: 2.2,
 });
 
-const themeWithCustomColors = {
-  ...theme,
-  customColors,
-};
-
-declare module '@mui/material/styles' {
-  interface Theme {
-    customColors: typeof customColors;
-  }
-}
-
-export default themeWithCustomColors as typeof theme;
+export default theme;
