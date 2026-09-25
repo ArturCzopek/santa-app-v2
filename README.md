@@ -48,21 +48,62 @@ npm run emulators        # terminal 1: Auth + Firestore emulators
 npm run dev:emulators    # terminal 2: the app at http://localhost:5173
 ```
 
-Optionally fill the database with test data (emulators must be running):
+### Test data (`npm run emulators:seed`)
+
+With the emulators running, one command sets up people and draws to click
+through:
 
 ```bash
 npm run emulators:seed
 ```
 
-This adds six test Google accounts (Olga, Ania, Bartek, Celina, Darek, Ewa)
-and two draws with password `test123`: *Testowa Wigilia* with all six people,
-waiting to be drawn by Olga, and *Testowe Mikołajki*, already drawn.
+It creates six test Google accounts and two draws (password `test123`):
+
+| Account | Testowa Wigilia (waiting) | Testowe Mikołajki (drawn) |
+|---|---|---|
+| Olga Organizatorka (`olga`) | owner, letter written | owner, letter written |
+| Ania Test (`ania`) | letter written | letter written |
+| Bartek Test (`bartek`) | letter written | letter written |
+| Celina Test (`celina`) | letter written | letter written |
+| Darek Test (`darek`) | no letter yet | – |
+| Ewa Test (`ewa`) | no letter yet | – |
+
+*Testowa Wigilia* also has a gift exchange date (the next Christmas Eve) and
+place, and one exclusion: Ania and Bartek do not draw each other.
+
+**Every run resets both test draws** to exactly this state: people who
+joined, letters, results, exclusions and invite links from earlier runs are
+removed first. Your other local draws are not touched. So after playing a
+draw through, run the seed again to start over.
+
+What you can try with it:
+
+- **Organizer before the draw:** sign in as Olga, open *Testowa Wigilia* -
+  invite, exclusions, edit or delete the draw, "Rozpocznij losowanie"
+  (password `test123`). The dialog warns that Darek and Ewa have no letter.
+- **Participant without a letter:** Darek or Ewa - write the first letter.
+- **The result:** Ania, Bartek or Celina in *Testowe Mikołajki* - open the
+  sealed envelope. Each sees only their own result.
+- **Joining as a new person:** in the account picker choose "Add new account",
+  then open `http://localhost:5173/#/join/seed-waiting` and type `test123`
+  (or use the invite link Olga copies, which needs no password).
 
 **Signing in:** "Zaloguj przez Google" opens the emulator's fake account
 picker. Pick a seeded account or click "Add new account" to create any number
-of new ones - no real Google account is involved. A browser window is signed
-in as one person at a time; to act as several people at once, use separate
-incognito windows or browser profiles.
+of new ones - no real Google account is involved. Faster, from the browser's
+developer console (emulator mode only; the code is not in production builds):
+
+```js
+await window.__santaTest.signIn('ania', 'Ania Test')
+```
+
+A browser window is signed in as one person at a time; to act as several
+people at once, use separate incognito windows or browser profiles.
+
+How it works: the Auth emulator accepts unsigned Google tokens, so the seed
+script and `__santaTest.signIn` sign in with a made-up token (name and
+`<id>@example.com`), and the seed writes the draws straight to the Firestore
+emulator, past the security rules.
 
 ### The local database
 
@@ -201,7 +242,7 @@ node scripts/migrate.mjs path/to/service-account-key.json --apply
 | Command | What it does |
 |---|---|
 | `npm run emulators` | Start local Auth + Firestore emulators (data kept in `.emulator-data/`) |
-| `npm run emulators:seed` | Add test accounts and draws to the running emulators |
+| `npm run emulators:seed` | Add test accounts and (re)set the two test draws in the running emulators |
 | `npm run emulators:save` | Save emulator data without stopping |
 | `npm run emulators:reset` | Delete saved emulator data |
 | `npm run dev:emulators` | Run the app against the local emulators |

@@ -92,8 +92,39 @@ const shuffledCircle = (uids) => {
   return shuffled.map((from, i) => [from, shuffled[(i + 1) % shuffled.length]]);
 };
 
-const seedDraw = async (drawId, name, owner, people, drawn) => {
+// Everything under a seeded draw from an earlier run: people who joined,
+// letters, results, exclusions, keys. Without this a second run would leave
+// the old results behind and the draw could not be started again.
+const SUBCOLLECTIONS = ['participants', 'letters', 'assignments', 'exclusions', 'joinKeys', 'invite'];
+
+const clearDraw = async (drawId) => {
+  for (const sub of SUBCOLLECTIONS) {
+    const list = await check(
+      await fetch(`${FIRESTORE}/draws/${drawId}/${sub}?pageSize=300`, {
+        headers: { Authorization: 'Bearer owner' },
+      }),
+      `List draws/${drawId}/${sub}`,
+    );
+    for (const { name } of list.documents ?? []) {
+      const response = await fetch(`http://127.0.0.1:8080/v1/${name}`, {
+        method: 'DELETE',
+        headers: { Authorization: 'Bearer owner' },
+      });
+      if (!response.ok) throw new Error(`Delete ${name} failed (${response.status})`);
+    }
+  }
+};
+
+// The next Christmas Eve, so the date is never in the past.
+const nextChristmasEve = () => {
   const now = new Date();
+  const year = now.getMonth() === 11 && now.getDate() > 24 ? now.getFullYear() + 1 : now.getFullYear();
+  return `${year}-12-24`;
+};
+
+const seedDraw = async (drawId, name, owner, people, drawn, extra = {}) => {
+  const now = new Date();
+  await clearDraw(drawId);
   await setDoc(`draws/${drawId}`, {
     createdDate: now,
     ownerUuid: owner.uid,
@@ -106,7 +137,13 @@ const seedDraw = async (drawId, name, owner, people, drawn) => {
     participantUuids: people.map((p) => p.uid),
     status: drawn ? 'DRAWED' : 'WAITING_FOR_DRAW',
     drawDate: drawn ? now : null,
+    eventDate: extra.eventDate ?? '',
+    eventPlace: extra.eventPlace ?? '',
   });
+  for (const pair of extra.exclusions ?? []) {
+    const [a, b] = pair.map((person) => person.uid).sort();
+    await setDoc(`draws/${drawId}/exclusions/${a}_${b}`, { a, b });
+  }
   await setDoc(`draws/${drawId}/joinKeys/${sha256(`${drawId}:${sha256(PASSWORD)}`)}`, {
     createdDate: now,
   });
@@ -139,12 +176,20 @@ const people = [];
 for (const [sub, name] of PEOPLE) people.push(await googleAccount(sub, name));
 const [owner] = people;
 
-await seedDraw('seed-waiting', 'Testowa Wigilia (czeka na losowanie)', owner, people, false);
+const [, ania, bartek] = people;
+await seedDraw('seed-waiting', 'Testowa Wigilia (czeka na losowanie)', owner, people, false, {
+  eventDate: nextChristmasEve(),
+  eventPlace: 'U babci Krysi, godz. 18:00',
+  exclusions: [[ania, bartek]],
+});
 await seedDraw('seed-drawn', 'Testowe Mikołajki (rozlosowane)', owner, people.slice(0, 4), true);
 
 console.log(`Accounts (pick them in the Google sign-in window):`);
 for (const p of people) console.log(`  ${p.name.padEnd(20)} ${p.sub}@example.com`);
-console.log(`\nDraws (password ${PASSWORD}):`);
-console.log(`  Testowa Wigilia – all 6 people, waiting; Olga can start it`);
-console.log(`  Testowe Mikołajki – Olga, Ania, Bartek, Celina; already drawn`);
-console.log(`Join link for new accounts: http://localhost:5173/#/join/seed-waiting`);
+console.log(`\nDraws (password ${PASSWORD}), reset to this state on every run:`);
+console.log(`  Testowa Wigilia – all 6 people, waiting; Olga can start it.`);
+console.log(`    Letters: Olga, Ania, Bartek, Celina (Darek and Ewa have none).`);
+console.log(`    Exclusion: Ania ↔ Bartek. Gift exchange: ${nextChristmasEve()}, u babci Krysi.`);
+console.log(`  Testowe Mikołajki – Olga, Ania, Bartek, Celina; already drawn.`);
+console.log(`\nJoin link for new accounts: http://localhost:5173/#/join/seed-waiting (password ${PASSWORD})`);
+console.log(`Sign in from the browser console: await window.__santaTest.signIn('ania', 'Ania Test')`);
