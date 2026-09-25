@@ -60,7 +60,9 @@ describe('JoinToDrawPage', () => {
     auth.user = null;
     renderJoinPage();
 
-    expect(screen.getByText(/Musisz się zalogować/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Zaloguj się, żeby zobaczyć, kto zaprasza/),
+    ).toBeInTheDocument();
     expect(drawService.getDraw).not.toHaveBeenCalled();
     // Messages need an account; the modal used to spin forever for guests.
     expect(screen.queryByText(/Zostaw wiadomość/)).toBeNull();
@@ -185,7 +187,9 @@ describe('LoginPage', () => {
       screen.getByRole('button', { name: /Zaloguj przez Google/ }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole('heading', { name: 'Otwórz tę stronę w przeglądarce' }),
+      screen.queryByRole('heading', {
+        name: 'Otwórz tę stronę w przeglądarce',
+      }),
     ).toBeNull();
   });
 

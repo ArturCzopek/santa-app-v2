@@ -1,5 +1,8 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
+import { ArrowBack } from '@mui/icons-material';
+import { useNavigate } from 'react-router';
+import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { enUS, pl } from 'date-fns/locale';
@@ -11,10 +14,21 @@ import { LAST_UPDATED, privacyPolicy } from './privacyPolicy';
 // Open to everyone, signed in or not.
 const PrivacyPage = () => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const language = i18n.language === 'en' ? 'en' : 'pl';
 
   return (
     <MainLayout>
+      {/* Guests arrive here from the login page and need a way back too. */}
+      <Button
+        color="inherit"
+        startIcon={<ArrowBack />}
+        onClick={() => navigate(user ? '/draws' : '/')}
+        sx={{ ml: -1.5, mb: 2, color: tokens.snowMuted }}
+      >
+        {user ? t('common.backToDraws') : t('common.backHome')}
+      </Button>
       <Box component="header" sx={{ mb: 3 }}>
         <Typography variant="h1" sx={{ color: tokens.snow, mb: 1.5 }}>
           {t('privacy.title')}

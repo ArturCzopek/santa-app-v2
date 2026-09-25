@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Box,
   IconButton,
   InputAdornment,
   TextField,
@@ -7,6 +8,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import { tokens } from '../../styles/theme';
 
 type PasswordFieldProps = Omit<TextFieldProps, 'onChange' | 'error'> & {
   value: string;
@@ -29,7 +31,23 @@ const PasswordField = React.forwardRef<HTMLDivElement, PasswordFieldProps>(
         value={value}
         onChange={(e) => onChange(e.target.value)}
         error={!!error}
-        helperText={error || helperText}
+        // The hint stays under the error: it says what to do, exactly when
+        // it is needed ("Hasło dostajesz od organizatora.").
+        helperText={
+          error && helperText ? (
+            <>
+              {error}
+              <Box
+                component="span"
+                sx={{ display: 'block', color: tokens.inkMuted }}
+              >
+                {helperText}
+              </Box>
+            </>
+          ) : (
+            error || helperText
+          )
+        }
         slotProps={{
           ...slotProps,
           input: {

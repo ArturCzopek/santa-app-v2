@@ -24,6 +24,8 @@ export const mainContentStyles: SxProps<Theme> = {
   boxSizing: 'border-box',
   position: 'relative',
   zIndex: 1,
+  // Focused only by the skip link; no ring around the whole page.
+  outline: 'none',
 };
 
 export const pageTitleStyles: SxProps<Theme> = {
@@ -47,4 +49,20 @@ export const footerLinkStyles: SxProps<Theme> = {
   display: 'inline-flex',
   alignItems: 'center',
   minHeight: 44,
+};
+
+// Hidden until it gets keyboard focus, then shown over the navbar.
+export const skipLinkStyles: SxProps<Theme> = {
+  position: 'absolute',
+  top: 8,
+  left: 8,
+  zIndex: 1200,
+  px: 2,
+  py: 1.25,
+  borderRadius: 1,
+  backgroundColor: tokens.paper,
+  color: tokens.ink,
+  fontWeight: 700,
+  transform: 'translateY(-200%)',
+  '&:focus-visible, &.Mui-focusVisible': { transform: 'none' },
 };

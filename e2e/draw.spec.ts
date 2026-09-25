@@ -225,6 +225,6 @@ test('the join page fits the phone screen without horizontal scrolling', async (
   test.skip(testInfo.project.name !== 'mobile');
 
   await page.goto('/#/join/some-draw');
-  await expect(page.getByText(/Musisz się zalogować/)).toBeVisible();
+  await expect(page.getByText(/Zaloguj się, żeby zobaczyć, kto zaprasza/)).toBeVisible();
   await expectNoHorizontalScroll(page);
 });

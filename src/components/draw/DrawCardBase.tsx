@@ -12,6 +12,8 @@ interface DrawCardBaseProps {
   budget?: number;
   currency?: string;
   airmail?: boolean;
+  // Lets a link around the card name itself by the title.
+  titleId?: string;
 }
 
 // A draw on paper: its name, a status postmark, budget and description.
@@ -23,6 +25,7 @@ const DrawCardBase: React.FC<DrawCardBaseProps> = ({
   budget,
   currency,
   airmail = false,
+  titleId,
 }) => {
   const { t } = useTranslation();
 
@@ -39,6 +42,7 @@ const DrawCardBase: React.FC<DrawCardBaseProps> = ({
       >
         <Typography
           variant="h2"
+          id={titleId}
           sx={{ fontSize: '1.35rem', minWidth: 0, flex: '1 1 12rem' }}
         >
           {title}

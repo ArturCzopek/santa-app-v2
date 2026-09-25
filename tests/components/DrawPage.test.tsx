@@ -186,9 +186,7 @@ describe('DrawPage', () => {
       await screen.findByText('Office party');
       expect(containedButtons()).toEqual(['Napisz list']);
       await user.click(screen.getByRole('button', { name: 'Napisz list' }));
-      expect(
-        await screen.findByLabelText('Co chcesz dostać?'),
-      ).toHaveFocus();
+      expect(await screen.findByLabelText('Co chcesz dostać?')).toHaveFocus();
       expect(containedButtons()).toEqual(['Zapisz list']);
     });
 
@@ -318,12 +316,28 @@ describe('DrawPage', () => {
     expect(screen.getByText('13 / 2000')).toBeInTheDocument();
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
+    // Unsaved changes are not thrown away without asking.
     await user.click(screen.getByRole('button', { name: 'Anuluj' }));
+    const discard = await screen.findByRole('dialog', {
+      name: 'Odrzucić zmiany?',
+    });
+    await user.click(within(discard).getByRole('button', { name: 'Anuluj' }));
+    expect(screen.getByLabelText('Co chcesz dostać?')).toHaveValue('Coffee');
+    await user.click(screen.getByRole('button', { name: 'Anuluj' }));
+    await user.click(
+      within(
+        await screen.findByRole('dialog', { name: 'Odrzucić zmiany?' }),
+      ).getByRole('button', { name: 'Odrzuć' }),
+    );
     expect(screen.queryByLabelText('Co chcesz dostać?')).toBeNull();
     expect(screen.getByText('Mountain book')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Edytuj list' }));
+    await user.click(
+      await screen.findByRole('button', { name: 'Edytuj list' }),
+    );
     wishField = screen.getByLabelText('Co chcesz dostać?');
+    // The discarded draft does not come back.
+    expect(wishField).toHaveValue('Mountain book');
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
     await user.click(screen.getByRole('button', { name: 'Zapisz list' }));
@@ -335,6 +349,25 @@ describe('DrawPage', () => {
       'Coffee',
     );
     expect(screen.getByText('Coffee')).toBeInTheDocument();
+  });
+
+  it('brings back an unsaved letter after a reload', async () => {
+    localStorage.setItem(
+      'santa-app.letter-draft.d1.owner',
+      'Mountain book and a map',
+    );
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Edytuj list' }),
+    );
+    expect(screen.getByLabelText('Co chcesz dostać?')).toHaveValue(
+      'Mountain book and a map',
+    );
+    expect(
+      screen.getByText(/Przywrócono niezapisany szkic/),
+    ).toBeInTheDocument();
   });
 
   it('keeps the draft and says so when saving the wish fails', async () => {
@@ -721,8 +754,8 @@ describe('DrawPage', () => {
       renderDrawPage();
 
       await screen.findByRole('heading', { name: 'Wykluczenia (0)' });
-      await pick(user, 'Osoba', 'Olga Owner');
-      await pick(user, 'Nie losuje z', 'Ania Test');
+      await pick(user, 'Pierwsza osoba', 'Olga Owner');
+      await pick(user, 'Druga osoba', 'Ania Test');
       await user.click(screen.getByRole('button', { name: 'Dodaj parę' }));
 
       expect(
@@ -748,8 +781,8 @@ describe('DrawPage', () => {
       renderDrawPage();
 
       await screen.findByRole('heading', { name: 'Wykluczenia (0)' });
-      await pick(user, 'Osoba', 'Ania Test');
-      await pick(user, 'Nie losuje z', 'Bartek Test');
+      await pick(user, 'Pierwsza osoba', 'Ania Test');
+      await pick(user, 'Druga osoba', 'Bartek Test');
       await user.click(screen.getByRole('button', { name: 'Dodaj parę' }));
 
       expect(drawService.addExclusion).toHaveBeenCalledWith('d1', [
@@ -792,8 +825,8 @@ describe('DrawPage', () => {
       renderDrawPage();
 
       await screen.findByRole('heading', { name: 'Wykluczenia (1)' });
-      await pick(user, 'Osoba', 'Ania Test');
-      await user.click(screen.getByRole('combobox', { name: 'Nie losuje z' }));
+      await pick(user, 'Pierwsza osoba', 'Ania Test');
+      await user.click(screen.getByRole('combobox', { name: 'Druga osoba' }));
       const options = (await screen.findAllByRole('option')).map(
         (option) => option.textContent,
       );
@@ -827,18 +860,24 @@ describe('DrawPage', () => {
       };
 
       await screen.findByRole('heading', { name: 'Wykluczenia (1)' });
-      await pick(user, 'Osoba', 'Bartek Test');
-      expect(await optionsOf('Nie losuje z')).toEqual([
+      await pick(user, 'Pierwsza osoba', 'Bartek Test');
+      expect(await optionsOf('Druga osoba')).toEqual([
         'Celina Test',
         'Olga Owner',
       ]);
 
       // The same from the second field: either person hides the other.
-      await pick(user, 'Osoba', 'Celina Test');
-      await pick(user, 'Nie losuje z', 'Bartek Test');
-      expect(await optionsOf('Osoba')).toEqual(['Celina Test', 'Olga Owner']);
-      await pick(user, 'Nie losuje z', 'Ania Test');
-      expect(await optionsOf('Osoba')).toEqual(['Celina Test', 'Olga Owner']);
+      await pick(user, 'Pierwsza osoba', 'Celina Test');
+      await pick(user, 'Druga osoba', 'Bartek Test');
+      expect(await optionsOf('Pierwsza osoba')).toEqual([
+        'Celina Test',
+        'Olga Owner',
+      ]);
+      await pick(user, 'Druga osoba', 'Ania Test');
+      expect(await optionsOf('Pierwsza osoba')).toEqual([
+        'Celina Test',
+        'Olga Owner',
+      ]);
     });
 
     it('asks before the draw whether all exclusions are set', async () => {

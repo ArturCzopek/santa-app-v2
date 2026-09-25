@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { Typography, Box, ButtonBase } from '@mui/material';
 import {
   ArrowForward,
@@ -23,6 +23,8 @@ interface DrawPreviewCardProps {
 const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const titleId = useId();
+  const statusId = useId();
   const drawn = drawPreview.status === 'DRAWED';
   const missingWish = !drawn && !drawPreview.userWishProvided;
   // Once opened, the card stops asking to open the envelope.
@@ -32,6 +34,8 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
   return (
     <ButtonBase
       component={RouterLink}
+      aria-labelledby={titleId}
+      aria-describedby={drawn || missingWish ? statusId : undefined}
       to={`/draw/${drawPreview.id}`}
       sx={{
         display: 'block',
@@ -47,6 +51,7 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
       }}
     >
       <DrawCardBase
+        titleId={titleId}
         title={drawPreview.drawName}
         description={drawPreview.description}
         status={drawPreview.status}
@@ -63,6 +68,7 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
 
         {(drawn || missingWish) && (
           <Typography
+            id={statusId}
             sx={{
               display: 'flex',
               alignItems: 'center',

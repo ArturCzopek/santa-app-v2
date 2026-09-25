@@ -248,13 +248,27 @@ const DrawPage = () => {
         <Typography variant="h2" sx={{ fontSize: '1.2rem', mb: 2 }}>
           {error || t('drawPage.errors.drawNotFound')}
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<ArrowBack />}
-          onClick={() => navigate('/draws')}
-        >
-          {t('common.backToDraws')}
-        </Button>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+          {/* Someone with a plain link to a draw they are not in yet. */}
+          {accessDenied && (
+            <Button
+              variant="contained"
+              startIcon={<PersonAdd />}
+              onClick={() => navigate(`/join/${drawId}`)}
+            >
+              {t('drawPage.goToJoin')}
+            </Button>
+          )}
+          <Button
+            variant={accessDenied ? 'outlined' : 'contained'}
+            color={accessDenied ? 'inherit' : 'primary'}
+            startIcon={<ArrowBack />}
+            onClick={() => navigate('/draws')}
+            sx={accessDenied ? { color: tokens.snow } : undefined}
+          >
+            {t('common.backToDraws')}
+          </Button>
+        </Box>
       </MainLayout>
     );
   }

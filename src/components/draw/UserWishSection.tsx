@@ -8,6 +8,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { useNotify } from '../../hooks/useNotify';
 import PaperCard from '../common/PaperCard';
 import SectionHeading from './SectionHeading';
+import ConfirmDialog from '../common/ConfirmDialog';
+import { letterDraft } from '../../services/letterDraft';
 import { handFont, tokens } from '../../styles/theme';
 
 interface UserWishSectionProps {
@@ -43,16 +45,52 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
 
   const hasWish = savedWish !== '';
 
-  // Draft edited in the text field; the saved wish comes from the page.
-  const [wish, setWish] = useState(savedWish);
-  const [isSaving, setIsSaving] = useState(false);
+  // An unsaved draft survives a reload, e.g. when a chat app's browser
+  // reloads the page after switching apps.
+  const draft = letterDraft(draw.id ?? '', user?.uid ?? '');
+  const keptDraft = () => {
+    const kept = draft.read();
+    return kept !== null && kept !== savedWish ? kept : null;
+  };
 
-  // Each time the editor opens it starts from the saved letter.
+  // Draft edited in the text field; the saved wish comes from the page.
+  const [wish, setWish] = useState(
+    () => (isEditing && keptDraft()) || savedWish,
+  );
+  // Whether the editor opened with a draft from an earlier visit.
+  const [restoredDraft, setRestoredDraft] = useState(
+    () => isEditing && keptDraft() !== null,
+  );
+  const [isSaving, setIsSaving] = useState(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+
+  // Each time the editor opens it starts from the kept draft or the letter.
   const [wasEditing, setWasEditing] = useState(isEditing);
   if (isEditing !== wasEditing) {
     setWasEditing(isEditing);
-    if (isEditing) setWish(savedWish);
+    if (isEditing) {
+      const kept = keptDraft();
+      setWish(kept ?? savedWish);
+      setRestoredDraft(kept !== null);
+    }
   }
+
+  const handleChange = (text: string) => {
+    setWish(text);
+    setRestoredDraft(false);
+    draft.write(text);
+  };
+
+  const closeEditor = () => {
+    draft.clear();
+    onEditingChange(false);
+  };
+
+  // Changes that were not saved are not thrown away without asking.
+  const handleCancel = () => {
+    if (wish.trim() !== savedWish) setConfirmDiscard(true);
+    else closeEditor();
+  };
 
   const handleSave = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -63,7 +101,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
       const text = wish.trim();
       await drawService.updateWish(draw.id || '', user.uid, text);
 
-      onEditingChange(false);
+      closeEditor();
       notify(t('drawPage.wishSection.saveSuccess'), 'success');
       onWishSaved(text);
     } catch (error) {
@@ -94,10 +132,14 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
             minRows={4}
             autoFocus
             value={wish}
-            onChange={(e) => setWish(e.target.value)}
+            onChange={(e) => handleChange(e.target.value)}
             fullWidth
             placeholder={t('drawPage.wishSection.wishPlaceholder')}
-            helperText={`${wish.length} / ${WISH_MAX_LENGTH}`}
+            helperText={
+              restoredDraft
+                ? `${t('drawPage.wishSection.draftRestored')} · ${wish.length} / ${WISH_MAX_LENGTH}`
+                : `${wish.length} / ${WISH_MAX_LENGTH}`
+            }
             slotProps={{ htmlInput: { maxLength: WISH_MAX_LENGTH } }}
           />
         ) : hasWish ? (
@@ -121,7 +163,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
               <>
                 <Button
                   variant="text"
-                  onClick={() => onEditingChange(false)}
+                  onClick={handleCancel}
                   sx={{ color: tokens.ink }}
                 >
                   {t('common.cancel')}
@@ -151,6 +193,18 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
           </Box>
         )}
       </PaperCard>
+
+      <ConfirmDialog
+        open={confirmDiscard}
+        title={t('drawPage.wishSection.discardTitle')}
+        text={t('drawPage.wishSection.discardText')}
+        confirmLabel={t('drawPage.wishSection.discardConfirm')}
+        onClose={() => setConfirmDiscard(false)}
+        onConfirm={async () => {
+          setConfirmDiscard(false);
+          closeEditor();
+        }}
+      />
     </Box>
   );
 };

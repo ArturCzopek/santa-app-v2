@@ -5,7 +5,8 @@ const resources = {
   en: {
     translation: {
       common: {
-        backToDraws: 'Back to Draws',
+        backHome: 'Back to the home page',
+        backToDraws: 'Back to your draws',
         cancel: 'Cancel',
         close: 'Close',
         hidePassword: 'Hide password',
@@ -13,6 +14,7 @@ const resources = {
         loading: 'Loading',
         saving: 'Saving...',
         showPassword: 'Show password',
+        skipToContent: 'Skip to content',
         submitting: 'Submitting...',
       },
       errorPage: {
@@ -72,6 +74,7 @@ const resources = {
       },
       drawPage: {
         description: { less: 'Show less', more: 'Show the whole description' },
+        goToJoin: 'Join this draw',
         drawnOn: 'Drawn on {{date}}',
         drawDone: {
           copied: 'Message copied. Paste it in your chat.',
@@ -107,7 +110,7 @@ const resources = {
             '{{owner}} will start the draw once everyone has joined. Then come back here for your envelope.',
         },
         errors: {
-          accessDenied: "Access denied. You are not a participant in this draw.",
+          accessDenied: 'You are not in this draw. If you have an invitation, you can join it.',
           drawNotFound: "Draw not found or you don't have access to it.",
           fetchFailed: 'Failed to fetch draw details. Please try again.',
           redirecting: "You will be redirected to your draws in a few seconds.",
@@ -146,7 +149,7 @@ const resources = {
           alreadyThere: 'This pair is already on the list.',
           explanation:
             'People in a pair will not draw each other – e.g. a couple who buy presents together anyway.',
-          first: 'Person',
+          first: 'First person',
           impossibleRemoveMore:
             'With these exclusions the draw is impossible. Remove a few pairs.',
           impossibleRemoveOne:
@@ -154,7 +157,7 @@ const resources = {
           pickTwo: 'Pick two different people.',
           remove: 'Remove the pair {{pair}}',
           saveFailed: 'Could not save the exclusions. Please try again.',
-          second: 'Does not draw',
+          second: 'Second person',
           title: 'Exclusions ({{count}})',
           wouldBeImpossible:
             'With this pair the draw would be impossible – too few people are left to draw.',
@@ -238,6 +241,10 @@ const resources = {
           title: 'Your letter to Santa',
           wishLabel: 'What would you like to get?',
           wishPlaceholder: 'E.g. warm reindeer socks, a book about mountains… The more specific, the easier.',
+          discardConfirm: 'Discard',
+          discardText: 'Your changes to the letter have not been saved.',
+          discardTitle: 'Discard the changes?',
+          draftRestored: 'Unsaved draft restored',
           writeButton: 'Write a letter',
         },
       },
@@ -248,9 +255,9 @@ const resources = {
         },
         joinButton: 'Join Draw',
         joinModal: {
-          codeRequired: 'Draw code is required',
-          description: 'Paste the invite link or just the draw code from the organizer.',
-          drawCodeLabel: 'Invite link or draw code',
+          codeRequired: 'Paste the invite link',
+          description: 'Paste the invite link you got from the organizer, e.g. in a group chat.',
+          drawCodeLabel: 'Invite link',
           proceedButton: 'Next',
         },
         emptyTitle: 'No draws yet',
@@ -282,7 +289,7 @@ const resources = {
           passwordRequired: 'Password is required to join the draw',
         },
         joinButton: 'Join Draw',
-        loginRequired: 'Someone invites you to a Secret Santa. You need to sign in to see the details and join.',
+        loginRequired: 'You have an invitation to a Secret Santa. Sign in to see who invites you and to join.',
         passwordHint: 'You get the password from the organizer.',
         passwordLabel: 'Draw password',
         passwordPlaceholder: 'Enter the draw password',
@@ -356,6 +363,7 @@ const resources = {
   pl: {
     translation: {
       common: {
+        backHome: 'Powrót na stronę główną',
         backToDraws: 'Powrót do losowań',
         cancel: 'Anuluj',
         close: 'Zamknij',
@@ -364,6 +372,7 @@ const resources = {
         loading: 'Wczytywanie',
         saving: 'Zapisywanie...',
         showPassword: 'Pokaż hasło',
+        skipToContent: 'Przejdź do treści',
         submitting: 'Wysyłanie...',
       },
       errorPage: {
@@ -423,6 +432,7 @@ const resources = {
       },
       drawPage: {
         description: { less: 'Zwiń opis', more: 'Pokaż cały opis' },
+        goToJoin: 'Dołącz do tego losowania',
         drawnOn: 'Rozlosowano {{date}}',
         drawDone: {
           copied: 'Wiadomość skopiowana. Wklej ją na czacie.',
@@ -458,7 +468,7 @@ const resources = {
             '{{owner}} rozpocznie losowanie, gdy wszyscy dołączą. Wtedy zajrzyj tu po swoją kopertę.',
         },
         errors: {
-          accessDenied: "Odmowa dostępu. Nie jesteś uczestnikiem tego losowania.",
+          accessDenied: 'Nie bierzesz udziału w tym losowaniu. Jeśli masz zaproszenie, możesz dołączyć.',
           drawNotFound:
             'Losowanie nie zostało znalezione lub nie masz do niego dostępu.',
           fetchFailed:
@@ -499,7 +509,7 @@ const resources = {
           alreadyThere: 'Ta para już jest na liście.',
           explanation:
             'Osoby w parze nie wylosują siebie nawzajem – np. małżonkowie, którzy i tak kupują sobie prezenty.',
-          first: 'Osoba',
+          first: 'Pierwsza osoba',
           impossibleRemoveMore:
             'Przy tych wykluczeniach losowanie jest niemożliwe. Usuń kilka par.',
           impossibleRemoveOne:
@@ -507,7 +517,7 @@ const resources = {
           pickTwo: 'Wybierz dwie różne osoby.',
           remove: 'Usuń parę {{pair}}',
           saveFailed: 'Nie udało się zapisać wykluczeń. Spróbuj ponownie.',
-          second: 'Nie losuje z',
+          second: 'Druga osoba',
           title: 'Wykluczenia ({{count}})',
           wouldBeImpossible:
             'Z tą parą losowanie byłoby niemożliwe – zostaje za mało osób do wylosowania.',
@@ -593,6 +603,10 @@ const resources = {
           title: 'Twój list do Mikołaja',
           wishLabel: 'Co chcesz dostać?',
           wishPlaceholder: 'Np. ciepłe skarpetki w renifery, książka o górach… Im konkretniej, tym łatwiej.',
+          discardConfirm: 'Odrzuć',
+          discardText: 'Zmiany w liście nie zostały zapisane.',
+          discardTitle: 'Odrzucić zmiany?',
+          draftRestored: 'Przywrócono niezapisany szkic',
           writeButton: 'Napisz list',
         },
       },
@@ -603,10 +617,10 @@ const resources = {
         },
         joinButton: 'Dołącz do losowania',
         joinModal: {
-          codeRequired: 'Kod losowania jest wymagany',
+          codeRequired: 'Wklej link z zaproszenia',
           description:
-            'Wklej link z zaproszeniem albo sam kod losowania od organizatora.',
-          drawCodeLabel: 'Link albo kod losowania',
+            'Wklej link z zaproszenia, który dostajesz od organizatora, np. na czacie.',
+          drawCodeLabel: 'Link z zaproszenia',
           proceedButton: 'Dalej',
         },
         emptyTitle: 'Nie masz jeszcze żadnego losowania',
@@ -639,7 +653,7 @@ const resources = {
           loginRequired: 'Musisz się zalogować, aby dołączyć do tego losowania',
           passwordRequired: 'Wpisz hasło, żeby dołączyć do losowania',
         },
-        loginRequired: 'Ktoś zaprasza cię do Tajemniczego Mikołaja. Musisz się zalogować, żeby zobaczyć szczegóły i dołączyć.',
+        loginRequired: 'Masz zaproszenie do Tajemniczego Mikołaja. Zaloguj się, żeby zobaczyć, kto zaprasza, i dołączyć.',
         joinButton: 'Dołącz do losowania',
         passwordHint: 'Hasło dostajesz od organizatora.',
         passwordLabel: 'Hasło do losowania',
