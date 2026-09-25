@@ -87,6 +87,30 @@ const ExclusionsSection: React.FC<ExclusionsSectionProps> = ({
     draw.participants.find((p) => p.userUuid === uid)?.userName ?? '?';
   const current = currentExclusions(draw, exclusions);
 
+  // Nobody draws themselves anyway, and a pair is listed once, so the other
+  // field offers neither this person nor anyone already paired with them.
+  const unavailableWith = (uid: string) =>
+    new Set(
+      uid
+        ? [
+            uid,
+            ...current
+              .filter((pair) => pair.includes(uid))
+              .map(([a, b]) => (a === uid ? b : a)),
+          ]
+        : [],
+    );
+
+  const pickFirst = (uid: string) => {
+    setFirst(uid);
+    if (unavailableWith(uid).has(second)) setSecond('');
+  };
+
+  const pickSecond = (uid: string) => {
+    setSecond(uid);
+    if (unavailableWith(uid).has(first)) setFirst('');
+  };
+
   const handleAdd = async (event: React.FormEvent) => {
     event.preventDefault();
     const pair: Exclusion = [first, second];
@@ -132,6 +156,7 @@ const ExclusionsSection: React.FC<ExclusionsSectionProps> = ({
     label: string,
     value: string,
     setValue: (value: string) => void,
+    unavailable: Set<string>,
   ) => (
     <FormControl fullWidth error={!!error}>
       <InputLabel id={`${id}-label`}>{label}</InputLabel>
@@ -144,11 +169,13 @@ const ExclusionsSection: React.FC<ExclusionsSectionProps> = ({
           setError(null);
         }}
       >
-        {people.map((person) => (
-          <MenuItem key={person.userUuid} value={person.userUuid}>
-            {person.userName}
-          </MenuItem>
-        ))}
+        {people
+          .filter((person) => !unavailable.has(person.userUuid))
+          .map((person) => (
+            <MenuItem key={person.userUuid} value={person.userUuid}>
+              {person.userName}
+            </MenuItem>
+          ))}
       </Select>
     </FormControl>
   );
@@ -218,7 +245,8 @@ const ExclusionsSection: React.FC<ExclusionsSectionProps> = ({
               'exclusion-first',
               t('drawPage.exclusions.first'),
               first,
-              setFirst,
+              pickFirst,
+              unavailableWith(second),
             )}
             <SyncAlt
               aria-hidden
@@ -232,7 +260,8 @@ const ExclusionsSection: React.FC<ExclusionsSectionProps> = ({
               'exclusion-second',
               t('drawPage.exclusions.second'),
               second,
-              setSecond,
+              pickSecond,
+              unavailableWith(first),
             )}
           </Box>
           {error && (

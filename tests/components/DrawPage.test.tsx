@@ -672,6 +672,32 @@ describe('DrawPage', () => {
       ).toBeInTheDocument();
     });
 
+    it('offers neither the same person nor an existing pair', async () => {
+      vi.mocked(drawService.getDraw).mockResolvedValue({
+        ...waitingDraw,
+        participantUuids: ['owner', 'alice', 'bob', 'celina'],
+      });
+      vi.mocked(drawService.getParticipants).mockResolvedValue([
+        participant('owner', 'Olga Owner'),
+        participant('alice', 'Ania Test'),
+        participant('bob', 'Bartek Test'),
+        participant('celina', 'Celina Test'),
+      ]);
+      vi.mocked(drawService.getExclusions).mockResolvedValue([
+        ['alice', 'bob'],
+      ]);
+      const user = userEvent.setup();
+      renderDrawPage();
+
+      await screen.findByRole('heading', { name: 'Wykluczenia (1)' });
+      await pick(user, 'Osoba', 'Ania Test');
+      await user.click(screen.getByRole('combobox', { name: 'Nie losuje z' }));
+      const options = (await screen.findAllByRole('option')).map(
+        (option) => option.textContent,
+      );
+      expect(options).toEqual(['Celina Test', 'Olga Owner']);
+    });
+
     it('asks before the draw whether all exclusions are set', async () => {
       const user = userEvent.setup();
       renderDrawPage();
