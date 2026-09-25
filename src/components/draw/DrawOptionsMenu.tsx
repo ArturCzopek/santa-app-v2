@@ -21,8 +21,9 @@ const DrawOptionsMenu: React.FC<{ options: DrawOption[] }> = ({ options }) => {
 
   return (
     <>
+      {/* A quiet text button: the draw's own actions come first. */}
       <Button
-        variant="outlined"
+        variant="text"
         color="inherit"
         startIcon={<MoreHoriz />}
         aria-haspopup="menu"

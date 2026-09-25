@@ -124,6 +124,7 @@ const DrawPage = () => {
   const isWaiting = draw?.status === 'WAITING_FOR_DRAW';
   const showStartButton =
     isOwner && isWaiting && (draw?.participantUuids.length ?? 0) >= 2;
+  const hasLetter = myWish.trim() !== '';
 
   // After the draw everyone needs their result, so the draw stays as it is.
   const options: DrawOption[] = !isWaiting
@@ -245,10 +246,14 @@ const DrawPage = () => {
                 '& > *': { flex: { xs: '1 1 100%', sm: '0 0 auto' } },
               }}
             >
+              {/* Wax is for the one main action: until your letter is
+                  written, that is "Napisz list" below. */}
               <Button
-                variant="contained"
+                variant={hasLetter ? 'contained' : 'outlined'}
+                color={hasLetter ? 'primary' : 'inherit'}
                 startIcon={<PersonAdd />}
                 onClick={() => setIsInviteModalOpen(true)}
+                sx={hasLetter ? undefined : { color: tokens.snow }}
               >
                 {t('drawPage.inviteButton')}
               </Button>
