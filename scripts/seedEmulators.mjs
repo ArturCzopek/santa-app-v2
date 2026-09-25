@@ -66,6 +66,7 @@ const value = (v) => {
   if (v === null) return { nullValue: null };
   if (v instanceof Date) return { timestampValue: v.toISOString() };
   if (Array.isArray(v)) return { arrayValue: { values: v.map(value) } };
+  if (typeof v === 'boolean') return { booleanValue: v };
   if (typeof v === 'number') return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
   if (typeof v === 'object') return { mapValue: { fields: fields(v) } };
   return { stringValue: String(v) };
