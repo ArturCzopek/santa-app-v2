@@ -698,6 +698,47 @@ describe('DrawPage', () => {
       expect(options).toEqual(['Celina Test', 'Olga Owner']);
     });
 
+    it('treats a pair the same either way round', async () => {
+      vi.mocked(drawService.getDraw).mockResolvedValue({
+        ...waitingDraw,
+        participantUuids: ['owner', 'alice', 'bob', 'celina'],
+      });
+      vi.mocked(drawService.getParticipants).mockResolvedValue([
+        participant('owner', 'Olga Owner'),
+        participant('alice', 'Ania Test'),
+        participant('bob', 'Bartek Test'),
+        participant('celina', 'Celina Test'),
+      ]);
+      // Stored as Ania-Bartek; picking from Bartek's side must see it too.
+      vi.mocked(drawService.getExclusions).mockResolvedValue([
+        ['alice', 'bob'],
+      ]);
+      const user = userEvent.setup();
+      renderDrawPage();
+      const optionsOf = async (label: string) => {
+        await user.click(screen.getByRole('combobox', { name: label }));
+        const names = (await screen.findAllByRole('option')).map(
+          (option) => option.textContent,
+        );
+        await user.keyboard('{Escape}');
+        return names;
+      };
+
+      await screen.findByRole('heading', { name: 'Wykluczenia (1)' });
+      await pick(user, 'Osoba', 'Bartek Test');
+      expect(await optionsOf('Nie losuje z')).toEqual([
+        'Celina Test',
+        'Olga Owner',
+      ]);
+
+      // The same from the second field: either person hides the other.
+      await pick(user, 'Osoba', 'Celina Test');
+      await pick(user, 'Nie losuje z', 'Bartek Test');
+      expect(await optionsOf('Osoba')).toEqual(['Celina Test', 'Olga Owner']);
+      await pick(user, 'Nie losuje z', 'Ania Test');
+      expect(await optionsOf('Osoba')).toEqual(['Celina Test', 'Olga Owner']);
+    });
+
     it('asks before the draw whether all exclusions are set', async () => {
       const user = userEvent.setup();
       renderDrawPage();

@@ -539,11 +539,26 @@ describe('draws', () => {
         setDoc(doc(db, `draws/d1/exclusions/${b}_${a}`), { a: b, b: a }),
       );
       await assertFails(setDoc(doc(db, 'draws/d1/exclusions/x_y'), { a, b }));
+      // Nobody is paired with themselves.
+      await assertFails(
+        setDoc(doc(db, `draws/d1/exclusions/${a}_${a}`), { a, b: a }),
+      );
       await assertFails(
         setDoc(doc(db, `draws/d1/exclusions/${a}_${MALLORY}`), {
           a,
           b: MALLORY,
         }),
+      );
+    });
+
+    it('keeps each pair once, whichever way round it is given', async () => {
+      const db = authed(env, OWNER);
+      await assertSucceeds(
+        setDoc(doc(db, `draws/d1/exclusions/${pairId}`), { a, b }),
+      );
+      // A-B and B-A share one id, and an existing pair cannot be written again.
+      await assertFails(
+        setDoc(doc(db, `draws/d1/exclusions/${pairId}`), { a, b }),
       );
     });
 
