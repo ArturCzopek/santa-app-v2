@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { fakeUser, renderWithProviders } from './renderWithProviders';
 import { Draw, Participant } from '../../src/models/Draw';
@@ -490,6 +490,60 @@ describe('DrawPage', () => {
     expect(
       await screen.findByRole('heading', { name: 'Wigilia' }),
     ).toBeInTheDocument();
+  });
+
+  describe('gift exchange date', () => {
+    const openEdit = async (user: ReturnType<typeof userEvent.setup>) => {
+      await user.click(await screen.findByRole('button', { name: 'Więcej' }));
+      await user.click(
+        screen.getByRole('menuitem', { name: 'Edytuj losowanie' }),
+      );
+      return screen.findByRole('dialog');
+    };
+
+    it('refuses a date that has passed', async () => {
+      const user = userEvent.setup();
+      renderDrawPage();
+
+      const dialog = await openEdit(user);
+      fireEvent.change(
+        within(dialog).getByLabelText(/Data wręczenia prezentów/),
+        { target: { value: '2020-01-01' } },
+      );
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Zapisz zmiany' }),
+      );
+
+      expect(
+        await within(dialog).findByText(
+          'Wybierz dzisiejszą albo późniejszą datę',
+        ),
+      ).toBeInTheDocument();
+      expect(drawService.updateDrawDetails).not.toHaveBeenCalled();
+    });
+
+    it('keeps a stored date that has passed when other fields change', async () => {
+      vi.mocked(drawService.getDraw).mockResolvedValue({
+        ...waitingDraw,
+        eventDate: '2020-12-24',
+      });
+      vi.mocked(drawService.updateDrawDetails).mockResolvedValue();
+      const user = userEvent.setup();
+      renderDrawPage();
+
+      const dialog = await openEdit(user);
+      const name = within(dialog).getByLabelText('Nazwa losowania');
+      await user.clear(name);
+      await user.type(name, 'Wigilia');
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Zapisz zmiany' }),
+      );
+
+      expect(drawService.updateDrawDetails).toHaveBeenCalledWith(
+        'd1',
+        expect.objectContaining({ eventDate: '2020-12-24' }),
+      );
+    });
   });
 
   it('lets a participant leave, but not edit, before the draw', async () => {

@@ -88,7 +88,10 @@ const EditDrawModal: React.FC<EditDrawModalProps> = ({
             '&&': { pt: 1 },
           }}
         >
-          <DrawDetailsFields control={control} />
+          <DrawDetailsFields
+            control={control}
+            savedEventDate={draw.eventDate}
+          />
           <FormActions
             primaryLabel={t('drawPage.edit.save')}
             secondaryLabel={t('common.cancel')}

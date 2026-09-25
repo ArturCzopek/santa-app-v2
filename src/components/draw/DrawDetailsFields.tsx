@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
+import { format } from 'date-fns';
 import { Control, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import FormTextField from '../form/FormTextField';
@@ -27,14 +28,22 @@ export const cleanDrawDetails = (details: DrawDetails): DrawDetails => ({
   eventPlace: (details.eventPlace ?? '').trim(),
 });
 
+// Today as 'YYYY-MM-DD' in the person's own time zone.
+const todayIso = () => format(new Date(), 'yyyy-MM-dd');
+
 // The draw's own fields, shared by the create form and the edit dialog.
 const DrawDetailsFields = <T extends FieldValues & DrawDetails>({
   control,
+  savedEventDate,
 }: {
   control: Control<T>;
+  // The date already stored, which may have passed by now; editing other
+  // fields should not force a new one.
+  savedEventDate?: string;
 }) => {
   const { t } = useTranslation();
   const name = (field: keyof DrawDetails) => field as Path<T>;
+  const today = todayIso();
 
   return (
     <>
@@ -121,12 +130,21 @@ const DrawDetailsFields = <T extends FieldValues & DrawDetails>({
         label={t('createPage.eventDate')}
         type="date"
         fullWidth
-        slotProps={{ inputLabel: { shrink: true } }}
+        slotProps={{
+          inputLabel: { shrink: true },
+          // Greys out past days in the calendar.
+          htmlInput: { min: today },
+        }}
         rules={{
           pattern: {
             value: /^\d{4}-\d{2}-\d{2}$/,
             message: t('createPage.validation.eventDateInvalid'),
           },
+          validate: (value: string) =>
+            !value ||
+            value >= today ||
+            value === savedEventDate ||
+            t('createPage.validation.eventDateInPast'),
         }}
       />
 
