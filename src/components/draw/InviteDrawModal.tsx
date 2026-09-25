@@ -201,6 +201,13 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
           </Typography>
         )}
 
+        {/* The password is still needed to start the draw. */}
+        {justCreated && isOwner && (
+          <Typography sx={{ fontWeight: 700 }}>
+            {t('drawPage.inviteModal.passwordReminder')}
+          </Typography>
+        )}
+
         {inviteKey && canMakeKey && (
           <Box>
             {confirmRenew ? (

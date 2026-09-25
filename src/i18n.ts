@@ -34,10 +34,12 @@ const resources = {
         errors: {
           createFailed: 'Failed to create the draw. Please try again.',
         },
-        lead: 'Set the name, budget and password. Then you will invite everyone else.',
-        password: 'Password',
+        lead: 'Set the name, the budget and the password you will start the draw with. Then invite everyone else.',
+        password: 'Password to start the draw',
         passwordHint:
-          'Needed to start the draw and to join without the link. It cannot be viewed or changed later.',
+          'At least 6 characters. People without the invite link can also join with it.',
+        passwordNote:
+          'Write the password down! You need it to start the draw, and it cannot be viewed or changed later.',
         success: 'Draw created. Now write your letter to Santa!',
         title: 'New draw',
         validation: {
@@ -144,6 +146,8 @@ const resources = {
             'The link lets people in without the password – send it only to the people in the draw.',
           passwordNotIncluded:
             'The password is not in the invite (we do not keep it). Send it separately.',
+          passwordReminder:
+            'Keep your password safe – you need it to start the draw once everyone has joined.',
           postcardTitle: 'Greetings from Santa!',
           renewButton: 'Yes, make a new link',
           renewConfirm:
@@ -337,10 +341,12 @@ const resources = {
         errors: {
           createFailed: 'Nie udało się utworzyć losowania. Spróbuj ponownie.',
         },
-        lead: 'Ustal nazwę, budżet i hasło. Potem zaprosisz pozostałe osoby.',
-        password: 'Hasło',
+        lead: 'Ustal nazwę, budżet i hasło, którym rozpoczniesz losowanie. Potem zaprosisz pozostałe osoby.',
+        password: 'Hasło do rozpoczęcia losowania',
         passwordHint:
-          'Potrzebne do rozpoczęcia losowania i do dołączenia bez linku. Później nie da się go podejrzeć ani zmienić.',
+          'Co najmniej 6 znaków. Osoby bez linku z zaproszenia też dołączą tym hasłem.',
+        passwordNote:
+          'Zapisz hasło! Bez niego nie rozpoczniesz losowania, a później nie da się go podejrzeć ani zmienić.',
         success: 'Losowanie utworzone. Teraz napisz swój list do Mikołaja!',
         title: 'Nowe losowanie',
         validation: {
@@ -449,6 +455,8 @@ const resources = {
             'Link wpuszcza do losowania bez hasła – wysyłaj go tylko uczestnikom.',
           passwordNotIncluded:
             'Hasła nie ma w zaproszeniu (nie przechowujemy go). Wyślij je osobno.',
+          passwordReminder:
+            'Zachowaj hasło – bez niego nie rozpoczniesz losowania, gdy wszyscy dołączą.',
           postcardTitle: 'Pozdrowienia od Mikołaja!',
           renewButton: 'Tak, utwórz nowy link',
           renewConfirm:

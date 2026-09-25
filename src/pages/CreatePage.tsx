@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Typography } from '@mui/material';
+import { KeyOutlined } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import PaperCard from '../components/common/PaperCard';
 import DrawDetailsFields, {
@@ -75,7 +76,28 @@ const CreatePage = () => {
       <PaperCard airmail onSubmit={handleSubmit(onSubmit)}>
         <DrawDetailsFields control={control} />
 
-        <Box sx={{ borderTop: `1px dashed ${tokens.paperLine}`, pt: 2.5 }}>
+        <Box
+          sx={{
+            borderTop: `1px dashed ${tokens.paperLine}`,
+            pt: 2.5,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
+          {/* Easy to miss in a hint; without it the draw never starts. */}
+          <Typography
+            sx={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 1,
+              fontWeight: 700,
+              color: tokens.amber,
+            }}
+          >
+            <KeyOutlined aria-hidden sx={{ mt: '2px' }} />
+            {t('createPage.passwordNote')}
+          </Typography>
           <Controller
             name="password"
             control={control}

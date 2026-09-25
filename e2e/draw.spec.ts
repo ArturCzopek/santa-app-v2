@@ -63,11 +63,11 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
   await owner.page.getByLabel('Nazwa losowania').fill('Wigilia E2E');
   await owner.page.getByLabel('Opis').fill('Prezenty do 80 zł');
   await owner.page.getByLabel('Budżet').fill('80');
-  await owner.page.getByLabel('Hasło', { exact: true }).fill('abc12');
+  await owner.page.getByLabel('Hasło do rozpoczęcia losowania').fill('abc12');
   await owner.page.getByRole('button', { name: 'Stwórz losowanie' }).click();
   await expect(owner.page.getByText(/przynajmniej 6 znaków/)).toBeVisible();
   await expectNoHorizontalScroll(owner.page);
-  await owner.page.getByLabel('Hasło', { exact: true }).fill('sekret1');
+  await owner.page.getByLabel('Hasło do rozpoczęcia losowania').fill('sekret1');
   await owner.page.getByRole('button', { name: 'Stwórz losowanie' }).click();
   await owner.page.waitForURL(/#\/draw\//, { timeout: 10_000 });
   const drawId = owner.page.url().split('/draw/')[1];
@@ -128,10 +128,10 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
     .getByRole('button', { name: 'Rozpocznij losowanie' })
     .click();
   const dialog = owner.page.getByRole('dialog');
-  await dialog.getByLabel('Hasło', { exact: true }).fill('zlehaslo');
+  await dialog.getByLabel('Hasło do rozpoczęcia losowania').fill('zlehaslo');
   await dialog.getByRole('button', { name: 'Losuj' }).click();
   await expect(dialog.getByText('Nieprawidłowe hasło')).toBeVisible();
-  await dialog.getByLabel('Hasło', { exact: true }).fill('sekret1');
+  await dialog.getByLabel('Hasło do rozpoczęcia losowania').fill('sekret1');
   await dialog.getByRole('button', { name: 'Losuj' }).click();
   await expect(
     owner.page.getByRole('heading', { name: 'Twój wynik losowania' }),
@@ -169,7 +169,7 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
 const createDraw = async (page: Page, name: string) => {
   await page.getByRole('button', { name: 'Stwórz nowe losowanie' }).click();
   await page.getByLabel('Nazwa losowania').fill(name);
-  await page.getByLabel('Hasło', { exact: true }).fill('sekret1');
+  await page.getByLabel('Hasło do rozpoczęcia losowania').fill('sekret1');
   await page.getByRole('button', { name: 'Stwórz losowanie' }).click();
   await page.waitForURL(/#\/draw\//, { timeout: 10_000 });
   await page
