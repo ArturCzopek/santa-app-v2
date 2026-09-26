@@ -216,7 +216,7 @@ Zakończenie (wymóg kontraktu Impeccable)
 
 - [ ] **F0 – przejście na plan Blaze** (decyzja Artura: OK, gdy będzie potrzebny). Przy tej skali
   ~0 zł (te same darmowe limity + darmowy limit Functions), wymaga karty, brak twardego limitu –
-  ustawić alert budżetowy (np. 5 zł). Potrzebny dla: F3, $4, losowania po stronie serwera.
+  ustawić alert budżetowy (np. 5 zł). Potrzebny dla: F3, \$4, losowania po stronie serwera.
   Zmiana: Firebase console → Upgrade (Artur, ręcznie). Po przejściu: Cloud Functions + deploy w workflow.
 - [x] F1 – wykluczenia par (2026-09-24/25). Zostało: unikanie par z zeszłego roku (trudne: wyniki zna tylko
   obdarowujący, organizator ich nie widzi – D3/D8)
@@ -279,12 +279,12 @@ Zakończenie (wymóg kontraktu Impeccable)
 
 ## 7. Monetyzacja
 
-Kolejność (decyzja Artura, 2026-09-26): **najpierw program partnerski Allegro/Ceneo ($0 → $5 → $1)**,
-potem pozostałe pomysły partnerskie; „postaw kawę” ($7) na końcu, jako test chęci płacenia;
-płatne duże losowania ($8) dopiero po analizie sezonu. Aplikacja poza monetyzacją jest gotowa
+Kolejność (decyzja Artura, 2026-09-26): **najpierw program partnerski Allegro/Ceneo (\$0 → \$5 → \$1)**,
+potem pozostałe pomysły partnerskie; „postaw kawę” (\$7) na końcu, jako test chęci płacenia;
+płatne duże losowania (\$8) dopiero po analizie sezonu. Aplikacja poza monetyzacją jest gotowa
 (przed sezonem zalecane jeszcze F9 i S4).
 
-- [ ] **$0 – warunki wstępne programu partnerskiego (Artur + Claude), przed $1:**
+- [ ] **\$0 – warunki wstępne programu partnerskiego (Artur + Claude), przed \$1:**
   - konto w programie partnerskim Allegro i/lub Ceneo; w panelu sprawdzić format deep-linka
     (link do wyszukiwania z frazą i filtrem ceny) i zasady oznaczania linków (Artur);
   - polityka prywatności: dziś mówi „prywatny, niekomercyjny projekt… nie wyświetla reklam” –
@@ -294,33 +294,33 @@ płatne duże losowania ($8) dopiero po analizie sezonu. Aplikacja poza monetyza
     zgody i bez nowego narzędzia). Zmienić dopiero, gdy dane z panelu nie wystarczą;
   - regulamin: rozważyć przy zarobkowym charakterze serwisu (treść do konsultacji);
   - rozliczenie przychodu z programu – pytanie do księgowego (Artur).
-- [ ] **$1 – przyciski „Znajdź na Allegro” / „Porównaj na Ceneo” przy życzeniu obdarowanego
+- [ ] **\$1 – przyciski „Znajdź na Allegro” / „Porównaj na Ceneo” przy życzeniu obdarowanego
   (pierwsza funkcja zarabiająca):** widoczne tylko po losowaniu, u osoby, która czyta list
   swojego obdarowanego. Wyszukiwanie z tekstu życzenia (per linia/pozycja), filtr ceny do
-  budżetu losowania, link partnerski w formacie z panelu ($0). Wymaga $0 i $5. Bez zmian
+  budżetu losowania, link partnerski w formacie z panelu (\$0). Wymaga \$0 i \$5. Bez zmian
   w danych i regułach – linki składane w przeglądarce.
-- [ ] $2 – przepisywanie wklejonych linków Allegro na partnerskie
-- [ ] $3 – „pomysły na prezent do X zł” przy pustym życzeniu (kuratorowane listy)
-- [ ] $4 – AI: opis zainteresowań → frazy produktowe (wymaga serwera do ukrycia klucza → Blaze)
-- [ ] $5 – wymagania dla każdego linku partnerskiego (robione razem z $1): widoczna etykieta
+- [ ] \$2 – przepisywanie wklejonych linków Allegro na partnerskie
+- [ ] \$3 – „pomysły na prezent do X zł” przy pustym życzeniu (kuratorowane listy)
+- [ ] \$4 – AI: opis zainteresowań → frazy produktowe (wymaga serwera do ukrycia klucza → Blaze)
+- [ ] \$5 – wymagania dla każdego linku partnerskiego (robione razem z \$1): widoczna etykieta
   „link partnerski”, `rel="sponsored noopener"`, otwieranie w nowej karcie; polityka prywatności
-  z $0; analityka kliknięć tylko za zgodą (na start brak, patrz $0)
-- [ ] $6 – inne: premium (wykluczenia, motywy), wersja firmowa/HR
-- [ ] **$7 – „Postaw kawę” (buycoffee.to lub Buy Me a Coffee) – na koniec, test chęci płacenia:**
+  z \$0; analityka kliknięć tylko za zgodą (na start brak, patrz \$0)
+- [ ] \$6 – inne: premium (wykluczenia, motywy), wersja firmowa/HR
+- [ ] **\$7 – „Postaw kawę” (buycoffee.to lub Buy Me a Coffee) – na koniec, test chęci płacenia:**
   zwykły link do zewnętrznego serwisu wpłat (buycoffee.to obsługuje BLIK), bez backendu i bez
   Blaze. Miejsca: okno po udanym losowaniu (moment największego zadowolenia) i stopka.
   Wymaga: konta w serwisie (Artur), wzmianki w polityce prywatności (zewnętrzny serwis wpłat),
   pytania do księgowego o rozliczenie wpłat. Po sezonie sprawdzić liczbę wpłat – to sygnał
-  przed decyzją o $8.
-- [ ] **$8 – darmowe losowania do N osób, większe za jednorazową opłatę (pomysł Artura:
+  przed decyzją o \$8.
+- [ ] **\$8 – darmowe losowania do N osób, większe za jednorazową opłatę (pomysł Artura:
   do 6 osób za darmo, powyżej 5–10 zł) – decyzja po sezonie, na danych:**
   - **Analiza po sezonie (najpierw):** rozkład wielkości grup z Firestore (`participantUuids.size()`
     każdego losowania; `appData/stats` ma tylko sumy) – skrypt tylko do odczytu z kluczem konta
     serwisowego. Pytania: ile losowań przekracza 6 / 8 / 10 osób, ile by to dało przy danej
-    cenie i konwersji, ile wpłat dał $7.
+    cenie i konwersji, ile wpłat dał \$7.
   - **Ryzyko produktowe:** limit 6 tnie typowe rodziny i zespoły w pracy, a darmowa konkurencja jest
     o kliknięcie dalej. Alternatywy do porównania: wyższy limit (np. 10), płatne dodatki zamiast
-    płatnej wielkości ($6).
+    płatnej wielkości (\$6).
   - **Cena:** prowizja operatora to zwykle ok. 1 zł + 1,5–2% (sprawdzić aktualne cenniki) –
     przy 5 zł ok. 20–25% przychodu, przy 10 zł ok. 10–12%. Rekomendacja Claude'a: 9–10 zł.
   - **Technicznie (największa zmiana w backlogu):** Blaze (F0) + Cloud Function potwierdzająca
