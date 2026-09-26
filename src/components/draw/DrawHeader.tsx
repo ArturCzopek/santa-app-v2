@@ -6,6 +6,7 @@ import { pl, enUS } from 'date-fns/locale';
 import { Timestamp } from 'firebase/firestore';
 import Postmark from '../common/Postmark';
 import EventDetails from './EventDetails';
+import AddToCalendarButton from './AddToCalendarButton';
 import { Draw } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
 
@@ -121,6 +122,7 @@ const DrawHeader: React.FC<{ draw: Draw }> = ({ draw }) => {
         eventDate={draw.eventDate}
         eventPlace={draw.eventPlace}
       />
+      <AddToCalendarButton draw={draw} onDark />
 
       {draw.description && <Description text={draw.description} />}
     </Box>

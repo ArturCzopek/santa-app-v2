@@ -352,6 +352,12 @@ const resources = {
         showSanta: 'Show Santa!',
         title: 'Santa App',
       },
+      calendar: {
+        add: 'Add to calendar',
+        description: 'Secret Santa gift exchange. Budget: {{budget}} {{currency}}. Your envelope: {{link}}',
+        fileName: 'secret-santa',
+        title: 'Secret Santa: {{name}}',
+      },
       help: {
         lead: 'The most common questions about Secret Santa in Santa App.',
         links: {
@@ -727,6 +733,12 @@ const resources = {
         logout: 'Wyloguj',
         showSanta: 'Pokaż Mikołaja!',
         title: 'Santa App',
+      },
+      calendar: {
+        add: 'Dodaj do kalendarza',
+        description: 'Wręczenie prezentów w Tajemniczym Mikołaju. Budżet: {{budget}} {{currency}}. Twoja koperta: {{link}}',
+        fileName: 'tajemniczy-mikolaj',
+        title: 'Tajemniczy Mikołaj: {{name}}',
       },
       help: {
         lead: 'Najczęstsze pytania o Tajemniczego Mikołaja w Santa App.',

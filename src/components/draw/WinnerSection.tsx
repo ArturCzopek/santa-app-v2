@@ -10,6 +10,7 @@ import PaperCard from '../common/PaperCard';
 import StampAvatar from '../common/StampAvatar';
 import SectionHeading from './SectionHeading';
 import EventDetails from './EventDetails';
+import AddToCalendarButton from './AddToCalendarButton';
 import SealedEnvelope, { ENVELOPE_OPENING_MS } from './SealedEnvelope';
 import {
   rememberEnvelopeOpened,
@@ -146,6 +147,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
               eventDate={draw.eventDate}
               eventPlace={draw.eventPlace}
             />
+            <AddToCalendarButton draw={draw} />
 
             <Box
               sx={{
