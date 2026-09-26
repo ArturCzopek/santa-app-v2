@@ -4,6 +4,8 @@ How the app works inside: what runs where, where the data lives, and what happen
 step of the [journey](01-how-it-works.md). Setup, environments, tests and deployment are in
 the [README](../README.md).
 
+For the current detailed engineering reference, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## The big picture
 
 ```
@@ -21,7 +23,7 @@ normally sit in a backend (who may join, who may read a letter, that a result is
 once), and why they have the largest test suite (`tests/rules`).
 
 - **App:** React 19, TypeScript, MUI 9, React Router with hash routes (`#/draw/…`, see
-  [D2](04-decisions.md)), i18next with Polish (used) and English (ready, no switch yet).
+  [D2](04-decisions.md)), i18next with Polish and English (the language switch is in the footer).
 - **Firebase:** Authentication (Google only) and Firestore. Free Spark plan: no Cloud
   Functions, so nothing runs on a server or on a schedule.
 - **Hosting:** GitHub Pages, built and published by GitHub Actions on every push to

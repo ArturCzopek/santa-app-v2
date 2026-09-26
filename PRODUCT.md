@@ -35,21 +35,25 @@ sees the recipient's current wish right next to the result.
 - The invite link is shared in group chats (Messenger, WhatsApp); opened mostly on phones,
   often in the in-app browser, where Google sign-in can be blocked (the app explains how to open
   it in a real browser).
-- A draw is protected by a password chosen by the organizer; today the password is passed on
-  separately from the link. Planned: the share message carries link and password together; later
-  a link that carries its own key (no typing).
+- A draw has an organizer password. The invite link carries a separate random key and allows
+  one-tap joining; participants can read and share the current invite link. The password can
+  also be used to join and is required by the organizer to start the draw.
 - Seasonal use: peaks in November–December.
 
 ## Capabilities and Constraints
 
 - React 19 + MUI 9 + Vite, Firebase (Google Auth + Firestore), hosted on GitHub Pages
   (hash routes), no backend server; security lives in Firestore rules.
-- Polish UI (English translations exist; no language switch yet).
-- Current features: create draw (name, description, budget, currency, password), invite link,
-  join with password, wish per participant (max 2000 chars), start draw (organizer, password),
-  result with the recipient's wish, feedback message to the author, "Pokaż Mikołaja" videos.
-- Not yet: editing/deleting draws, leaving a draw, gift exchange date, exclusions, reminders,
-  privacy policy.
+- Polish UI by default, with an English language switch whose choice is remembered in the browser.
+- Current features: create/edit/delete a waiting draw; Google sign-in; password or invite-link
+  joining; password and invite-key rotation; participant leave/removal; a private wish per
+  participant (max 2000 chars); symmetric exclusions; organizer-started draw; a private result
+  with the recipient's wish; optional gift-exchange date/place and calendar export; help and
+  privacy pages; one feedback message per user per day; and "Pokaż Mikołaja" videos.
+- Not yet: email-link sign-in, organizer-not-participating mode, previous-year no-repeat,
+  anonymous chat, structured wishlists, bought/status tracking, push/email reminders, PWA,
+  QR invites, an in-app admin inbox, or monetization. These are roadmap ideas, not committed
+  product decisions.
 
 ## Brand Commitments
 

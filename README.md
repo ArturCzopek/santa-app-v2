@@ -15,10 +15,15 @@ person sees only who they buy a gift for, together with that person's wish.
 |---|---|
 | [How the app works](docs/01-how-it-works.md) | The app from the user's side: roles, the journey step by step, every screen, what can be changed and when |
 | [The design explained](docs/02-design.md) | Why it looks the way it does: the Christmas-mail idea, what each screen puts first, words, motion, accessibility |
-| [Architecture](docs/03-architecture.md) | What runs where, the data and who can read it, what happens at each step, where things are in the code |
+| [Architecture](docs/ARCHITECTURE.md) | Current runtime, routing, state, Firestore boundaries, code structure, and architectural trade-offs |
+| [Domain model](docs/DOMAIN.md) | Current roles, lifecycle, data visibility, and domain invariants |
+| [Development](docs/DEVELOPMENT.md) | Environment setup, commands, validation, CI, and deployment |
+| [Known issues](docs/KNOWN_ISSUES.md) | Audit findings, risks, and proposed follow-up order |
+| [Roadmap and backlog](BACKLOG.md) | Shared roadmap, open work, owners, and Codex-ready tasks |
 | [Decisions](docs/04-decisions.md) | Decision log: why X and not Y |
 | [DESIGN.md](DESIGN.md) | The design system for building screens: colours, type, layout, components |
 | [PRODUCT.md](PRODUCT.md) | Who the app is for and what success means |
+| [AGENTS.md](AGENTS.md) | Claude/Codex ownership, delegation boundaries, and required validation |
 
 This README covers setting up, running, testing and deploying.
 
