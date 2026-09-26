@@ -131,7 +131,7 @@ describe('DrawPage', () => {
     );
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'secret1');
-    await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
+    await user.click(within(dialog).getByRole('button', { name: 'Losuj pary' }));
 
     // The owner gets a ready message telling everyone the envelopes are here.
     const done = await screen.findByRole('dialog', {
@@ -252,7 +252,7 @@ describe('DrawPage', () => {
     );
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'wrong-1');
-    await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
+    await user.click(within(dialog).getByRole('button', { name: 'Losuj pary' }));
 
     expect(
       await within(dialog).findByText('Nieprawidłowe hasło'),
@@ -273,7 +273,7 @@ describe('DrawPage', () => {
     );
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'secret1');
-    await user.click(within(dialog).getByRole('button', { name: 'Losuj' }));
+    await user.click(within(dialog).getByRole('button', { name: 'Losuj pary' }));
 
     expect(
       await screen.findByText(/Nie udało się przeprowadzić losowania/),
@@ -753,7 +753,7 @@ describe('DrawPage', () => {
       const user = userEvent.setup();
       renderDrawPage();
 
-      await screen.findByRole('heading', { name: 'Wykluczenia (0)' });
+      await screen.findByRole('heading', { name: 'Pary, które się nie wylosują (0)' });
       await pick(user, 'Pierwsza osoba', 'Olga Owner');
       await pick(user, 'Druga osoba', 'Ania Test');
       await user.click(screen.getByRole('button', { name: 'Dodaj parę' }));
@@ -780,7 +780,7 @@ describe('DrawPage', () => {
       const user = userEvent.setup();
       renderDrawPage();
 
-      await screen.findByRole('heading', { name: 'Wykluczenia (0)' });
+      await screen.findByRole('heading', { name: 'Pary, które się nie wylosują (0)' });
       await pick(user, 'Pierwsza osoba', 'Ania Test');
       await pick(user, 'Druga osoba', 'Bartek Test');
       await user.click(screen.getByRole('button', { name: 'Dodaj parę' }));
@@ -803,7 +803,7 @@ describe('DrawPage', () => {
         'bob',
       ]);
       expect(
-        await screen.findByRole('heading', { name: 'Wykluczenia (0)' }),
+        await screen.findByRole('heading', { name: 'Pary, które się nie wylosują (0)' }),
       ).toBeInTheDocument();
     });
 
@@ -824,7 +824,7 @@ describe('DrawPage', () => {
       const user = userEvent.setup();
       renderDrawPage();
 
-      await screen.findByRole('heading', { name: 'Wykluczenia (1)' });
+      await screen.findByRole('heading', { name: 'Pary, które się nie wylosują (1)' });
       await pick(user, 'Pierwsza osoba', 'Ania Test');
       await user.click(screen.getByRole('combobox', { name: 'Druga osoba' }));
       const options = (await screen.findAllByRole('option')).map(
@@ -859,7 +859,7 @@ describe('DrawPage', () => {
         return names;
       };
 
-      await screen.findByRole('heading', { name: 'Wykluczenia (1)' });
+      await screen.findByRole('heading', { name: 'Pary, które się nie wylosują (1)' });
       await pick(user, 'Pierwsza osoba', 'Bartek Test');
       expect(await optionsOf('Druga osoba')).toEqual([
         'Celina Test',
@@ -890,14 +890,14 @@ describe('DrawPage', () => {
       const dialog = await screen.findByRole('dialog');
       expect(
         within(dialog).getByText(
-          'Brak wykluczeń – losujemy spośród wszystkich.',
+          'Każdy może wylosować każdego.',
         ),
       ).toBeInTheDocument();
       expect(
         within(dialog).getByText(/Czy to wszystkie pary/),
       ).toBeInTheDocument();
       expect(
-        within(dialog).getByRole('button', { name: 'Losuj' }),
+        within(dialog).getByRole('button', { name: 'Losuj pary' }),
       ).toBeEnabled();
     });
 
@@ -915,11 +915,11 @@ describe('DrawPage', () => {
       const dialog = await screen.findByRole('dialog');
       expect(
         within(dialog).getByText(
-          /Usuń jedną z tych par: Ania Test ↔ Olga Owner/,
+          /Usuń jedną z nich: Ania Test ↔ Olga Owner/,
         ),
       ).toBeInTheDocument();
       expect(
-        within(dialog).getByRole('button', { name: 'Losuj' }),
+        within(dialog).getByRole('button', { name: 'Losuj pary' }),
       ).toBeDisabled();
     });
   });

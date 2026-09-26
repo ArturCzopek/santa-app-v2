@@ -151,14 +151,14 @@ const resources = {
             'People in a pair will not draw each other – e.g. a couple who buy presents together anyway.',
           first: 'First person',
           impossibleRemoveMore:
-            'With these exclusions the draw is impossible. Remove a few pairs.',
+            'With these pairs the draw is impossible. Remove a few of them.',
           impossibleRemoveOne:
-            'With these exclusions the draw is impossible. Remove one of these pairs: {{pairs}}.',
+            'With these pairs the draw is impossible. Remove one of them: {{pairs}}.',
           pickTwo: 'Pick two different people.',
           remove: 'Remove the pair {{pair}}',
-          saveFailed: 'Could not save the exclusions. Please try again.',
+          saveFailed: 'Could not save the pairs. Please try again.',
           second: 'Second person',
-          title: 'Exclusions ({{count}})',
+          title: 'Pairs who will not draw each other ({{count}})',
           wouldBeImpossible:
             'With this pair the draw would be impossible – too few people are left to draw.',
         },
@@ -208,12 +208,12 @@ const resources = {
         startDraw: {
           passwordLabel: 'Draw password',
           allExclusionsSet: 'Are these all the pairs who should not draw each other?',
-          editExclusions: 'Change the exclusions',
-          exclusions: 'Exclusions: {{pairs}}.',
-          noExclusions: 'No exclusions – everyone is in the hat for everyone.',
+          editExclusions: 'Change these pairs',
+          exclusions: 'Will not draw each other: {{pairs}}.',
+          noExclusions: 'Everyone can draw everyone else.',
           confirmationText:
             'Are you sure you want to draw pairs? This action is irreversible.\nTo confirm the draw, enter the password created when the draw was set up.',
-          drawButton: 'Draw',
+          drawButton: 'Draw the pairs',
           incorrectPassword: 'Incorrect password',
           withoutWish_one: '{{names}} has not written a letter yet. Their Santa will have to guess.',
           withoutWish_other: '{{count}} people have not written a letter yet: {{names}}. Their Santas will have to guess.',
@@ -528,14 +528,14 @@ const resources = {
             'Osoby w parze nie wylosują siebie nawzajem – np. małżonkowie, którzy i tak kupują sobie prezenty.',
           first: 'Pierwsza osoba',
           impossibleRemoveMore:
-            'Przy tych wykluczeniach losowanie jest niemożliwe. Usuń kilka par.',
+            'Przy tych parach losowanie jest niemożliwe. Usuń kilka z nich.',
           impossibleRemoveOne:
-            'Przy tych wykluczeniach losowanie jest niemożliwe. Usuń jedną z tych par: {{pairs}}.',
+            'Przy tych parach losowanie jest niemożliwe. Usuń jedną z nich: {{pairs}}.',
           pickTwo: 'Wybierz dwie różne osoby.',
           remove: 'Usuń parę {{pair}}',
-          saveFailed: 'Nie udało się zapisać wykluczeń. Spróbuj ponownie.',
+          saveFailed: 'Nie udało się zapisać par. Spróbuj ponownie.',
           second: 'Druga osoba',
-          title: 'Wykluczenia ({{count}})',
+          title: 'Pary, które się nie wylosują ({{count}})',
           wouldBeImpossible:
             'Z tą parą losowanie byłoby niemożliwe – zostaje za mało osób do wylosowania.',
         },
@@ -585,12 +585,12 @@ const resources = {
         startDraw: {
           passwordLabel: 'Hasło losowania',
           allExclusionsSet: 'Czy to wszystkie pary, które nie powinny się wylosować?',
-          editExclusions: 'Zmień wykluczenia',
-          exclusions: 'Wykluczenia: {{pairs}}.',
-          noExclusions: 'Brak wykluczeń – losujemy spośród wszystkich.',
+          editExclusions: 'Zmień te pary',
+          exclusions: 'Nie wylosują siebie nawzajem: {{pairs}}.',
+          noExclusions: 'Każdy może wylosować każdego.',
           confirmationText:
             'Czy na pewno chcesz wylosować pary? Tego nie da się cofnąć.\nAby potwierdzić, wpisz hasło ustalone przy tworzeniu losowania.',
-          drawButton: 'Losuj',
+          drawButton: 'Losuj pary',
           incorrectPassword: 'Nieprawidłowe hasło',
           withoutWish_one: 'Jedna osoba nie napisała jeszcze listu: {{names}}. Jej Mikołaj będzie musiał zgadywać.',
           withoutWish_few: '{{count}} osoby nie napisały jeszcze listu: {{names}}. Ich Mikołaje będą musieli zgadywać.',

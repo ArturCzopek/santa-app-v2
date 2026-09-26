@@ -129,10 +129,10 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
     .click();
   const dialog = owner.page.getByRole('dialog');
   await dialog.getByLabel('Hasło losowania', { exact: true }).fill('zlehaslo');
-  await dialog.getByRole('button', { name: 'Losuj' }).click();
+  await dialog.getByRole('button', { name: 'Losuj pary' }).click();
   await expect(dialog.getByText('Nieprawidłowe hasło')).toBeVisible();
   await dialog.getByLabel('Hasło losowania', { exact: true }).fill('sekret1');
-  await dialog.getByRole('button', { name: 'Losuj' }).click();
+  await dialog.getByRole('button', { name: 'Losuj pary' }).click();
   // A ready message for the group: the envelopes are here.
   const done = owner.page.getByRole('dialog', {
     name: 'Gotowe! Pary wylosowane',
