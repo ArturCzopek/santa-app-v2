@@ -162,7 +162,7 @@ const resources = {
           wouldBeImpossible:
             'With this pair the draw would be impossible – too few people are left to draw.',
         },
-        inviteButton: 'Invite to Draw',
+        inviteButton: 'Invite to the draw',
         inviteModal: {
           copyLink: 'Copy link',
           copyMessage: 'Copy invite',
@@ -218,7 +218,7 @@ const resources = {
           withoutWish_one: '{{names}} has not written a letter yet. Their Santa will have to guess.',
           withoutWish_other: '{{count}} people have not written a letter yet: {{names}}. Their Santas will have to guess.',
         },
-        startDrawButton: 'Start Draw',
+        startDrawButton: 'Start the draw',
         title: 'Draw',
         winnerSection: {
           budget: 'Budget: up to {{budget}} {{currency}}',
@@ -322,7 +322,7 @@ const resources = {
         googleNote: 'All you need is a Google account. We use your name and photo so others know who joined.',
         privacyLink: 'How we use your data.',
         lead: 'One link for the whole group. Everyone writes a letter to Santa, and on draw day opens an envelope with the name of the person they buy a gift for.',
-        loginWithGoogle: 'Login with Google',
+        loginWithGoogle: 'Sign in with Google',
         title: 'Secret Santa without paper slips in a hat',
         videoTitle: 'To warm up',
       },
@@ -749,12 +749,39 @@ const resources = {
   },
 };
 
+export type Language = 'pl' | 'en';
+
+// The chosen language is kept in this browser; Polish is the default.
+const LANGUAGE_KEY = 'santa-app.language';
+
+const savedLanguage = (): Language => {
+  try {
+    return localStorage.getItem(LANGUAGE_KEY) === 'en' ? 'en' : 'pl';
+  } catch {
+    return 'pl';
+  }
+};
+
 i18n.use(initReactI18next).init({
   resources,
-  lng: 'pl', // Default language
+  lng: savedLanguage(),
   interpolation: {
     escapeValue: false,
   },
 });
+
+if (typeof document !== 'undefined') {
+  document.documentElement.lang = i18n.language;
+}
+
+export const setLanguage = (language: Language) => {
+  i18n.changeLanguage(language);
+  document.documentElement.lang = language;
+  try {
+    localStorage.setItem(LANGUAGE_KEY, language);
+  } catch {
+    // Not remembered, then: the next visit starts in Polish.
+  }
+};
 
 export default i18n;

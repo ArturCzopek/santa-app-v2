@@ -1,12 +1,14 @@
 import React from 'react';
 import { Box, Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router';
-import { GitHub } from '@mui/icons-material';
+import { GitHub, Translate } from '@mui/icons-material';
+import { setLanguage } from '../../i18n';
 import { useTranslation } from 'react-i18next';
 import { footerLinkStyles, footerStyles } from '../../styles/layoutStyles';
 
 const Footer = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const otherLanguage = i18n.language === 'en' ? 'pl' : 'en';
 
   return (
     <Box
@@ -20,6 +22,18 @@ const Footer = () => {
         rowGap: 1,
       }}
     >
+      {/* Named in the language it switches to, so either reader finds it. */}
+      <Link
+        component="button"
+        type="button"
+        color="inherit"
+        lang={otherLanguage}
+        onClick={() => setLanguage(otherLanguage)}
+        sx={{ ...footerLinkStyles, gap: 0.75, font: 'inherit' }}
+      >
+        <Translate fontSize="small" aria-hidden />
+        {otherLanguage === 'en' ? 'English' : 'Polski'}
+      </Link>
       <Link
         component={RouterLink}
         to="/help"

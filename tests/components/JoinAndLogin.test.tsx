@@ -254,3 +254,24 @@ describe('HelpPage', () => {
     expect(screen.getByText(/Ustaw nowe hasło/)).toBeVisible();
   });
 });
+
+describe('language', () => {
+  it('switches between Polish and English and remembers the choice', async () => {
+    auth.user = null;
+    const user = userEvent.setup();
+    renderWithProviders(<LoginPage />);
+
+    await user.click(screen.getByRole('button', { name: 'English' }));
+    expect(
+      screen.getByRole('button', { name: /Sign in with Google/ }),
+    ).toBeInTheDocument();
+    expect(document.documentElement.lang).toBe('en');
+    expect(localStorage.getItem('santa-app.language')).toBe('en');
+
+    await user.click(screen.getByRole('button', { name: 'Polski' }));
+    expect(
+      screen.getByRole('button', { name: /Zaloguj przez Google/ }),
+    ).toBeInTheDocument();
+    expect(document.documentElement.lang).toBe('pl');
+  });
+});
