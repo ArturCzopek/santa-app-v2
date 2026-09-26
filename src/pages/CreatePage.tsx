@@ -8,6 +8,7 @@ import DrawDetailsFields, {
   cleanDrawDetails,
 } from '../components/draw/DrawDetailsFields';
 import FormActions from '../components/form/FormActions';
+import HelpLink from '../components/HelpLink';
 import PasswordField from '../components/form/PasswordField';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -98,6 +99,9 @@ const CreatePage = () => {
             <KeyOutlined aria-hidden sx={{ mt: '2px' }} />
             {t('createPage.passwordNote')}
           </Typography>
+          <Box sx={{ mt: -1.5 }}>
+            <HelpLink topic="password">{t('help.links.password')}</HelpLink>
+          </Box>
           <Controller
             name="password"
             control={control}

@@ -15,6 +15,7 @@ import { useAuth } from './hooks/useAuth';
 import CreatePage from './pages/CreatePage';
 import DrawPage from './pages/DrawPage';
 import PrivacyPage from './pages/PrivacyPage';
+import HelpPage from './pages/HelpPage';
 
 // A new page starts at the top, not where the previous one was scrolled.
 const ScrollToTop = () => {
@@ -65,6 +66,7 @@ const AppRoutes = () => {
         <Route path="/" element={<LoginPage />} />
 
         <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/help" element={<HelpPage />} />
 
         {/*redirection done on page*/}
         <Route path="/join/:drawId" element={<JoinToDrawPage />} />

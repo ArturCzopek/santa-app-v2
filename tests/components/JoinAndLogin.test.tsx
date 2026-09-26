@@ -25,6 +25,7 @@ vi.mock('../../src/services/MessageService', () => ({
 import JoinToDrawPage from '../../src/pages/JoinToDrawPage';
 import LoginPage from '../../src/pages/LoginPage';
 import PrivacyPage from '../../src/pages/PrivacyPage';
+import HelpPage from '../../src/pages/HelpPage';
 import { drawService } from '../../src/services/DrawService';
 
 const draw: Draw = {
@@ -234,5 +235,22 @@ describe('PrivacyPage', () => {
     expect(
       screen.getByRole('heading', { name: 'Kto odpowiada za dane' }),
     ).toBeInTheDocument();
+  });
+});
+
+describe('HelpPage', () => {
+  it('opens the answer a screen links to', () => {
+    auth.user = null;
+    renderWithProviders(<HelpPage />, { route: '/help?q=password' });
+
+    expect(
+      screen.getByRole('button', {
+        name: 'Nie pamiętam hasła do losowania. Co teraz?',
+      }),
+    ).toHaveAttribute('aria-expanded', 'true');
+    expect(
+      screen.getByRole('button', { name: 'Czy to coś kosztuje?' }),
+    ).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByText(/Ustaw nowe hasło/)).toBeVisible();
   });
 });

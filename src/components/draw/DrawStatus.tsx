@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { CheckCircleOutlined, HourglassEmpty } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import HelpLink from '../HelpLink';
 import { Draw } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
 
@@ -46,7 +47,10 @@ const DrawStatus: React.FC<{ draw: Draw; isOwner: boolean }> = ({
           sx={{ color: tokens.stampGold, mt: '2px' }}
         />
       )}
-      {text}
+      <span>
+        {text}{' '}
+        {!isOwner && <HelpLink topic="when">{t('help.links.when')}</HelpLink>}
+      </span>
     </Typography>
   );
 };

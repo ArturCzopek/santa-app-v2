@@ -341,6 +341,7 @@ const resources = {
         place: 'Place:',
       },
       footer: {
+        help: 'Help',
         privacy: 'Privacy policy',
         sourceCode: 'Source code on GitHub',
       },
@@ -350,6 +351,16 @@ const resources = {
         logout: 'Log out',
         showSanta: 'Show Santa!',
         title: 'Santa App',
+      },
+      help: {
+        lead: 'The most common questions about Secret Santa in Santa App.',
+        links: {
+          exclusions: 'How do these pairs work?',
+          password: 'What if I forget the password?',
+          questions: 'Questions? See the help',
+          when: 'When is the draw?',
+        },
+        title: 'Help',
       },
       privacy: {
         title: 'Privacy policy',
@@ -706,6 +717,7 @@ const resources = {
         place: 'Miejsce:',
       },
       footer: {
+        help: 'Pomoc',
         privacy: 'Polityka prywatności',
         sourceCode: 'Kod aplikacji na GitHubie',
       },
@@ -715,6 +727,16 @@ const resources = {
         logout: 'Wyloguj',
         showSanta: 'Pokaż Mikołaja!',
         title: 'Santa App',
+      },
+      help: {
+        lead: 'Najczęstsze pytania o Tajemniczego Mikołaja w Santa App.',
+        links: {
+          exclusions: 'Jak działają takie pary?',
+          password: 'Co, jeśli zapomnę hasła?',
+          questions: 'Masz pytania? Zajrzyj do pomocy',
+          when: 'Kiedy będzie losowanie?',
+        },
+        title: 'Pomoc',
       },
       privacy: {
         title: 'Polityka prywatności',

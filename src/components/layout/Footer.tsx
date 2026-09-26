@@ -22,6 +22,14 @@ const Footer = () => {
     >
       <Link
         component={RouterLink}
+        to="/help"
+        color="inherit"
+        sx={footerLinkStyles}
+      >
+        {t('footer.help')}
+      </Link>
+      <Link
+        component={RouterLink}
         to="/privacy"
         color="inherit"
         sx={footerLinkStyles}

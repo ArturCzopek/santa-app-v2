@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { Close, SyncAlt } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import HelpLink from '../HelpLink';
 import PaperCard from '../common/PaperCard';
 import SectionHeading from './SectionHeading';
 import { Draw } from '../../models/Draw';
@@ -190,6 +191,9 @@ const ExclusionsSection: React.FC<ExclusionsSectionProps> = ({
         <Typography color="text.secondary">
           {t('drawPage.exclusions.explanation')}
         </Typography>
+        <Box sx={{ mt: -1.5 }}>
+          <HelpLink topic="exclusions">{t('help.links.exclusions')}</HelpLink>
+        </Box>
 
         {current.length > 0 && (
           <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
