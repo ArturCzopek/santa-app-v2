@@ -36,15 +36,6 @@ export const postcardDialogSx: SxProps<Theme> = {
   },
 };
 
-export const postcardActionsSx: SxProps<Theme> = {
-  px: 3,
-  pb: 2,
-  pt: 0,
-  flexDirection: 'column',
-  alignItems: 'stretch',
-  gap: 1,
-  '& > :not(style) ~ :not(style)': { ml: 0 },
-};
 
 // The invite as a postcard: a ready message with the link, the budget and
 // how to join, sent with the phone's share sheet or copied for a group chat.
@@ -205,7 +196,22 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
           </Box>
         )}
       </DialogContent>
-      <DialogActions sx={postcardActionsSx}>
+      {/* Close, copy the link, send: the main action last on wide
+          screens and first on phones. */}
+      <DialogActions>
+        <Button onClick={handleClose} sx={{ color: tokens.ink }}>
+          {t('common.close')}
+        </Button>
+        <Button
+          startIcon={<ContentCopy />}
+          disabled={loading}
+          onClick={() =>
+            copy(inviteLink, t('drawPage.inviteModal.linkCopied'), inviteLink)
+          }
+          sx={{ color: tokens.ink, whiteSpace: 'nowrap' }}
+        >
+          {t('drawPage.inviteModal.copyLink')}
+        </Button>
         {canShare ? (
           <Button
             variant="contained"
@@ -227,21 +233,6 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
             {t('drawPage.inviteModal.copyMessage')}
           </Button>
         )}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Button
-            startIcon={<ContentCopy />}
-            disabled={loading}
-            onClick={() =>
-              copy(inviteLink, t('drawPage.inviteModal.linkCopied'), inviteLink)
-            }
-            sx={{ color: tokens.ink, whiteSpace: 'nowrap' }}
-          >
-            {t('drawPage.inviteModal.copyLink')}
-          </Button>
-          <Button onClick={handleClose} sx={{ color: tokens.ink }}>
-            {t('common.close')}
-          </Button>
-        </Box>
       </DialogActions>
     </Dialog>
   );

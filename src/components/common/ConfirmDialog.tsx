@@ -52,7 +52,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       <DialogContent>
         <DialogContentText sx={{ color: tokens.ink }}>{text}</DialogContentText>
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+      <DialogActions>
         <Button onClick={onClose} disabled={working} sx={{ color: tokens.ink }}>
           {t('common.cancel')}
         </Button>

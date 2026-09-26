@@ -164,7 +164,7 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
             slotProps={{ htmlInput: { maxLength: MESSAGE_MAX_LENGTH } }}
           />
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+        <DialogActions>
           <Button
             onClick={handleClose}
             disabled={isSending}

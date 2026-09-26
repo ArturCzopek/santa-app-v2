@@ -38,7 +38,7 @@ const ShowSantaModal: React.FC<ShowSantaModalProps> = ({ open, onClose }) => {
       <DialogContent>
         {videoId && <YouTubeEmbed videoId={videoId} />}
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 3 }}>
+      <DialogActions>
         <Button variant="contained" onClick={onClose}>
           {t('common.close')}
         </Button>

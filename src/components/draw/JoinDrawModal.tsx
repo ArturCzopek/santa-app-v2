@@ -83,7 +83,7 @@ const JoinDrawModal: React.FC<JoinDrawModalProps> = ({ open, onClose }) => {
           helperText={error}
         />
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+      <DialogActions>
         <Button onClick={handleClose} sx={{ color: tokens.ink }}>
           {t('common.cancel')}
         </Button>

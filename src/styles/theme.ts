@@ -126,6 +126,21 @@ const baseTheme = createTheme({
         },
       },
     },
+    // One layout for every dialog's buttons, like FormActions: main action
+    // on the right; on phones full width, main action on top.
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          padding: '0 24px 24px',
+          gap: 8,
+          '@media (max-width: 599.95px)': {
+            flexDirection: 'column-reverse',
+            alignItems: 'stretch',
+            '& > :not(style) ~ :not(style)': { marginLeft: 0 },
+          },
+        },
+      },
+    },
     MuiDialogTitle: {
       styleOverrides: { root: { fontWeight: 800, fontSize: '1.3rem', paddingBottom: 8 } },
     },

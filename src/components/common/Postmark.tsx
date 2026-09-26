@@ -27,7 +27,7 @@ const Postmark: React.FC<PostmarkProps> = ({ label, tone, onDark = false }) => {
         flexShrink: 0,
         mx: '3px',
         px: 1.25,
-        py: 0.5,
+        py: 0.625,
         color: ink,
         border: `2px solid ${ink}`,
         borderRadius: '6px',

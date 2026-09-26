@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useShareMessage } from '../../hooks/useShareMessage';
 import Postcard from '../common/Postcard';
 import { eventSummary } from './EventDetails';
-import { postcardActionsSx, postcardDialogSx } from './InviteDrawModal';
+import { postcardDialogSx } from './InviteDrawModal';
 import { Draw } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
 
@@ -63,7 +63,10 @@ const DrawDoneModal: React.FC<DrawDoneModalProps> = ({
         <Typography>{t('drawPage.drawDone.description')}</Typography>
         <Postcard title={postcardTitle} message={message} />
       </DialogContent>
-      <DialogActions sx={postcardActionsSx}>
+      <DialogActions>
+        <Button onClick={onClose} sx={{ color: tokens.ink }}>
+          {t('common.close')}
+        </Button>
         {canShare ? (
           <Button
             variant="contained"
@@ -81,9 +84,6 @@ const DrawDoneModal: React.FC<DrawDoneModalProps> = ({
             {t('drawPage.drawDone.copyMessage')}
           </Button>
         )}
-        <Button onClick={onClose} sx={{ color: tokens.ink }}>
-          {t('common.close')}
-        </Button>
       </DialogActions>
     </Dialog>
   );
