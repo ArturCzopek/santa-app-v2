@@ -6,7 +6,7 @@ const sha256 = (text: string) => createHash('sha256').update(text).digest('hex')
 
 describe('PasswordUtils.joinKey', () => {
   it('is sha256(drawId + ":" + sha256(password)), compatible with legacy hashes', async () => {
-    // Legacy draws stored sha256(password); the migration relies on this shape.
+    // Old draws stored sha256(password); their migrated keys rely on this shape.
     const legacyHash = sha256('secret1');
     expect(await PasswordUtils.joinKey('draw-1', 'secret1')).toBe(
       sha256(`draw-1:${legacyHash}`),

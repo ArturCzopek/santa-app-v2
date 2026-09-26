@@ -21,8 +21,8 @@ export const PasswordUtils = {
   // Key stored as a document id in draws/{drawId}/joinKeys, for the password
   // and for the invite link's secret alike. Salted with the
   // draw id so the same password gives different keys in different draws.
-  // The inner hash matches what older versions stored, which lets existing
-  // draws be migrated without knowing their passwords.
+  // Keys of old draws were migrated from sha256(password), so this shape
+  // must stay or their passwords stop working.
   joinKey: async (drawId: string, password: string): Promise<string> =>
     sha256Hex(`${drawId}:${await sha256Hex(password)}`),
 };

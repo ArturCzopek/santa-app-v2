@@ -25,7 +25,7 @@ once), and why they have the largest test suite (`tests/rules`).
 - **Firebase:** Authentication (Google only) and Firestore. Free Spark plan: no Cloud
   Functions, so nothing runs on a server or on a schedule.
 - **Hosting:** GitHub Pages, built and published by GitHub Actions on every push to
-  `master`, after the rules and data migrations are deployed.
+  `master`, after the rules are deployed.
 
 ## Data
 
@@ -113,6 +113,6 @@ written until it is saved (`services/letterDraft.ts`).
 | `src/styles/theme.ts` | Colour tokens, fonts, the MUI theme, the focus ring |
 | `src/i18n.ts` | All texts, Polish and English |
 | `firestore.rules` | The security rules, i.e. the backend |
-| `scripts/` | Test data for the emulators (`seedEmulators.mjs`), data migrations run on deploy |
-| `tests/` | `rules`, `services` (against emulators), `components` (React Testing Library), `unit`, `migration` |
+| `scripts/` | Test data for the emulators (`seedEmulators.mjs`) |
+| `tests/` | `rules`, `services` (against emulators), `components` (React Testing Library), `unit` |
 | `e2e/` | Playwright: the whole Secret Santa with several people, on desktop and phone |

@@ -10,6 +10,6 @@ build/
 .emulator-data/
 test-results/
 playwright-report/
-# Service account keys (used by scripts/migrate.mjs) - never commit them
+# Service account keys - never commit them
 *firebase-adminsdk*.json
 service-account*.json

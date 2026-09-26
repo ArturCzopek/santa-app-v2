@@ -161,7 +161,7 @@ the dev project - not production.
 ```bash
 npm run lint
 npm run typecheck
-npm test            # Firestore rules, services, components, unit, migration (emulators)
+npm test            # Firestore rules, services, components, unit (emulators)
 npm run test:e2e    # Playwright end-to-end tests in real browsers (emulators)
 ```
 
@@ -174,9 +174,9 @@ Every push to `master` runs `.github/workflows/deploy.yml`:
 
 1. All checks and tests (the CI workflow).
 2. **Staging** (only when `FIREBASE_SERVICE_ACCOUNT_DEV` is set): deploy
-   Firestore rules and indexes to the dev project, then migrate old data.
-3. **Production:** deploy Firestore rules and indexes, migrate old data,
-   build the app and publish it to GitHub Pages.
+   Firestore rules and indexes to the dev project.
+3. **Production:** deploy Firestore rules and indexes, build the app and
+   publish it to GitHub Pages.
 
 If a step fails, the following steps do not run, so production is only
 touched when the tests and staging passed. The workflow can also be started
@@ -243,15 +243,6 @@ npx firebase login
 npx firebase deploy --only firestore --project <project-id>
 ```
 
-Migrate old data by hand - draws created before the security update and
-letters still stored in participant documents (the workflow runs this on
-every deploy; dry run unless `--apply`):
-
-```bash
-node scripts/migrate.mjs path/to/service-account-key.json
-node scripts/migrate.mjs path/to/service-account-key.json --apply
-```
-
 ## Scripts
 
 | Command | What it does |
@@ -264,6 +255,6 @@ node scripts/migrate.mjs path/to/service-account-key.json --apply
 | `npm run dev:staging` | Run the app against the dev Firebase project (`.env.staging`) |
 | `npm run build` | Production build into `build/` |
 | `npm run lint` / `npm run typecheck` | ESLint / TypeScript checks |
-| `npm test` | Rules, services, components, unit and migration tests |
+| `npm test` | Rules, services, components and unit tests |
 | `npm run test:e2e` | Playwright end-to-end tests |
 | `npm run deploy:rules` | Deploy Firestore rules/indexes to the project selected with `firebase use` |
