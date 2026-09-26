@@ -311,6 +311,28 @@ describe('draws', () => {
       await assertFails(getDoc(doc(authed(env, MALLORY), letter(ALICE))));
     });
 
+    it('after the draw nobody writes, changes or clears a letter', async () => {
+      await writeLetter(authed(env, ALICE), 'd1', ALICE, 'Socks');
+      await updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
+        status: 'DRAWED',
+        drawDate: serverTimestamp(),
+      });
+
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, 'A bike instead'),
+      );
+      await assertFails(writeLetter(authed(env, ALICE), 'd1', ALICE, ''));
+      await assertFails(writeLetter(authed(env, BOB), 'd1', BOB, 'Late wish'));
+      await assertFails(
+        setDoc(doc(authed(env, ALICE), letter(ALICE)), { wish: 'A bike' }),
+      );
+      await assertFails(
+        updateDoc(doc(authed(env, BOB), `draws/d1/participants/${BOB}`), {
+          hasWish: false,
+        }),
+      );
+    });
+
     it('participants see only whether a letter is written', async () => {
       await writeLetter(authed(env, ALICE), 'd1', ALICE, 'Socks');
       const alice = await getDoc(

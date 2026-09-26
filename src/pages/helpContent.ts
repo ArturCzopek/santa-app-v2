@@ -36,7 +36,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       question: 'Kto przeczyta mój list do Mikołaja?',
       answer: [
         'Tylko jedna osoba: ta, która cię wylosuje, i dopiero po losowaniu. Organizator i pozostali widzą jedynie, czy list jest już napisany.',
-        'List możesz zmieniać w każdej chwili, także po losowaniu – twój Mikołaj zawsze widzi najnowszą wersję.',
+        'List możesz pisać i zmieniać aż do losowania. Po losowaniu zostaje taki, jaki był – twój Mikołaj czyta dokładnie to, co było w nim w chwili losowania. Nie zwlekaj więc z pisaniem!',
       ],
     },
     {
@@ -72,7 +72,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'change',
       question: 'Czy można coś zmienić albo się wycofać?',
       answer: [
-        'Przed losowaniem organizator może edytować albo usunąć losowanie („Więcej”) i usunąć z niego osobę (ikona przy imieniu na liście uczestników), a uczestnicy mogą je opuścić („Więcej”). Po losowaniu nic poza listami się nie zmienia, żeby wyniki wszystkich były ważne.',
+        'Przed losowaniem organizator może edytować albo usunąć losowanie („Więcej”) i usunąć z niego osobę (ikona przy imieniu na liście uczestników), a uczestnicy mogą je opuścić („Więcej”). Po losowaniu nic się już nie zmienia – ani losowanie, ani listy – żeby wyniki wszystkich były ważne.',
       ],
     },
     {
@@ -109,7 +109,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       question: 'Who reads my letter to Santa?',
       answer: [
         'Only one person: whoever draws you, and only after the draw. The organizer and everyone else only see whether your letter is written.',
-        'You can change your letter at any time, also after the draw – your Santa always sees the latest version.',
+        'You can write and change your letter until the draw. After the draw it stays as it was – your Santa reads exactly what it said when the pairs were drawn. So do not leave it too late!',
       ],
     },
     {
@@ -145,7 +145,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'change',
       question: 'Can things be changed, or can I back out?',
       answer: [
-        'Before the draw the organizer can edit or delete it ("More") and remove a person from it (the icon next to the name in the participants list), and participants can leave ("More"). After the draw nothing but the letters changes, so everyone’s result stays valid.',
+        'Before the draw the organizer can edit or delete it ("More") and remove a person from it (the icon next to the name in the participants list), and participants can leave ("More"). After the draw nothing changes any more – neither the draw nor the letters – so everyone’s result stays valid.',
       ],
     },
     {

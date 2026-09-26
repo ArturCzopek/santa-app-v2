@@ -54,7 +54,7 @@ the app just chose not to show them. Now `letters/{uid}` is readable only by its
 after the draw, by the one person who drew the author. Participants see only whether a
 letter is written.
 
-## D9. Letters stay editable after the draw; the draw itself freezes, Accepted
+## D9. Letters stay editable after the draw; the draw itself freezes, Superseded by D30
 A late or changed wish is exactly what the Santa needs to see, so the letter can change any
 time. Everything else about the draw (details, participants, exclusions, results) is fixed
 once it is drawn, so every result stays valid.
@@ -176,3 +176,11 @@ can remove one other participant: the list entry, the participant document, thei
 (deleted unread) and the exclusion pairs they were in go in one batch. The invite link is
 not replaced automatically, because everyone else may still need it; the dialog says to make
 a new one if the person should not come back.
+
+## D30. Letters are frozen at the draw too, Accepted
+Replaces D9 (decided by the author, 2026-09-26). A letter that changes after the draw means
+the Santa may already have bought a gift from the old one, and a participant could rewrite
+the wish once they know it is being read. So the letter is written and changed only before
+the draw, like everything else about it: the rules refuse letter and `hasWish` writes once
+the draw is `DRAWED`, the page shows the letter read-only with "Po losowaniu listu nie da się
+już zmienić", and the start dialog warns that people without a letter will be too late.

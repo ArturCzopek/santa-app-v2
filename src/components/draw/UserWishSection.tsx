@@ -31,7 +31,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
   draw,
   savedWish,
   onWishSaved,
-  isEditing,
+  isEditing: isEditingProp,
   onEditingChange,
   writeButtonInRow = false,
 }) => {
@@ -44,6 +44,10 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
   );
 
   const hasWish = savedWish !== '';
+  // The Santa reads the letter as it was at the draw, so it cannot change
+  // afterwards.
+  const isLocked = draw.status !== 'WAITING_FOR_DRAW';
+  const isEditing = isEditingProp && !isLocked;
 
   // An unsaved draft survives a reload, e.g. when a chat app's browser
   // reloads the page after switching apps.
@@ -112,7 +116,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     }
   };
 
-  const showWriteButton = hasWish || !writeButtonInRow;
+  const showWriteButton = !isLocked && (hasWish || !writeButtonInRow);
 
   return (
     <Box component="section" id={LETTER_SECTION_ID}>
@@ -144,9 +148,20 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
           />
         ) : hasWish ? (
           <Typography sx={{ whiteSpace: 'pre-line' }}>{savedWish}</Typography>
+        ) : isLocked ? (
+          <Typography color="text.secondary">
+            {t('drawPage.wishSection.noWishAfterDraw')}
+          </Typography>
         ) : (
           <Typography sx={{ color: tokens.amber, fontWeight: 700 }}>
             {t('drawPage.wishSection.noWishWarning')}
+          </Typography>
+        )}
+
+        {/* Said while writing, and after the draw where the button was. */}
+        {(isEditing || (isLocked && hasWish)) && (
+          <Typography variant="body2" color="text.secondary">
+            {t('drawPage.wishSection.lockedNote')}
           </Typography>
         )}
 

@@ -200,9 +200,11 @@ service cloud.firestore {
           );
 
         // Users only mark whether they wrote their letter, in the same batch
-        // as the letter itself (see letters below), so the mark is true.
+        // as the letter itself (see letters below), so the mark is true;
+        // like the letter, only before the draw.
         allow update: if signedIn()
           && request.auth.uid == uid
+          && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hasWish'])
           && request.resource.data.hasWish == (getAfter(letterPath(drawId, uid)).data.wish.size() > 0);
 
@@ -270,9 +272,12 @@ service cloud.firestore {
             || (get(drawPath(drawId)).data.status == 'DRAWED'
               && get(/databases/$(database)/documents/draws/$(drawId)/assignments/$(request.auth.uid)).data.toUuid == uid));
 
+        // Written and changed only before the draw: the Santa reads the
+        // letter as it was when the pairs were drawn.
         allow create, update: if signedIn()
           && request.auth.uid == uid
           && request.auth.uid in get(drawPath(drawId)).data.participantUuids
+          && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
           && request.resource.data.keys().hasOnly(['wish'])
           && isString(request.resource.data.wish, 2000)
           && getAfter(participantPath(drawId, uid)).data.hasWish == (request.resource.data.wish.size() > 0);

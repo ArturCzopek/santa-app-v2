@@ -214,7 +214,7 @@ describe('DrawPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('still shows your own wish, editable, after the draw', async () => {
+  it('still shows your own wish after the draw, but no longer to edit', async () => {
     vi.mocked(drawService.getDraw).mockResolvedValue({
       ...waitingDraw,
       status: 'DRAWED',
@@ -231,7 +231,10 @@ describe('DrawPage', () => {
     await openEnvelope();
     expect(await screen.findByText('Socks')).toBeInTheDocument();
     expect(screen.getByText('Mountain book')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Edytuj list' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: 'Edytuj list' })).toBeNull();
+    expect(
+      screen.getByText('Po losowaniu listu nie da się już zmienić.'),
+    ).toBeInTheDocument();
     // Only the user's own letter and the one of their recipient are fetched.
     expect(
       vi
@@ -239,6 +242,25 @@ describe('DrawPage', () => {
         .mock.calls.map(([, uid]) => uid)
         .sort(),
     ).toEqual(['alice', 'owner']);
+  });
+
+  it('offers no letter to write after a draw you had no letter for', async () => {
+    letters.owner = '';
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
+    renderDrawPage();
+
+    expect(
+      await screen.findByText('List nie został napisany przed losowaniem.'),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Napisz list' })).toBeNull();
+    expect(screen.queryByRole('textbox')).toBeNull();
   });
 
   it('does not start the draw with a wrong password', async () => {

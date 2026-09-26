@@ -99,8 +99,10 @@ who draws you, and only after the draw.
 
 - Before the draw the participants list shows who has a letter ready (*List gotowy*) and who
   does not (*Bez listu*). The organizer also sees the count: *Napisane listy: 4 z 6*.
-- The letter **stays editable after the draw**, so a late or changed wish still reaches the
-  Santa, who always sees the current version.
+- The letter can be written and changed **only until the draw**. After it the letter stays
+  as it was, so the Santa reads what it said when the pairs were drawn; the page says
+  *Po losowaniu listu nie da się już zmienić*. The start dialog warns the organizer that
+  people without a letter will be too late afterwards.
 - A letter being written is kept in the browser until it is saved, so a reload does not lose
   it (*Przywrócono niezapisany szkic*), and *Anuluj* asks before throwing changes away.
 
@@ -166,9 +168,9 @@ caveat for a technically skilled organizer, see [D3](04-decisions.md#d3-the-pair
 | Delete the draw (with all letters) | Organizer | Before the draw | *Więcej* -> *Usuń losowanie* |
 | Leave the draw (the letter is deleted) | Participant | Before the draw | *Więcej* -> *Opuść losowanie* |
 | Remove someone else (their letter and exclusion pairs go with them; the invite link still lets them back, so make a new one if they should not) | Organizer | Before the draw | The icon next to the name in *Uczestnicy* |
-| Edit your letter | Everyone | Any time | *Edytuj list* |
+| Edit your letter | Everyone | Before the draw | *Edytuj list* |
 
-After the draw nothing about the draw itself changes, so everyone's result stays valid.
+After the draw nothing changes, neither the draw nor the letters, so everyone's result stays valid.
 
 ## Everything else
 

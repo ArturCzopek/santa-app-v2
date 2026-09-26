@@ -36,7 +36,7 @@ it has different readers:
 |---|---|---|
 | `draws/{id}` | Name, description, budget, currency, date, place, owner, `participantUuids`, status, draw date | Anyone signed in who knows the id |
 | `…/participants/{uid}` | Name and photo (must match the Google profile), `hasWish` | Participants |
-| `…/letters/{uid}` | The letter to Santa | The author; after the draw also the one person who drew the author |
+| `…/letters/{uid}` | The letter to Santa, written by its author before the draw only | The author; after the draw also the one person who drew the author |
 | `…/exclusions/{a}_{b}` | A pair who must not draw each other (`a < b`) | The owner, before the draw |
 | `…/assignments/{uid}` | `toUuid`: whom `uid` buys for | Only `uid` |
 | `…/joinKeys/{key}` | Proof of the password or of the invite link's key (a hash, never the secret) | The owner, to confirm the password when starting the draw; before the draw the owner may add keys and remove any but the current invite link's |
