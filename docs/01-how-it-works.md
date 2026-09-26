@@ -104,9 +104,9 @@ who draws you, and only after the draw.
 - A letter being written is kept in the browser until it is saved, so a reload does not lose
   it (*Przywrócono niezapisany szkic*), and *Anuluj* asks before throwing changes away.
 
-### 5. The organizer sets exclusions (optional)
+### 5. The organizer sets pairs who do not draw each other (optional)
 
-*Wykluczenia* lets the organizer mark pairs who must not draw each other, e.g. a couple who
+*Pary, które się nie wylosują* (in the code: exclusions) lets the organizer mark pairs who must not draw each other, e.g. a couple who
 buy gifts together anyway. Only the organizer sees this section, and only before the draw.
 
 - A pair works both ways: *Ania ↔ Bartek* means neither draws the other, and it is the same
@@ -130,7 +130,7 @@ letter is missing, *Rozpocznij losowanie* for the organizer once every letter is
 - who has not written a letter yet (their Santa will have to guess),
 - the current exclusions, with a link to change them,
 - the password field (the one from step 1), with *Nie pamiętasz hasła? Ustaw nowe*,
-- **Losuj**, which cannot be undone.
+- **Losuj pary**, which cannot be undone.
 
 The draw makes one gift circle through everyone when it can (A -> B -> C -> A), never
 pairing anyone with themselves or with someone they are excluded with.
@@ -171,7 +171,7 @@ After the draw nothing about the draw itself changes, so everyone's result stays
 
 ## Everything else
 
-- **Twoje losowania** lists your draws as envelopes: waiting ones say whether you still owe a
+- **Twoje losowania** lists your draws (also in the top bar, or in the account menu on phones) as envelopes: waiting ones say whether you still owe a
   letter, drawn ones (with the striped airmail edge) say "otwórz kopertę" until you have
   opened yours, then "Koperta otwarta". Once there are a few draws in the app, a line at the
   bottom shows the app-wide counts.
@@ -179,8 +179,13 @@ After the draw nothing about the draw itself changes, so everyone's result stays
   stays on purpose, like the "Dubstep Santa" video on the login page (*Na rozgrzewkę*).
 - **Zostaw wiadomość!** (signed-in people only) sends a message to the author, at most one a
   day, up to 1000 characters.
+- **Pomoc** in the footer answers the common questions; screens link straight to the answer
+  that fits (e.g. "Co, jeśli zapomnę hasła?" under the password note).
 - **Polityka prywatności** in the footer says what data is used (name, photo and e-mail from
   Google, the letters), who sees it and for how long.
+- **English / Polski** in the footer switches the language; the choice is remembered.
+- **Dodaj do kalendarza** (when the organizer set a date) saves the gift exchange to the
+  phone's calendar, with a link back to the draw.
 - The account menu (your avatar, top right) has *Wyloguj*.
 
 ## Where the important things are
@@ -192,6 +197,7 @@ After the draw nothing about the draw itself changes, so everyone's result stays
 | New draw | `#/create` | Set up a draw (and remember the password) |
 | Invite | `#/join/{id}?k={key}` | Join with one tap |
 | Draw | `#/draw/{id}` | Before: write your letter, invite. After: open your envelope |
+| Help | `#/help?q={topic}` | Find an answer, e.g. about a forgotten password |
 | Privacy | `#/privacy` | Read how data is used |
 
 On the draw page the order is always: the draw's name and details, the status line (before

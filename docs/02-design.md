@@ -74,6 +74,8 @@ once; later visits go straight to the letter, and the list says "Koperta otwarta
 
 ## Words
 
+- Pairs who do not draw each other are named that way ("Pary, które się nie wylosują"), not
+  "wykluczenia"; the draw button says "Losuj pary".
 - Plain Polish that works for a grandmother and for a team at work.
 - **Gender-neutral forms**: the app talks to you in the present tense ("Kupujesz prezent
   dla"), uses "wszyscy", "osoby" and impersonal forms, and avoids past-tense verbs that mark
@@ -100,6 +102,13 @@ once; later visits go straight to the letter, and the list says "Koperta otwarta
 - **The envelope** takes about a second to open (seal, flap, letter). With reduced motion
   the letter simply appears.
 - Everything else moves only as feedback (hover, focus, fold), under 200 ms.
+
+## Help and language
+
+- Help is one tap away from where a question comes up: a "?" link opens the one answer that
+  fits on `#/help`, instead of a manual people have to search.
+- The footer switches between Polish and English, named in the language it switches to.
+- Errors stay on screen until closed; they say what to do next.
 
 ## Accessibility
 

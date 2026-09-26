@@ -61,7 +61,9 @@ Rules:
   lead, then paper cards. Sections have a `SectionHeading` on the ground above the paper.
 - Phones from 360 px: `document.documentElement.scrollWidth` must equal the viewport
   width (the E2E tests check this on every step).
-- Buttons and standalone links (navbar, footer) are at least 44 px tall. In forms the main action is on the right; on phones
+- Buttons and standalone links (navbar, footer) are at least 44 px tall. Every dialog lays out its
+  buttons the same way (set once in the theme on `MuiDialogActions`): main action on the right;
+  on phones full width with the main action on top. In forms the main action is on the right; on phones
   the buttons take the full width with the main action on top (`FormActions`).
 
 ## Building blocks
@@ -80,6 +82,8 @@ Rules:
 | `SignInCard`, `OpenInBrowserCard` | What a guest sees. Inside Messenger & co. the "open in your browser" card comes first, with "Kopiuj link" as the red action and the address in a field; the Google button becomes secondary. |
 | `PasswordField`, `FormTextField`, `FormSelect`, `FormActions` | Form parts on paper: white inputs with a warm grey outline, a navy focus outline, errors under the field. |
 | `SectionHeading` | Section title on the ground. After the draw the participants heading is a toggle (`aria-expanded`). |
+| `HelpLink` | A small "?" link to one answer on the help page (`#/help?q=…`), placed where the question comes up. |
+| `AddToCalendarButton` | "Dodaj do kalendarza": the gift exchange as an .ics file, when a date is set. |
 | `HowItWorks` | The three steps with handwritten numbers, for first-time visitors. |
 
 ## Motion

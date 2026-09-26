@@ -154,3 +154,17 @@ Chat apps' browsers often reload the page after switching apps, which lost a hal
 letter. The draft is kept in `localStorage` per draw and person until it is saved or
 discarded, comes back with "Przywrócono niezapisany szkic", and "Anuluj" asks before
 throwing changes away. Like D13, this is a per-device convenience, not shared state.
+
+## D26. Help sits next to the question, Accepted
+A help page (`#/help`) answers the questions people actually ask, and screens link to the
+one answer that fits (`#/help?q=password` next to the password note, `q=when` in the
+participant's status line, and so on), so nobody has to search a manual.
+
+## D27. Polish by default, English on request, Accepted
+Refines D17. The English translation was complete but unreachable. A footer button switches
+the language and remembers it in the browser; Polish stays the default for new visitors.
+
+## D28. Reminders through the phone's calendar, Accepted
+Without a server (D1) the app cannot send reminders. When a gift exchange date is set,
+"Dodaj do kalendarza" downloads an .ics event with the place, the budget and a link back to
+the draw, so the phone reminds people and brings them back.
