@@ -32,7 +32,7 @@ For the real Google sign-in flow against the dev Firebase project, fill in `.env
 | `npm test` | Starts clean Auth/Firestore emulators with `firebase emulators:exec`, then runs Vitest: rule, service, component, and unit tests. Vitest uses one worker sequence because tests share an emulator. |
 | `npm run test:e2e` | Starts emulators and Playwright; the configured desktop Chrome and Pixel 7 projects run serially. The E2E web server uses emulator mode on port 5173. |
 
-The emulator-based test commands use ports 8080, 9099, and 5173. Stop manually started development emulators first. CI runs lint, typecheck, unit/rules/service/component tests, and E2E on pull requests and non-`master` branches. The deployment workflow invokes CI for `master`.
+The emulator-based test commands use ports 8080, 9099, and 5173. Stop manually started development emulators first. CI runs lint, typecheck, the production build, unit/rules/service/component tests, and E2E on pull requests and non-`master` branches. The deployment workflow invokes CI for `master`.
 
 ### Audit baseline (2026-09-26)
 
@@ -43,4 +43,4 @@ The emulator-based test commands use ports 8080, 9099, and 5173. Stop manually s
 
 ## Deploy
 
-Every push to `master` triggers the deploy workflow. It waits for CI, deploys Firestore rules and indexes to staging when the dev service-account secret is configured, deploys them to production, then builds and publishes `build/` to GitHub Pages. A manually started workflow may also create a release tag. Only the project owner/authorized release operator should change Firebase console configuration or run production deploys. See [KNOWN_ISSUES.md](KNOWN_ISSUES.md) for a sequencing risk in the current workflow.
+Every push to `master` triggers the deploy workflow. It waits for CI, checks all required deployment secrets, checks out the code, installs dependencies, and builds with production configuration before touching Firebase. It then deploys Firestore rules and indexes to staging when the dev service-account secret is configured, deploys them to production, and publishes `build/` to GitHub Pages. A manually started workflow may also create a release tag. Firebase and GitHub Pages are separate systems, so a failure after the rules step (for example, during Pages publishing) can still leave them out of step; rerun the workflow or revert. For rules that need a new client, use expand/contract: release 1 deploys rules that accept both old and new clients and ships the new client, then release 2 tightens the rules. Only the project owner/authorized release operator should change Firebase console configuration or run production deploys.

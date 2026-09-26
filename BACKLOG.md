@@ -66,7 +66,9 @@
      projektu dev (Project settings → General → Your apps → Config), potem `npm run dev:staging`.
 - [x] Stan repo potwierdzony 2026-09-26: `master` i `origin/master` wskazują na `f662830`.
   Czy ten commit zakończył deploy produkcyjny, trzeba potwierdzić w GitHub Actions.
-- [ ] **O1 – bezpieczna kolejność wdrożenia (Claude decyduje, Codex może wykonać):** uruchamiać
+- [x] **O1 – bezpieczna kolejność wdrożenia (Claude decyduje, Codex może wykonać)** (2026-09-26, Codex,
+  zrecenzowane przez Claude'a: build przed Firebase, sprawdzanie wszystkich sekretów, build w CI,
+  expand/contract w `docs/DEVELOPMENT.md`)**:** uruchamiać
   build z produkcyjną konfiguracją przed zmianami w Firebase. Dla zmian reguł wymagających
   nowego klienta przyjąć rollout expand/contract: najpierw reguły zgodne ze starym i nowym
   klientem, potem publikacja aplikacji, a dopiero później zaostrzenie reguł. Build przed

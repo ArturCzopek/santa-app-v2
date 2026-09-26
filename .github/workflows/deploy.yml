@@ -1,7 +1,7 @@
 name: Deploy
 
-# Every push to master: all checks, then deploy Firestore rules + indexes,
-# and publish the app to GitHub Pages. Can also be started by hand (optionally creating a release).
+# Every push to master: all checks and a production build, then deploy Firestore
+# rules + indexes and publish the app to GitHub Pages. Can also create a release by hand.
 #
 # Needs the repository secret FIREBASE_SERVICE_ACCOUNT (service account key
 # JSON) next to the existing VITE_FIREBASE_* secrets.
@@ -43,10 +43,20 @@ jobs:
       - name: Check deployment secrets
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
         run: |
-          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ] || [ -z "$PROJECT_ID" ]; then
-            echo "::error::Missing FIREBASE_SERVICE_ACCOUNT or VITE_FIREBASE_PROJECT_ID repository secret. Nothing was deployed."
+          missing=()
+          for name in FIREBASE_SERVICE_ACCOUNT VITE_FIREBASE_API_KEY VITE_FIREBASE_AUTH_DOMAIN VITE_FIREBASE_PROJECT_ID VITE_FIREBASE_STORAGE_BUCKET VITE_FIREBASE_MESSAGING_SENDER_ID VITE_FIREBASE_APP_ID VITE_APP_URL; do
+            [ -n "${!name}" ] || missing+=("$name")
+          done
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error::Missing required deployment secrets: ${missing[*]}"
             exit 1
           fi
 
@@ -58,6 +68,17 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
 
       # Staging (dev Firebase project), only when its key is configured.
       - name: Authenticate to the staging project
@@ -79,17 +100,6 @@ jobs:
 
       - name: Deploy Firestore rules and indexes
         run: npx firebase deploy --only firestore --project "${{ secrets.VITE_FIREBASE_PROJECT_ID }}" --non-interactive
-
-      - name: Build
-        run: npm run build
-        env:
-          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
-          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
-          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
-          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
-          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
-          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
-          VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

@@ -18,23 +18,17 @@ The system-level gap remains: `DrawService.startDraw` runs this algorithm in the
 
 **Priority:** low at the current scale. Keep deletion pre-draw only. Revisit batch strategy and matching rule semantics if large groups become a supported use case.
 
-### P2 — Removing a participant does not revoke a password they know
+### P2 — Removing a participant does not revoke a password they know (resolved 2026-09-26)
 
-Removing a participant deletes their documents, but keeps the draw password key. Rotating the invite link revokes its current link key only; it does not invalidate the separate password. Someone who joined with and knows the password can rejoin until the owner changes that password. The UI's removal guidance should be checked against this behavior.
+Removing a participant still keeps the draw password key, and rotating the invite link does not change the password; this is by design. Resolved by F16: the removal dialog now says so and tells the owner to set a new password if the removed person knows it.
 
-**Decision:** the owner should be told that rotating the invite link does not change the password; if the removed person knows it, both credentials need rotation. This bounded UI copy/test task is recorded as Codex-ready F16 in [BACKLOG.md](../BACKLOG.md).
+### P2 — Privacy policy omits local browser data (resolved 2026-09-26)
 
-### P2 — Privacy policy omits local browser data
+Resolved by S10 and S3: the policy lists everything kept in the browser (letter draft, language, opened envelope, Firebase sign-in session) and how deletion requests are handled by hand, with anonymisation in finished draws ([D31](04-decisions.md)).
 
-`src/pages/privacyPolicy.ts` says the app stores **only** the opened-envelope flag in `localStorage`. The code also stores unsaved wish drafts (`src/services/letterDraft.ts`) and language preference (`src/i18n.ts`). The draft may contain personal information and persists in that browser until saved or discarded. The policy also says deletion is available on request, while the app has no account-deletion flow; the operational request path is not documented in the repo.
+### P2 — Deployment changes production rules before building the app (resolved 2026-09-26)
 
-**Owner:** Claude/product owner approves privacy promises. The factual PL/EN storage disclosure is marked Codex-ready in [BACKLOG.md](../BACKLOG.md); changes to legal basis, retention, or deletion promises still need owner review.
-
-### P2 — Deployment changes production rules before building the app
-
-`.github/workflows/deploy.yml` deploys staging rules, then production rules, and only afterwards runs `npm run build`. CI does not run the production build. If the build fails after production rules changed, the old published client may be incompatible with the new rules. The deploy precheck verifies the production project ID and service account, not every `VITE_FIREBASE_*` value.
-
-**Owner:** Claude decides release sequencing and rollback expectations. First build and validate the production-configured app before any live rules changes. That reduces avoidable partial deploys but is not atomic across Firebase and GitHub Pages. For rules that require a new client, use an expand/contract rollout: deploy backward-compatible rules, publish the client, then tighten rules in a later release. Codex can implement an approved sequence.
+Resolved 2026-09-26: CI builds the app, deployment checks all required secrets, and the production-configured build completes before Firebase changes. Firebase and GitHub Pages remain non-atomic; use expand/contract by deploying rules that accept old and new clients with the new client in release 1, then tightening rules in release 2.
 
 ### P3 — Migration discipline does not validate arbitrary Firestore documents at runtime
 

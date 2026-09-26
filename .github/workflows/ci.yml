@@ -1,6 +1,6 @@
 name: CI
 
-# Lint, typecheck, unit/rules/service/component tests and E2E.
+# Lint, typecheck, build, unit/rules/service/component tests and E2E.
 # Runs on pull requests and on pushes to branches other than master;
 # the deploy workflow calls it for master before deploying.
 on:
@@ -36,6 +36,9 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Build
+        run: npm run build
 
       - name: Tests (rules, services, components, unit)
         run: npm test
