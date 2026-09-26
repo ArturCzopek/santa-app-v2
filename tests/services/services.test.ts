@@ -8,7 +8,6 @@ import {
 import { terminate } from 'firebase/firestore';
 import { auth, db } from '../../src/services/FirebaseConfig';
 import { drawService } from '../../src/services/DrawService';
-import { drawingService } from '../../src/services/DrawingService';
 import { messageService } from '../../src/services/MessageService';
 import { appDataService } from '../../src/services/AppDataService';
 import { isValidDraw } from '../../src/services/pairs';
@@ -54,7 +53,7 @@ afterAll(async () => {
   await terminate(db);
 });
 
-describe('DrawService + DrawingService against the emulator', () => {
+describe('DrawService against the emulator', () => {
   it('runs a whole draw: create, join, wishes, start, results', async () => {
     const owner = await signInAs('owner', 'Olga Owner');
     const drawId = await drawService.createDraw(newDrawForm, owner);
@@ -91,7 +90,7 @@ describe('DrawService + DrawingService against the emulator', () => {
     const bob = await signInAs('bob', 'Bob Test');
     await drawService.joinToDraw(drawId, bob, 'secret1');
 
-    await expect(drawingService.startDraw(drawId, bob.uid)).rejects.toThrow();
+    await expect(drawService.startDraw(drawId, bob.uid)).rejects.toThrow();
 
     await signInAs('owner', 'Olga Owner');
     const participants = await drawService.getParticipants(drawId);
@@ -100,9 +99,9 @@ describe('DrawService + DrawingService against the emulator', () => {
       'Bob Test',
       'Olga Owner',
     ]);
-    const started = await drawingService.startDraw(drawId, owner.uid);
+    const started = await drawService.startDraw(drawId, owner.uid);
     expect(started.status).toBe('DRAWED');
-    await expect(drawingService.startDraw(drawId, owner.uid)).rejects.toThrow();
+    await expect(drawService.startDraw(drawId, owner.uid)).rejects.toThrow();
 
     const pairs: Pair[] = [];
     for (const [sub, name, uid] of [
@@ -111,7 +110,7 @@ describe('DrawService + DrawingService against the emulator', () => {
       ['bob', 'Bob Test', bob.uid],
     ]) {
       await signInAs(sub, name);
-      const assignment = await drawingService.getMyAssignment(drawId, uid);
+      const assignment = await drawService.getMyAssignment(drawId, uid);
       expect(assignment).not.toBeNull();
       pairs.push({ fromUuid: uid, toUuid: assignment!.toUuid });
     }
@@ -246,7 +245,7 @@ describe('DrawService + DrawingService against the emulator', () => {
     await drawService.removeExclusion(drawId, [bob.uid, celina.uid]);
     expect(await drawService.getExclusions(drawId)).toHaveLength(2);
 
-    await drawingService.startDraw(drawId, owner.uid);
+    await drawService.startDraw(drawId, owner.uid);
 
     const pairs: Pair[] = [];
     for (const [sub, name, person] of [
@@ -256,7 +255,7 @@ describe('DrawService + DrawingService against the emulator', () => {
       ['celina', 'Celina Test', celina],
     ] as const) {
       await signInAs(sub, name);
-      const assignment = await drawingService.getMyAssignment(
+      const assignment = await drawService.getMyAssignment(
         drawId,
         person.uid,
       );
@@ -286,7 +285,7 @@ describe('DrawService + DrawingService against the emulator', () => {
       drawService.isDrawPasswordValid(drawId, 'secret1'),
     ).rejects.toThrow();
     await expect(
-      drawingService.getMyAssignment(drawId, owner.uid),
+      drawService.getMyAssignment(drawId, owner.uid),
     ).rejects.toThrow();
     expect(await drawService.getDrawPreviews(mallory.uid)).toEqual([]);
   });

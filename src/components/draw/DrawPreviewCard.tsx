@@ -8,7 +8,8 @@ import {
 } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import DrawCardBase from './DrawCardBase';
+import PaperCard from '../common/PaperCard';
+import Postmark from '../common/Postmark';
 import EventDetails from './EventDetails';
 import { DrawPreview } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
@@ -50,13 +51,37 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
         },
       }}
     >
-      <DrawCardBase
-        titleId={titleId}
-        title={drawPreview.drawName}
-        description={drawPreview.description}
-        status={drawPreview.status}
-        airmail={drawn}
-      >
+      <PaperCard airmail={drawn}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap-reverse',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: 1.5,
+          }}
+        >
+          <Typography
+            variant="h2"
+            id={titleId}
+            sx={{ fontSize: '1.35rem', minWidth: 0, flex: '1 1 12rem' }}
+          >
+            {drawPreview.drawName}
+          </Typography>
+          <Postmark
+            tone={drawn ? 'done' : 'waiting'}
+            label={
+              drawn ? t('drawCard.drawedStatus') : t('drawCard.waitingStatus')
+            }
+          />
+        </Box>
+
+        {drawPreview.description && (
+          <Typography variant="body2" color="text.secondary">
+            {drawPreview.description}
+          </Typography>
+        )}
+
         <EventDetails
           eventDate={drawPreview.eventDate}
           eventPlace={drawPreview.eventPlace}
@@ -105,7 +130,7 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
           {t('drawCard.viewDetails')}
           <ArrowForward fontSize="small" />
         </Box>
-      </DrawCardBase>
+      </PaperCard>
     </ButtonBase>
   );
 };

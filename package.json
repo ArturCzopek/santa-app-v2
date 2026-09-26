@@ -27,7 +27,6 @@
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^9.4.0",
     "@mui/material": "^9.4.0",
-    "date-fns": "^4.1.0",
     "firebase": "^12.19.0",
     "i18next": "^26.4.2",
     "react": "^19.3.0",

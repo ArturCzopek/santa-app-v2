@@ -2,16 +2,20 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { CalendarMonthOutlined, PlaceOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
-import { enUS, pl } from 'date-fns/locale';
 import { tokens } from '../../styles/theme';
 
-// 'YYYY-MM-DD' as a local calendar day, e.g. "24 grudnia 2026".
+// "24 grudnia 2026" / "24 December 2026".
+export const longDate = (date: Date, language: string) =>
+  date.toLocaleDateString(language === 'pl' ? 'pl' : 'en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+// 'YYYY-MM-DD' as a local calendar day.
 export const formatEventDate = (eventDate: string, language: string) => {
   const [year, month, day] = eventDate.split('-').map(Number);
-  return format(new Date(year, month - 1, day), 'd MMMM yyyy', {
-    locale: language === 'pl' ? pl : enUS,
-  });
+  return longDate(new Date(year, month - 1, day), language);
 };
 
 // One line for the invite message: "24 grudnia 2026, u babci".

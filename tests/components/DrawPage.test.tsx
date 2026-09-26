@@ -32,10 +32,9 @@ vi.mock('../../src/services/DrawService', () => ({
     renewInviteKey: vi.fn(),
     updateWish: vi.fn(),
     getLetter: vi.fn(),
+    startDraw: vi.fn(),
+    getMyAssignment: vi.fn(),
   },
-}));
-vi.mock('../../src/services/DrawingService', () => ({
-  drawingService: { startDraw: vi.fn(), getMyAssignment: vi.fn() },
 }));
 vi.mock('../../src/services/MessageService', () => ({
   messageService: { canUserSendMessageToday: vi.fn(), sendMessage: vi.fn() },
@@ -43,7 +42,6 @@ vi.mock('../../src/services/MessageService', () => ({
 
 import DrawPage from '../../src/pages/DrawPage';
 import { drawService } from '../../src/services/DrawService';
-import { drawingService } from '../../src/services/DrawingService';
 
 // Letters live apart from participants; getLetter below serves them.
 let letters: Record<string, string> = {};
@@ -116,12 +114,12 @@ describe('DrawPage', () => {
 
   it('keeps participants and shows the result after the owner starts the draw', async () => {
     vi.mocked(drawService.isDrawPasswordValid).mockResolvedValue(true);
-    vi.mocked(drawingService.startDraw).mockResolvedValue({
+    vi.mocked(drawService.startDraw).mockResolvedValue({
       ...waitingDraw,
       status: 'DRAWED',
       drawDate: new Date(),
     });
-    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
       toUuid: 'alice',
     });
     const user = userEvent.setup();
@@ -138,7 +136,7 @@ describe('DrawPage', () => {
     const done = await screen.findByRole('dialog', {
       name: 'Gotowe! Pary wylosowane',
     });
-    expect(drawingService.startDraw).toHaveBeenCalledWith('d1', 'owner');
+    expect(drawService.startDraw).toHaveBeenCalledWith('d1', 'owner');
     expect(within(done).getByText(/Koperty już czekają!/)).toBeInTheDocument();
     expect(
       within(done).getByText(/Otwórz swoją kopertę.*#\/draw\/d1/),
@@ -222,7 +220,7 @@ describe('DrawPage', () => {
       status: 'DRAWED',
       drawDate: new Date(),
     });
-    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
       toUuid: 'alice',
     });
     renderDrawPage();
@@ -258,12 +256,12 @@ describe('DrawPage', () => {
     expect(
       await within(dialog).findByText('Nieprawidłowe hasło'),
     ).toBeInTheDocument();
-    expect(drawingService.startDraw).not.toHaveBeenCalled();
+    expect(drawService.startDraw).not.toHaveBeenCalled();
   });
 
   it('explains in Polish when starting the draw fails', async () => {
     vi.mocked(drawService.isDrawPasswordValid).mockResolvedValue(true);
-    vi.mocked(drawingService.startDraw).mockRejectedValue(
+    vi.mocked(drawService.startDraw).mockRejectedValue(
       new Error('Draw cannot be started'),
     );
     const user = userEvent.setup();
@@ -395,7 +393,7 @@ describe('DrawPage', () => {
       status: 'DRAWED',
       drawDate: new Date(),
     });
-    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
       toUuid: 'alice',
     });
     const { unmount } = renderDrawPage();
@@ -424,7 +422,7 @@ describe('DrawPage', () => {
       status: 'DRAWED',
       drawDate: new Date(),
     });
-    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
       toUuid: 'alice',
     });
     const user = userEvent.setup();
@@ -773,7 +771,7 @@ describe('DrawPage', () => {
       status: 'DRAWED',
       drawDate: new Date(),
     });
-    vi.mocked(drawingService.getMyAssignment).mockResolvedValue({
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
       toUuid: 'alice',
     });
     renderDrawPage();

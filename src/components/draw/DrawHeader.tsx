@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
-import { pl, enUS } from 'date-fns/locale';
 import { Timestamp } from 'firebase/firestore';
 import Postmark from '../common/Postmark';
-import EventDetails from './EventDetails';
+import EventDetails, { longDate } from './EventDetails';
 import AddToCalendarButton from './AddToCalendarButton';
 import { Draw } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
@@ -109,9 +107,7 @@ const DrawHeader: React.FC<{ draw: Draw }> = ({ draw }) => {
         {drawn && draw.drawDate && (
           <Typography>
             {t('drawPage.drawnOn', {
-              date: format(toDate(draw.drawDate), 'd MMMM yyyy', {
-                locale: i18n.language === 'pl' ? pl : enUS,
-              }),
+              date: longDate(toDate(draw.drawDate), i18n.language),
             })}
           </Typography>
         )}

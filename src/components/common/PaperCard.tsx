@@ -39,25 +39,23 @@ const PaperCard: React.FC<PaperCardProps> = ({
   sx = {},
   ...rest
 }) => {
-  const as = onSubmit ? 'form' : component;
+  const sheet = (
+    <Box
+      component={onSubmit ? 'form' : component}
+      onSubmit={onSubmit}
+      noValidate={onSubmit ? true : undefined}
+      sx={[
+        paperSx,
+        airmail ? { borderRadius: '6px' } : { boxShadow: shadow },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
+      {...rest}
+    >
+      {children}
+    </Box>
+  );
 
-  if (!airmail) {
-    return (
-      <Box
-        component={as}
-        onSubmit={onSubmit}
-        noValidate={onSubmit ? true : undefined}
-        sx={[
-          paperSx,
-          { boxShadow: shadow },
-          ...(Array.isArray(sx) ? sx : [sx]),
-        ]}
-        {...rest}
-      >
-        {children}
-      </Box>
-    );
-  }
+  if (!airmail) return sheet;
 
   return (
     <Box
@@ -70,19 +68,7 @@ const PaperCard: React.FC<PaperCardProps> = ({
         boxShadow: shadow,
       }}
     >
-      <Box
-        component={as}
-        onSubmit={onSubmit}
-        noValidate={onSubmit ? true : undefined}
-        sx={[
-          paperSx,
-          { borderRadius: '6px' },
-          ...(Array.isArray(sx) ? sx : [sx]),
-        ]}
-        {...rest}
-      >
-        {children}
-      </Box>
+      {sheet}
     </Box>
   );
 };

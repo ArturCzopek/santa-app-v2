@@ -37,7 +37,6 @@ import { Draw, Participant } from '../models/Draw';
 import { useAuth } from '../hooks/useAuth';
 import { useNotify } from '../hooks/useNotify';
 import UserWishSection from '../components/draw/UserWishSection';
-import { drawingService } from '../services/DrawingService';
 import { tokens } from '../styles/theme';
 
 const BackToDraws = () => {
@@ -244,7 +243,7 @@ const DrawPage = () => {
     if (!draw || !drawId || !user) return;
 
     try {
-      const updatedDraw = await drawingService.startDraw(drawId, user.uid);
+      const updatedDraw = await drawService.startDraw(drawId, user.uid);
       setDraw({
         ...draw,
         status: updatedDraw.status,

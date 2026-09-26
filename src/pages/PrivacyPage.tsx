@@ -4,10 +4,9 @@ import { ArrowBack } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
-import { enUS, pl } from 'date-fns/locale';
 import MainLayout from '../components/layout/MainLayout';
 import PaperCard from '../components/common/PaperCard';
+import { longDate } from '../components/draw/EventDetails';
 import { tokens } from '../styles/theme';
 import { LAST_UPDATED, privacyPolicy } from './privacyPolicy';
 
@@ -35,9 +34,7 @@ const PrivacyPage = () => {
         </Typography>
         <Typography sx={{ color: tokens.snowMuted }}>
           {t('privacy.updated', {
-            date: format(new Date(LAST_UPDATED), 'd MMMM yyyy', {
-              locale: language === 'pl' ? pl : enUS,
-            }),
+            date: longDate(new Date(LAST_UPDATED), language),
           })}
         </Typography>
       </Box>

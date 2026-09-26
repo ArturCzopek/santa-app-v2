@@ -61,9 +61,6 @@ const baseTheme = createTheme({
     fontFamily: '"Nunito", "Segoe UI", system-ui, sans-serif',
     h1: { fontWeight: 800, fontSize: '2.25rem', lineHeight: 1.15, letterSpacing: '-0.01em' },
     h2: { fontWeight: 800, fontSize: '1.625rem', lineHeight: 1.2 },
-    h3: { fontWeight: 700, fontSize: '1.3rem', lineHeight: 1.25 },
-    h4: { fontWeight: 700, fontSize: '1.15rem', lineHeight: 1.3 },
-    h5: { fontWeight: 700, fontSize: '1.05rem' },
     h6: { fontWeight: 700, fontSize: '1rem' },
     body1: { fontSize: '1rem', lineHeight: 1.55 },
     body2: { fontSize: '0.9375rem', lineHeight: 1.5 },
@@ -167,17 +164,6 @@ const baseTheme = createTheme({
     },
     MuiMenu: {
       styleOverrides: { paper: { ...onPaper, color: tokens.ink } },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 10,
-          boxShadow: '0 12px 28px -12px rgba(0, 0, 0, 0.55)',
-        },
-      },
-    },
-    MuiChip: {
-      styleOverrides: { root: { fontWeight: 700 } },
     },
     MuiLink: {
       styleOverrides: { root: { textUnderlineOffset: '0.2em' } },

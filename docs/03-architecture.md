@@ -74,7 +74,7 @@ participants see only "List gotowy" / "Bez listu", never the text.
 existing pair. Before saving, the app checks that a draw is still possible
 (`isDrawPossible` in [`pairs.ts`](../src/services/pairs.ts)).
 
-**Starting the draw** (`StartDrawModal` -> `DrawingService.startDraw`). The owner types the
+**Starting the draw** (`StartDrawModal` -> `DrawService.startDraw`). The owner types the
 password, which the app checks against the join key (the invite link's key does not count,
 so whoever has the link still cannot start the draw). Then the owner's browser:
 
@@ -107,9 +107,9 @@ written until it is saved (`services/letterDraft.ts`).
 |---|---|
 | `src/pages/` | One file per screen: `LoginPage`, `DrawsListPage`, `CreatePage`, `JoinToDrawPage`, `DrawPage`, `PrivacyPage` |
 | `src/components/draw/` | Parts of the draw page: header, letter, envelope and result, participants, exclusions, invite, start/edit dialogs |
-| `src/components/common/` | The design's building blocks: `PaperCard`, `Postmark`, `StampAvatar`, `ConfirmDialog`, `ActionButtons` |
+| `src/components/common/` | The design's building blocks: `PaperCard`, `Postmark`, `StampAvatar`, `ConfirmDialog` |
 | `src/components/form/` | Form fields on paper, the password field, form buttons |
-| `src/services/` | Everything that talks to Firebase (`DrawService`, `DrawingService`, `MessageService`, `AppDataService`), the pairing algorithm (`pairs.ts`), password hashing, in-app browser detection |
+| `src/services/` | Everything that talks to Firebase (`DrawService`, `MessageService`, `AppDataService`), the pairing algorithm (`pairs.ts`), password hashing, in-app browser detection |
 | `src/styles/theme.ts` | Colour tokens, fonts, the MUI theme, the focus ring |
 | `src/i18n.ts` | All texts, Polish and English |
 | `firestore.rules` | The security rules, i.e. the backend |

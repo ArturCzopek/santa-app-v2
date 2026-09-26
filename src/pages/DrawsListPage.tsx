@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { Add, GroupAdd } from '@mui/icons-material';
 import MainLayout from '../components/layout/MainLayout';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,6 @@ import { useAuth } from '../hooks/useAuth';
 import { drawService } from '../services/DrawService';
 import { DrawPreview } from '../models/Draw';
 import DrawPreviewCard from '../components/draw/DrawPreviewCard';
-import ActionButtons from '../components/common/ActionButtons';
 import PaperCard from '../components/common/PaperCard';
 import HowItWorks from '../components/HowItWorks';
 import JoinDrawModal from '../components/draw/JoinDrawModal';
@@ -52,24 +51,35 @@ const DrawsListPage = () => {
   // "one of 1 draws" reads oddly, so the real counts show up once they grow.
   const showStats = totalDrawsCount >= 2 && totalWinnersCounts >= 2;
 
-  const actionButtons = [
-    {
-      icon: <Add />,
-      label: t('drawsPage.createButton'),
-      onClick: () => navigate('/create'),
-    },
-    {
-      icon: <GroupAdd />,
-      label: t('drawsPage.joinButton'),
-      variant: 'outlined' as const,
-      sx: { color: tokens.snow },
-      onClick: () => setIsJoinModalOpen(true),
-    },
-  ];
-
   return (
     <MainLayout title={t('drawsPage.title')}>
-      <ActionButtons buttons={actionButtons} containerStyles={{ mb: 4 }} />
+      {/* Full-width buttons on phones. */}
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 1.5,
+          mb: 4,
+          '& > *': { flex: { xs: '1 1 100%', sm: '0 0 auto' } },
+        }}
+      >
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={() => navigate('/create')}
+        >
+          {t('drawsPage.createButton')}
+        </Button>
+        <Button
+          variant="outlined"
+          color="inherit"
+          startIcon={<GroupAdd />}
+          onClick={() => setIsJoinModalOpen(true)}
+          sx={{ color: tokens.snow }}
+        >
+          {t('drawsPage.joinButton')}
+        </Button>
+      </Box>
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>

@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { storage } from './services/storage';
 
 const resources = {
   en: {
@@ -65,7 +66,6 @@ const resources = {
         budget: 'Budget: {{budget}} {{currency}}',
         checkResults: 'The draw took place – open your envelope to see who you buy for.',
         envelopeOpened: 'Envelope opened. Look again whenever you want to reread the letter.',
-        drawDate: 'Draw date: {{drawDate}}',
         drawedStatus: 'Drawn',
         noWish: 'You have not written your letter to Santa yet.',
         participants: 'Participants: {{count}}',
@@ -113,7 +113,6 @@ const resources = {
           accessDenied: 'You are not in this draw. If you have an invitation, you can join it.',
           drawNotFound: "Draw not found or you don't have access to it.",
           fetchFailed: 'Failed to fetch draw details. Please try again.',
-          redirecting: "You will be redirected to your draws in a few seconds.",
           startDrawFailed:
             'Failed to start the draw. Refresh the page and try again.',
           wishUpdateFailed: 'Failed to update your wish. Please try again.',
@@ -281,7 +280,6 @@ const resources = {
         title: 'How does it work?',
       },
       joinPage: {
-        alreadyParticipating: 'You are already participating in this draw',
         createdBy: 'From: {{name}}',
         invitedBy: '{{name}} invites you to a Secret Santa.',
         errors: {
@@ -293,17 +291,14 @@ const resources = {
           linkExpired:
             'This link no longer works – the organizer made a new one. Type the password or ask for the new link.',
           joinFailed: 'Failed to join the draw. Please try again.',
-          loginRequired: 'You need to log in to join this draw',
           passwordRequired: 'Password is required to join the draw',
         },
         joinButton: 'Join Draw',
         loginRequired: 'You have an invitation to a Secret Santa. Sign in to see who invites you and to join.',
         passwordHint: 'You get the password from the organizer.',
         passwordLabel: 'Draw password',
-        passwordPlaceholder: 'Enter the draw password',
         success: 'You are in! Now write your letter to Santa.',
         title: 'Invitation to a draw',
-        viewDraw: 'View Draw',
       },
       loginPage: {
         errors: {
@@ -449,7 +444,6 @@ const resources = {
         budget: 'Budżet: {{budget}} {{currency}}',
         checkResults: 'Losowanie się odbyło – otwórz kopertę i sprawdź, komu kupujesz prezent.',
         envelopeOpened: 'Koperta otwarta. Zajrzyj, jeśli chcesz jeszcze raz przeczytać list.',
-        drawDate: 'Data losowania: {{drawDate}}',
         drawedStatus: 'Rozlosowane',
         noWish: 'Nie masz jeszcze listu do Mikołaja.',
         participants: 'Uczestnicy: {{count}}',
@@ -499,7 +493,6 @@ const resources = {
             'Losowanie nie zostało znalezione lub nie masz do niego dostępu.',
           fetchFailed:
             'Nie udało się pobrać szczegółów losowania. Spróbuj ponownie.',
-          redirecting: 'Za kilka sekund wrócisz do listy swoich losowań.',
           startDrawFailed:
             'Nie udało się przeprowadzić losowania. Odśwież stronę i spróbuj ponownie.',
           wishUpdateFailed: 'Nie udało się zapisać listu. Spróbuj ponownie.',
@@ -670,7 +663,6 @@ const resources = {
         title: 'Jak to działa?',
       },
       joinPage: {
-        alreadyParticipating: 'Już uczestniczysz w tym losowaniu',
         createdBy: 'Od: {{name}}',
         invitedBy: '{{name}} zaprasza cię do Tajemniczego Mikołaja.',
         errors: {
@@ -684,17 +676,14 @@ const resources = {
           linkExpired:
             'Ten link już nie działa – organizator utworzył nowy. Wpisz hasło albo poproś o nowy link.',
           joinFailed: 'Nie udało się dołączyć do losowania. Spróbuj ponownie.',
-          loginRequired: 'Musisz się zalogować, aby dołączyć do tego losowania',
           passwordRequired: 'Wpisz hasło, żeby dołączyć do losowania',
         },
         loginRequired: 'Masz zaproszenie do Tajemniczego Mikołaja. Zaloguj się, żeby zobaczyć, kto zaprasza, i dołączyć.',
         joinButton: 'Dołącz do losowania',
         passwordHint: 'Hasło dostajesz od organizatora.',
         passwordLabel: 'Hasło do losowania',
-        passwordPlaceholder: 'Wprowadź hasło do losowania',
         success: 'Jesteś w losowaniu! Teraz napisz list do Mikołaja.',
         title: 'Zaproszenie do losowania',
-        viewDraw: 'Zobacz losowanie',
       },
       loginPage: {
         errors: {
@@ -784,13 +773,8 @@ export type Language = 'pl' | 'en';
 // The chosen language is kept in this browser; Polish is the default.
 const LANGUAGE_KEY = 'santa-app.language';
 
-const savedLanguage = (): Language => {
-  try {
-    return localStorage.getItem(LANGUAGE_KEY) === 'en' ? 'en' : 'pl';
-  } catch {
-    return 'pl';
-  }
-};
+const savedLanguage = (): Language =>
+  storage.get(LANGUAGE_KEY) === 'en' ? 'en' : 'pl';
 
 i18n.use(initReactI18next).init({
   resources,
@@ -807,11 +791,8 @@ if (typeof document !== 'undefined') {
 export const setLanguage = (language: Language) => {
   i18n.changeLanguage(language);
   document.documentElement.lang = language;
-  try {
-    localStorage.setItem(LANGUAGE_KEY, language);
-  } catch {
-    // Not remembered, then: the next visit starts in Polish.
-  }
+  // Not remembered in private mode: the next visit starts in Polish.
+  storage.set(LANGUAGE_KEY, language);
 };
 
 export default i18n;

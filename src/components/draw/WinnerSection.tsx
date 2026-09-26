@@ -4,7 +4,6 @@ import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { Assignment, Draw } from '../../models/Draw';
-import { drawingService } from '../../services/DrawingService';
 import { drawService } from '../../services/DrawService';
 import PaperCard from '../common/PaperCard';
 import StampAvatar from '../common/StampAvatar';
@@ -49,7 +48,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
     const drawId = draw.id;
     (async () => {
       try {
-        const mine = await drawingService.getMyAssignment(drawId, user.uid);
+        const mine = await drawService.getMyAssignment(drawId, user.uid);
         // The rules let only the Santa read the recipient's letter.
         const letter = mine
           ? await drawService.getLetter(drawId, mine.toUuid)

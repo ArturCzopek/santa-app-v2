@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { format } from 'date-fns';
 import { Control, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import FormTextField from '../form/FormTextField';
@@ -29,7 +28,8 @@ export const cleanDrawDetails = (details: DrawDetails): DrawDetails => ({
 });
 
 // Today as 'YYYY-MM-DD' in the person's own time zone.
-const todayIso = () => format(new Date(), 'yyyy-MM-dd');
+// Sweden writes dates as local 'YYYY-MM-DD'.
+const todayIso = () => new Date().toLocaleDateString('sv');
 
 // The draw's own fields, shared by the create form and the edit dialog.
 const DrawDetailsFields = <T extends FieldValues & DrawDetails>({
