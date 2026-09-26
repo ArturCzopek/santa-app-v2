@@ -3,10 +3,16 @@ import {
   Box,
   ButtonBase,
   Collapse,
+  IconButton,
   LinearProgress,
   Typography,
 } from '@mui/material';
-import { CheckCircle, ExpandMore, HourglassEmpty } from '@mui/icons-material';
+import {
+  CheckCircle,
+  ExpandMore,
+  HourglassEmpty,
+  PersonRemoveOutlined,
+} from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Draw, Participant } from '../../models/Draw';
 import { useAuth } from '../../hooks/useAuth';
@@ -17,9 +23,14 @@ import { tokens } from '../../styles/theme';
 
 interface ParticipantsSectionProps {
   draw: Draw;
+  // The owner, before the draw: take someone else out.
+  onRemove?: (participant: Participant) => void;
 }
 
-const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
+const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
+  draw,
+  onRemove,
+}) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   // Whether someone wrote a letter matters only until the draw; after it
@@ -37,6 +48,8 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
   const renderParticipantRow = (participant: Participant) => {
     const isCurrentUser = user && participant.userUuid === user.uid;
     const hasWish = !!participant.hasWish;
+    const canRemove =
+      !!onRemove && showWishStatus && participant.userUuid !== draw.ownerUuid;
 
     return (
       <Box
@@ -96,6 +109,21 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ draw }) => {
               ? t('drawPage.participantsSection.wishProvided')
               : t('drawPage.participantsSection.noWish')}
           </Typography>
+        )}
+        {canRemove && (
+          <IconButton
+            aria-label={t('drawPage.remove.button', {
+              name: participant.userName,
+            })}
+            onClick={() => onRemove(participant)}
+            sx={{ flexShrink: 0, mr: -1, color: tokens.inkMuted }}
+          >
+            <PersonRemoveOutlined />
+          </IconButton>
+        )}
+        {/* Keeps the organizer's status in line with the rows above. */}
+        {!!onRemove && showWishStatus && !canRemove && (
+          <Box aria-hidden sx={{ width: 40, flexShrink: 0, mr: -1 }} />
         )}
       </Box>
     );

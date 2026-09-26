@@ -205,7 +205,8 @@ tests in `tests/rules`).
 
 - `draws/{id}` - public draw info only (anyone signed in who knows the id).
   Before the draw the owner may edit its details or delete it with everything
-  under it, and participants other than the owner may leave; after the draw
+  under it, or take one other participant out (with their letter), and
+  participants other than the owner may leave; after the draw
   it does not change.
 - `draws/{id}/participants/{uid}` - name, photo and whether the letter is
   written (`hasWish`), readable by participants; names/photos must match the

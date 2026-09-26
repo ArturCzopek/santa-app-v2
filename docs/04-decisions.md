@@ -168,3 +168,11 @@ the language and remembers it in the browser; Polish stays the default for new v
 Without a server (D1) the app cannot send reminders. When a gift exchange date is set,
 "Dodaj do kalendarza" downloads an .ics event with the place, the budget and a link back to
 the draw, so the phone reminds people and brings them back.
+
+## D29. The organizer can take someone out before the draw, Accepted
+Someone joins by mistake, a link reaches a stranger, or a person drops out without leaving
+themselves; until now the only fix was deleting the whole draw. Before the draw the owner
+can remove one other participant: the list entry, the participant document, their letter
+(deleted unread) and the exclusion pairs they were in go in one batch. The invite link is
+not replaced automatically, because everyone else may still need it; the dialog says to make
+a new one if the person should not come back.

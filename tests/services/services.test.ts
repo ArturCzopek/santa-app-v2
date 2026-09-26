@@ -199,6 +199,31 @@ describe('DrawService + DrawingService against the emulator', () => {
     expect(await drawService.getDrawPreviews(owner.uid)).toEqual([]);
   });
 
+  it('lets the owner take someone out, with their letter and pairs', async () => {
+    const owner = await signInAs('owner', 'Olga Owner');
+    const drawId = await drawService.createDraw(newDrawForm, owner);
+    const alice = await signInAs('alice', 'Ania Test');
+    await drawService.joinToDraw(drawId, alice, 'secret1');
+    await drawService.updateWish(drawId, alice.uid, 'Socks');
+    const bob = await signInAs('bob', 'Bob Test');
+    await drawService.joinToDraw(drawId, bob, 'secret1');
+
+    await signInAs('owner', 'Olga Owner');
+    await drawService.addExclusion(drawId, [alice.uid, bob.uid]);
+    await drawService.removeParticipant(drawId, alice.uid);
+    expect((await drawService.getDraw(drawId)).participantUuids).toEqual([
+      owner.uid,
+      bob.uid,
+    ]);
+    expect(await drawService.getExclusions(drawId)).toEqual([]);
+
+    // Joining again starts with an empty letter.
+    await signInAs('alice', 'Ania Test');
+    expect(await drawService.getDrawPreviews(alice.uid)).toEqual([]);
+    await drawService.joinToDraw(drawId, alice, 'secret1');
+    expect(await drawService.getLetter(drawId, alice.uid)).toBe('');
+  });
+
   it('draws around the exclusions', async () => {
     const owner = await signInAs('owner', 'Olga Owner');
     const drawId = await drawService.createDraw(newDrawForm, owner);

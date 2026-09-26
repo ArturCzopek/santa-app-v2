@@ -144,6 +144,14 @@ const resources = {
           text: 'Leave "{{name}}"? Your letter to Santa will be deleted. You can join again with the invite link.',
           title: 'Leave the draw?',
         },
+        remove: {
+          button: 'Remove from the draw: {{name}}',
+          confirm: 'Remove',
+          done: '{{name}} is no longer in the draw.',
+          failed: 'Could not remove this person. Please try again.',
+          text: '{{name}} will no longer take part in "{{draw}}", and their letter will be deleted. The invite link lets people join again; if this person should not, make a new link in "Invite to the draw".',
+          title: 'Remove this person from the draw?',
+        },
         exclusions: {
           add: 'Add the pair',
           alreadyThere: 'This pair is already on the list.',
@@ -521,6 +529,14 @@ const resources = {
           failed: 'Nie udało się opuścić losowania. Spróbuj ponownie.',
           text: 'Opuścić „{{name}}”? Twój list do Mikołaja zostanie usunięty. Możesz wrócić przez link z zaproszeniem.',
           title: 'Opuścić losowanie?',
+        },
+        remove: {
+          button: 'Usuń z losowania: {{name}}',
+          confirm: 'Usuń',
+          done: '{{name}} nie bierze już udziału w losowaniu.',
+          failed: 'Nie udało się usunąć tej osoby. Spróbuj ponownie.',
+          text: '{{name}} przestanie brać udział w „{{draw}}”, a list tej osoby zostanie usunięty. Przez link z zaproszeniem można dołączyć ponownie – jeśli ta osoba nie powinna, utwórz nowy link w oknie „Zaproś do losowania”.',
+          title: 'Usunąć osobę z losowania?',
         },
         exclusions: {
           add: 'Dodaj parę',

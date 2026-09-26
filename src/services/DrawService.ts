@@ -263,6 +263,22 @@ class DrawService {
     await batch.commit();
   }
 
+  // Owner only, before the draw: takes someone else out, with their letter
+  // (unread) and the pairs they were in.
+  async removeParticipant(drawId: string, userId: string): Promise<void> {
+    const exclusions = await this.getExclusions(drawId);
+    const batch = writeBatch(db);
+    batch.delete(doc(this.participantsCollection(drawId), userId));
+    batch.delete(this.letterRef(drawId, userId));
+    exclusions
+      .filter((pair) => pair.includes(userId))
+      .forEach((pair) => batch.delete(this.exclusionRef(drawId, pair)));
+    batch.update(doc(this.drawsCollection, drawId), {
+      participantUuids: arrayRemove(userId),
+    });
+    await batch.commit();
+  }
+
   // Owner only.
   async getExclusions(drawId: string): Promise<Exclusion[]> {
     const snapshot = await getDocs(this.exclusionsCollection(drawId));

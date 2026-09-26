@@ -33,7 +33,7 @@ import DrawOptionsMenu, {
   DrawOption,
 } from '../components/draw/DrawOptionsMenu';
 import { drawService } from '../services/DrawService';
-import { Draw } from '../models/Draw';
+import { Draw, Participant } from '../models/Draw';
 import { useAuth } from '../hooks/useAuth';
 import { useNotify } from '../hooks/useNotify';
 import UserWishSection from '../components/draw/UserWishSection';
@@ -87,6 +87,14 @@ const DrawPage = () => {
   // joining it starts open.
   const [editingLetter, setEditingLetter] = useState<boolean | null>(null);
   const [confirming, setConfirming] = useState<'delete' | 'leave' | null>(null);
+  // The person stays set while the dialog fades out, so its text does not
+  // change on the way.
+  const [removing, setRemoving] = useState<Participant | null>(null);
+  const [isRemoveOpen, setIsRemoveOpen] = useState(false);
+  const askToRemove = (participant: Participant) => {
+    setRemoving(participant);
+    setIsRemoveOpen(true);
+  };
 
   // A reload should not open the invite again.
   useEffect(() => {
@@ -202,6 +210,25 @@ const DrawPage = () => {
       );
       setConfirming(null);
     }
+  };
+
+  const handleRemove = async () => {
+    if (!draw?.id || !removing) return;
+    const uid = removing.userUuid;
+    try {
+      await drawService.removeParticipant(draw.id, uid);
+      setDraw({
+        ...draw,
+        participantUuids: draw.participantUuids.filter((id) => id !== uid),
+        participants: draw.participants.filter((p) => p.userUuid !== uid),
+      });
+      setExclusions(exclusions.filter((pair) => !pair.includes(uid)));
+      notify(t('drawPage.remove.done', { name: removing.userName }), 'success');
+    } catch (err) {
+      console.error('Error removing a participant:', err);
+      notify(t('drawPage.remove.failed'));
+    }
+    setIsRemoveOpen(false);
   };
 
   // From the start dialog to the exclusions, once the dialog has closed.
@@ -376,7 +403,10 @@ const DrawPage = () => {
           writeButtonInRow={isWaiting}
         />
 
-        <ParticipantsSection draw={draw} />
+        <ParticipantsSection
+          draw={draw}
+          onRemove={isOwner && isWaiting ? askToRemove : undefined}
+        />
 
         {isOwner && isWaiting && draw.participantUuids.length >= 2 && (
           <ExclusionsSection
@@ -438,6 +468,18 @@ const DrawPage = () => {
         }
         onClose={() => setConfirming(null)}
         onConfirm={handleDeleteOrLeave}
+      />
+
+      <ConfirmDialog
+        open={isRemoveOpen}
+        title={t('drawPage.remove.title')}
+        text={t('drawPage.remove.text', {
+          name: removing?.userName ?? '',
+          draw: draw.drawName,
+        })}
+        confirmLabel={t('drawPage.remove.confirm')}
+        onClose={() => setIsRemoveOpen(false)}
+        onConfirm={handleRemove}
       />
 
       {isOwner && (

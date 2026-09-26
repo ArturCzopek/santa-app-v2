@@ -28,6 +28,7 @@ vi.mock('../../src/services/DrawService', () => ({
     addExclusion: vi.fn(),
     removeExclusion: vi.fn(),
     leaveDraw: vi.fn(),
+    removeParticipant: vi.fn(),
     renewInviteKey: vi.fn(),
     updateWish: vi.fn(),
     getLetter: vi.fn(),
@@ -723,6 +724,46 @@ describe('DrawPage', () => {
     );
     expect(drawService.deleteDraw).toHaveBeenCalledWith('d1');
     expect(await screen.findByText('Draws list page')).toBeInTheDocument();
+  });
+
+  it('lets the owner take someone else out before the draw', async () => {
+    vi.mocked(drawService.removeParticipant).mockResolvedValue();
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await screen.findByText('Office party');
+    // Not the owner themselves.
+    expect(
+      screen.queryByRole('button', {
+        name: 'Usuń z losowania: Olga Owner',
+      }),
+    ).toBeNull();
+    await user.click(
+      screen.getByRole('button', { name: 'Usuń z losowania: Ania Test' }),
+    );
+    const dialog = await screen.findByRole('dialog');
+    expect(
+      within(dialog).getByText(/Ania Test przestanie brać udział/),
+    ).toBeInTheDocument();
+    await user.click(within(dialog).getByRole('button', { name: 'Usuń' }));
+
+    expect(drawService.removeParticipant).toHaveBeenCalledWith('d1', 'alice');
+    expect(
+      await screen.findByText('Ania Test nie bierze już udziału w losowaniu.'),
+    ).toBeInTheDocument();
+    // Waits for the dialog to close and give the page back.
+    expect(
+      await screen.findByRole('heading', { name: 'Uczestnicy (1)' }),
+    ).toBeInTheDocument();
+  });
+
+  it('does not let participants take anyone out', async () => {
+    auth.user = fakeUser('alice', 'Ania Test');
+    renderDrawPage();
+    await screen.findByText('Office party');
+    expect(
+      screen.queryByRole('button', { name: /Usuń z losowania/ }),
+    ).toBeNull();
   });
 
   it('offers no options after the draw', async () => {

@@ -72,7 +72,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'change',
       question: 'Czy można coś zmienić albo się wycofać?',
       answer: [
-        'Przed losowaniem organizator może edytować albo usunąć losowanie, a uczestnicy mogą je opuścić („Więcej”). Po losowaniu nic poza listami się nie zmienia, żeby wyniki wszystkich były ważne.',
+        'Przed losowaniem organizator może edytować albo usunąć losowanie („Więcej”) i usunąć z niego osobę (ikona przy imieniu na liście uczestników), a uczestnicy mogą je opuścić („Więcej”). Po losowaniu nic poza listami się nie zmienia, żeby wyniki wszystkich były ważne.',
       ],
     },
     {
@@ -145,7 +145,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'change',
       question: 'Can things be changed, or can I back out?',
       answer: [
-        'Before the draw the organizer can edit or delete it, and participants can leave ("More"). After the draw nothing but the letters changes, so everyone’s result stays valid.',
+        'Before the draw the organizer can edit or delete it ("More") and remove a person from it (the icon next to the name in the participants list), and participants can leave ("More"). After the draw nothing but the letters changes, so everyone’s result stays valid.',
       ],
     },
     {

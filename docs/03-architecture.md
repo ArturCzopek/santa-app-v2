@@ -45,7 +45,7 @@ it has different readers:
 | `messages/{uid}_{date}` | Messages to the author, one per person per day | The author of the message (the app owner reads them in the Firebase console) |
 
 The draw's status goes `WAITING_FOR_DRAW` -> `DRAWED` once and never back. Before the draw
-the owner can edit or delete it and participants can leave; after it, the rules freeze the
+the owner can edit or delete it and take someone out, and participants can leave; after it, the rules freeze the
 draw so every result stays valid.
 
 ## What happens at each step

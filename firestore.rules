@@ -132,6 +132,29 @@ service cloud.firestore {
         && !existsAfter(participantPath(drawId, request.auth.uid));
     }
 
+    // The owner takes one other person out before the draw (someone who
+    // joined by mistake, or will not take part after all), together with
+    // their participant document.
+    function isRemovingParticipant(drawId) {
+      let removed = resource.data.participantUuids.removeAll(request.resource.data.participantUuids);
+      return resource.data.ownerUuid == request.auth.uid
+        && resource.data.status == 'WAITING_FOR_DRAW'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantUuids'])
+        && removed.size() == 1
+        && !(request.auth.uid in removed)
+        && request.resource.data.participantUuids == resource.data.participantUuids.removeAll(removed)
+        && !existsAfter(participantPath(drawId, removed[0]));
+    }
+
+    // The documents that go with a person the owner takes out: that person
+    // is off the list after this batch.
+    function isOwnerRemoving(drawId, uid) {
+      return get(drawPath(drawId)).data.ownerUuid == request.auth.uid
+        && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
+        && uid != request.auth.uid
+        && !(uid in getAfter(drawPath(drawId)).data.participantUuids);
+    }
+
     function isValidNewParticipant(uid) {
       let p = request.resource.data;
       return p.keys().hasOnly(['userName', 'userUuid', 'userPhotoUrl', 'entryDate', 'hasWish', 'joinKey'])
@@ -150,7 +173,7 @@ service cloud.firestore {
       allow create: if signedIn() && isValidNewDraw(drawId);
       allow update: if signedIn()
         && (isStartingDraw() || isJoining(drawId) || isEditingDetails()
-          || isLeaving(drawId));
+          || isLeaving(drawId) || isRemovingParticipant(drawId));
       allow delete: if signedIn()
         && resource.data.ownerUuid == request.auth.uid
         && resource.data.status == 'WAITING_FOR_DRAW';
@@ -183,9 +206,11 @@ service cloud.firestore {
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hasWish'])
           && request.resource.data.hasWish == (getAfter(letterPath(drawId, uid)).data.wish.size() > 0);
 
-        // Leaving the draw, or the owner deleting it.
+        // Leaving the draw, the owner taking someone out, or the owner
+        // deleting the draw.
         allow delete: if signedIn()
           && (isDeletingDraw(drawId)
+            || isOwnerRemoving(drawId, uid)
             || (request.auth.uid == uid
               && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
               && uid != get(drawPath(drawId)).data.ownerUuid
@@ -252,9 +277,11 @@ service cloud.firestore {
           && isString(request.resource.data.wish, 2000)
           && getAfter(participantPath(drawId, uid)).data.hasWish == (request.resource.data.wish.size() > 0);
 
-        // Leaving the draw, or the owner deleting it.
+        // Leaving the draw, the owner taking someone out (the letter goes
+        // unread), or the owner deleting the draw.
         allow delete: if signedIn()
           && (isDeletingDraw(drawId)
+            || isOwnerRemoving(drawId, uid)
             || (request.auth.uid == uid
               && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
               && !(uid in getAfter(drawPath(drawId)).data.participantUuids)));

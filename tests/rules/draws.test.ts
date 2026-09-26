@@ -497,10 +497,76 @@ describe('draws', () => {
       await assertFails(deleteAll(db));
     });
 
-    it('owner cannot remove a participant without deleting the draw', async () => {
+    it('owner cannot remove a participant without taking them off the list', async () => {
       await assertFails(
         deleteDoc(doc(authed(env, OWNER), `draws/d1/participants/${ALICE}`)),
       );
+    });
+
+    // The owner takes someone out: the list, their participant document,
+    // their letter and the exclusions they were in, in one batch.
+    const removeParticipant = (
+      db: ReturnType<typeof authed>,
+      uid: string,
+      exclusionIds: string[] = [],
+    ) => {
+      const batch = writeBatch(db);
+      batch.delete(doc(db, `draws/d1/participants/${uid}`));
+      batch.delete(doc(db, `draws/d1/letters/${uid}`));
+      exclusionIds.forEach((id) =>
+        batch.delete(doc(db, `draws/d1/exclusions/${id}`)),
+      );
+      batch.update(doc(db, 'draws/d1'), {
+        participantUuids: arrayRemove(uid),
+      });
+      return batch.commit();
+    };
+
+    it('owner takes a participant out before the draw, with their letter and pairs', async () => {
+      await joinDraw(authed(env, BOB), 'd1', BOB);
+      await writeLetter(authed(env, ALICE), 'd1', ALICE, 'Skarpetki');
+      const [a, b] = [ALICE, BOB].sort();
+      await setDoc(doc(authed(env, OWNER), `draws/d1/exclusions/${a}_${b}`), {
+        a,
+        b,
+      });
+
+      await assertSucceeds(
+        removeParticipant(authed(env, OWNER), ALICE, [`${a}_${b}`]),
+      );
+      const snapshot = await getDoc(doc(authed(env, OWNER), 'draws/d1'));
+      expect(snapshot.data()?.participantUuids).toEqual([OWNER, BOB]);
+    });
+
+    it('owner cannot take out two people at once, themselves, or anyone after the draw', async () => {
+      await joinDraw(authed(env, BOB), 'd1', BOB);
+      const db = authed(env, OWNER);
+
+      const both = writeBatch(db);
+      both.delete(doc(db, `draws/d1/participants/${ALICE}`));
+      both.delete(doc(db, `draws/d1/participants/${BOB}`));
+      both.update(doc(db, 'draws/d1'), {
+        participantUuids: arrayRemove(ALICE, BOB),
+      });
+      await assertFails(both.commit());
+
+      await assertFails(removeParticipant(db, OWNER));
+
+      // The participant document must go with the name on the list.
+      await assertFails(
+        updateDoc(doc(db, 'draws/d1'), { participantUuids: arrayRemove(BOB) }),
+      );
+
+      await updateDoc(doc(db, 'draws/d1'), {
+        status: 'DRAWED',
+        drawDate: serverTimestamp(),
+      });
+      await assertFails(removeParticipant(db, ALICE));
+    });
+
+    it('a participant cannot take someone else out', async () => {
+      await joinDraw(authed(env, BOB), 'd1', BOB);
+      await assertFails(removeParticipant(authed(env, BOB), ALICE));
     });
 
     it('a participant can leave before the draw', async () => {
