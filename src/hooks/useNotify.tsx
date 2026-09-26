@@ -34,7 +34,8 @@ export const NotifyProvider: React.FC<{ children: React.ReactNode }> = ({
       <Snackbar
         key={notification?.key}
         open={open}
-        autoHideDuration={6000}
+        // Errors stay until closed: they often say what to do next.
+        autoHideDuration={notification?.severity === 'error' ? null : 6000}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >

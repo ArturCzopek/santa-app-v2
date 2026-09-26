@@ -12,7 +12,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { ExitToApp, FeedbackOutlined } from '@mui/icons-material';
+import { ExitToApp, FeedbackOutlined, MailOutlined } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router';
 import { useAuth } from '../../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
@@ -64,6 +64,23 @@ const Navbar = () => {
           </ButtonBase>
 
           <Box sx={{ flexGrow: 1 }} />
+
+          {/* The way back to your draws, said in words, not only by the
+              logo. On phones it is in the account menu. */}
+          {user && (
+            <Button
+              component={RouterLink}
+              to="/draws"
+              color="inherit"
+              startIcon={<MailOutlined />}
+              sx={{
+                ...navButtonStyles,
+                display: { xs: 'none', md: 'inline-flex' },
+              }}
+            >
+              {t('navbar.yourDraws')}
+            </Button>
+          )}
 
           <Button
             color="inherit"
@@ -122,7 +139,18 @@ const Navbar = () => {
                   {userName}
                 </Typography>
                 <Divider />
-                {/* Wider screens have this button in the bar itself. */}
+                {/* Wider screens have these buttons in the bar itself. */}
+                <MenuItem
+                  component={RouterLink}
+                  to="/draws"
+                  onClick={() => setMenuAnchor(null)}
+                  sx={{ display: { md: 'none' } }}
+                >
+                  <ListItemIcon>
+                    <MailOutlined fontSize="small" />
+                  </ListItemIcon>
+                  {t('navbar.yourDraws')}
+                </MenuItem>
                 <MenuItem
                   onClick={openMessageModal}
                   sx={{ display: { md: 'none' } }}
