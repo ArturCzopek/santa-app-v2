@@ -22,6 +22,7 @@ Claude should delegate self-contained implementation tasks to Codex when the dec
 - Claude writes the handoff to a scratchpad file (repository and branch, context, scope and allowed files, out of scope, validation commands, report format; no commit, push or deploy) and runs it in the background:
   `~/.codex/.sandbox-bin/codex.exe exec -m gpt-6-luna -c model_reasoning_effort="xhigh" -s workspace-write -C <repo> -o <scratchpad>/codex-result.md - < <scratchpad>/codex-brief.md`
   Never claim a delegation that did not run. If Codex reports "code-mode host executable is missing", copy `codex-code-mode-host.exe` from `(Get-AppxPackage OpenAI.Codex).InstallLocation\app\resources` to `~/.codex/.sandbox-bin` and rerun.
+- Fallback: if Codex still cannot do the task after at most three attempts (tool or sandbox failure, no file access, model unavailable), Claude implements it itself within the same scope and tells Artur plainly that it was not delegated and why.
 - Claude does not edit Codex's files while it runs. Afterwards Claude reviews the diff, runs the validation itself, and reports to Artur separately: the handoff, Codex's result, Claude's review.
 - `BACKLOG.md` is the repository's shared backlog. Claude owns prioritization and product decisions; Codex may update an item's status when its assigned work is verified, without broadening its scope.
 
