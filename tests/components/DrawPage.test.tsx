@@ -765,6 +765,12 @@ describe('DrawPage', () => {
     expect(
       within(dialog).getByText(/Ania Test przestanie brać udział/),
     ).toBeInTheDocument();
+    expect(
+      within(dialog).getByText(/linku.*unieważnia tylko stary link, nie hasło/i),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByText(/ustaw nowe w „Więcej → Ustaw nowe hasło”/i),
+    ).toBeInTheDocument();
     await user.click(within(dialog).getByRole('button', { name: 'Usuń' }));
 
     expect(drawService.removeParticipant).toHaveBeenCalledWith('d1', 'alice');

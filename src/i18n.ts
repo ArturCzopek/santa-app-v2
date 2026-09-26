@@ -148,7 +148,7 @@ const resources = {
           confirm: 'Remove',
           done: '{{name}} is no longer in the draw.',
           failed: 'Could not remove this person. Please try again.',
-          text: '{{name}} will no longer take part in "{{draw}}", and their letter will be deleted. The invite link lets people join again; if this person should not, make a new link in "Invite to the draw".',
+          text: '{{name}} will no longer take part in "{{draw}}", and their letter will be deleted. They can rejoin with the invite link or password. Making a new link in "Invite to the draw" blocks only the old link, not the password. If this person knows the password, set a new one in "More → Set a new password" so they cannot rejoin.',
           title: 'Remove this person from the draw?',
         },
         exclusions: {
@@ -530,7 +530,7 @@ const resources = {
           confirm: 'Usuń',
           done: '{{name}} nie bierze już udziału w losowaniu.',
           failed: 'Nie udało się usunąć tej osoby. Spróbuj ponownie.',
-          text: '{{name}} przestanie brać udział w „{{draw}}”, a list tej osoby zostanie usunięty. Przez link z zaproszeniem można dołączyć ponownie – jeśli ta osoba nie powinna, utwórz nowy link w oknie „Zaproś do losowania”.',
+          text: '{{name}} przestanie brać udział w „{{draw}}”, a list tej osoby zostanie usunięty. Ta osoba może dołączyć ponownie przez link z zaproszeniem lub hasło. Utworzenie nowego linku w oknie „Zaproś do losowania” unieważnia tylko stary link, nie hasło. Jeśli ta osoba zna hasło, ustaw nowe w „Więcej → Ustaw nowe hasło”, aby nie mogła dołączyć ponownie.',
           title: 'Usunąć osobę z losowania?',
         },
         exclusions: {
