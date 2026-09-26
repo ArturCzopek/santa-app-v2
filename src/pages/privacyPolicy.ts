@@ -2,7 +2,7 @@
 // it is long prose; the page picks the language like the rest of the app.
 // Update LAST_UPDATED whenever the content changes.
 
-export const LAST_UPDATED = '2026-09-24';
+export const LAST_UPDATED = '2026-09-26';
 
 export type PolicySection = {
   heading: string;
@@ -25,7 +25,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
         'Z konta Google przy logowaniu: imię i nazwisko (nazwa wyświetlana), zdjęcie profilowe, adres e-mail i identyfikator konta. Adres e-mail zna tylko usługa logowania – nie pokazujemy go innym osobom i nie wysyłamy na niego wiadomości.',
         'To, co wpisujesz: losowania (nazwa, opis, budżet, data i miejsce wręczenia), listy do Mikołaja, wykluczenia par oraz wiadomości do autora.',
         'Dane potrzebne do działania losowania: lista uczestników, daty dołączenia i wynik losowania (kto komu kupuje prezent). Hasło losowania zapisujemy tylko jako skrót (hash), z którego nie da się go odczytać.',
-        'W Twojej przeglądarce (localStorage) zapamiętujemy tylko, że koperta z wynikiem została już otwarta. Nie używamy narzędzi analitycznych ani plików cookie do śledzenia.',
+        'Szkic listu do Mikołaja (do czasu zapisania albo odrzucenia), wybrany język i informacja o otwarciu koperty z wynikiem pozostają w przeglądarce na Twoim urządzeniu i nie są do nas wysyłane. Firebase Authentication przechowuje w przeglądarce sesję logowania aż do wylogowania. Nie używamy narzędzi analitycznych ani plików cookie do śledzenia.',
       ],
     },
     {
@@ -49,13 +49,15 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
       items: [
         'Losowanie i listy przechowujemy, dopóki losowanie istnieje – także po losowaniu, żeby uczestnicy mogli wrócić do swojego wyniku.',
         'Przed losowaniem organizator może je usunąć razem ze wszystkimi listami, a każdy uczestnik może z niego wyjść (jego list znika).',
-        'Na prośbę usuniemy zakończone losowanie, Twoje konto logowania i Twoje wiadomości.',
+        'Po losowaniu nic się w nim już nie zmienia, więc prośby o usunięcie danych obsługujemy ręcznie. Na prośbę organizatora usuniemy całe zakończone losowanie – zniknie wtedy u wszystkich uczestników.',
+        'Na Twoją prośbę usuniemy Twoje konto logowania, wiadomości i listy do Mikołaja, a w zakończonych losowaniach zastąpimy Twoje imię i zdjęcie napisem „Usunięta osoba”, żeby wyniki pozostałych osób dalej działały.',
       ],
     },
     {
       heading: 'Twoje prawa',
       paragraphs: [
-        'Masz prawo dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania i przeniesienia, a także prawo sprzeciwu. Napisz do nas – odpowiemy najszybciej, jak się da, najpóźniej w ciągu miesiąca.',
+        'Masz prawo dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania i przeniesienia, a także prawo sprzeciwu.',
+        'Napisz do nas przyciskiem „Zostaw wiadomość!” po zalogowaniu albo mailem z adresu, którym logujesz się przez Google – tak sprawdzimy, że prośba jest od Ciebie. Prośby obsługuje ręcznie autor aplikacji: odpowiemy najszybciej, jak się da, najpóźniej w ciągu miesiąca, i damy znać, gdy wszystko będzie zrobione.',
         'Możesz też złożyć skargę do Prezesa Urzędu Ochrony Danych Osobowych (uodo.gov.pl).',
       ],
     },
@@ -74,7 +76,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
         'From your Google account when you sign in: your name, profile photo, email address and account id. Only the sign-in service knows your email address – we do not show it to anyone or send you emails.',
         'What you type in: draws (name, description, budget, date and place of the gift exchange), letters to Santa, excluded pairs and messages to the author.',
         'What the draw needs to work: who takes part, when they joined and who drew whom. The draw password is stored only as a hash that cannot be turned back into the password.',
-        'In your browser (localStorage) we only remember that you have opened the envelope with your result. We use no analytics and no tracking cookies.',
+        'The draft of your letter to Santa (until you save or discard it), your chosen language and whether you have opened the result envelope stay in your browser on your device and are not sent to us. Firebase Authentication keeps your sign-in session in the browser until you sign out. We use no analytics and no tracking cookies.',
       ],
     },
     {
@@ -98,13 +100,15 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
       items: [
         'We keep a draw and its letters as long as the draw exists – also after the draw, so participants can come back to their result.',
         'Before the draw the organizer can delete it with all letters, and every participant can leave it (their letter goes away).',
-        'On request we delete a finished draw, your sign-in account and your messages.',
+        'After the draw nothing in it changes any more, so requests to delete data are handled by hand. If the organizer asks, we delete the whole finished draw – it then disappears for every participant.',
+        'If you ask, we delete your sign-in account, your messages and your letters to Santa, and in finished draws we replace your name and photo with "Usunięta osoba" (deleted person), so everyone else’s result keeps working.',
       ],
     },
     {
       heading: 'Your rights',
       paragraphs: [
-        'You have the right to access, correct, delete, restrict and port your data, and to object. Write to us – we answer as soon as we can, within a month at the latest.',
+        'You have the right to access, correct, delete, restrict and port your data, and to object.',
+        'Write to us with the "Leave a message!" button after signing in, or by email from the address you sign in with through Google – that is how we check the request is yours. The author of the app handles requests by hand: we answer as soon as we can, within a month at the latest, and let you know when everything is done.',
         'You can also complain to the Polish data protection authority (Prezes UODO, uodo.gov.pl).',
       ],
     },

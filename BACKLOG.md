@@ -77,10 +77,12 @@
 - [x] S1 – podszywanie się pod imię/zdjęcie (reguły wymagają danych z tokenu Google)
 - [x] S2 – podatności w zależnościach: runtime (to, co idzie do przeglądarki) = **0**.
   Zostało 5 „moderate” w zależnościach `firebase-tools` (CLI tylko do deployu/testów) – czekamy na Google.
-- [~] **S3 – prywatność / RODO:** strona polityki istnieje. Do uzupełnienia: prawdziwy opis
-  `localStorage` (szkic życzenia, język, stan koperty) i jasny opis ręcznej obsługi próśb o
-  usunięcie danych. Regulamin i tematy monetyzacji pozostają odrębnymi decyzjami produktowymi.
-- [ ] **S10 – polityka prywatności: opis localStorage [Codex-ready]:** zaktualizować PL i EN
+- [x] **S3 – prywatność / RODO** (2026-09-26): polityka opisuje, co zostaje w przeglądarce (S10),
+  i ręczną obsługę próśb o usunięcie: zgłoszenie przez „Zostaw wiadomość” lub mail z adresu
+  konta Google, do miesiąca; w zakończonych losowaniach anonimizacja „Usunięta osoba” (D31,
+  tam instrukcja krok po kroku). Regulamin i monetyzacja pozostają odrębnymi decyzjami.
+- [x] **S10 – polityka prywatności: opis localStorage [Codex-ready]** (2026-09-26, Codex,
+  zrecenzowane przez Claude'a; dopisana też sesja logowania Firebase)**:** zaktualizować PL i EN
   w `src/pages/privacyPolicy.ts`, żeby wymieniały szkic listu (do zapisu/odrzucenia), wybór
   języka i zapamiętanie otwarcia koperty. Nie zmieniać podstaw prawnych, retencji ani obietnic
   usunięcia bez decyzji właściciela; zgłosić Claude'owi każde miejsce, którego nie da się

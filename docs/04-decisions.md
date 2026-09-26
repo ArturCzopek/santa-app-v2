@@ -184,3 +184,20 @@ the wish once they know it is being read. So the letter is written and changed o
 the draw, like everything else about it: the rules refuse letter and `hasWish` writes once
 the draw is `DRAWED`, the page shows the letter read-only with "Po losowaniu listu nie da się
 już zmienić", and the start dialog warns that people without a letter will be too late.
+
+## D31. Deletion requests are handled by hand; a finished draw keeps the person anonymised, Accepted
+Decided by the author, 2026-09-26 (S3). Before the draw people delete their own data: a
+participant leaves, the organizer removes someone or deletes the draw. After the draw the app
+changes nothing (D30), so a request to delete personal data is done by the author in the
+Firebase console, within a month, and answered when done. The request comes through "Zostaw
+wiadomość" (the message carries the sender's uid) or by email from the address of the Google
+account, which the author checks in Firebase Authentication. For that person:
+- in every finished draw they took part in: delete `letters/{uid}`; in `participants/{uid}` set
+  `userName` to "Usunięta osoba", `userPhotoUrl` to "" and `hasWish` to false; if they are the
+  organizer, do the same with `ownerName` / `ownerPhotoUrl` in the draw document. The uid stays
+  in `participantUuids` and the assignments, so everyone else's result keeps working; once the
+  account is gone it points to nobody;
+- delete their documents in `messages` (`userUid`) and then their Authentication account.
+An organizer can also ask to delete a whole finished draw (the document and all its
+subcollections); it then disappears for every participant. The stored name is Polish only,
+because it is data, not an interface string.
