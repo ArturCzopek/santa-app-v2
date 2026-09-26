@@ -41,4 +41,4 @@ Before any code changes, tell Artur what the item is: a short description of the
 - Run `npm run lint`, `npm run typecheck`, and `npm run build` for code changes.
 - Run `npm test` for rules, services, components, and unit coverage; run `npm run test:e2e` when a user journey, routing, or responsive behavior changes.
 - Changes to Firestore rules or domain invariants require emulator rule tests and Claude review. Never report a check as passed unless it was run.
-- See [development and validation details](docs/DEVELOPMENT.md).
+- See the [development and validation details](README.md).

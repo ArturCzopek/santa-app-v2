@@ -15,10 +15,7 @@ person sees only who they buy a gift for, together with that person's wish.
 |---|---|
 | [How the app works](docs/01-how-it-works.md) | The app from the user's side: roles, the journey step by step, every screen, what can be changed and when |
 | [The design explained](docs/02-design.md) | Why it looks the way it does: the Christmas-mail idea, what each screen puts first, words, motion, accessibility |
-| [Architecture](docs/ARCHITECTURE.md) | Current runtime, routing, state, Firestore boundaries, code structure, and architectural trade-offs |
-| [Domain model](docs/DOMAIN.md) | Current roles, lifecycle, data visibility, and domain invariants |
-| [Development](docs/DEVELOPMENT.md) | Environment setup, commands, validation, CI, and deployment |
-| [Known issues](docs/KNOWN_ISSUES.md) | Audit findings, risks, and proposed follow-up order |
+| [Architecture](docs/03-architecture.md) | Current runtime, routing, state, Firestore boundaries, code structure, and architectural trade-offs |
 | [Roadmap and backlog](BACKLOG.md) | Shared roadmap, open work, owners, and Codex-ready tasks |
 | [Decisions](docs/04-decisions.md) | Decision log: why X and not Y |
 | [DESIGN.md](DESIGN.md) | The design system for building screens: colours, type, layout, components |
@@ -170,22 +167,31 @@ npm test            # Firestore rules, services, components, unit (emulators)
 npm run test:e2e    # Playwright end-to-end tests in real browsers (emulators)
 ```
 
-CI (`.github/workflows/ci.yml`) runs all of them on pull requests and on
-pushes to branches other than `master`.
+CI (`.github/workflows/ci.yml`) runs lint, typecheck, the production build,
+tests and E2E on pull requests and pushes to branches other than `master`.
+Typecheck covers source, tests, E2E files and TypeScript config; strict mode
+is on, but `noImplicitAny` is off. The emulator-based test commands use ports
+8080, 9099 and 5173, so stop manually started development emulators first.
 
 ## Deployment
 
-Every push to `master` runs `.github/workflows/deploy.yml`:
+Every push to `master` runs `.github/workflows/deploy.yml` after CI passes:
 
-1. All checks and tests (the CI workflow).
-2. **Staging** (only when `FIREBASE_SERVICE_ACCOUNT_DEV` is set): deploy
+1. The deploy job checks that all required deployment secrets are set.
+2. It checks out the repository, runs `npm ci`, then builds the app with the
+   production configuration.
+3. **Staging** (only when `FIREBASE_SERVICE_ACCOUNT_DEV` is set): deploy
    Firestore rules and indexes to the dev project.
-3. **Production:** deploy Firestore rules and indexes, build the app and
-   publish it to GitHub Pages.
+4. **Production:** deploy Firestore rules and indexes, then publish the
+   already-built app to GitHub Pages.
 
-If a step fails, the following steps do not run, so production is only
-touched when the tests and staging passed. The workflow can also be started
-by hand in the Actions tab, optionally creating a release tag.
+Each step waits for the previous one to succeed. Firebase and GitHub Pages
+are separate systems, so a failure after rules deploy (for example, while
+publishing Pages) can leave them out of step. Use expand/contract for rules
+that require a new client: first deploy rules that accept both clients and
+ship the new client, then tighten the rules in a later release. The workflow
+can also be started by hand in the Actions tab, optionally creating a release
+tag.
 
 Repository secrets (Settings -> Secrets and variables -> Actions):
 
@@ -202,42 +208,18 @@ needs the **Firebase Admin** and **Service Usage Consumer** roles
 minutes to start working. Delete the downloaded key file after adding it as a
 secret and never commit it.
 
+`VITE_FIREBASE_*` web configuration is embedded in the browser bundle, so its
+secrecy is not the data security boundary; Firestore rules protect the data.
+
 ## Security model
 
-There is no backend: the browser talks to Firestore directly and
-[`firestore.rules`](firestore.rules) is what protects the data (covered by
-tests in `tests/rules`).
-
-- `draws/{id}` - public draw info only (anyone signed in who knows the id).
-  Before the draw the owner may edit its details or delete it with everything
-  under it, or take one other participant out (with their letter), and
-  participants other than the owner may leave; after the draw
-  it does not change.
-- `draws/{id}/participants/{uid}` - name, photo and whether the letter is
-  written (`hasWish`), readable by participants; names/photos must match the
-  Google profile.
-- `draws/{id}/letters/{uid}` - the letter to Santa, readable only by its
-  author and, after the draw, by the one person whose result is the author.
-  Written only by the author, together with `hasWish`.
-- `draws/{id}/exclusions/{a}_{b}` - pairs who must not draw each other; only
-  the owner reads and changes them, before the draw.
-- `draws/{id}/assignments/{uid}` - who `uid` gives a gift to, readable only by
-  `uid`, written once when the owner starts the draw.
-- `draws/{id}/joinKeys/{key}` - the join check; the key is
-  `sha256(drawId + ":" + sha256(secret))`, where the secret is the password or
-  the invite link's key, and is never readable by others. Before the draw the
-  owner can replace the password's key with a new one ("Ustaw nowe hasło").
-- `draws/{id}/invite/link` - the invite link's key (128 random bits), readable
-  by participants so they can share the link. The link is
-  `#/join/{id}?k={key}`; the key stays in the URL fragment, so it never reaches
-  the web server. The owner can replace it, which retires the old key; people
-  who already joined stay. The password is still needed to start the draw.
-- `appData/stats`, `messages` - counters that only grow together with real
-  draws, and at most one message per user per day.
-
-Known trade-off: the owner's browser shuffles the pairs, so a determined
-owner could look at the result in the browser's developer tools. Other
-participants cannot.
+There is no backend: the browser talks directly to Firestore, and
+[`firestore.rules`](firestore.rules) is the authorization boundary covered by
+`tests/rules`. The rules restrict draw data, letters, exclusions and
+assignments to the appropriate signed-in users. The data paths and access
+details are in [the architecture guide](docs/03-architecture.md). Known
+trade-off: the owner's browser shuffles the pairs, so a determined owner
+could inspect the result in developer tools; other participants cannot.
 
 ## Maintenance
 

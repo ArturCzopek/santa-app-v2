@@ -4,8 +4,6 @@ How the app works inside: what runs where, where the data lives, and what happen
 step of the [journey](01-how-it-works.md). Setup, environments, tests and deployment are in
 the [README](../README.md).
 
-For the current detailed engineering reference, see [ARCHITECTURE.md](ARCHITECTURE.md).
-
 ## The big picture
 
 ```
@@ -26,8 +24,20 @@ once), and why they have the largest test suite (`tests/rules`).
   [D2](04-decisions.md)), i18next with Polish and English (the language switch is in the footer).
 - **Firebase:** Authentication (Google only) and Firestore. Free Spark plan: no Cloud
   Functions, so nothing runs on a server or on a schedule.
-- **Hosting:** GitHub Pages, built and published by GitHub Actions on every push to
-  `master`, after the rules are deployed.
+- **Hosting:** GitHub Pages. On pushes to `master`, GitHub Actions builds the app before
+  deploying Firestore rules, then publishes the built app.
+
+## Routes
+
+| Route | Purpose and access |
+|---|---|
+| `#/` | Login and introduction; signed-in users are directed to their draws. |
+| `#/draws` | Signed-in users' draws, create/join entry points and app counters. |
+| `#/create` | Create a draw; requires sign-in. |
+| `#/join/:drawId` | Invite details and joining; the route is public, but joining and draw data require sign-in. |
+| `#/draw/:drawId` | Waiting-stage management or a participant's result; requires sign-in. |
+| `#/help` | Public help page. |
+| `#/privacy` | Public privacy page. |
 
 ## Data
 
@@ -46,16 +56,22 @@ it has different readers:
 | `appData/stats` | App-wide counters of draws and results | Everyone signed in |
 | `messages/{uid}_{date}` | Messages to the author, one per person per day | The author of the message (the app owner reads them in the Firebase console) |
 
-The draw's status goes `WAITING_FOR_DRAW` -> `DRAWED` once and never back. Before the draw
-the owner can edit or delete it and take someone out, and participants can leave; after it, the rules freeze the
-draw so every result stays valid.
+Before the draw the owner can edit or delete it and take someone out, and participants can
+leave; after it, the rules freeze the draw so every result stays valid.
+
+## Rules the data follows
+
+- A draw name is at most 80 characters and its description at most 1000; a wish is at most
+  2000 characters and a feedback message at most 1000.
+- A draw supports up to 100 participants and currencies `PLN`, `EUR`, `USD`, or `GBP`.
+- The password form requires at least 6 characters, and the owner is always a participant.
+- Draw status moves from `WAITING_FOR_DRAW` to `DRAWED`; `DRAWED` is terminal.
 
 ## What happens at each step
 
 **Creating a draw** (`CreatePage` -> `DrawService.createDraw`). One batch writes the draw
-(with the owner as the first participant), the owner's participant document, the join key
-for the password and a first invite link. The password itself is never stored: the join
-key is `sha256(drawId + ":" + sha256(password))`.
+and the owner's participant document, the join key for the password and a first invite link.
+The password itself is never stored: the join key is `sha256(drawId + ":" + sha256(password))`.
 
 **Inviting** (`InviteDrawModal`). The link is `#/join/{id}?k={key}`, where the key is 128
 random bits stored in `invite/link`. It sits in the URL fragment (after `#`), which browsers
@@ -89,8 +105,7 @@ so whoever has the link still cannot start the draw). Then the owner's browser:
 3. writes, in one batch, the status change and one `assignments/{giver}` document per
    person, readable only by that giver.
 
-From then on no browser holds the whole result. The trade-off is that the owner's browser
-had it for a moment ([D3](04-decisions.md#d3-the-pairs-are-drawn-in-the-organizers-browser-accepted)).
+From then on no browser holds the whole result.
 
 **Setting a new password** (`SetPasswordModal` -> `DrawService.setDrawPassword`). In one batch
 the owner removes every join key except the current invite link's and adds the key of the
@@ -103,11 +118,18 @@ that assignment. Whether the envelope was opened is remembered in the browser's
 `localStorage`, per draw and person (`services/envelope.ts`), and so is a letter being
 written until it is saved (`services/letterDraft.ts`).
 
+## Trade-offs and known limits
+
+- The organizer's browser temporarily holds every pair ([D3](04-decisions.md#d3-the-pairs-are-drawn-in-the-organizers-browser-accepted)).
+- Rules check assignment documents individually and do not prove the full result is a complete one-to-one matching ([F13](../BACKLOG.md)).
+- Deleting a large waiting draw with many exclusions may exceed the 500-write batch limit ([F17](../BACKLOG.md)).
+- Reads cast documents to types without runtime validation; schema changes needing migrations require a versioned script and compatibility tests with that change ([S9](../BACKLOG.md)).
+
 ## Where things are in the code
 
 | Folder | What is there |
 |---|---|
-| `src/pages/` | One file per screen: `LoginPage`, `DrawsListPage`, `CreatePage`, `JoinToDrawPage`, `DrawPage`, `PrivacyPage` |
+| `src/pages/` | One file per screen: `LoginPage`, `DrawsListPage`, `CreatePage`, `JoinToDrawPage`, `DrawPage`, `HelpPage`, `PrivacyPage` |
 | `src/components/draw/` | Parts of the draw page: header, letter, envelope and result, participants, exclusions, invite, start/edit dialogs |
 | `src/components/common/` | The design's building blocks: `PaperCard`, `Postmark`, `StampAvatar`, `ConfirmDialog` |
 | `src/components/form/` | Form fields on paper, the password field, form buttons |
@@ -118,3 +140,7 @@ written until it is saved (`services/letterDraft.ts`).
 | `scripts/` | Test data for the emulators (`seedEmulators.mjs`) |
 | `tests/` | `rules`, `services` (against emulators), `components` (React Testing Library), `unit` |
 | `e2e/` | Playwright: the whole Secret Santa with several people, on desktop and phone |
+
+`useAuth` and `useNotify` provide shared state; there is no global store. Services use
+one-shot Firestore reads and writes, with no `onSnapshot` subscriptions. Firestore documents
+are cast to TypeScript types without runtime shape validation.

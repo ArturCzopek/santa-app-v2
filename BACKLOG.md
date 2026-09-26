@@ -68,7 +68,7 @@
   Czy ten commit zakończył deploy produkcyjny, trzeba potwierdzić w GitHub Actions.
 - [x] **O1 – bezpieczna kolejność wdrożenia (Claude decyduje, Codex może wykonać)** (2026-09-26, Codex,
   zrecenzowane przez Claude'a: build przed Firebase, sprawdzanie wszystkich sekretów, build w CI,
-  expand/contract w `docs/DEVELOPMENT.md`)**:** uruchamiać
+  expand/contract w `README.md`)**:** uruchamiać
   build z produkcyjną konfiguracją przed zmianami w Firebase. Dla zmian reguł wymagających
   nowego klienta przyjąć rollout expand/contract: najpierw reguły zgodne ze starym i nowym
   klientem, potem publikacja aplikacji, a dopiero później zaostrzenie reguł. Build przed
@@ -213,6 +213,15 @@ Zakończenie (wymóg kontraktu Impeccable)
   (cel: ≥ 30/40)
 
 ## 6. Funkcje
+
+**Kolejność pracy nad F (zatwierdzona przez Artura, 2026-09-26)** – następny krok to pierwszy
+niezrobiony punkt z tej listy (przed startem sprawdzić jego stan w kodzie):
+1. **Przed sezonem:** F9 (logowanie linkiem z maila).
+2. **Warte zrobienia, bez Blaze:** F5 → F6 → F7 → F8 (kod QR) → F11 (PWA) → F12.
+3. **Wymagają Blaze (F0):** F2, F3 (przypomnienia), F13.
+4. **Na później / rzadkie:** F15, F17.
+
+Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, \$8 po analizie sezonu.
 
 - [ ] **F0 – przejście na plan Blaze** (decyzja Artura: OK, gdy będzie potrzebny). Przy tej skali
   ~0 zł (te same darmowe limity + darmowy limit Functions), wymaga karty, brak twardego limitu –
