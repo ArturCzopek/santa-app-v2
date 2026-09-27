@@ -17,6 +17,14 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       ],
     },
     {
+      id: 'install',
+      question: 'Jak dodać aplikację do ekranu telefonu?',
+      answer: [
+        'Na Androidzie w Chrome otwórz menu ⋮ i wybierz „Zainstaluj aplikację” albo „Dodaj do ekranu głównego”. Na iPhonie w Safari stuknij „Udostępnij” → „Do ekranu początkowego”. Na komputerze wybierz ikonę instalacji na pasku adresu albo opcję instalacji w menu przeglądarki.',
+        'Na iPhonie aplikacja na ekranie początkowym ma osobne miejsce na dane, więc może być konieczne ponowne zalogowanie.',
+      ],
+    },
+    {
       id: 'organizer',
       question: 'Czy organizator musi brać udział w losowaniu?',
       answer: [
@@ -92,7 +100,9 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
     {
       id: 'cost',
       question: 'Czy to coś kosztuje?',
-      answer: ['Nie. Santa App jest darmowa i nie trzeba niczego instalować.'],
+      answer: [
+        'Nie. Santa App jest darmowa i działa w przeglądarce; dodanie jej do ekranu telefonu jest opcjonalne.',
+      ],
     },
   ],
   en: [
@@ -102,6 +112,14 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       answer: [
         'The organizer creates a draw and sends everyone one link. Players join from their own phones and write a letter to Santa: what they would like to get.',
         'When the players are ready, the organizer draws the pairs. Each player opens their envelope and sees only whom they buy for, together with that person’s letter.',
+      ],
+    },
+    {
+      id: 'install',
+      question: 'How do I add the app to my home screen?',
+      answer: [
+        'On Android in Chrome, open the ⋮ menu and choose “Install app” or “Add to Home screen”. On iPhone in Safari, tap “Share” → “Add to Home Screen”. On a computer, choose the install icon in the address bar or the install option in the browser menu.',
+        'On iPhone, the home-screen app has its own storage, so you may need to sign in again.',
       ],
     },
     {
@@ -179,7 +197,9 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
     {
       id: 'cost',
       question: 'Does it cost anything?',
-      answer: ['No. Santa App is free and there is nothing to install.'],
+      answer: [
+        'No. Santa App is free and works in the browser; adding it to your home screen is optional.',
+      ],
     },
   ],
 };

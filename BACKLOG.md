@@ -258,7 +258,9 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
   Alternatywy: e-mail + hasło (prostsze w kodzie, ale hasła/resety), Microsoft/Facebook (darmowe),
   Apple (wymaga płatnego konta Apple Developer, 99 USD/rok).
 - [x] F10 – przełącznik języka w stopce (09-26, D27)
-- [ ] F11 – PWA
+- [x] F11 – PWA (2026-09-27, D34; Codex + ikony Claude'a): manifest i ikony, instalacja z menu
+  przeglądarki / „Do ekranu początkowego”, bez service workera. **Do sprawdzenia przez Artura na
+  iPhonie:** logowanie Google w aplikacji z ekranu początkowego (jeśli nie działa → `"display": "browser"`)
 - [ ] F12 – powtórzenie losowania z zeszłego roku
 - [ ] **F13 – losowanie po stronie serwera / zaufany wynik (Claude-owned):** obecny `generatePairs`
   waliduje pełne przypisanie i zwraca poprawny wynik albo rzuca błąd. Reguły Firestore nie

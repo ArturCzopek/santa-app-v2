@@ -216,3 +216,12 @@ The browser draws the QR code from the invite link with qrcode-generator; no ext
 service receives the link. The code has the same access as the link, including joining
 without the password, so it is only for people in the draw. Replacing the invite link
 retires its QR code too.
+
+## D34. Installable app without a service worker, Accepted
+The web manifest and icons make Santa App installable from the browser menu or iOS share
+sheet. Chrome supports installation without a service worker (Android 108+, desktop 112+),
+so no automatic install banner is provided. A service worker could keep a stale app after a
+GitHub Pages deploy, and offline use is not useful because the app needs Firebase. Manifest
+URLs stay relative for the GitHub Pages sub-path. On iOS, the home-screen app has separate
+storage, so people sign in again there; Google popup sign-in has not been verified on a real
+iPhone. If it fails, change the manifest display mode to `browser`.

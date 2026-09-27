@@ -25,7 +25,8 @@ once), and why they have the largest test suite (`tests/rules`).
 - **Firebase:** Authentication (Google only) and Firestore. Free Spark plan: no Cloud
   Functions, so nothing runs on a server or on a schedule.
 - **Hosting:** GitHub Pages. On pushes to `master`, GitHub Actions builds the app before
-  deploying Firestore rules, then publishes the built app.
+  deploying Firestore rules, then publishes the built app. `public/` contains the PWA
+  manifest and install icons; there is no service worker.
 
 ## Routes
 

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Full-bleed ground so the same art works as a maskable icon; the envelope stays inside the 80% safe zone. -->
+  <rect width="512" height="512" fill="#0E2A1E"/>
+  <rect x="100" y="160" width="312" height="204" rx="14" fill="#FBF8F2"/>
+  <path d="M108 358 L230 262 M404 358 L282 262" stroke="#DDD3C2" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <path d="M114 160 H398 Q412 160 404 170 L256 286 L108 170 Q100 160 114 160 Z" fill="#F1EBDF" stroke="#DDD3C2" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="256" cy="284" r="50" fill="#B3202A"/>
+  <circle cx="256" cy="284" r="36" fill="none" stroke="#8E1820" stroke-width="5"/>
+  <path d="M256 258 L263.5 276 L283 277.5 L268 290 L272.5 309 L256 299 L239.5 309 L244 290 L229 277.5 L248.5 276 Z" fill="#F5F1E8"/>
+</svg>
