@@ -5,6 +5,7 @@ import {
 } from 'firebase/auth';
 import { auth } from './FirebaseConfig';
 import { storage } from './storage';
+import i18n from '../i18n';
 
 // Signing in with a link from an email (D38). The link comes back to the
 // app's own address, without the #/route: Firebase adds its query
@@ -25,6 +26,8 @@ const readPending = (): Pending | null => {
 };
 
 export const sendLoginLink = async (email: string, returnTo: string) => {
+  // Firebase writes the email in this language: the one the person uses here.
+  auth.languageCode = i18n.language;
   await sendSignInLinkToEmail(auth, email, {
     url: appUrl(),
     handleCodeInApp: true,

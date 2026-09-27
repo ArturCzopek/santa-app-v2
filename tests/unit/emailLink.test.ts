@@ -7,6 +7,7 @@ vi.mock('firebase/auth', () => ({
   signInWithEmailLink: vi.fn(),
 }));
 vi.mock('../../src/services/FirebaseConfig', () => ({ auth: {} }));
+vi.mock('../../src/i18n', () => ({ default: { language: 'pl' } }));
 
 import { sendSignInLinkToEmail, signInWithEmailLink } from 'firebase/auth';
 import {
@@ -26,10 +27,14 @@ describe('email link sign-in', () => {
     window.history.replaceState(null, '', '/santa-app-v2/#/join/d1?k=key');
     await sendLoginLink('ania@example.com', '/join/d1?k=key');
 
-    expect(sendSignInLinkToEmail).toHaveBeenCalledWith({}, 'ania@example.com', {
-      url: `${window.location.origin}/santa-app-v2/`,
-      handleCodeInApp: true,
-    });
+    expect(sendSignInLinkToEmail).toHaveBeenCalledWith(
+      { languageCode: 'pl' },
+      'ania@example.com',
+      {
+        url: `${window.location.origin}/santa-app-v2/`,
+        handleCodeInApp: true,
+      },
+    );
     expect(pendingLoginEmail()).toBe('ania@example.com');
   });
 
@@ -43,7 +48,7 @@ describe('email link sign-in', () => {
 
     expect(await finishLoginLink('ania@example.com')).toBe('/join/d1?k=key');
     expect(signInWithEmailLink).toHaveBeenCalledWith(
-      {},
+      expect.anything(),
       'ania@example.com',
       `${window.location.origin}/santa-app-v2/?mode=signIn&oobCode=abc&apiKey=x`,
     );

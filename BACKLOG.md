@@ -219,7 +219,7 @@ niezrobiony punkt z tej listy (przed startem sprawdzić jego stan w kodzie):
 1. **Przed sezonem:** F9 (logowanie linkiem z maila) – zrobione 2026-09-27.
 2. **Warte zrobienia, bez Blaze:** F5 → F6 → F7 → F8 (kod QR) → F11 (PWA) – zrobione 2026-09-27; F12 odrzucone.
 3. **Bez Blaze, przed Blaze (decyzja Artura 2026-09-27):** F15.
-4. **Wymagają Blaze (F0) – na sam koniec:** F2, F3 (przypomnienia), F13.
+4. **Wymagają Blaze (F0) – na sam koniec:** F2, F3 (przypomnienia), F13, F18 (własny mail logowania).
 
 Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, \$8 po analizie sezonu.
 
@@ -307,6 +307,16 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
 - [x] **F17 – usuwanie dużego oczekującego losowania [P3]** (2026-09-27, Codex): wykluczenia
   są usuwane najpierw osobnymi batchami po 450 zapisów, a pozostałe dokumenty losowania
   w jednym batchu; reguły Firestore i dane pozostają bez zmian.
+- [ ] **F18 – ładniejszy i mniej „spamowy” mail z linkiem logowania** (Artur, 2026-09-27, po F9):
+  dziś generyczny mail Firebase od `noreply@…firebaseapp.com` z długim linkiem `…/__/auth/action?apiKey=…`,
+  w Gmailu trafia do spamu. Treści tego szablonu nie da się edytować w konsoli. Kroki od najtańszego:
+  - zrobione w kodzie: mail w języku aplikacji (`auth.languageCode`);
+  - Artur, konsola, za darmo: „Public-facing name” = Santa App, język szablonów polski, spróbować
+    „Customize action URL” = `https://arturczopek.github.io/santa-app-v2/` (aplikacja już obsługuje link);
+  - własna domena (~40–60 zł/rok) + „Customize domain” (SPF/DKIM) – nadawca z domeny, dużo mniej spamu;
+    przy okazji można przenieść aplikację z github.io na tę domenę;
+  - pełny własny wygląd i tekst: wysyłka przez Cloud Function (Admin SDK `generateSignInWithEmailLink`
+    + usługa pocztowa) → wymaga Blaze (F0).
 
 ## 7. Monetyzacja
 
