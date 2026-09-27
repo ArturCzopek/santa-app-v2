@@ -33,7 +33,7 @@ import DrawOptionsMenu, {
   DrawOption,
 } from '../components/draw/DrawOptionsMenu';
 import { drawService } from '../services/DrawService';
-import { Draw, getDrawPlayers, Participant } from '../models/Draw';
+import { Draw, getDrawPlayers, Letter, Participant } from '../models/Draw';
 import { useAuth } from '../hooks/useAuth';
 import { useNotify } from '../hooks/useNotify';
 import UserWishSection from '../components/draw/UserWishSection';
@@ -81,7 +81,11 @@ const DrawPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [exclusions, setExclusions] = useState<Exclusion[]>([]);
-  const [myWish, setMyWish] = useState('');
+  const [myLetter, setMyLetter] = useState<Letter>({
+    wish: '',
+    sizes: '',
+    notWanted: '',
+  });
   // null until someone opens or closes the letter editor; right after
   // joining it starts open.
   const [editingLetter, setEditingLetter] = useState<boolean | null>(null);
@@ -119,7 +123,7 @@ const DrawPage = () => {
 
         const participants = await drawService.getParticipants(drawId);
         setDraw({ ...drawData, participants });
-        setMyWish(await drawService.getLetter(drawId, user.uid));
+        setMyLetter(await drawService.getLetter(drawId, user.uid));
         // Only the owner may read them, and they matter only before the draw.
         if (
           drawData.ownerUuid === user.uid &&
@@ -145,7 +149,7 @@ const DrawPage = () => {
   const isPlayer = !!user && playerUuids.has(user.uid);
   const isNonPlayingOwner = !!isOwner && !isPlayer;
   const showStartButton = isOwner && isWaiting && players.length >= 2;
-  const hasLetter = myWish.trim() !== '';
+  const hasLetter = myLetter.wish.trim() !== '';
   const allLettersWritten =
     !!draw &&
     draw.participants.filter((participant) =>
@@ -407,16 +411,18 @@ const DrawPage = () => {
         {isNonPlayingOwner ? (
           isWaiting && <Typography>{t('drawPage.ownerNotPlaying')}</Typography>
         ) : (
-          // Still editable after the draw, so the Santa sees the latest wish.
+          // The letter is read-only after the draw.
           <UserWishSection
             draw={draw}
-            savedWish={myWish}
-            onWishSaved={(wish) => {
-              setMyWish(wish);
+            savedLetter={myLetter}
+            onLetterSaved={(letter) => {
+              setMyLetter(letter);
               setDraw({
                 ...draw,
                 participants: draw.participants.map((p) =>
-                  p.userUuid === user?.uid ? { ...p, hasWish: wish !== '' } : p,
+                  p.userUuid === user?.uid
+                    ? { ...p, hasWish: letter.wish !== '' }
+                    : p,
                 ),
               });
             }}

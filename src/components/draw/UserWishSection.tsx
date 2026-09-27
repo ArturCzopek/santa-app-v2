@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { Draw, WISH_MAX_LENGTH } from '../../models/Draw';
+import {
+  Draw,
+  Letter,
+  LETTER_NOT_WANTED_MAX_LENGTH,
+  LETTER_SIZES_MAX_LENGTH,
+  WISH_MAX_LENGTH,
+} from '../../models/Draw';
 import { drawService } from '../../services/DrawService';
 import { useAuth } from '../../hooks/useAuth';
 import { useNotify } from '../../hooks/useNotify';
@@ -11,12 +17,13 @@ import SectionHeading from './SectionHeading';
 import ConfirmDialog from '../common/ConfirmDialog';
 import { letterDraft } from '../../services/letterDraft';
 import { handFont, tokens } from '../../styles/theme';
+import LetterView from './LetterView';
 
 interface UserWishSectionProps {
   draw: Draw;
-  // The user's own letter ('' when not written yet).
-  savedWish: string;
-  onWishSaved: (wish: string) => void;
+  // The user's own letter (empty fields when not written yet).
+  savedLetter: Letter;
+  onLetterSaved: (letter: Letter) => void;
   // The page decides when the editor is open, e.g. right after joining or
   // from "Napisz list" in its action row.
   isEditing: boolean;
@@ -29,8 +36,8 @@ export const LETTER_SECTION_ID = 'your-letter';
 
 const UserWishSection: React.FC<UserWishSectionProps> = ({
   draw,
-  savedWish,
-  onWishSaved,
+  savedLetter,
+  onLetterSaved,
   isEditing: isEditingProp,
   onEditingChange,
   writeButtonInRow = false,
@@ -43,7 +50,11 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     (p) => p.userUuid === user?.uid,
   );
 
-  const hasWish = savedWish !== '';
+  const hasWish = savedLetter.wish !== '';
+  const hasLetterContent =
+    hasWish ||
+    savedLetter.sizes.trim() !== '' ||
+    savedLetter.notWanted.trim() !== '';
   // The Santa reads the letter as it was at the draw, so it cannot change
   // afterwards.
   const isLocked = draw.status !== 'WAITING_FOR_DRAW';
@@ -54,12 +65,12 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
   const draft = letterDraft(draw.id ?? '', user?.uid ?? '');
   const keptDraft = () => {
     const kept = draft.read();
-    return kept !== null && kept !== savedWish ? kept : null;
+    return kept !== null && !sameLetter(kept, savedLetter) ? kept : null;
   };
 
-  // Draft edited in the text field; the saved wish comes from the page.
-  const [wish, setWish] = useState(
-    () => (isEditing && keptDraft()) || savedWish,
+  // Draft edited in the fields; the saved letter comes from the page.
+  const [letter, setLetter] = useState(
+    () => (isEditing && keptDraft()) || savedLetter,
   );
   // Whether the editor opened with a draft from an earlier visit.
   const [restoredDraft, setRestoredDraft] = useState(
@@ -74,15 +85,16 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     setWasEditing(isEditing);
     if (isEditing) {
       const kept = keptDraft();
-      setWish(kept ?? savedWish);
+      setLetter(kept ?? savedLetter);
       setRestoredDraft(kept !== null);
     }
   }
 
-  const handleChange = (text: string) => {
-    setWish(text);
+  const handleChange = (field: keyof Letter, text: string) => {
+    const updated = { ...letter, [field]: text };
+    setLetter(updated);
     setRestoredDraft(false);
-    draft.write(text);
+    draft.write(updated);
   };
 
   const closeEditor = () => {
@@ -92,7 +104,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
 
   // Changes that were not saved are not thrown away without asking.
   const handleCancel = () => {
-    if (wish.trim() !== savedWish) setConfirmDiscard(true);
+    if (!sameLetter(trimLetter(letter), savedLetter)) setConfirmDiscard(true);
     else closeEditor();
   };
 
@@ -102,12 +114,12 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
 
     setIsSaving(true);
     try {
-      const text = wish.trim();
-      await drawService.updateWish(draw.id || '', user.uid, text);
+      const updated = trimLetter(letter);
+      await drawService.updateLetter(draw.id || '', user.uid, updated);
 
       closeEditor();
       notify(t('drawPage.wishSection.saveSuccess'), 'success');
-      onWishSaved(text);
+      onLetterSaved(updated);
     } catch (error) {
       console.error('Error updating wish:', error);
       notify(t('drawPage.errors.wishUpdateFailed'));
@@ -116,7 +128,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     }
   };
 
-  const showWriteButton = !isLocked && (hasWish || !writeButtonInRow);
+  const showWriteButton = !isLocked && (hasLetterContent || !writeButtonInRow);
 
   return (
     <Box component="section" id={LETTER_SECTION_ID}>
@@ -130,24 +142,42 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
         </Typography>
 
         {isEditing ? (
-          <TextField
-            label={t('drawPage.wishSection.wishLabel')}
-            multiline
-            minRows={4}
-            autoFocus
-            value={wish}
-            onChange={(e) => handleChange(e.target.value)}
-            fullWidth
-            placeholder={t('drawPage.wishSection.wishPlaceholder')}
-            helperText={
-              restoredDraft
-                ? `${t('drawPage.wishSection.draftRestored')} · ${wish.length} / ${WISH_MAX_LENGTH}`
-                : `${wish.length} / ${WISH_MAX_LENGTH}`
-            }
-            slotProps={{ htmlInput: { maxLength: WISH_MAX_LENGTH } }}
-          />
-        ) : hasWish ? (
-          <Typography sx={{ whiteSpace: 'pre-line' }}>{savedWish}</Typography>
+          <Box sx={{ display: 'grid', gap: 2 }}>
+            <TextField
+              label={t('drawPage.wishSection.wishLabel')}
+              multiline
+              minRows={4}
+              autoFocus
+              value={letter.wish}
+              onChange={(e) => handleChange('wish', e.target.value)}
+              fullWidth
+              placeholder={t('drawPage.wishSection.wishPlaceholder')}
+              helperText={`${restoredDraft ? `${t('drawPage.wishSection.draftRestored')} · ` : ''}${t('drawPage.wishSection.wishHelper')} · ${letter.wish.length} / ${WISH_MAX_LENGTH}`}
+              slotProps={{ htmlInput: { maxLength: WISH_MAX_LENGTH } }}
+            />
+            <TextField
+              label={t('drawPage.wishSection.sizesLabel')}
+              value={letter.sizes}
+              onChange={(e) => handleChange('sizes', e.target.value)}
+              fullWidth
+              slotProps={{
+                htmlInput: { maxLength: LETTER_SIZES_MAX_LENGTH },
+              }}
+            />
+            <TextField
+              label={t('drawPage.wishSection.notWantedLabel')}
+              multiline
+              minRows={2}
+              value={letter.notWanted}
+              onChange={(e) => handleChange('notWanted', e.target.value)}
+              fullWidth
+              slotProps={{
+                htmlInput: { maxLength: LETTER_NOT_WANTED_MAX_LENGTH },
+              }}
+            />
+          </Box>
+        ) : hasLetterContent ? (
+          <LetterView letter={savedLetter} />
         ) : isLocked ? (
           <Typography color="text.secondary">
             {t('drawPage.wishSection.noWishAfterDraw')}
@@ -159,7 +189,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
         )}
 
         {/* Said while writing, and after the draw where the button was. */}
-        {(isEditing || (isLocked && hasWish)) && (
+        {(isEditing || (isLocked && hasLetterContent)) && (
           <Typography variant="body2" color="text.secondary">
             {t('drawPage.wishSection.lockedNote')}
           </Typography>
@@ -191,16 +221,16 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
               </>
             ) : (
               <Button
-                variant={hasWish ? 'outlined' : 'contained'}
+                variant={hasLetterContent ? 'outlined' : 'contained'}
                 startIcon={<Edit />}
                 onClick={() => onEditingChange(true)}
                 sx={
-                  hasWish
+                  hasLetterContent
                     ? { color: tokens.ink, borderColor: tokens.ink }
                     : undefined
                 }
               >
-                {hasWish
+                {hasLetterContent
                   ? t('drawPage.wishSection.editButton')
                   : t('drawPage.wishSection.writeButton')}
               </Button>
@@ -223,5 +253,16 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     </Box>
   );
 };
+
+const sameLetter = (first: Letter, second: Letter) =>
+  first.wish === second.wish &&
+  first.sizes === second.sizes &&
+  first.notWanted === second.notWanted;
+
+const trimLetter = (letter: Letter): Letter => ({
+  wish: letter.wish.trim(),
+  sizes: letter.sizes.trim(),
+  notWanted: letter.notWanted.trim(),
+});
 
 export default UserWishSection;

@@ -14,6 +14,14 @@ export type Participant = {
 
 // Same limit as in firestore.rules.
 export const WISH_MAX_LENGTH = 2000;
+export const LETTER_SIZES_MAX_LENGTH = 200;
+export const LETTER_NOT_WANTED_MAX_LENGTH = 500;
+
+export type Letter = {
+  wish: string;
+  sizes: string;
+  notWanted: string;
+};
 
 export type Pair = {
   fromUuid: string;

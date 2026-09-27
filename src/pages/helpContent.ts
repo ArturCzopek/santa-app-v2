@@ -58,6 +58,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       question: 'Kto przeczyta mój list do Mikołaja?',
       answer: [
         'Tylko jedna osoba: ta, która cię wylosuje, i dopiero po losowaniu. Organizator i pozostali widzą jedynie, czy list jest już napisany.',
+        'W części „Czego chcę” wpisz po jednej rzeczy w linii; możesz wkleić link do produktu. Opcjonalnie dopisz rozmiary i rzeczy, których nie chcesz.',
         'List możesz pisać i zmieniać aż do losowania. Po losowaniu zostaje taki, jaki był – twój Mikołaj czyta dokładnie to, co było w nim w chwili losowania. Nie zwlekaj więc z pisaniem!',
       ],
     },
@@ -155,6 +156,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       question: 'Who reads my letter to Santa?',
       answer: [
         'Only one person: whoever draws you, and only after the draw. The organizer and everyone else only see whether your letter is written.',
+        'In “What I would like”, write one thing per line; you can paste a product link. You can also add your sizes and things you do not want.',
         'You can write and change your letter until the draw. After the draw it stays as it was – your Santa reads exactly what it said when the pairs were drawn. So do not leave it too late!',
       ],
     },

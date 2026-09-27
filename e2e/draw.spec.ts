@@ -30,7 +30,7 @@ const openResult = async (page: Page) => {
 };
 
 const writeLetter = async (page: Page, wish: string) => {
-  await page.getByLabel('Co chcesz dostać?').fill(wish);
+  await page.getByLabel('Czego chcę').fill(wish);
   await page.getByRole('button', { name: 'Zapisz list' }).click();
   await expect(page.getByText(/List zapisany/)).toBeVisible();
 };
@@ -225,6 +225,8 @@ test('the join page fits the phone screen without horizontal scrolling', async (
   test.skip(testInfo.project.name !== 'mobile');
 
   await page.goto('/#/join/some-draw');
-  await expect(page.getByText(/Zaloguj się, żeby zobaczyć, kto zaprasza/)).toBeVisible();
+  await expect(
+    page.getByText(/Zaloguj się, żeby zobaczyć, kto zaprasza/),
+  ).toBeVisible();
   await expectNoHorizontalScroll(page);
 });

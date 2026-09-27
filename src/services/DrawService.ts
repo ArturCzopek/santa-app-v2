@@ -22,6 +22,7 @@ import {
   Draw,
   DrawDetails,
   DrawPreview,
+  Letter,
   Participant,
   getDrawPlayers,
 } from '../models/Draw';
@@ -192,15 +193,21 @@ class DrawService {
   // not in there: see getLetter.
   async getParticipants(drawId: string): Promise<Participant[]> {
     const snapshot = await getDocs(this.participantsCollection(drawId));
-    return snapshot.docs.map((participantDoc) => participantDoc.data() as Participant);
+    return snapshot.docs.map(
+      (participantDoc) => participantDoc.data() as Participant,
+    );
   }
 
   // The letter and the public "written" mark change together.
-  async updateWish(drawId: string, userId: string, wish: string): Promise<void> {
+  async updateLetter(
+    drawId: string,
+    userId: string,
+    letter: Letter,
+  ): Promise<void> {
     const batch = writeBatch(db);
-    batch.set(this.letterRef(drawId, userId), { wish });
+    batch.set(this.letterRef(drawId, userId), letter);
     batch.update(doc(this.participantsCollection(drawId), userId), {
-      hasWish: wish.length > 0,
+      hasWish: letter.wish.length > 0,
     });
     await batch.commit();
   }
@@ -211,10 +218,17 @@ class DrawService {
   }
 
   // A letter to Santa: the user's own, or after the draw the one of the
-  // person they give a gift to. '' when not written yet.
-  async getLetter(drawId: string, userId: string): Promise<string> {
-    const letter = await getDoc(this.letterRef(drawId, userId));
-    return letter.exists() ? (letter.data().wish as string) : '';
+  // person they give a gift to. Missing documents and optional fields are empty.
+  async getLetter(drawId: string, userId: string): Promise<Letter> {
+    const snapshot = await getDoc(this.letterRef(drawId, userId));
+    if (!snapshot.exists()) return { wish: '', sizes: '', notWanted: '' };
+
+    const data = snapshot.data();
+    return {
+      wish: data.wish as string,
+      sizes: (data.sizes as string | undefined) ?? '',
+      notWanted: (data.notWanted as string | undefined) ?? '',
+    };
   }
 
   // Owner only, before the draw: the draw and everything under it go in one
@@ -305,7 +319,10 @@ class DrawService {
 
   // Only the owner may check the password (used to confirm starting the draw).
   // The invite link's key opens the same door, so it is ruled out here.
-  async isDrawPasswordValid(drawId: string, password: string): Promise<boolean> {
+  async isDrawPasswordValid(
+    drawId: string,
+    password: string,
+  ): Promise<boolean> {
     const joinKey = await PasswordUtils.joinKey(drawId, password);
     const [joinKeyDoc, invite] = await Promise.all([
       getDoc(this.joinKeyRef(drawId, joinKey)),
@@ -390,10 +407,7 @@ class DrawService {
     }
 
     // Read with the owner's rights: exclusions are visible only to them.
-    const pairs = generatePairs(
-      players,
-      await this.getExclusions(drawId),
-    );
+    const pairs = generatePairs(players, await this.getExclusions(drawId));
 
     // Each pair goes to its own document that only the giver can read, so the
     // full result never reaches any browser after this one.

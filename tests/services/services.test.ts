@@ -11,7 +11,7 @@ import { drawService } from '../../src/services/DrawService';
 import { messageService } from '../../src/services/MessageService';
 import { appDataService } from '../../src/services/AppDataService';
 import { isValidDraw } from '../../src/services/pairs';
-import { Pair } from '../../src/models/Draw';
+import { Letter, Pair } from '../../src/models/Draw';
 import { PROJECT_ID } from '../rules/setup';
 
 // Signs in against the Auth emulator, which accepts unsigned Google tokens.
@@ -45,6 +45,12 @@ const newDrawForm = {
   password: 'secret1',
 };
 
+const letter = (wish: string, sizes = '', notWanted = ''): Letter => ({
+  wish,
+  sizes,
+  notWanted,
+});
+
 beforeEach(async () => {
   await clearFirestore();
 });
@@ -63,7 +69,9 @@ describe('DrawService against the emulator', () => {
     expect(await drawService.isDrawPasswordValid(drawId, 'wrong-1')).toBe(
       false,
     );
-    await drawService.updateWish(drawId, owner.uid, 'Mountain book');
+    const ownerLetter = letter('Mountain book', 'M / 39', 'Scented candles');
+    await drawService.updateLetter(drawId, owner.uid, ownerLetter);
+    expect(await drawService.getLetter(drawId, owner.uid)).toEqual(ownerLetter);
 
     const alice = await signInAs('alice', 'Ania Test');
     await expect(
@@ -83,7 +91,7 @@ describe('DrawService against the emulator', () => {
       participantsCount: 2,
       userWishProvided: false,
     });
-    await drawService.updateWish(drawId, alice.uid, 'Socks');
+    await drawService.updateLetter(drawId, alice.uid, letter('Socks'));
     expect(
       (await drawService.getDrawPreviews(alice.uid))[0].userWishProvided,
     ).toBe(true);
@@ -153,7 +161,9 @@ describe('DrawService against the emulator', () => {
       pairs.push({ fromUuid: uid, toUuid: assignment!.toUuid });
     }
     expect(isValidDraw(pairs, [alice.uid, bob.uid])).toBe(true);
-    expect(await appDataService.getAppData()).toMatchObject({ winnersCount: 2 });
+    expect(await appDataService.getAppData()).toMatchObject({
+      winnersCount: 2,
+    });
   });
 
   it('lets the owner set a new password; the invite link keeps working', async () => {
@@ -218,7 +228,7 @@ describe('DrawService against the emulator', () => {
     const drawId = await drawService.createDraw(newDrawForm, owner);
     const alice = await signInAs('alice', 'Ania Test');
     await drawService.joinToDraw(drawId, alice, 'secret1');
-    await drawService.updateWish(drawId, alice.uid, 'Socks');
+    await drawService.updateLetter(drawId, alice.uid, letter('Socks'));
 
     await drawService.leaveDraw(drawId, alice.uid);
     expect(await drawService.getDrawPreviews(alice.uid)).toEqual([]);
@@ -237,7 +247,7 @@ describe('DrawService against the emulator', () => {
     const drawId = await drawService.createDraw(newDrawForm, owner);
     const alice = await signInAs('alice', 'Ania Test');
     await drawService.joinToDraw(drawId, alice, 'secret1');
-    await drawService.updateWish(drawId, alice.uid, 'Socks');
+    await drawService.updateLetter(drawId, alice.uid, letter('Socks'));
     const bob = await signInAs('bob', 'Bob Test');
     await drawService.joinToDraw(drawId, bob, 'secret1');
 
@@ -254,7 +264,7 @@ describe('DrawService against the emulator', () => {
     await signInAs('alice', 'Ania Test');
     expect(await drawService.getDrawPreviews(alice.uid)).toEqual([]);
     await drawService.joinToDraw(drawId, alice, 'secret1');
-    expect(await drawService.getLetter(drawId, alice.uid)).toBe('');
+    expect(await drawService.getLetter(drawId, alice.uid)).toEqual(letter(''));
   });
 
   it('draws around the exclusions', async () => {
@@ -289,10 +299,7 @@ describe('DrawService against the emulator', () => {
       ['celina', 'Celina Test', celina],
     ] as const) {
       await signInAs(sub, name);
-      const assignment = await drawService.getMyAssignment(
-        drawId,
-        person.uid,
-      );
+      const assignment = await drawService.getMyAssignment(drawId, person.uid);
       pairs.push({ fromUuid: person.uid, toUuid: assignment!.toUuid });
     }
     expect(

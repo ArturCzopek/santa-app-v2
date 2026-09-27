@@ -273,9 +273,15 @@ const resources = {
           saveButton: 'Save letter',
           saveSuccess: 'Letter saved. Your Santa will read it.',
           title: 'Your letter to Santa',
-          wishLabel: 'What would you like to get?',
+          wishLabel: 'What I would like',
+          wishHelper:
+            'One thing per line. Paste a link if you have a specific product in mind.',
           wishPlaceholder:
             'E.g. warm reindeer socks, a book about mountains… The more specific, the easier.',
+          sizesLabel: 'Sizes (clothes, shoes…)',
+          sizesHeading: 'Sizes',
+          notWantedLabel: "What I don't want",
+          notWantedHeading: "What I don't want",
           discardConfirm: 'Discard',
           discardText: 'Your changes to the letter have not been saved.',
           discardTitle: 'Discard the changes?',
@@ -695,9 +701,15 @@ const resources = {
           saveButton: 'Zapisz list',
           saveSuccess: 'List zapisany. Twój Mikołaj go przeczyta.',
           title: 'Twój list do Mikołaja',
-          wishLabel: 'Co chcesz dostać?',
+          wishLabel: 'Czego chcę',
+          wishHelper:
+            'Jedna rzecz w linii. Wklej link, jeśli masz na myśli konkretny produkt.',
           wishPlaceholder:
             'Np. ciepłe skarpetki w renifery, książka o górach… Im konkretniej, tym łatwiej.',
+          sizesLabel: 'Rozmiary (ubrania, buty…)',
+          sizesHeading: 'Rozmiary',
+          notWantedLabel: 'Czego nie chcę',
+          notWantedHeading: 'Czego nie chcę',
           discardConfirm: 'Odrzuć',
           discardText: 'Zmiany w liście nie zostały zapisane.',
           discardTitle: 'Odrzucić zmiany?',

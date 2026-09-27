@@ -49,7 +49,7 @@ it has different readers:
 |---|---|---|
 | `draws/{id}` | Name, description, budget, currency, date, place, owner, optional `ownerPlays` (missing means true), `participantUuids`, status, draw date | Anyone signed in who knows the id |
 | `…/participants/{uid}` | Name and photo (must match the Google profile), `hasWish` | Participants |
-| `…/letters/{uid}` | The letter to Santa, written by its author before the draw only | The author; after the draw also the one person who drew the author |
+| `…/letters/{uid}` | `wish` (up to 2000 characters), optional `sizes` (up to 200 characters) and `notWanted` (up to 500 characters); written by its author before the draw only | The author; after the draw also the one person who drew the author |
 | `…/exclusions/{a}_{b}` | A pair who must not draw each other (`a < b`) | The owner, before the draw |
 | `…/assignments/{uid}` | `toUuid`: whom `uid` buys for | Only `uid` |
 | `…/joinKeys/{key}` | Proof of the password or of the invite link's key (a hash, never the secret) | The owner, to confirm the password when starting the draw; before the draw the owner may add keys and remove any but the current invite link's |
@@ -63,7 +63,8 @@ leave; after it, the rules freeze the draw so every result stays valid.
 ## Rules the data follows
 
 - A draw name is at most 80 characters and its description at most 1000; a wish is at most
-  2000 characters and a feedback message at most 1000.
+  2000 characters, sizes 200 and `notWanted` 500; a feedback message at most 1000. Older
+  letters without the optional fields read as empty strings.
 - A draw supports up to 100 participants and currencies `PLN`, `EUR`, `USD`, or `GBP`.
 - The password form requires at least 6 characters. The owner stays a participant for management access, and `ownerPlays` decides whether they are included among the players; missing means `true` for older draws.
 - Draw status moves from `WAITING_FOR_DRAW` to `DRAWED`; `DRAWED` is terminal.

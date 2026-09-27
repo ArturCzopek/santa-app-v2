@@ -225,3 +225,11 @@ GitHub Pages deploy, and offline use is not useful because the app needs Firebas
 URLs stay relative for the GitHub Pages sub-path. On iOS, the home-screen app has separate
 storage, so people sign in again there; Google popup sign-in has not been verified on a real
 iPhone. If it fails, change the manifest display mode to `browser`.
+
+## D35. A structured letter to Santa, Accepted
+The letter keeps its main `wish` field, with one item per line, and adds optional `sizes` and
+`notWanted` fields. Missing optional fields read as empty strings, so existing letters need
+no migration. The author can include product links; the reader links only explicit HTTP(S)
+URLs and renders all other text normally. `hasWish` still tracks only whether `wish` is
+non-empty, and the entire letter remains frozen after the draw (D30). Drafts store all three
+fields as JSON while continuing to load older plain-text drafts as the wish.

@@ -286,6 +286,46 @@ describe('draws', () => {
       await assertFails(writeLetter(authed(env, MALLORY), 'd1', MALLORY, 'Hi'));
     });
 
+    it('accepts the optional fields and validates their size and shape', async () => {
+      await assertSucceeds(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: 'Socks',
+          sizes: 'M / 39',
+          notWanted: 'Scented candles',
+        }),
+      );
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: 'Socks',
+          sizes: 'x'.repeat(201),
+        }),
+      );
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: 'Socks',
+          sizes: 39,
+        }),
+      );
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: 'Socks',
+          notWanted: 'x'.repeat(501),
+        }),
+      );
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: 'Socks',
+          notWanted: false,
+        }),
+      );
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: 'Socks',
+          surprise: 'unknown field',
+        }),
+      );
+    });
+
     it('before the draw nobody but the author reads it, not even the owner', async () => {
       await writeLetter(authed(env, ALICE), 'd1', ALICE, 'Socks');
       await assertSucceeds(getDoc(doc(authed(env, ALICE), letter(ALICE))));
@@ -327,6 +367,12 @@ describe('draws', () => {
 
       await assertFails(
         writeLetter(authed(env, ALICE), 'd1', ALICE, 'A bike instead'),
+      );
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: 'Socks',
+          sizes: 'XL',
+        }),
       );
       await assertFails(writeLetter(authed(env, ALICE), 'd1', ALICE, ''));
       await assertFails(writeLetter(authed(env, BOB), 'd1', BOB, 'Late wish'));
@@ -449,8 +495,12 @@ describe('draws', () => {
 
     it('owner can toggle participation before the draw only', async () => {
       const db = authed(env, OWNER);
-      await assertSucceeds(updateDoc(doc(db, 'draws/d1'), { ownerPlays: false }));
-      await assertSucceeds(updateDoc(doc(db, 'draws/d1'), { ownerPlays: true }));
+      await assertSucceeds(
+        updateDoc(doc(db, 'draws/d1'), { ownerPlays: false }),
+      );
+      await assertSucceeds(
+        updateDoc(doc(db, 'draws/d1'), { ownerPlays: true }),
+      );
       await updateDoc(doc(db, 'draws/d1'), {
         status: 'DRAWED',
         drawDate: serverTimestamp(),

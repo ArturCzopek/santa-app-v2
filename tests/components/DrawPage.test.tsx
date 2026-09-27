@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { fakeUser, renderWithProviders } from './renderWithProviders';
-import { Draw, Participant } from '../../src/models/Draw';
+import { Draw, Letter, Participant } from '../../src/models/Draw';
 
 const auth = vi.hoisted(() => ({ user: null as unknown }));
 
@@ -30,7 +30,7 @@ vi.mock('../../src/services/DrawService', () => ({
     leaveDraw: vi.fn(),
     removeParticipant: vi.fn(),
     renewInviteKey: vi.fn(),
-    updateWish: vi.fn(),
+    updateLetter: vi.fn(),
     getLetter: vi.fn(),
     startDraw: vi.fn(),
     getMyAssignment: vi.fn(),
@@ -44,10 +44,11 @@ import DrawPage from '../../src/pages/DrawPage';
 import { drawService } from '../../src/services/DrawService';
 
 // Letters live apart from participants; getLetter below serves them.
-let letters: Record<string, string> = {};
+let letters: Record<string, Letter> = {};
+const emptyLetter: Letter = { wish: '', sizes: '', notWanted: '' };
 
 const participant = (uid: string, userName: string, wish = ''): Participant => {
-  letters[uid] = wish;
+  letters[uid] = { ...emptyLetter, wish };
   return {
     userUuid: uid,
     userName,
@@ -92,7 +93,7 @@ beforeEach(() => {
   vi.mocked(drawService.getExclusions).mockResolvedValue([]);
   letters = {};
   vi.mocked(drawService.getLetter).mockImplementation(
-    async (_, uid) => letters[uid] ?? '',
+    async (_, uid) => letters[uid] ?? emptyLetter,
   );
   auth.user = fakeUser('owner', 'Olga Owner');
   vi.mocked(drawService.getDraw).mockResolvedValue(waitingDraw);
@@ -187,7 +188,7 @@ describe('DrawPage', () => {
       await screen.findByText('Office party');
       expect(containedButtons()).toEqual(['Napisz list']);
       await user.click(screen.getByRole('button', { name: 'Napisz list' }));
-      expect(await screen.findByLabelText('Co chcesz dostać?')).toHaveFocus();
+      expect(await screen.findByLabelText('Czego chcę')).toHaveFocus();
       expect(containedButtons()).toEqual(['Zapisz list']);
     });
 
@@ -247,7 +248,7 @@ describe('DrawPage', () => {
   });
 
   it('offers no letter to write after a draw you had no letter for', async () => {
-    letters.owner = '';
+    letters.owner = emptyLetter;
     vi.mocked(drawService.getDraw).mockResolvedValue({
       ...waitingDraw,
       status: 'DRAWED',
@@ -328,19 +329,19 @@ describe('DrawPage', () => {
   });
 
   it('lets a participant edit, cancel and save their wish', async () => {
-    vi.mocked(drawService.updateWish).mockResolvedValue();
+    vi.mocked(drawService.updateLetter).mockResolvedValue();
     const user = userEvent.setup();
     renderDrawPage();
 
     expect(await screen.findByText('Mountain book')).toBeInTheDocument();
-    expect(screen.queryByLabelText('Co chcesz dostać?')).toBeNull();
+    expect(screen.queryByLabelText('Czego chcę')).toBeNull();
 
     await user.click(screen.getByRole('button', { name: 'Edytuj list' }));
-    let wishField = screen.getByLabelText('Co chcesz dostać?');
+    let wishField = screen.getByLabelText('Czego chcę');
     expect(wishField).toHaveValue('Mountain book');
     // Same limit as the rules, so a long wish cannot fail on save.
     expect(wishField).toHaveAttribute('maxLength', '2000');
-    expect(screen.getByText('13 / 2000')).toBeInTheDocument();
+    expect(screen.getByText(/13 \/ 2000/)).toBeInTheDocument();
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
     // Unsaved changes are not thrown away without asking.
@@ -349,32 +350,34 @@ describe('DrawPage', () => {
       name: 'Odrzucić zmiany?',
     });
     await user.click(within(discard).getByRole('button', { name: 'Anuluj' }));
-    expect(screen.getByLabelText('Co chcesz dostać?')).toHaveValue('Coffee');
+    expect(screen.getByLabelText('Czego chcę')).toHaveValue('Coffee');
     await user.click(screen.getByRole('button', { name: 'Anuluj' }));
     await user.click(
       within(
         await screen.findByRole('dialog', { name: 'Odrzucić zmiany?' }),
       ).getByRole('button', { name: 'Odrzuć' }),
     );
-    expect(screen.queryByLabelText('Co chcesz dostać?')).toBeNull();
+    expect(screen.queryByLabelText('Czego chcę')).toBeNull();
     expect(screen.getByText('Mountain book')).toBeInTheDocument();
 
     await user.click(
       await screen.findByRole('button', { name: 'Edytuj list' }),
     );
-    wishField = screen.getByLabelText('Co chcesz dostać?');
+    wishField = screen.getByLabelText('Czego chcę');
     // The discarded draft does not come back.
     expect(wishField).toHaveValue('Mountain book');
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
+    await user.type(screen.getByLabelText('Rozmiary (ubrania, buty…)'), '39');
+    await user.type(screen.getByLabelText('Czego nie chcę'), 'Coal');
     await user.click(screen.getByRole('button', { name: 'Zapisz list' }));
 
     expect(await screen.findByText(/List zapisany/)).toBeInTheDocument();
-    expect(drawService.updateWish).toHaveBeenCalledWith(
-      'd1',
-      'owner',
-      'Coffee',
-    );
+    expect(drawService.updateLetter).toHaveBeenCalledWith('d1', 'owner', {
+      wish: 'Coffee',
+      sizes: '39',
+      notWanted: 'Coal',
+    });
     expect(screen.getByText('Coffee')).toBeInTheDocument();
   });
 
@@ -389,7 +392,7 @@ describe('DrawPage', () => {
     await user.click(
       await screen.findByRole('button', { name: 'Edytuj list' }),
     );
-    expect(screen.getByLabelText('Co chcesz dostać?')).toHaveValue(
+    expect(screen.getByLabelText('Czego chcę')).toHaveValue(
       'Mountain book and a map',
     );
     expect(
@@ -398,14 +401,14 @@ describe('DrawPage', () => {
   });
 
   it('keeps the draft and says so when saving the wish fails', async () => {
-    vi.mocked(drawService.updateWish).mockRejectedValue(new Error('offline'));
+    vi.mocked(drawService.updateLetter).mockRejectedValue(new Error('offline'));
     const user = userEvent.setup();
     renderDrawPage();
 
     await user.click(
       await screen.findByRole('button', { name: 'Edytuj list' }),
     );
-    const wishField = screen.getByLabelText('Co chcesz dostać?');
+    const wishField = screen.getByLabelText('Czego chcę');
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
     await user.click(screen.getByRole('button', { name: 'Zapisz list' }));
@@ -442,6 +445,44 @@ describe('DrawPage', () => {
         name: 'Otwórz kopertę z wynikiem losowania',
       }),
     ).not.toBeInTheDocument();
+  });
+
+  it('shows the Santa the wish list, safe links, sizes and things not wanted', async () => {
+    letters.alice = {
+      wish: 'Socks\n\nA book at https://x.pl/a?b=1 please',
+      sizes: 'M / 39',
+      notWanted: 'Scented candles',
+    };
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
+    renderDrawPage();
+
+    await openEnvelope();
+    const link = await screen.findByRole('link', {
+      name: 'https://x.pl/a?b=1',
+    });
+    const listItems = within(link.closest('ul') as HTMLElement).getAllByRole(
+      'listitem',
+    );
+    expect(listItems).toHaveLength(2);
+    expect(listItems[0]).toHaveTextContent('Socks');
+    expect(listItems[1]).toHaveTextContent(
+      'A book at https://x.pl/a?b=1 please',
+    );
+
+    expect(link).toHaveAttribute('href', 'https://x.pl/a?b=1');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer nofollow');
+    expect(screen.getByText('Rozmiary')).toBeInTheDocument();
+    expect(screen.getByText('M / 39')).toBeInTheDocument();
+    expect(screen.getByText('Czego nie chcę')).toBeInTheDocument();
+    expect(screen.getByText('Scented candles')).toBeInTheDocument();
   });
 
   it('folds the participant list away after the draw', async () => {

@@ -3,7 +3,7 @@ import { Box, Typography, useMediaQuery } from '@mui/material';
 import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
-import { Assignment, Draw } from '../../models/Draw';
+import { Assignment, Draw, Letter } from '../../models/Draw';
 import { drawService } from '../../services/DrawService';
 import PaperCard from '../common/PaperCard';
 import StampAvatar from '../common/StampAvatar';
@@ -16,6 +16,7 @@ import {
   wasEnvelopeOpened,
 } from '../../services/envelope';
 import { handFont, tokens } from '../../styles/theme';
+import LetterView from './LetterView';
 
 interface WinnerSectionProps {
   draw: Draw;
@@ -32,7 +33,11 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [assignment, setAssignment] = useState<Assignment | null>(null);
-  const [winnerWish, setWinnerWish] = useState('');
+  const [winnerLetter, setWinnerLetter] = useState<Letter>({
+    wish: '',
+    sizes: '',
+    notWanted: '',
+  });
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)', {
     noSsr: true,
   });
@@ -52,8 +57,8 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
         // The rules let only the Santa read the recipient's letter.
         const letter = mine
           ? await drawService.getLetter(drawId, mine.toUuid)
-          : '';
-        setWinnerWish(letter);
+          : { wish: '', sizes: '', notWanted: '' };
+        setWinnerLetter(letter);
         setAssignment(mine);
       } catch (error) {
         console.error('Error fetching assignment:', error);
@@ -167,16 +172,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({ draw }) => {
                 })}
               </Typography>
               {/* The part the Santa actually needs, so not the quietest. */}
-              <Typography
-                sx={{
-                  whiteSpace: 'pre-line',
-                  fontSize: '1.125rem',
-                  lineHeight: 1.6,
-                  color: tokens.ink,
-                }}
-              >
-                {winnerWish || t('drawPage.winnerSection.noWishProvided')}
-              </Typography>
+              <LetterView letter={winnerLetter} />
             </Box>
 
             <Typography variant="body2" color="text.secondary">

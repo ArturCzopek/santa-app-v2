@@ -99,11 +99,15 @@ export const writeLetter = (
   db: Db,
   drawId: string,
   uid: string,
-  wish: string,
-  hasWish = wish.length > 0,
+  letter: string | Record<string, unknown>,
+  hasWish?: boolean,
 ) => {
+  const data = typeof letter === 'string' ? { wish: letter } : letter;
+  const wish = typeof data.wish === 'string' ? data.wish : '';
   const batch = writeBatch(db);
-  batch.set(doc(db, `draws/${drawId}/letters/${uid}`), { wish });
-  batch.update(doc(db, `draws/${drawId}/participants/${uid}`), { hasWish });
+  batch.set(doc(db, `draws/${drawId}/letters/${uid}`), data);
+  batch.update(doc(db, `draws/${drawId}/participants/${uid}`), {
+    hasWish: hasWish ?? wish.length > 0,
+  });
   return batch.commit();
 };
