@@ -201,3 +201,12 @@ account, which the author checks in Firebase Authentication. For that person:
 An organizer can also ask to delete a whole finished draw (the document and all its
 subcollections); it then disappears for every participant. The stored name is Polish only,
 because it is data, not an interface string.
+
+## D32. The organizer can opt out of the draw, Accepted
+The organizer still stays in `participantUuids` and keeps their participant document, so
+they can invite people, manage exclusions and start the draw. The optional `ownerPlays`
+field defaults to `true` on older draws. When it is `false`, the owner does not write a
+letter or receive an assignment; players are the participants except the owner. Pair
+generation, exclusions, the minimum of two, letter progress and the app's winner counter all
+use players. Firestore rules validate the field, enforce the minimum and reject assignments
+to or from a non-playing owner.

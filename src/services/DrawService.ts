@@ -23,6 +23,7 @@ import {
   DrawDetails,
   DrawPreview,
   Participant,
+  getDrawPlayers,
 } from '../models/Draw';
 import { User } from 'firebase/auth';
 import { PasswordUtils } from './PasswordUtils';
@@ -109,6 +110,7 @@ class DrawService {
       description: formData.description,
       eventDate: formData.eventDate,
       eventPlace: formData.eventPlace,
+      ownerPlays: formData.ownerPlays,
       participantUuids: [currentUser.uid], // Owner is the first participant
       status: 'WAITING_FOR_DRAW',
       drawDate: null,
@@ -149,6 +151,11 @@ class DrawService {
         const ownParticipant = await getDoc(
           doc(this.participantsCollection(drawDoc.id), userId),
         );
+        const isPlayer = getDrawPlayers({
+          participantUuids: data.participantUuids ?? [],
+          ownerUuid: data.ownerUuid,
+          ownerPlays: data.ownerPlays,
+        }).includes(userId);
 
         return {
           id: drawDoc.id,
@@ -158,7 +165,8 @@ class DrawService {
           eventDate: data.eventDate ?? '',
           eventPlace: data.eventPlace ?? '',
           participantsCount: data.participantUuids?.length || 0,
-          userWishProvided: !!ownParticipant.data()?.hasWish,
+          userWishProvided: !isPlayer || !!ownParticipant.data()?.hasWish,
+          isPlayer,
         } as DrawPreview;
       }),
     );
@@ -372,8 +380,9 @@ class DrawService {
       throw new Error('Only draw owner can start the draw');
     }
 
-    if (draw.participantUuids.length < 2) {
-      throw new Error('Draw must have at least two participants');
+    const players = getDrawPlayers(draw);
+    if (players.length < 2) {
+      throw new Error('Draw must have at least two players');
     }
 
     if (draw.status !== 'WAITING_FOR_DRAW') {
@@ -382,7 +391,7 @@ class DrawService {
 
     // Read with the owner's rights: exclusions are visible only to them.
     const pairs = generatePairs(
-      draw.participantUuids,
+      players,
       await this.getExclusions(drawId),
     );
 

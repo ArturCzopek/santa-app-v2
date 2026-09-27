@@ -34,6 +34,9 @@ const resources = {
         eventDate: 'Gift exchange date (optional)',
         eventPlace: 'Place (optional)',
         eventPlaceHint: 'E.g. at grandma’s, 6 pm.',
+        ownerPlays: 'I take part in the draw',
+        ownerPlaysHint:
+          'Untick it if you only organize – you will not write a letter and nobody will draw you.',
         errors: {
           createFailed: 'Failed to create the draw. Please try again.',
         },
@@ -44,6 +47,7 @@ const resources = {
         passwordNote:
           'Write the password down! You need it to start the draw. It cannot be viewed later, though you can set a new one (More → Set a new password).',
         success: 'Draw created. Now write your letter to Santa!',
+        successNoLetter: 'Draw created.',
         title: 'New draw',
         validation: {
           budgetMustBeNumber: 'Budget must be a number',
@@ -76,6 +80,10 @@ const resources = {
         description: { less: 'Show less', more: 'Show the whole description' },
         goToJoin: 'Join this draw',
         drawnOn: 'Drawn on {{date}}',
+        ownerNotPlaying:
+          'You are not taking part, so you do not write a letter.',
+        noEnvelope:
+          'The draw has taken place. You are not taking part, so there is no envelope for you.',
         drawDone: {
           copied: 'Message copied. Paste it in your chat.',
           copyMessage: 'Copy message',
@@ -207,6 +215,7 @@ const resources = {
         participantsSection: {
           noWish: 'No letter yet',
           owner: 'Organizer',
+          ownerNotDrawing: 'Organizer · not drawing',
           lettersProgress: 'Letters written: {{done}} of {{total}}',
           title: 'Participants ({{count}})',
           wishProvided: 'Letter ready',
@@ -277,8 +286,8 @@ const resources = {
       },
       howItWorks: {
         step1: 'The organizer creates a draw and sends everyone one link.',
-        step2: 'Everyone joins and writes a letter to Santa: what they would like to get.',
-        step3: 'The organizer draws the pairs. You open your envelope and see who you are buying a gift for – nobody else does.',
+        step2: 'Players join and write a letter to Santa: what they would like to get.',
+        step3: 'The organizer draws the pairs. Each player opens an envelope and sees who they are buying a gift for – nobody else does.',
         title: 'How does it work?',
       },
       joinPage: {
@@ -326,7 +335,7 @@ const resources = {
         },
         googleNote: 'All you need is a Google account. We use your name and photo so others know who joined.',
         privacyLink: 'How we use your data.',
-        lead: 'One link for the whole group. Everyone writes a letter to Santa, and on draw day opens an envelope with the name of the person they buy a gift for.',
+        lead: 'One link for the whole group. Players write a letter to Santa, and on draw day open an envelope with the name of the person they buy a gift for.',
         loginWithGoogle: 'Sign in with Google',
         title: 'Secret Santa without paper slips in a hat',
         videoTitle: 'To warm up',
@@ -414,6 +423,9 @@ const resources = {
         eventDate: 'Data wręczenia prezentów (opcjonalnie)',
         eventPlace: 'Miejsce (opcjonalnie)',
         eventPlaceHint: 'Np. u babci Krysi, godz. 18:00.',
+        ownerPlays: 'Biorę udział w losowaniu',
+        ownerPlaysHint:
+          'Odznacz, jeśli tylko organizujesz – nie napiszesz listu i nikt Cię nie wylosuje.',
         errors: {
           createFailed: 'Nie udało się utworzyć losowania. Spróbuj ponownie.',
         },
@@ -424,6 +436,7 @@ const resources = {
         passwordNote:
           'Zapisz hasło! Bez niego nie rozpoczniesz losowania. Później nie da się go podejrzeć, ale możesz ustawić nowe (Więcej → Ustaw nowe hasło).',
         success: 'Losowanie utworzone. Teraz napisz swój list do Mikołaja!',
+        successNoLetter: 'Losowanie utworzone.',
         title: 'Nowe losowanie',
         validation: {
           budgetMustBeNumber: 'Budżet musi być liczbą',
@@ -456,6 +469,10 @@ const resources = {
         description: { less: 'Zwiń opis', more: 'Pokaż cały opis' },
         goToJoin: 'Dołącz do tego losowania',
         drawnOn: 'Rozlosowano {{date}}',
+        ownerNotPlaying:
+          'Nie bierzesz udziału w losowaniu, więc nie piszesz listu.',
+        noEnvelope:
+          'Losowanie się odbyło. Nie bierzesz w nim udziału, więc nie masz koperty.',
         drawDone: {
           copied: 'Wiadomość skopiowana. Wklej ją na czacie.',
           copyMessage: 'Kopiuj wiadomość',
@@ -589,6 +606,7 @@ const resources = {
         participantsSection: {
           noWish: 'Bez listu',
           owner: 'Organizator',
+          ownerNotDrawing: 'Organizator · nie losuje',
           lettersProgress: 'Napisane listy: {{done}} z {{total}}',
           title: 'Uczestnicy ({{count}})',
           wishProvided: 'List gotowy',
@@ -662,8 +680,8 @@ const resources = {
       },
       howItWorks: {
         step1: 'Organizator zakłada losowanie i wysyła wszystkim jeden link.',
-        step2: 'Wszyscy dołączają i piszą listy do Mikołaja: co chcą dostać.',
-        step3: 'Organizator losuje pary. Otwierasz swoją kopertę i widzisz, komu kupujesz prezent – nikt inny tego nie wie.',
+        step2: 'Osoby biorące udział dołączają i piszą listy do Mikołaja: co chcą dostać.',
+        step3: 'Organizator losuje pary. Każda osoba biorąca udział otwiera kopertę i widzi, komu kupuje prezent – nikt inny tego nie wie.',
         title: 'Jak to działa?',
       },
       joinPage: {
@@ -713,7 +731,7 @@ const resources = {
         },
         googleNote: 'Wystarczy konto Google. Używamy imienia i zdjęcia, żeby inni wiedzieli, kto dołączył.',
         privacyLink: 'Jak używamy danych.',
-        lead: 'Jeden link dla całej grupy. Wszyscy piszą listy do Mikołaja, a w dniu losowania otwierają koperty z imieniem osoby, dla której kupują prezent.',
+        lead: 'Jeden link dla całej grupy. Uczestnicy losowania piszą listy do Mikołaja, a w dniu losowania otwierają koperty z imieniem osoby, dla której kupują prezent.',
         loginWithGoogle: 'Zaloguj przez Google',
         title: 'Tajemniczy Mikołaj bez karteczek w czapce',
         videoTitle: 'Na rozgrzewkę',

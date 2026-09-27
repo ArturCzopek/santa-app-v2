@@ -33,7 +33,7 @@ import DrawOptionsMenu, {
   DrawOption,
 } from '../components/draw/DrawOptionsMenu';
 import { drawService } from '../services/DrawService';
-import { Draw, Participant } from '../models/Draw';
+import { Draw, getDrawPlayers, Participant } from '../models/Draw';
 import { useAuth } from '../hooks/useAuth';
 import { useNotify } from '../hooks/useNotify';
 import UserWishSection from '../components/draw/UserWishSection';
@@ -140,23 +140,36 @@ const DrawPage = () => {
 
   const isOwner = !!draw && !!user && draw.ownerUuid === user.uid;
   const isWaiting = draw?.status === 'WAITING_FOR_DRAW';
-  const showStartButton =
-    isOwner && isWaiting && (draw?.participantUuids.length ?? 0) >= 2;
+  const players = draw ? getDrawPlayers(draw) : [];
+  const playerUuids = new Set(players);
+  const isPlayer = !!user && playerUuids.has(user.uid);
+  const isNonPlayingOwner = !!isOwner && !isPlayer;
+  const showStartButton = isOwner && isWaiting && players.length >= 2;
   const hasLetter = myWish.trim() !== '';
   const allLettersWritten =
-    !!draw && draw.participants.every((participant) => participant.hasWish);
+    !!draw &&
+    draw.participants.filter((participant) =>
+      playerUuids.has(participant.userUuid),
+    ).length === players.length &&
+    draw.participants
+      .filter((participant) => playerUuids.has(participant.userUuid))
+      .every((participant) => participant.hasWish);
   const isEditingLetter = editingLetter ?? (justJoined && isWaiting);
   // The one next step: your own letter first; then, for the owner with
   // every letter in, the draw; otherwise getting everyone in.
   const mainAction: 'write' | 'start' | 'invite' | null = !isWaiting
     ? null
-    : !hasLetter
-      ? isEditingLetter
-        ? null
-        : 'write'
-      : showStartButton && allLettersWritten
+    : !isPlayer
+      ? showStartButton && allLettersWritten
         ? 'start'
-        : 'invite';
+        : 'invite'
+      : !hasLetter
+        ? isEditingLetter
+          ? null
+          : 'write'
+        : showStartButton && allLettersWritten
+          ? 'start'
+          : 'invite';
 
   // After the draw everyone needs their result, so the draw stays as it is.
   const options: DrawOption[] = !isWaiting
@@ -344,7 +357,9 @@ const DrawPage = () => {
                 color={mainAction === 'invite' ? 'primary' : 'inherit'}
                 startIcon={<PersonAdd />}
                 onClick={() => setIsInviteModalOpen(true)}
-                sx={mainAction === 'invite' ? undefined : { color: tokens.snow }}
+                sx={
+                  mainAction === 'invite' ? undefined : { color: tokens.snow }
+                }
               >
                 {t('drawPage.inviteButton')}
               </Button>
@@ -382,32 +397,41 @@ const DrawPage = () => {
           )}
         </Box>
 
-        {draw.status === 'DRAWED' && <WinnerSection draw={draw} />}
+        {draw.status === 'DRAWED' &&
+          (isNonPlayingOwner ? (
+            <Typography>{t('drawPage.noEnvelope')}</Typography>
+          ) : (
+            <WinnerSection draw={draw} />
+          ))}
 
-        {/* Still editable after the draw, so the Santa sees the latest wish. */}
-        <UserWishSection
-          draw={draw}
-          savedWish={myWish}
-          onWishSaved={(wish) => {
-            setMyWish(wish);
-            setDraw({
-              ...draw,
-              participants: draw.participants.map((p) =>
-                p.userUuid === user?.uid ? { ...p, hasWish: wish !== '' } : p,
-              ),
-            });
-          }}
-          isEditing={isEditingLetter}
-          onEditingChange={setEditingLetter}
-          writeButtonInRow={isWaiting}
-        />
+        {isNonPlayingOwner ? (
+          isWaiting && <Typography>{t('drawPage.ownerNotPlaying')}</Typography>
+        ) : (
+          // Still editable after the draw, so the Santa sees the latest wish.
+          <UserWishSection
+            draw={draw}
+            savedWish={myWish}
+            onWishSaved={(wish) => {
+              setMyWish(wish);
+              setDraw({
+                ...draw,
+                participants: draw.participants.map((p) =>
+                  p.userUuid === user?.uid ? { ...p, hasWish: wish !== '' } : p,
+                ),
+              });
+            }}
+            isEditing={isEditingLetter}
+            onEditingChange={setEditingLetter}
+            writeButtonInRow={isWaiting}
+          />
+        )}
 
         <ParticipantsSection
           draw={draw}
           onRemove={isOwner && isWaiting ? askToRemove : undefined}
         />
 
-        {isOwner && isWaiting && draw.participantUuids.length >= 2 && (
+        {isOwner && isWaiting && players.length >= 2 && (
           <ExclusionsSection
             draw={draw}
             exclusions={exclusions}
@@ -426,7 +450,7 @@ const DrawPage = () => {
           onEditExclusions={goToExclusions}
           onForgotPassword={() => setIsPasswordModalOpen(true)}
           withoutWish={draw.participants
-            .filter((p) => !p.hasWish)
+            .filter((p) => playerUuids.has(p.userUuid) && !p.hasWish)
             .map((p) => p.userName)}
         />
       )}

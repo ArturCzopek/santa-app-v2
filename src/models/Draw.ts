@@ -33,6 +33,7 @@ export type DrawDetails = {
   currency: string;
   eventDate: string; // 'YYYY-MM-DD' of the gift exchange, or ''
   eventPlace: string;
+  ownerPlays: boolean;
 };
 
 export type Draw = {
@@ -52,7 +53,18 @@ export type Draw = {
   // Missing on draws created before these fields existed.
   eventDate?: string;
   eventPlace?: string;
+  // Missing on draws created before the organizer could opt out.
+  ownerPlays?: boolean;
 };
+
+// The owner stays in participantUuids for management access, even when they
+// choose not to play. Missing ownerPlays means older draws include the owner.
+export const getDrawPlayers = (
+  draw: Pick<Draw, 'participantUuids' | 'ownerUuid' | 'ownerPlays'>,
+): string[] =>
+  draw.ownerPlays === false
+    ? draw.participantUuids.filter((uid) => uid !== draw.ownerUuid)
+    : draw.participantUuids;
 
 export type DrawPreview = Pick<
   Draw,
@@ -60,4 +72,5 @@ export type DrawPreview = Pick<
 > & {
   participantsCount: number;
   userWishProvided: boolean;
+  isPlayer: boolean;
 };

@@ -1,8 +1,9 @@
 # How the app works (for the people using it)
 
-Santa App runs a Secret Santa (*Tajemniczy Mikołaj*) without paper slips in a hat. Everybody
-joins from their own phone, writes what they would like to get, and after the draw each
-person sees only whom they buy a gift for, together with that person's wish.
+Santa App runs a Secret Santa (*Tajemniczy Mikołaj*) without paper slips in a hat. Players
+join from their own phones, write what they would like to get, and after the draw each
+player sees only whom they buy a gift for, together with that person's wish. The organizer
+can choose to play or to only manage the draw.
 
 This page walks through the app the way people meet it. The UI is in Polish, so screen and
 button names are quoted in Polish. Why it looks the way it does is in
@@ -18,12 +19,13 @@ with a peak in November and December.
 
 | Role | Who | Can |
 |---|---|---|
-| **Organizer** (*Organizator*) | Whoever creates the draw | Everything a participant can, plus: invite, edit the draw, set exclusions, remove a participant, start the draw, delete the draw (before the draw) |
+| **Organizer** (*Organizator*) | Whoever creates the draw | Manage the draw: invite, edit it, set exclusions, remove a participant, start or delete it (before the draw). May choose to play too. |
 | **Participant** (*Uczestnik*) | Everyone who joined | Write and edit their letter, invite others, leave the draw (before the draw), open their own result |
 | **Guest** | Someone with a link who has not signed in | See what the app is and sign in; nothing about a draw until signed in |
 
-The organizer is always a participant too: they write a letter and get a result like
-everyone else.
+The organizer stays on the participant list so they can manage the draw. When creating or
+editing it, they can choose whether to play. If they opt out, they do not write a letter and
+nobody draws them.
 
 **The most common path** is a participant who gets a link in a group chat (Messenger,
 WhatsApp), opens it on a phone, often inside the chat app's own browser, signs in with
@@ -43,6 +45,7 @@ Everything is designed for that path first.
 | Budżet + Waluta | yes | PLN, EUR, USD or GBP |
 | Data wręczenia prezentów | no | Today or later |
 | Miejsce | no | E.g. "u babci Krysi, godz. 18:00" |
+| Biorę udział w losowaniu | no | Checked by default; untick it to organize without playing |
 | Hasło do rozpoczęcia losowania | yes | At least 6 characters |
 
 The password matters more than it looks: **the organizer needs it to start the draw**, and it
@@ -91,11 +94,12 @@ as the main button, and the page's address in a field that stays on screen in ca
 is not allowed. *Jak to działa?* and the Google button follow, the button marked as usually
 failing there.
 
-### 4. Everybody writes a letter to Santa
+### 4. Players write a letter to Santa
 
 The letter (*Twój list do Mikołaja*, starting with "Drogi Mikołaju,") is the wish: what you
 would like to get, up to 2000 characters. Only one other person will ever read it, the one
-who draws you, and only after the draw.
+who draws you, and only after the draw. An organizer who opted out sees a note that they do
+not write a letter.
 
 - Before the draw the participants list shows who has a letter ready (*List gotowy*) and who
   does not (*Bez listu*). The organizer also sees the count: *Napisane listy: 4 z 6*.
@@ -122,12 +126,13 @@ buy gifts together anyway. Only the organizer sees this section, and only before
 ### 6. The organizer starts the draw
 
 While the draw waits, a line under its name says who acts next: participants read that the
-organizer starts it once everyone has joined; the organizer sees whether letters are still
-missing or all are in. The red button is always the next step: *Napisz list* while your own
-letter is missing, *Rozpocznij losowanie* for the organizer once every letter is in, otherwise
-*Zaproś do losowania*.
+organizer starts it once the players have joined; the organizer sees whether player letters
+are still missing or all are in. The red button is always the next step: *Napisz list* while
+your own letter is missing, *Rozpocznij losowanie* for the organizer once every player letter
+is in, otherwise *Zaproś do losowania*.
 
-**Rozpocznij losowanie** appears once there are at least two people. The dialog shows:
+**Rozpocznij losowanie** appears once there are at least two players (the organizer counts
+only when they chose to play). The dialog shows:
 
 - who has not written a letter yet (their Santa will have to guess),
 - the current exclusions, with a link to change them,
@@ -142,9 +147,9 @@ with a ready message for the group (link, budget, date and place), to share or c
 else tells people the draw has happened, so this is the moment to send it. *Daj znać
 wszystkim* on the draw page opens it again later.
 
-### 7. Everybody opens their envelope
+### 7. Players open their envelope
 
-After the draw each person finds a **sealed envelope** addressed to them (*Do: …*) with a wax
+After the draw each player finds a **sealed envelope** addressed to them (*Do: …*) with a wax
 seal and *Stuknij, aby otworzyć*. Tapping breaks the seal and the letter slides out:
 
 - *Kupujesz prezent dla* + the recipient's name, large and handwritten,
@@ -157,13 +162,14 @@ again, which is fine). After the draw the participants list folds away: the resu
 now, not who wrote a letter.
 
 **Nobody sees any pair other than their own**, the organizer included (with one known
-caveat for a technically skilled organizer, see [D3](04-decisions.md#d3-the-pairs-are-drawn-in-the-organizers-browser-accepted)).
+caveat for a technically skilled organizer, see [D3](04-decisions.md#d3-the-pairs-are-drawn-in-the-organizers-browser-accepted)). An organizer who opted out has no envelope.
 
 ## Changing your mind
 
 | What | Who | When | Where |
 |---|---|---|---|
 | Edit name, description, budget, date, place | Organizer | Before the draw | *Więcej* -> *Edytuj losowanie* |
+| Choose whether the organizer plays | Organizer | Before the draw | *Więcej* -> *Edytuj losowanie* |
 | Set a new password (people who joined stay, the invite link keeps working) | Organizer | Before the draw | *Więcej* -> *Ustaw nowe hasło*, or from the start dialog |
 | Delete the draw (with all letters) | Organizer | Before the draw | *Więcej* -> *Usuń losowanie* |
 | Leave the draw (the letter is deleted) | Participant | Before the draw | *Więcej* -> *Opuść losowanie* |

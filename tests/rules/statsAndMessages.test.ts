@@ -89,6 +89,7 @@ describe('stats', () => {
       await env.withSecurityRulesDisabled((ctx) =>
         setDoc(doc(ctx.firestore(), 'draws/d1'), {
           ownerUuid: OWNER,
+          ownerPlays: false,
           participantUuids: [OWNER, ALICE, BOB],
           status: 'WAITING_FOR_DRAW',
         }),
@@ -110,11 +111,15 @@ describe('stats', () => {
       return batch.commit();
     };
 
-    it('counts participants in the batch that starts the draw', async () => {
-      await assertSucceeds(startCounting(3));
+    it('counts players in the batch that starts the draw', async () => {
+      await assertSucceeds(startCounting(2));
     });
 
-    it('cannot count more winners than participants', async () => {
+    it('does not count the non-playing owner', async () => {
+      await assertFails(startCounting(3));
+    });
+
+    it('cannot count more winners than players', async () => {
       await assertFails(startCounting(10));
     });
   });

@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import HelpLink from '../HelpLink';
 import PaperCard from '../common/PaperCard';
 import SectionHeading from './SectionHeading';
-import { Draw } from '../../models/Draw';
+import { Draw, getDrawPlayers } from '../../models/Draw';
 import {
   blockingExclusions,
   Exclusion,
@@ -35,11 +35,10 @@ export const pairLabel = ([a, b]: Exclusion, nameOf: (uid: string) => string) =>
   `${nameOf(a)} ↔ ${nameOf(b)}`;
 
 // Exclusions between people still in the draw (someone may have left).
-export const currentExclusions = (draw: Draw, exclusions: Exclusion[]) =>
-  exclusions.filter(
-    ([a, b]) =>
-      draw.participantUuids.includes(a) && draw.participantUuids.includes(b),
-  );
+export const currentExclusions = (draw: Draw, exclusions: Exclusion[]) => {
+  const players = new Set(getDrawPlayers(draw));
+  return exclusions.filter(([a, b]) => players.has(a) && players.has(b));
+};
 
 // Tells which exclusions to remove when the draw has become impossible.
 export const ImpossibleDrawNotice: React.FC<{
@@ -48,9 +47,10 @@ export const ImpossibleDrawNotice: React.FC<{
   nameOf: (uid: string) => string;
 }> = ({ draw, exclusions, nameOf }) => {
   const { t } = useTranslation();
-  if (isDrawPossible(draw.participantUuids, exclusions)) return null;
+  const players = getDrawPlayers(draw);
+  if (isDrawPossible(players, exclusions)) return null;
 
-  const blocking = blockingExclusions(draw.participantUuids, exclusions);
+  const blocking = blockingExclusions(players, exclusions);
   return (
     <Typography role="alert" sx={{ color: tokens.wax, fontWeight: 700 }}>
       {blocking.length > 0
@@ -81,9 +81,10 @@ const ExclusionsSection: React.FC<ExclusionsSectionProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const people = [...draw.participants].sort((a, b) =>
-    a.userName.localeCompare(b.userName),
-  );
+  const players = getDrawPlayers(draw);
+  const people = draw.participants
+    .filter((participant) => players.includes(participant.userUuid))
+    .sort((a, b) => a.userName.localeCompare(b.userName));
   const nameOf = (uid: string) =>
     draw.participants.find((p) => p.userUuid === uid)?.userName ?? '?';
   const current = currentExclusions(draw, exclusions);
@@ -123,7 +124,7 @@ const ExclusionsSection: React.FC<ExclusionsSectionProps> = ({
       setError(t('drawPage.exclusions.alreadyThere'));
       return;
     }
-    if (!isDrawPossible(draw.participantUuids, [...current, pair])) {
+    if (!isDrawPossible(players, [...current, pair])) {
       setError(t('drawPage.exclusions.wouldBeImpossible'));
       return;
     }

@@ -12,8 +12,15 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'what',
       question: 'Jak działa Tajemniczy Mikołaj w Santa App?',
       answer: [
-        'Organizator zakłada losowanie i wysyła wszystkim jeden link. Każda osoba dołącza ze swojego telefonu i pisze list do Mikołaja: co chciałaby dostać.',
-        'Gdy wszyscy są gotowi, organizator losuje pary. Każdy otwiera swoją kopertę i widzi tylko to, komu kupuje prezent, razem z listem tej osoby.',
+        'Organizator zakłada losowanie i wysyła wszystkim jeden link. Osoby biorące udział dołączają ze swoich telefonów i piszą listy do Mikołaja: co chciałyby dostać.',
+        'Gdy gracze są gotowi, organizator losuje pary. Każda osoba biorąca udział otwiera swoją kopertę i widzi tylko to, komu kupuje prezent, razem z listem tej osoby.',
+      ],
+    },
+    {
+      id: 'organizer',
+      question: 'Czy organizator musi brać udział w losowaniu?',
+      answer: [
+        'Nie. Przy tworzeniu losowania możesz odznaczyć udział organizatora. Nadal zarządzasz losowaniem, ale nie piszesz listu i nikt cię nie wylosuje.',
       ],
     },
     {
@@ -86,8 +93,15 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'what',
       question: 'How does Secret Santa work in Santa App?',
       answer: [
-        'The organizer creates a draw and sends everyone one link. Each person joins from their own phone and writes a letter to Santa: what they would like to get.',
-        'When everyone is ready, the organizer draws the pairs. Everyone opens their envelope and sees only whom they buy for, together with that person’s letter.',
+        'The organizer creates a draw and sends everyone one link. Players join from their own phones and write a letter to Santa: what they would like to get.',
+        'When the players are ready, the organizer draws the pairs. Each player opens their envelope and sees only whom they buy for, together with that person’s letter.',
+      ],
+    },
+    {
+      id: 'organizer',
+      question: 'Does the organizer have to take part in the draw?',
+      answer: [
+        'No. Untick the organizer’s participation when creating the draw. You still manage the draw, but you do not write a letter and nobody draws you.',
       ],
     },
     {

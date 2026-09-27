@@ -11,6 +11,7 @@ import {
   getDocs,
   serverTimestamp,
   setDoc,
+  updateDoc,
   writeBatch,
 } from 'firebase/firestore';
 import { ALICE, authed, BOB, createTestEnv, OWNER } from './setup';
@@ -49,6 +50,11 @@ const startDraw = (uid: string, pairs: [string, string][]) => {
   return batch.commit();
 };
 
+const setNonPlayingOwner = () =>
+  env.withSecurityRulesDisabled((ctx) =>
+    updateDoc(doc(ctx.firestore(), 'draws/d1'), { ownerPlays: false }),
+  );
+
 const VALID_PAIRS: [string, string][] = [
   [OWNER, ALICE],
   [ALICE, BOB],
@@ -58,6 +64,40 @@ const VALID_PAIRS: [string, string][] = [
 describe('assignments', () => {
   it('owner can write assignments together with starting the draw', async () => {
     await assertSucceeds(startDraw(OWNER, VALID_PAIRS));
+  });
+
+  it('requires two players when the owner does not play', async () => {
+    await setNonPlayingOwner();
+    await env.withSecurityRulesDisabled((ctx) =>
+      updateDoc(doc(ctx.firestore(), 'draws/d1'), {
+        participantUuids: [OWNER, ALICE],
+      }),
+    );
+    await assertFails(startDraw(OWNER, [[ALICE, OWNER]]));
+
+    await env.withSecurityRulesDisabled((ctx) =>
+      updateDoc(doc(ctx.firestore(), 'draws/d1'), {
+        participantUuids: [OWNER, ALICE, BOB],
+      }),
+    );
+    await assertSucceeds(
+      startDraw(OWNER, [
+        [ALICE, BOB],
+        [BOB, ALICE],
+      ]),
+    );
+  });
+
+  it('does not allow assignments from or to a non-playing owner', async () => {
+    await setNonPlayingOwner();
+    await assertFails(
+      startDraw(OWNER, [
+        [OWNER, ALICE],
+        [ALICE, BOB],
+        [BOB, ALICE],
+      ]),
+    );
+    await assertFails(startDraw(OWNER, [[ALICE, OWNER]]));
   });
 
   it('non-owner cannot start the draw with assignments', async () => {

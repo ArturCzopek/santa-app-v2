@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { drawService } from '../../services/DrawService';
 import PasswordField from '../form/PasswordField';
 import { tokens } from '../../styles/theme';
-import { Draw } from '../../models/Draw';
+import { Draw, getDrawPlayers } from '../../models/Draw';
 import { Exclusion, isDrawPossible } from '../../services/pairs';
 import { ImpossibleDrawNotice, pairLabel } from './ExclusionsSection';
 
@@ -41,7 +41,7 @@ const StartDrawModal: React.FC<StartDrawModalProps> = ({
   onForgotPassword,
 }) => {
   const drawId = draw.id ?? '';
-  const possible = isDrawPossible(draw.participantUuids, exclusions);
+  const possible = isDrawPossible(getDrawPlayers(draw), exclusions);
   const nameOf = (uid: string) =>
     draw.participants.find((p) => p.userUuid === uid)?.userName ?? '?';
   const { t } = useTranslation();

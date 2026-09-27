@@ -2,6 +2,7 @@ import React, { useId, useState } from 'react';
 import {
   Box,
   ButtonBase,
+  Chip,
   Collapse,
   IconButton,
   LinearProgress,
@@ -14,7 +15,7 @@ import {
   PersonRemoveOutlined,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { Draw, Participant } from '../../models/Draw';
+import { Draw, getDrawPlayers, Participant } from '../../models/Draw';
 import { useAuth } from '../../hooks/useAuth';
 import PaperCard from '../common/PaperCard';
 import StampAvatar from '../common/StampAvatar';
@@ -39,7 +40,11 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
   const [expanded, setExpanded] = useState(false);
   const listId = useId();
   const isOwner = !!user && user.uid === draw.ownerUuid;
-  const lettersWritten = draw.participants.filter((p) => !!p.hasWish).length;
+  const players = new Set(getDrawPlayers(draw));
+  const playerCount = players.size;
+  const lettersWritten = draw.participants.filter(
+    (p) => players.has(p.userUuid) && !!p.hasWish,
+  ).length;
 
   const sortedParticipants = [...draw.participants].sort((a, b) =>
     a.userName.localeCompare(b.userName),
@@ -83,12 +88,20 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
           {/* Only the organizer's role says something; "Uczestnik" on every
               row was noise. */}
           {participant.userUuid === draw.ownerUuid && (
-            <Typography variant="body2" color="text.secondary">
-              {t('drawPage.participantsSection.owner')}
-            </Typography>
+            draw.ownerPlays === false ? (
+              <Chip
+                size="small"
+                variant="outlined"
+                label={t('drawPage.participantsSection.ownerNotDrawing')}
+              />
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                {t('drawPage.participantsSection.owner')}
+              </Typography>
+            )
           )}
         </Box>
-        {showWishStatus && (
+        {showWishStatus && players.has(participant.userUuid) && (
           <Typography
             variant="body2"
             sx={{
@@ -146,14 +159,14 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
           <Typography sx={{ fontWeight: 700, mb: 1 }}>
             {t('drawPage.participantsSection.lettersProgress', {
               done: lettersWritten,
-              total: draw.participants.length,
+              total: playerCount,
             })}
           </Typography>
           <LinearProgress
             variant="determinate"
             color="secondary"
             value={
-              (lettersWritten / Math.max(draw.participants.length, 1)) * 100
+              (lettersWritten / Math.max(playerCount, 1)) * 100
             }
             aria-hidden
             sx={{ height: 8, borderRadius: 4, bgcolor: tokens.paperShade }}

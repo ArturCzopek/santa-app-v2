@@ -29,6 +29,7 @@ const detailsOf = (draw: Draw): DrawDetails => ({
   currency: draw.currency,
   eventDate: draw.eventDate ?? '',
   eventPlace: draw.eventPlace ?? '',
+  ownerPlays: draw.ownerPlays !== false,
 });
 
 // The owner changes the draw's details before the draw takes place.

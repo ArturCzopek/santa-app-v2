@@ -46,7 +46,7 @@ it has different readers:
 
 | Path | Holds | Who reads it |
 |---|---|---|
-| `draws/{id}` | Name, description, budget, currency, date, place, owner, `participantUuids`, status, draw date | Anyone signed in who knows the id |
+| `draws/{id}` | Name, description, budget, currency, date, place, owner, optional `ownerPlays` (missing means true), `participantUuids`, status, draw date | Anyone signed in who knows the id |
 | `…/participants/{uid}` | Name and photo (must match the Google profile), `hasWish` | Participants |
 | `…/letters/{uid}` | The letter to Santa, written by its author before the draw only | The author; after the draw also the one person who drew the author |
 | `…/exclusions/{a}_{b}` | A pair who must not draw each other (`a < b`) | The owner, before the draw |
@@ -64,7 +64,7 @@ leave; after it, the rules freeze the draw so every result stays valid.
 - A draw name is at most 80 characters and its description at most 1000; a wish is at most
   2000 characters and a feedback message at most 1000.
 - A draw supports up to 100 participants and currencies `PLN`, `EUR`, `USD`, or `GBP`.
-- The password form requires at least 6 characters, and the owner is always a participant.
+- The password form requires at least 6 characters. The owner stays a participant for management access, and `ownerPlays` decides whether they are included among the players; missing means `true` for older draws.
 - Draw status moves from `WAITING_FOR_DRAW` to `DRAWED`; `DRAWED` is terminal.
 
 ## What happens at each step
@@ -83,7 +83,7 @@ from the password or from the link's key and writes, in one batch, its own parti
 document (carrying that join key) and its uid into `participantUuids`. The rules accept the
 batch only if `joinKeys/{thatKey}` exists, so a wrong password shows up as a refused write.
 
-**Writing a letter** (`UserWishSection`). The author writes `letters/{uid}` and, in the same
+**Writing a letter** (`UserWishSection`). A player writes `letters/{uid}` and, in the same
 batch, `hasWish` in their participant document; the rules check that the two match. Other
 participants see only "List gotowy" / "Bez listu", never the text.
 
@@ -97,13 +97,15 @@ password, which the app checks against the join key (the invite link's key does 
 so whoever has the link still cannot start the draw). Then the owner's browser:
 
 1. reads the exclusions (only the owner may),
-2. draws the pairs with `generatePairs`: first it looks for **one circle through everyone**
-   (A -> B -> C -> A), which feels most like drawing from a hat; if exclusions make that
-   impossible, it takes any valid set where everyone gives and receives exactly once. It
-   never pairs anyone with themselves or with an excluded partner, and uses the browser's
-   cryptographic random numbers,
+2. gets the players from `participantUuids` (excluding the owner only when `ownerPlays` is
+   false; see `getDrawPlayers` in [`Draw.ts`](../src/models/Draw.ts)), then draws the pairs
+   with `generatePairs`: first it looks for **one circle through everyone** (A -> B -> C -> A),
+   which feels most like drawing from a hat; if exclusions make that impossible, it takes
+   any valid set where everyone gives and receives exactly once. Exclusions involving a
+   non-player are ignored. It never pairs anyone with themselves or with an excluded
+   partner, and uses the browser's cryptographic random numbers,
 3. writes, in one batch, the status change and one `assignments/{giver}` document per
-   person, readable only by that giver.
+   player, readable only by that giver.
 
 From then on no browser holds the whole result.
 
@@ -112,9 +114,10 @@ the owner removes every join key except the current invite link's and adds the k
 new password, so the old password stops working, the new one starts the draw and lets
 people join, and the link and everyone who joined stay.
 
-**Opening the result** (`WinnerSection`, `SealedEnvelope`). The app reads
+**Opening the result** (`WinnerSection`, `SealedEnvelope`). A player reads
 `assignments/{me}` and then the recipient's letter, which the rules allow only because of
-that assignment. Whether the envelope was opened is remembered in the browser's
+that assignment. An organizer who opted out has no assignment or envelope. Whether the
+envelope was opened is remembered in the browser's
 `localStorage`, per draw and person (`services/envelope.ts`), and so is a letter being
 written until it is saved (`services/letterDraft.ts`).
 

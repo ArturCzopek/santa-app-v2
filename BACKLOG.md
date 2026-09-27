@@ -234,7 +234,9 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
   e-mail/push – wymaga serwera → Blaze
 - [x] F4 – edycja, usuwanie losowania i opuszczenie (09-24), nowe hasło (09-25, D21), usuwanie uczestnika przez
   organizatora (09-26, `6109bb6`, D29). Po losowaniu stan końcowy: brak edycji/usuwania i ponownego losowania.
-- [ ] F5 – organizator niebiorący udziału
+- [x] F5 – organizator niebiorący udziału (2026-09-27, D32; Codex, zrecenzowane przez Claude'a):
+  pole „Biorę udział w losowaniu” przy zakładaniu i edycji; `ownerPlays: false` – organizator
+  zostaje na liście (zarządza), ale nie pisze listu i nie jest losowany; reguły to wymuszają
 - [ ] F6 – lista życzeń w strukturze: pozycje, linki, rozmiary, „czego nie chcę”
 - [ ] F7 – status „prezent kupiony” / podziękowanie
 - [~] F8 – Web Share + gotowa wiadomość (R10, D23) zrobione. Zostało: kod QR (np. na kartkę na lodówkę / spotkanie)

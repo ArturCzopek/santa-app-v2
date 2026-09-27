@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { CheckCircleOutlined, HourglassEmpty } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import HelpLink from '../HelpLink';
-import { Draw } from '../../models/Draw';
+import { Draw, getDrawPlayers } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
 
 // Before the draw: one line on what the draw is waiting for and who acts
@@ -13,8 +13,11 @@ const DrawStatus: React.FC<{ draw: Draw; isOwner: boolean }> = ({
   isOwner,
 }) => {
   const { t } = useTranslation();
-  const total = draw.participants.length;
-  const done = draw.participants.filter((p) => p.hasWish).length;
+  const players = new Set(getDrawPlayers(draw));
+  const total = players.size;
+  const done = draw.participants.filter(
+    (p) => players.has(p.userUuid) && p.hasWish,
+  ).length;
   const ready = isOwner && total >= 2 && done === total;
 
   const text = !isOwner

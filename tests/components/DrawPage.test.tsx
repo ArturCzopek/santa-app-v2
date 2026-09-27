@@ -470,6 +470,83 @@ describe('DrawPage', () => {
     ).toBeInTheDocument();
   });
 
+  it('keeps a non-playing organizer on the list without letter status', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      ownerPlays: false,
+      participantUuids: ['owner', 'alice', 'bob'],
+    });
+    vi.mocked(drawService.getParticipants).mockResolvedValue([
+      participant('owner', 'Olga Owner'),
+      participant('alice', 'Ania Test', 'Socks'),
+      participant('bob', 'Bartek Test'),
+    ]);
+    renderDrawPage();
+
+    const tag = await screen.findByText('Organizator · nie losuje');
+    const ownerRow = tag.closest('li');
+    expect(ownerRow).not.toBeNull();
+    expect(within(ownerRow!).getByText('Olga Owner')).toBeInTheDocument();
+    expect(within(ownerRow!).queryByText('Bez listu')).not.toBeInTheDocument();
+    expect(screen.getByText('Napisane listy: 1 z 2')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Nie bierzesz udziału w losowaniu, więc nie piszesz listu.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Twój list do Mikołaja' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('does not offer a non-playing organizer in exclusion pickers', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      ownerPlays: false,
+      participantUuids: ['owner', 'alice', 'bob'],
+    });
+    vi.mocked(drawService.getParticipants).mockResolvedValue([
+      participant('owner', 'Olga Owner'),
+      participant('alice', 'Ania Test'),
+      participant('bob', 'Bartek Test'),
+    ]);
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await screen.findByRole('heading', {
+      name: 'Pary, które się nie wylosują (0)',
+    });
+    await user.click(screen.getByRole('combobox', { name: 'Pierwsza osoba' }));
+    expect(
+      (await screen.findAllByRole('option')).map((option) => option.textContent),
+    ).toEqual(['Ania Test', 'Bartek Test']);
+  });
+
+  it('shows no envelope to the organizer after opting out', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      ownerPlays: false,
+      participantUuids: ['owner', 'alice', 'bob'],
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawService.getParticipants).mockResolvedValue([
+      participant('owner', 'Olga Owner'),
+      participant('alice', 'Ania Test'),
+      participant('bob', 'Bartek Test'),
+    ]);
+    renderDrawPage();
+
+    expect(
+      await screen.findByText(
+        'Losowanie się odbyło. Nie bierzesz w nim udziału, więc nie masz koperty.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Twój wynik losowania' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('does not show the letter count to other participants', async () => {
     auth.user = fakeUser('alice', 'Ania Test');
     renderDrawPage();
@@ -599,6 +676,11 @@ describe('DrawPage', () => {
       screen.getByRole('menuitem', { name: 'Edytuj losowanie' }),
     );
     const dialog = await screen.findByRole('dialog');
+    const ownerPlays = within(dialog).getByRole('checkbox', {
+      name: 'Biorę udział w losowaniu',
+    });
+    expect(ownerPlays).toBeChecked();
+    await user.click(ownerPlays);
     const name = within(dialog).getByLabelText('Nazwa losowania');
     await user.clear(name);
     await user.type(name, 'Wigilia');
@@ -608,7 +690,11 @@ describe('DrawPage', () => {
 
     expect(drawService.updateDrawDetails).toHaveBeenCalledWith(
       'd1',
-      expect.objectContaining({ drawName: 'Wigilia', budget: 80 }),
+      expect.objectContaining({
+        drawName: 'Wigilia',
+        budget: 80,
+        ownerPlays: false,
+      }),
     );
     expect(
       await screen.findByRole('heading', { name: 'Wigilia' }),

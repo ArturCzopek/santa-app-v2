@@ -2,6 +2,7 @@ import React, { useId } from 'react';
 import { Typography, Box, ButtonBase } from '@mui/material';
 import {
   ArrowForward,
+  CheckCircleOutlined,
   DraftsOutlined,
   HourglassEmpty,
   MarkEmailUnread,
@@ -27,7 +28,8 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
   const titleId = useId();
   const statusId = useId();
   const drawn = drawPreview.status === 'DRAWED';
-  const missingWish = !drawn && !drawPreview.userWishProvided;
+  const missingWish =
+    !drawn && drawPreview.isPlayer && !drawPreview.userWishProvided;
   // Once opened, the card stops asking to open the envelope.
   const opened =
     drawn && !!user && wasEnvelopeOpened(drawPreview.id ?? '', user.uid);
@@ -104,6 +106,8 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
           >
             {opened ? (
               <DraftsOutlined aria-hidden />
+            ) : drawn && !drawPreview.isPlayer ? (
+              <CheckCircleOutlined aria-hidden />
             ) : drawn ? (
               <MarkEmailUnread aria-hidden />
             ) : (
@@ -112,7 +116,9 @@ const DrawPreviewCard: React.FC<DrawPreviewCardProps> = ({ drawPreview }) => {
             {opened
               ? t('drawCard.envelopeOpened')
               : drawn
-                ? t('drawCard.checkResults')
+                ? drawPreview.isPlayer
+                  ? t('drawCard.checkResults')
+                  : t('drawPage.noEnvelope')
                 : t('drawCard.noWish')}
           </Typography>
         )}

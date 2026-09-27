@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import { Control, FieldValues, Path } from 'react-hook-form';
+import { Box, Checkbox, FormControlLabel, FormHelperText } from '@mui/material';
+import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import FormTextField from '../form/FormTextField';
 import FormSelect from '../form/FormSelect';
@@ -25,6 +25,7 @@ export const cleanDrawDetails = (details: DrawDetails): DrawDetails => ({
   currency: details.currency,
   eventDate: details.eventDate ?? '',
   eventPlace: (details.eventPlace ?? '').trim(),
+  ownerPlays: details.ownerPlays !== false,
 });
 
 // Today as 'YYYY-MM-DD' in the person's own time zone.
@@ -163,6 +164,22 @@ const DrawDetailsFields = <T extends FieldValues & DrawDetails>({
           },
         }}
       />
+
+      <Box>
+        <Controller
+          name={name('ownerPlays')}
+          control={control}
+          render={({ field }) => (
+            <FormControlLabel
+              control={<Checkbox {...field} checked={field.value} />}
+              label={t('createPage.ownerPlays')}
+            />
+          )}
+        />
+        <FormHelperText sx={{ ml: 4, mt: -1 }}>
+          {t('createPage.ownerPlaysHint')}
+        </FormHelperText>
+      </Box>
     </>
   );
 };

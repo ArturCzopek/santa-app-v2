@@ -41,6 +41,7 @@ const newDrawForm = {
   currency: 'PLN',
   eventDate: '2026-12-24',
   eventPlace: 'At grandma’s',
+  ownerPlays: true,
   password: 'secret1',
 };
 
@@ -120,6 +121,39 @@ describe('DrawService against the emulator', () => {
       drawsCount: 1,
       winnersCount: 3,
     });
+  });
+
+  it('lets the owner organize without playing or receiving an assignment', async () => {
+    const owner = await signInAs('owner', 'Olga Owner');
+    const drawId = await drawService.createDraw(
+      { ...newDrawForm, ownerPlays: false },
+      owner,
+    );
+    const alice = await signInAs('alice', 'Ania Test');
+    await drawService.joinToDraw(drawId, alice, 'secret1');
+    await signInAs('owner', 'Olga Owner');
+    await expect(drawService.startDraw(drawId, owner.uid)).rejects.toThrow(
+      'at least two players',
+    );
+
+    const bob = await signInAs('bob', 'Bob Test');
+    await drawService.joinToDraw(drawId, bob, 'secret1');
+    await signInAs('owner', 'Olga Owner');
+    await drawService.startDraw(drawId, owner.uid);
+
+    expect(await drawService.getMyAssignment(drawId, owner.uid)).toBeNull();
+    const pairs: Pair[] = [];
+    for (const [sub, name, uid] of [
+      ['alice', 'Ania Test', alice.uid],
+      ['bob', 'Bob Test', bob.uid],
+    ]) {
+      await signInAs(sub, name);
+      const assignment = await drawService.getMyAssignment(drawId, uid);
+      expect(assignment).not.toBeNull();
+      pairs.push({ fromUuid: uid, toUuid: assignment!.toUuid });
+    }
+    expect(isValidDraw(pairs, [alice.uid, bob.uid])).toBe(true);
+    expect(await appDataService.getAppData()).toMatchObject({ winnersCount: 2 });
   });
 
   it('lets the owner set a new password; the invite link keeps working', async () => {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { getDrawPlayers } from '../../src/models/Draw';
 import {
   blockingExclusions,
   cryptoRandomInt,
@@ -10,6 +11,29 @@ import {
 
 const uuids = (count: number) =>
   Array.from({ length: count }, (_, i) => `user-${i}`);
+
+describe('getDrawPlayers', () => {
+  const draw = {
+    ownerUuid: 'owner',
+    participantUuids: ['owner', 'alice', 'bob'],
+  };
+
+  it('includes the owner by default for older draws', () => {
+    expect(getDrawPlayers(draw)).toEqual(['owner', 'alice', 'bob']);
+    expect(getDrawPlayers({ ...draw, ownerPlays: true })).toEqual([
+      'owner',
+      'alice',
+      'bob',
+    ]);
+  });
+
+  it('leaves a non-playing owner on the draw but out of the players', () => {
+    expect(getDrawPlayers({ ...draw, ownerPlays: false })).toEqual([
+      'alice',
+      'bob',
+    ]);
+  });
+});
 
 describe('generatePairs', () => {
   it.each([2, 3, 5, 10, 50])(

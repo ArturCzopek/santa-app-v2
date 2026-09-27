@@ -36,6 +36,7 @@ const CreatePage = () => {
       currency: 'PLN',
       eventDate: '',
       eventPlace: '',
+      ownerPlays: true,
       password: '',
     },
   });
@@ -50,7 +51,10 @@ const CreatePage = () => {
         { ...cleanDrawDetails(data), password: data.password },
         user,
       );
-      notify(t('createPage.success'), 'success');
+      notify(
+        t(data.ownerPlays ? 'createPage.success' : 'createPage.successNoLetter'),
+        'success',
+      );
       // The invite opens first; the owner is a participant too, so the
       // letter editor is open behind it.
       navigate(`/draw/${newDrawUid}`, {

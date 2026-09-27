@@ -63,6 +63,13 @@ describe('draws', () => {
       await assertSucceeds(createDraw(authed(env, OWNER), 'd1', OWNER));
     });
 
+    it('accepts either owner participation choice and rejects non-booleans', async () => {
+      const db = authed(env, OWNER);
+      await assertSucceeds(createDraw(db, 'd1', OWNER, { ownerPlays: true }));
+      await assertSucceeds(createDraw(db, 'd2', OWNER, { ownerPlays: false }));
+      await assertFails(createDraw(db, 'd3', OWNER, { ownerPlays: 'false' }));
+    });
+
     it('cannot create a draw for someone else', async () => {
       await assertFails(
         createDraw(authed(env, MALLORY), 'd1', MALLORY, { ownerUuid: OWNER }),
@@ -438,6 +445,17 @@ describe('draws', () => {
       await assertSucceeds(
         updateDoc(doc(authed(env, OWNER), 'draws/d1'), changes),
       );
+    });
+
+    it('owner can toggle participation before the draw only', async () => {
+      const db = authed(env, OWNER);
+      await assertSucceeds(updateDoc(doc(db, 'draws/d1'), { ownerPlays: false }));
+      await assertSucceeds(updateDoc(doc(db, 'draws/d1'), { ownerPlays: true }));
+      await updateDoc(doc(db, 'draws/d1'), {
+        status: 'DRAWED',
+        drawDate: serverTimestamp(),
+      });
+      await assertFails(updateDoc(doc(db, 'draws/d1'), { ownerPlays: false }));
     });
 
     it('participants and outsiders cannot', async () => {
