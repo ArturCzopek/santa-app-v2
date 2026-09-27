@@ -3,7 +3,7 @@
 Secret Santa draws with friends, family or colleagues:
 [arturczopek.github.io/santa-app-v2](https://arturczopek.github.io/santa-app-v2)
 
-Sign in with Google, create a draw (name, description, budget, password),
+Sign in with Google or with a link sent to your email, create a draw (name, description, budget, password),
 share the invite link, let everybody write a wish, and start the draw. Each
 person sees only who they buy a gift for, together with that person's wish.
 
@@ -27,7 +27,7 @@ This README covers setting up, running, testing and deploying.
 ## Tech stack
 
 - React 19, TypeScript 6, Vite 8, MUI 9, React Router 8, i18next (Polish / English)
-- Firebase 12: Authentication (Google) and Firestore - there is no own backend
+- Firebase 12: Authentication (Google and email link) and Firestore - there is no own backend
 - Tests: Vitest 4, React Testing Library, Playwright, Firebase emulators
 - Hosting: GitHub Pages, deployed by GitHub Actions; the PWA manifest and icons are in `public/` (no service worker)
 

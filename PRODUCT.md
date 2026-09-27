@@ -45,15 +45,15 @@ sees the recipient's current wish right next to the result.
 - React 19 + MUI 9 + Vite, Firebase (Google Auth + Firestore), hosted on GitHub Pages
   (hash routes), no backend server; security lives in Firestore rules.
 - Polish UI by default, with an English language switch whose choice is remembered in the browser.
-- Current features: create/edit/delete a waiting draw; Google sign-in; password or invite-link
+- Current features: create/edit/delete a waiting draw; Google or email-link sign-in; password or invite-link
   joining; password and invite-key rotation; participant leave/removal; a private wish per
   participant (max 2000 chars); symmetric exclusions; organizer-started draw; a private result
   with the recipient's wish; optional gift-exchange date/place and calendar export; help and
   privacy pages; one feedback message per user per day; and "Pokaż Mikołaja" videos.
-- Not yet: email-link sign-in, organizer-not-participating mode, previous-year no-repeat,
-  anonymous chat, structured wishlists, bought/status tracking, push/email reminders, PWA,
-  QR invites, an in-app admin inbox, or monetization. These are roadmap ideas, not committed
-  product decisions.
+- Also: organizer-not-participating mode, a letter of short things plus a note, gift-bought
+  status and thank-you notes, QR invites, installable app (PWA), an in-app admin inbox.
+- Not yet: previous-year no-repeat, anonymous chat, push/email reminders, server-side drawing,
+  or monetization. These are roadmap ideas, not committed product decisions.
 
 ## Brand Commitments
 

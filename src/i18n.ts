@@ -353,6 +353,28 @@ const resources = {
         title: 'Invitation to a draw',
       },
       loginPage: {
+        email: {
+          changeAddress: 'Use another address',
+          confirmAddress:
+            'This link was opened in a different browser. Type the email address it was sent to.',
+          explain:
+            'We will email you a sign-in link. No password: open the link and you are in.',
+          finish: 'Sign in',
+          finishTitle: 'Signing in with the email link',
+          invalid: 'Type a valid email address.',
+          label: 'Email address',
+          linkExpired:
+            'This link has expired or was already used. Ask for a new one.',
+          open: 'No Google account? Sign in with email',
+          send: 'Send the sign-in link',
+          sendFailed: 'Could not send the link. Please try again.',
+          sent: 'We sent a sign-in link to {{email}}. Open it on this device (check spam too).',
+          sentTitle: 'Check your inbox',
+          signingIn: 'Signing in…',
+          startOver: 'Back to signing in',
+          wrongAddress:
+            'This is not the address the link was sent to. Check it and try again.',
+        },
         errors: {
           popupBlocked:
             'The browser blocked the sign-in window. Allow pop-ups for this page and try again.',
@@ -377,12 +399,23 @@ const resources = {
           why: 'It is open inside another app (e.g. Messenger or Instagram), and Google does not allow signing in there.',
         },
         googleNote:
-          'All you need is a Google account. We use your name and photo so others know who joined.',
+          'Sign in with Google or with a link sent to your email. Others see your name (and your Google photo) so they know who joined.',
         privacyLink: 'How we use your data.',
         lead: 'One link for the whole group. Players write a letter to Santa, and on draw day open an envelope with the name of the person they buy a gift for.',
         loginWithGoogle: 'Sign in with Google',
         title: 'Secret Santa without paper slips in a hat',
         videoTitle: 'To warm up',
+      },
+      namePage: {
+        explain:
+          'Your account has no name yet. Tell us how others in the draw should see you.',
+        failed: 'Could not save your name. Please try again.',
+        hint: 'E.g. first name, or first name and surname initial.',
+        label: 'Your name',
+        notMe: 'Sign out',
+        required: 'Type your name.',
+        save: 'Save',
+        title: 'What is your name?',
       },
       messages: {
         alreadySentToday:
@@ -806,6 +839,27 @@ const resources = {
         title: 'Zaproszenie do losowania',
       },
       loginPage: {
+        email: {
+          changeAddress: 'Podaj inny adres',
+          confirmAddress:
+            'Link otwarto w innej przeglądarce. Wpisz adres e-mail, na który przyszedł.',
+          explain:
+            'Wyślemy Ci link do logowania. Bez hasła: otwierasz link i gotowe.',
+          finish: 'Zaloguj się',
+          finishTitle: 'Logowanie linkiem z e-maila',
+          invalid: 'Wpisz poprawny adres e-mail.',
+          label: 'Adres e-mail',
+          linkExpired: 'Ten link wygasł albo został już użyty. Poproś o nowy.',
+          open: 'Nie masz konta Google? Zaloguj się e-mailem',
+          send: 'Wyślij link do logowania',
+          sendFailed: 'Nie udało się wysłać linku. Spróbuj ponownie.',
+          sent: 'Wysłaliśmy link do logowania na {{email}}. Otwórz go na tym urządzeniu (zajrzyj też do spamu).',
+          sentTitle: 'Sprawdź skrzynkę',
+          signingIn: 'Logowanie…',
+          startOver: 'Wróć do logowania',
+          wrongAddress:
+            'To nie jest adres, na który wysłano link. Sprawdź go i spróbuj ponownie.',
+        },
         errors: {
           popupBlocked:
             'Przeglądarka zablokowała okno logowania. Zezwól na wyskakujące okna dla tej strony i spróbuj ponownie.',
@@ -830,12 +884,23 @@ const resources = {
           why: 'Jest otwarta w innej aplikacji (np. Messengerze albo Instagramie), a tam Google nie pozwala się zalogować.',
         },
         googleNote:
-          'Wystarczy konto Google. Używamy imienia i zdjęcia, żeby inni wiedzieli, kto dołączył.',
+          'Zaloguj się przez Google albo linkiem wysłanym na e-mail. Inni widzą Twoje imię (i zdjęcie z Google), żeby wiedzieć, kto dołączył.',
         privacyLink: 'Jak używamy danych.',
         lead: 'Jeden link dla całej grupy. Uczestnicy losowania piszą listy do Mikołaja, a w dniu losowania otwierają koperty z imieniem osoby, dla której kupują prezent.',
         loginWithGoogle: 'Zaloguj przez Google',
         title: 'Tajemniczy Mikołaj bez karteczek w czapce',
         videoTitle: 'Na rozgrzewkę',
+      },
+      namePage: {
+        explain:
+          'Twoje konto nie ma jeszcze imienia. Napisz, jak mają Cię widzieć inni w losowaniu.',
+        failed: 'Nie udało się zapisać imienia. Spróbuj ponownie.',
+        hint: 'Np. imię albo imię i pierwsza litera nazwiska.',
+        label: 'Twoje imię',
+        notMe: 'Wyloguj się',
+        required: 'Wpisz swoje imię.',
+        save: 'Zapisz',
+        title: 'Jak masz na imię?',
       },
       messages: {
         alreadySentToday:

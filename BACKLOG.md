@@ -216,7 +216,7 @@ Zakończenie (wymóg kontraktu Impeccable)
 
 **Kolejność pracy nad F (zatwierdzona przez Artura, 2026-09-26)** – następny krok to pierwszy
 niezrobiony punkt z tej listy (przed startem sprawdzić jego stan w kodzie):
-1. **Przed sezonem:** F9 (logowanie linkiem z maila).
+1. **Przed sezonem:** F9 (logowanie linkiem z maila) – zrobione 2026-09-27.
 2. **Warte zrobienia, bez Blaze:** F5 → F6 → F7 → F8 (kod QR) → F11 (PWA) – zrobione 2026-09-27; F12 odrzucone.
 3. **Bez Blaze, przed Blaze (decyzja Artura 2026-09-27):** F15.
 4. **Wymagają Blaze (F0) – na sam koniec:** F2, F3 (przypomnienia), F13.
@@ -249,7 +249,11 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
   tylko autor i jego Mikołaj; polityka prywatności i D31 uzupełnione
 - [x] F8 – Web Share + gotowa wiadomość (R10, D23); kod QR z linkiem zaproszenia w oknie „Zaproś”
   z pobieraniem SVG do druku (2026-09-27, D33, `qrcode-generator`; Codex, zrecenzowane przez Claude'a)
-- [ ] **F9 – logowanie mailem** (Artur chce; nie wszyscy lubią Google). Rekomendacja Claude'a:
+- [x] **F9 – logowanie mailem** (2026-09-27, D38; zrobione przez Claude'a – Codex miał wyłączony limit):
+  „Nie masz konta Google? Zaloguj się e-mailem” na stronie logowania i zaproszenia, link wraca tam, skąd
+  wysłano; w innej przeglądarce prosi o adres; nowe konto pyta o imię (odświeżenie tokenu dla reguł);
+  polityka prywatności i pomoc uzupełnione, E2E na emulatorze. Artur włączył w konsoli Email/Password
+  i „Link w e-mailu”. Pierwotny plan (nie mieszać z opisem wyżej):
   **link logujący na maila (Firebase „Email link”, bez haseł)** – działa na darmowym planie
   (jest dzienny limit wysyłek – sprawdzić aktualny w dokumentacji), nie trzeba obsługiwać haseł i resetów,
   a przy okazji omija bug B3 (Google blokuje logowanie w przeglądarce Messengera/Instagrama, link z maila nie).

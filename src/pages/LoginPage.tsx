@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Location, Navigate, useLocation } from 'react-router';
@@ -6,6 +6,8 @@ import { useAuth } from '../hooks/useAuth';
 import MainLayout from '../components/layout/MainLayout';
 import PaperCard from '../components/common/PaperCard';
 import SignInCard from '../components/SignInCard';
+import EmailLinkSignIn from '../components/EmailLinkSignIn';
+import { isLoginLink } from '../services/emailLink';
 import YouTubeEmbed from '../components/YouTubeEmbed';
 import SectionHeading from '../components/draw/SectionHeading';
 import { tokens } from '../styles/theme';
@@ -15,6 +17,17 @@ const LoginPage = () => {
   const { t } = useTranslation();
   // Set by protected routes when a guest opens them (e.g. from a link).
   const from = (useLocation().state as { from?: Location } | null)?.from;
+  // Opened from the sign-in link in an email: finish signing in first; that
+  // page goes on to where the person was.
+  const [fromEmailLink] = useState(isLoginLink);
+
+  if (fromEmailLink) {
+    return (
+      <MainLayout>
+        <EmailLinkSignIn />
+      </MainLayout>
+    );
+  }
 
   if (user) {
     return <Navigate to={from ?? '/draws'} replace />;

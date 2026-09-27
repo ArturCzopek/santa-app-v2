@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
   User,
   signOut,
+  updateProfile,
 } from 'firebase/auth';
 import { useNotify } from './useNotify';
 
@@ -16,6 +17,9 @@ interface AuthContextValue {
   // True until Firebase has restored the session from the previous visit.
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  // Accounts from an email link have no name; the rules read it from the
+  // token, so the token is refreshed straight away.
+  setDisplayName: (name: string) => Promise<void>;
   logOut: () => Promise<void>;
 }
 
@@ -40,6 +44,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const notify = useNotify();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  // The user object changes in place; this re-renders everyone reading it.
+  const [, setProfileVersion] = useState(0);
 
   useEffect(
     () =>
@@ -67,8 +73,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const setDisplayName = async (name: string) => {
+    if (!auth.currentUser) return;
+    await updateProfile(auth.currentUser, { displayName: name });
+    await auth.currentUser.getIdToken(true);
+    setProfileVersion((version) => version + 1);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, logOut }}>
+    <AuthContext.Provider
+      value={{ user, loading, signInWithGoogle, setDisplayName, logOut }}
+    >
       {children}
     </AuthContext.Provider>
   );

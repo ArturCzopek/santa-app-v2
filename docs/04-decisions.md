@@ -23,7 +23,7 @@ so after the draw no browser can see the whole result.
 developer tools while the draw runs. Other participants cannot. The fix is drawing on the
 server (a Cloud Function), which needs the Blaze plan (D1).
 
-## D4. Google sign-in only, Accepted (for now)
+## D4. Google sign-in only, Superseded by D38
 Almost everyone has a Google account, and the name and photo come with it, so people
 recognise each other in the participants list. The rules take the name from the Google
 token, so nobody can join as someone else. Sign-in by an e-mail link is the planned
@@ -253,3 +253,15 @@ whether the page and navbar link are shown. Authors can still read only their ow
 and messages remain create-only for everyone: the page is read-only and has no read flag.
 The page loads newest first in batches of 20. This changes where the author reads messages,
 not who reads them, so the privacy policy stays as it is.
+
+## D38. Sign-in by an email link as well as Google, Accepted (supersedes D4)
+Not everyone has or wants a Google account, and Google refuses to sign in inside the browsers
+built into Messenger or Instagram. Next to the Google button people can ask for a sign-in link
+by email (Firebase "Email link", no password to keep or reset). The link comes back to the
+app's own address without the `#/route`, so Firebase's parameters stay clear of the hash
+routes; the address and the page to return to wait in this browser (`santa-app.email-sign-in`)
+until the sign-in finishes, and the one-time code is then removed from the address bar. Opened
+in another browser, the page asks for the address again. An account from an email link has no
+name, so before anything else the app asks for one and refreshes the token, because the rules
+take the name from it (`tokenName()`); the photo stays empty and the stamp shows the initial.
+The rules did not change. The privacy policy says the only email sent is the sign-in link.

@@ -35,7 +35,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'join',
       question: 'Jak dołączyć do losowania?',
       answer: [
-        'Otwórz link z zaproszenia i zaloguj się kontem Google. Z linkiem z zaproszenia wystarczy stuknąć „Dołącz do losowania”; ze zwykłym linkiem trzeba jeszcze wpisać hasło od organizatora.',
+        'Otwórz link z zaproszenia i zaloguj się kontem Google albo linkiem wysłanym na e-mail. Z linkiem z zaproszenia wystarczy stuknąć „Dołącz do losowania”; ze zwykłym linkiem trzeba jeszcze wpisać hasło od organizatora.',
       ],
     },
     {
@@ -50,7 +50,14 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       question:
         'Otwieram link w Messengerze i nie mogę się zalogować. Co robić?',
       answer: [
-        'Google nie pozwala logować się w przeglądarkach wbudowanych w Messengera, Instagrama czy Facebooka. Stuknij menu w rogu ekranu i wybierz „Otwórz w przeglądarce” albo skopiuj link i wklej go w swojej przeglądarce (np. Chrome lub Safari).',
+        'Google nie pozwala logować się w przeglądarkach wbudowanych w Messengera, Instagrama czy Facebooka. Stuknij menu w rogu ekranu i wybierz „Otwórz w przeglądarce” albo skopiuj link i wklej go w swojej przeglądarce (np. Chrome lub Safari). Możesz też wybrać „Zaloguj się e-mailem”: link z maila otworzy się już w zwykłej przeglądarce.',
+      ],
+    },
+    {
+      id: 'email',
+      question: 'Nie mam konta Google. Jak się zalogować?',
+      answer: [
+        'Wybierz „Nie masz konta Google? Zaloguj się e-mailem”, wpisz adres i otwórz link, który przyjdzie mailem (zajrzyj też do spamu). Nie ma hasła do zapamiętania. Za pierwszym razem podajesz imię – tak zobaczą Cię inni w losowaniu. Jeśli link otworzy się w innej przeglądarce, wystarczy jeszcze raz wpisać ten sam adres.',
       ],
     },
     {
@@ -141,7 +148,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'join',
       question: 'How do I join a draw?',
       answer: [
-        'Open the invite link and sign in with Google. With the invite link, tapping "Join the draw" is enough; with a plain link you also type the password from the organizer.',
+        'Open the invite link and sign in with Google or with a link sent to your email. With the invite link, tapping "Join the draw" is enough; with a plain link you also type the password from the organizer.',
       ],
     },
     {
@@ -155,7 +162,14 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'messenger',
       question: 'I open the link in Messenger and cannot sign in. What now?',
       answer: [
-        'Google does not allow signing in inside the browsers built into Messenger, Instagram or Facebook. Tap the menu in the corner and choose "Open in browser", or copy the link and paste it into your browser (e.g. Chrome or Safari).',
+        'Google does not allow signing in inside the browsers built into Messenger, Instagram or Facebook. Tap the menu in the corner and choose "Open in browser", or copy the link and paste it into your browser (e.g. Chrome or Safari). You can also choose "Sign in with email": the link from the email opens in your normal browser.',
+      ],
+    },
+    {
+      id: 'email',
+      question: 'I have no Google account. How do I sign in?',
+      answer: [
+        'Choose "No Google account? Sign in with email", type your address and open the link we email you (check spam too). There is no password to remember. The first time you give your name – that is how others in the draw see you. If the link opens in a different browser, just type the same address again.',
       ],
     },
     {

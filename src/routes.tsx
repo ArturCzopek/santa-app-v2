@@ -17,6 +17,7 @@ import DrawPage from './pages/DrawPage';
 import PrivacyPage from './pages/PrivacyPage';
 import HelpPage from './pages/HelpPage';
 import AdminMessagesPage from './pages/AdminMessagesPage';
+import NamePage from './pages/NamePage';
 import { ADMIN_EMAIL } from './admin';
 
 // A new page starts at the top, not where the previous one was scrolled.
@@ -67,52 +68,58 @@ const AppRoutes = () => {
   return (
     <Router>
       <ScrollToTop />
-      <Routes>
-        {/* Redirects signed-in users on its own */}
-        <Route path="/" element={<LoginPage />} />
+      {/* A new account from an email link has no name yet: that comes first,
+          and the page the person was going to follows (D38). */}
+      {user && !user.displayName?.trim() ? (
+        <NamePage />
+      ) : (
+        <Routes>
+          {/* Redirects signed-in users on its own */}
+          <Route path="/" element={<LoginPage />} />
 
-        <Route path="/privacy" element={<PrivacyPage />} />
-        <Route path="/help" element={<HelpPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/help" element={<HelpPage />} />
 
-        {user?.email === ADMIN_EMAIL && user.emailVerified && (
-          <Route path="/admin/messages" element={<AdminMessagesPage />} />
-        )}
+          {user?.email === ADMIN_EMAIL && user.emailVerified && (
+            <Route path="/admin/messages" element={<AdminMessagesPage />} />
+          )}
 
-        {/*redirection done on page*/}
-        <Route path="/join/:drawId" element={<JoinToDrawPage />} />
+          {/*redirection done on page*/}
+          <Route path="/join/:drawId" element={<JoinToDrawPage />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/draws"
-          element={
-            <RequireAuth>
-              <DrawsListPage />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/draw/:drawId"
-          element={
-            <RequireAuth>
-              <DrawPage />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/create"
-          element={
-            <RequireAuth>
-              <CreatePage />
-            </RequireAuth>
-          }
-        />
+          {/* Protected Routes */}
+          <Route
+            path="/draws"
+            element={
+              <RequireAuth>
+                <DrawsListPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/draw/:drawId"
+            element={
+              <RequireAuth>
+                <DrawPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/create"
+            element={
+              <RequireAuth>
+                <CreatePage />
+              </RequireAuth>
+            }
+          />
 
-        {/* Catch-all for unmatched routes */}
-        <Route
-          path="*"
-          element={<Navigate to={user ? '/draws' : '/'} replace />}
-        />
-      </Routes>
+          {/* Catch-all for unmatched routes */}
+          <Route
+            path="*"
+            element={<Navigate to={user ? '/draws' : '/'} replace />}
+          />
+        </Routes>
+      )}
     </Router>
   );
 };

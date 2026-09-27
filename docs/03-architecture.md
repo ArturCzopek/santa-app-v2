@@ -8,7 +8,7 @@ the [README](../README.md).
 
 ```
  Browser (React app on GitHub Pages)
-   │   Google sign-in (Firebase Auth, popup)
+   │   Google sign-in (popup) or an email link (Firebase Auth)
    │   reads and writes directly
    ▼
  Firestore ── firestore.rules decide every read and write
@@ -22,7 +22,7 @@ once), and why they have the largest test suite (`tests/rules`).
 
 - **App:** React 19, TypeScript, MUI 9, React Router with hash routes (`#/draw/…`, see
   [D2](04-decisions.md)), i18next with Polish and English (the language switch is in the footer).
-- **Firebase:** Authentication (Google only) and Firestore. Free Spark plan: no Cloud
+- **Firebase:** Authentication (Google, or a sign-in link by email – [D38](04-decisions.md)) and Firestore. Free Spark plan: no Cloud
   Functions, so nothing runs on a server or on a schedule.
 - **Hosting:** GitHub Pages. On pushes to `master`, GitHub Actions builds the app before
   deploying Firestore rules, then publishes the built app. `public/` contains the PWA

@@ -202,6 +202,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
             </Typography>
             <Button
               variant="outlined"
+              color="inherit"
               startIcon={<Download />}
               onClick={downloadQr}
               sx={{ color: tokens.ink }}

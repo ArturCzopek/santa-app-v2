@@ -306,6 +306,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({
             <Button
               type="submit"
               variant="outlined"
+              color="inherit"
               disabled={savingThanks}
               sx={{ color: tokens.ink }}
             >

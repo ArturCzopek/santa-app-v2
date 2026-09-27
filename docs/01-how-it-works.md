@@ -79,8 +79,10 @@ Any participant can open the invite and pass it on, but only the organizer can r
 Opening the link shows *Zaproszenie do losowania*:
 
 - Not signed in: "Masz zaproszenie do Tajemniczego Mikołaja", what Secret Santa is (*Jak to
-  działa?* in three steps) and **Zaloguj przez Google**. After signing in the person comes
-  back to this same invite.
+  działa?* in three steps), **Zaloguj przez Google** and, below it, *Nie masz konta Google?
+  Zaloguj się e-mailem*: the person types an address and opens the link from the email, with no
+  password (D38). Either way they come back to this same invite. A new email account first answers
+  *Jak masz na imię?*, because others see people by name.
 - Signed in: a postcard from the organizer (*Od: …*) with the draw's name, budget, date, place
   and description, and **Dołącz do losowania**. With the invite link that is all; with a
   plain link the password field appears.
@@ -96,7 +98,7 @@ built-in browsers, and that is where most invites are opened. There the page lea
 *Otwórz tę stronę w przeglądarce*: three short steps with the real menu icons, **Kopiuj link**
 as the main button, and the page's address in a field that stays on screen in case copying
 is not allowed. *Jak to działa?* and the Google button follow, the button marked as usually
-failing there.
+failing there, and the email option, whose link opens in the normal browser anyway.
 
 ### 4. Players write a letter to Santa
 
