@@ -65,6 +65,10 @@ budget, the date and place if set, the link, and one line on how to join.
 - **Kopiuj link** copies only the link.
 - The link carries its own key, so **people who open it join with one tap, without the
   password**. That is why the invite warns to send it only to the people in the draw.
+- **Kod QR** shows the same invite link as a code to scan with a phone camera. Show it at
+  a meeting or download and print it. It works like the link, including letting people in
+  without the password, so share it only with people in the draw. Making a new link retires
+  the old code too.
 - If the link got to the wrong people, the organizer can make a new one
   (*Utwórz nowy*). The old link stops working; people who already joined stay.
 

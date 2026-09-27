@@ -239,7 +239,8 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
   zostaje na liście (zarządza), ale nie pisze listu i nie jest losowany; reguły to wymuszają
 - [ ] F6 – lista życzeń w strukturze: pozycje, linki, rozmiary, „czego nie chcę”
 - [ ] F7 – status „prezent kupiony” / podziękowanie
-- [~] F8 – Web Share + gotowa wiadomość (R10, D23) zrobione. Zostało: kod QR (np. na kartkę na lodówkę / spotkanie)
+- [x] F8 – Web Share + gotowa wiadomość (R10, D23); kod QR z linkiem zaproszenia w oknie „Zaproś”
+  z pobieraniem SVG do druku (2026-09-27, D33, `qrcode-generator`; Codex, zrecenzowane przez Claude'a)
 - [ ] **F9 – logowanie mailem** (Artur chce; nie wszyscy lubią Google). Rekomendacja Claude'a:
   **link logujący na maila (Firebase „Email link”, bez haseł)** – działa na darmowym planie
   (jest dzienny limit wysyłek – sprawdzić aktualny w dokumentacji), nie trzeba obsługiwać haseł i resetów,

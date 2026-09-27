@@ -210,3 +210,9 @@ letter or receive an assignment; players are the participants except the owner. 
 generation, exclusions, the minimum of two, letter progress and the app's winner counter all
 use players. Firestore rules validate the field, enforce the minimum and reject assignments
 to or from a non-playing owner.
+
+## D33. The invite is also a QR code, Accepted
+The browser draws the QR code from the invite link with qrcode-generator; no external
+service receives the link. The code has the same access as the link, including joining
+without the password, so it is only for people in the draw. Replacing the invite link
+retires its QR code too.

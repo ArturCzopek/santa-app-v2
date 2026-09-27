@@ -130,7 +130,9 @@ describe('DrawPage', () => {
     );
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'secret1');
-    await user.click(within(dialog).getByRole('button', { name: 'Losuj pary' }));
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Losuj pary' }),
+    );
 
     // The owner gets a ready message telling everyone the envelopes are here.
     const done = await screen.findByRole('dialog', {
@@ -273,7 +275,9 @@ describe('DrawPage', () => {
     );
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'wrong-1');
-    await user.click(within(dialog).getByRole('button', { name: 'Losuj pary' }));
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Losuj pary' }),
+    );
 
     expect(
       await within(dialog).findByText('Nieprawidłowe hasło'),
@@ -294,7 +298,9 @@ describe('DrawPage', () => {
     );
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByLabelText(/Hasło/), 'secret1');
-    await user.click(within(dialog).getByRole('button', { name: 'Losuj pary' }));
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Losuj pary' }),
+    );
 
     expect(
       await screen.findByText(/Nie udało się przeprowadzić losowania/),
@@ -518,7 +524,9 @@ describe('DrawPage', () => {
     });
     await user.click(screen.getByRole('combobox', { name: 'Pierwsza osoba' }));
     expect(
-      (await screen.findAllByRole('option')).map((option) => option.textContent),
+      (await screen.findAllByRole('option')).map(
+        (option) => option.textContent,
+      ),
     ).toEqual(['Ania Test', 'Bartek Test']);
   });
 
@@ -582,6 +590,40 @@ describe('DrawPage', () => {
     expect(await navigator.clipboard.readText()).toMatch(
       /#\/join\/d1\?k=link-key/,
     );
+  });
+
+  it('shows the QR invite with its caption, warning, and download button', async () => {
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Zaproś do losowania' }),
+    );
+    const dialog = await screen.findByRole('dialog');
+    await user.click(within(dialog).getByRole('button', { name: 'Kod QR' }));
+
+    expect(
+      within(dialog).getByText('Zeskanuj aparatem telefonu, żeby dołączyć.'),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByText(
+        'Kod działa jak link: wpuszcza bez hasła – pokazuj go tylko osobom z losowania. Nowy link unieważnia też ten kod.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByRole('button', { name: 'Pobierz obrazek' }),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByRole('img', {
+        name: 'Kod QR zaproszenia do losowania Office party',
+      }),
+    ).toBeInTheDocument();
+    // The code takes the postcard's place; the same button brings it back.
+    expect(within(dialog).queryByText(/Link do losowania:/)).toBeNull();
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Wróć do wiadomości' }),
+    );
+    expect(within(dialog).getByText(/Link do losowania:/)).toBeInTheDocument();
   });
 
   it('gives an old draw its link the first time the owner invites', async () => {
@@ -852,7 +894,9 @@ describe('DrawPage', () => {
       within(dialog).getByText(/Ania Test przestanie brać udział/),
     ).toBeInTheDocument();
     expect(
-      within(dialog).getByText(/linku.*unieważnia tylko stary link, nie hasło/i),
+      within(dialog).getByText(
+        /linku.*unieważnia tylko stary link, nie hasło/i,
+      ),
     ).toBeInTheDocument();
     expect(
       within(dialog).getByText(/ustaw nowe w „Więcej → Ustaw nowe hasło”/i),
@@ -906,7 +950,9 @@ describe('DrawPage', () => {
       const user = userEvent.setup();
       renderDrawPage();
 
-      await screen.findByRole('heading', { name: 'Pary, które się nie wylosują (0)' });
+      await screen.findByRole('heading', {
+        name: 'Pary, które się nie wylosują (0)',
+      });
       await pick(user, 'Pierwsza osoba', 'Olga Owner');
       await pick(user, 'Druga osoba', 'Ania Test');
       await user.click(screen.getByRole('button', { name: 'Dodaj parę' }));
@@ -933,7 +979,9 @@ describe('DrawPage', () => {
       const user = userEvent.setup();
       renderDrawPage();
 
-      await screen.findByRole('heading', { name: 'Pary, które się nie wylosują (0)' });
+      await screen.findByRole('heading', {
+        name: 'Pary, które się nie wylosują (0)',
+      });
       await pick(user, 'Pierwsza osoba', 'Ania Test');
       await pick(user, 'Druga osoba', 'Bartek Test');
       await user.click(screen.getByRole('button', { name: 'Dodaj parę' }));
@@ -956,7 +1004,9 @@ describe('DrawPage', () => {
         'bob',
       ]);
       expect(
-        await screen.findByRole('heading', { name: 'Pary, które się nie wylosują (0)' }),
+        await screen.findByRole('heading', {
+          name: 'Pary, które się nie wylosują (0)',
+        }),
       ).toBeInTheDocument();
     });
 
@@ -977,7 +1027,9 @@ describe('DrawPage', () => {
       const user = userEvent.setup();
       renderDrawPage();
 
-      await screen.findByRole('heading', { name: 'Pary, które się nie wylosują (1)' });
+      await screen.findByRole('heading', {
+        name: 'Pary, które się nie wylosują (1)',
+      });
       await pick(user, 'Pierwsza osoba', 'Ania Test');
       await user.click(screen.getByRole('combobox', { name: 'Druga osoba' }));
       const options = (await screen.findAllByRole('option')).map(
@@ -1012,7 +1064,9 @@ describe('DrawPage', () => {
         return names;
       };
 
-      await screen.findByRole('heading', { name: 'Pary, które się nie wylosują (1)' });
+      await screen.findByRole('heading', {
+        name: 'Pary, które się nie wylosują (1)',
+      });
       await pick(user, 'Pierwsza osoba', 'Bartek Test');
       expect(await optionsOf('Druga osoba')).toEqual([
         'Celina Test',
@@ -1042,9 +1096,7 @@ describe('DrawPage', () => {
       );
       const dialog = await screen.findByRole('dialog');
       expect(
-        within(dialog).getByText(
-          'Każdy może wylosować każdego.',
-        ),
+        within(dialog).getByText('Każdy może wylosować każdego.'),
       ).toBeInTheDocument();
       expect(
         within(dialog).getByText(/Czy to wszystkie pary/),
@@ -1067,9 +1119,7 @@ describe('DrawPage', () => {
       );
       const dialog = await screen.findByRole('dialog');
       expect(
-        within(dialog).getByText(
-          /Usuń jedną z nich: Ania Test ↔ Olga Owner/,
-        ),
+        within(dialog).getByText(/Usuń jedną z nich: Ania Test ↔ Olga Owner/),
       ).toBeInTheDocument();
       expect(
         within(dialog).getByRole('button', { name: 'Losuj pary' }),

@@ -68,8 +68,10 @@ const resources = {
       },
       drawCard: {
         budget: 'Budget: {{budget}} {{currency}}',
-        checkResults: 'The draw took place – open your envelope to see who you buy for.',
-        envelopeOpened: 'Envelope opened. Look again whenever you want to reread the letter.',
+        checkResults:
+          'The draw took place – open your envelope to see who you buy for.',
+        envelopeOpened:
+          'Envelope opened. Look again whenever you want to reread the letter.',
         drawedStatus: 'Drawn',
         noWish: 'You have not written your letter to Santa yet.',
         participants: 'Participants: {{count}}',
@@ -118,7 +120,8 @@ const resources = {
             '{{owner}} will start the draw once everyone has joined. Then come back here for your envelope.',
         },
         errors: {
-          accessDenied: 'You are not in this draw. If you have an invitation, you can join it.',
+          accessDenied:
+            'You are not in this draw. If you have an invitation, you can join it.',
           drawNotFound: "Draw not found or you don't have access to it.",
           fetchFailed: 'Failed to fetch draw details. Please try again.',
           startDrawFailed:
@@ -208,6 +211,15 @@ const resources = {
           renewFailed: 'Could not make a new link. Please try again.',
           renewLink: 'Link got to the wrong people? Make a new one',
           renewed: 'New link ready. The old one no longer works.',
+          qrButton: 'QR code',
+          qrHide: 'Back to the message',
+          qrCaption: 'Scan it with a phone camera to join.',
+          qrDownload: 'Download image',
+          qrLabel: 'Invite QR code for {{name}}',
+          qrPasswordWarning:
+            'The code works like the link: it does not include the password, so people will need the password from the organizer to join.',
+          qrWarning:
+            'The code works like the link: it lets people in without the password – show it only to people in the draw. A new link retires this code too.',
           share: 'Share',
           titleAfterCreate: 'Send the invite',
         },
@@ -223,7 +235,8 @@ const resources = {
         },
         startDraw: {
           passwordLabel: 'Draw password',
-          allExclusionsSet: 'Are these all the pairs who should not draw each other?',
+          allExclusionsSet:
+            'Are these all the pairs who should not draw each other?',
           editExclusions: 'Change these pairs',
           exclusions: 'Will not draw each other: {{pairs}}.',
           noExclusions: 'Everyone can draw everyone else.',
@@ -231,15 +244,18 @@ const resources = {
             'Are you sure you want to draw pairs? This action is irreversible.\nTo confirm the draw, enter the password created when the draw was set up.',
           drawButton: 'Draw the pairs',
           incorrectPassword: 'Incorrect password',
-          withoutWish_one: '{{names}} has not written a letter yet, and after the draw it will be too late. Their Santa will have to guess.',
-          withoutWish_other: '{{count}} people have not written a letter yet: {{names}}. After the draw it will be too late, so their Santas will have to guess.',
+          withoutWish_one:
+            '{{names}} has not written a letter yet, and after the draw it will be too late. Their Santa will have to guess.',
+          withoutWish_other:
+            '{{count}} people have not written a letter yet: {{names}}. After the draw it will be too late, so their Santas will have to guess.',
         },
         startDrawButton: 'Start the draw',
         title: 'Draw',
         winnerSection: {
           budget: 'Budget: up to {{budget}} {{currency}}',
           keepSecret: 'Shh… it is a secret – do not tell anyone who you drew.',
-          noWishProvided: 'This person did not write a letter before the draw. Time for a good guess!',
+          noWishProvided:
+            'This person did not write a letter before the draw. Time for a good guess!',
           theirLetter: '{{name}} writes to Santa:',
           openEnvelope: 'Open the envelope with your draw result',
           sealedTo: 'To: {{name}}',
@@ -258,7 +274,8 @@ const resources = {
           saveSuccess: 'Letter saved. Your Santa will read it.',
           title: 'Your letter to Santa',
           wishLabel: 'What would you like to get?',
-          wishPlaceholder: 'E.g. warm reindeer socks, a book about mountains… The more specific, the easier.',
+          wishPlaceholder:
+            'E.g. warm reindeer socks, a book about mountains… The more specific, the easier.',
           discardConfirm: 'Discard',
           discardText: 'Your changes to the letter have not been saved.',
           discardTitle: 'Discard the changes?',
@@ -274,20 +291,24 @@ const resources = {
         joinButton: 'Join Draw',
         joinModal: {
           codeRequired: 'Paste the invite link',
-          description: 'Paste the invite link you got from the organizer, e.g. in a group chat.',
+          description:
+            'Paste the invite link you got from the organizer, e.g. in a group chat.',
           drawCodeLabel: 'Invite link',
           proceedButton: 'Next',
         },
         emptyTitle: 'No draws yet',
         noDraws:
           'Create your own draw or ask the organizer for the invite link.',
-        stats: 'Draws in the app: {{count}} · People with an envelope: {{winnersCount}}',
+        stats:
+          'Draws in the app: {{count}} · People with an envelope: {{winnersCount}}',
         title: 'Your Draws',
       },
       howItWorks: {
         step1: 'The organizer creates a draw and sends everyone one link.',
-        step2: 'Players join and write a letter to Santa: what they would like to get.',
-        step3: 'The organizer draws the pairs. Each player opens an envelope and sees who they are buying a gift for – nobody else does.',
+        step2:
+          'Players join and write a letter to Santa: what they would like to get.',
+        step3:
+          'The organizer draws the pairs. Each player opens an envelope and sees who they are buying a gift for – nobody else does.',
         title: 'How does it work?',
       },
       joinPage: {
@@ -305,7 +326,8 @@ const resources = {
           passwordRequired: 'Password is required to join the draw',
         },
         joinButton: 'Join Draw',
-        loginRequired: 'You have an invitation to a Secret Santa. Sign in to see who invites you and to join.',
+        loginRequired:
+          'You have an invitation to a Secret Santa. Sign in to see who invites you and to join.',
         passwordHint: 'You get the password from the organizer.',
         passwordLabel: 'Draw password',
         success: 'You are in! Now write your letter to Santa.',
@@ -328,12 +350,15 @@ const resources = {
           linkLabel: 'Address of this page',
           or: 'or',
           step1: 'Tap the menu in the corner of the screen:',
-          step2: 'Choose "Open in browser" (or "Open in Chrome" / "in Safari").',
-          step3: 'No such option? Copy the link and paste it into your browser.',
+          step2:
+            'Choose "Open in browser" (or "Open in Chrome" / "in Safari").',
+          step3:
+            'No such option? Copy the link and paste it into your browser.',
           title: 'Open this page in your browser',
           why: 'It is open inside another app (e.g. Messenger or Instagram), and Google does not allow signing in there.',
         },
-        googleNote: 'All you need is a Google account. We use your name and photo so others know who joined.',
+        googleNote:
+          'All you need is a Google account. We use your name and photo so others know who joined.',
         privacyLink: 'How we use your data.',
         lead: 'One link for the whole group. Players write a letter to Santa, and on draw day open an envelope with the name of the person they buy a gift for.',
         loginWithGoogle: 'Sign in with Google',
@@ -369,7 +394,8 @@ const resources = {
       },
       calendar: {
         add: 'Add to calendar',
-        description: 'Secret Santa gift exchange. Budget: {{budget}} {{currency}}. Your envelope: {{link}}',
+        description:
+          'Secret Santa gift exchange. Budget: {{budget}} {{currency}}. Your envelope: {{link}}',
         fileName: 'secret-santa',
         title: 'Secret Santa: {{name}}',
       },
@@ -457,8 +483,10 @@ const resources = {
       },
       drawCard: {
         budget: 'Budżet: {{budget}} {{currency}}',
-        checkResults: 'Losowanie się odbyło – otwórz kopertę i sprawdź, komu kupujesz prezent.',
-        envelopeOpened: 'Koperta otwarta. Zajrzyj, jeśli chcesz jeszcze raz przeczytać list.',
+        checkResults:
+          'Losowanie się odbyło – otwórz kopertę i sprawdź, komu kupujesz prezent.',
+        envelopeOpened:
+          'Koperta otwarta. Zajrzyj, jeśli chcesz jeszcze raz przeczytać list.',
         drawedStatus: 'Rozlosowane',
         noWish: 'Nie masz jeszcze listu do Mikołaja.',
         participants: 'Uczestnicy: {{count}}',
@@ -476,7 +504,8 @@ const resources = {
         drawDone: {
           copied: 'Wiadomość skopiowana. Wklej ją na czacie.',
           copyMessage: 'Kopiuj wiadomość',
-          description: 'Daj znać wszystkim, że mogą już otworzyć swoje koperty.',
+          description:
+            'Daj znać wszystkim, że mogą już otworzyć swoje koperty.',
           message: {
             done: 'Losowanie „{{name}}” już się odbyło!',
             open: 'Otwórz swoją kopertę i sprawdź, komu kupujesz prezent: {{link}}',
@@ -507,7 +536,8 @@ const resources = {
             '{{owner}} rozpocznie losowanie, gdy wszyscy dołączą. Wtedy zajrzyj tu po swoją kopertę.',
         },
         errors: {
-          accessDenied: 'Nie bierzesz udziału w tym losowaniu. Jeśli masz zaproszenie, możesz dołączyć.',
+          accessDenied:
+            'Nie bierzesz udziału w tym losowaniu. Jeśli masz zaproszenie, możesz dołączyć.',
           drawNotFound:
             'Losowanie nie zostało znalezione lub nie masz do niego dostępu.',
           fetchFailed:
@@ -599,6 +629,15 @@ const resources = {
           renewFailed: 'Nie udało się utworzyć nowego linku. Spróbuj ponownie.',
           renewLink: 'Link trafił do niewłaściwych osób? Utwórz nowy',
           renewed: 'Nowy link gotowy. Stary już nie działa.',
+          qrButton: 'Kod QR',
+          qrHide: 'Wróć do wiadomości',
+          qrCaption: 'Zeskanuj aparatem telefonu, żeby dołączyć.',
+          qrDownload: 'Pobierz obrazek',
+          qrLabel: 'Kod QR zaproszenia do losowania {{name}}',
+          qrPasswordWarning:
+            'Kod działa jak link: nie zawiera hasła, więc do dołączenia potrzebne będzie hasło od organizatora.',
+          qrWarning:
+            'Kod działa jak link: wpuszcza bez hasła – pokazuj go tylko osobom z losowania. Nowy link unieważnia też ten kod.',
           share: 'Udostępnij',
           titleAfterCreate: 'Wyślij zaproszenie',
         },
@@ -614,7 +653,8 @@ const resources = {
         },
         startDraw: {
           passwordLabel: 'Hasło losowania',
-          allExclusionsSet: 'Czy to wszystkie pary, które nie powinny się wylosować?',
+          allExclusionsSet:
+            'Czy to wszystkie pary, które nie powinny się wylosować?',
           editExclusions: 'Zmień te pary',
           exclusions: 'Nie wylosują siebie nawzajem: {{pairs}}.',
           noExclusions: 'Każdy może wylosować każdego.',
@@ -622,17 +662,22 @@ const resources = {
             'Czy na pewno chcesz wylosować pary? Tego nie da się cofnąć.\nAby potwierdzić, wpisz hasło ustalone przy tworzeniu losowania.',
           drawButton: 'Losuj pary',
           incorrectPassword: 'Nieprawidłowe hasło',
-          withoutWish_one: 'Jedna osoba nie napisała jeszcze listu: {{names}}. Po losowaniu będzie na to za późno, więc jej Mikołaj będzie musiał zgadywać.',
-          withoutWish_few: '{{count}} osoby nie napisały jeszcze listu: {{names}}. Po losowaniu będzie na to za późno, więc ich Mikołaje będą musieli zgadywać.',
-          withoutWish_many: '{{count}} osób nie napisało jeszcze listu: {{names}}. Po losowaniu będzie na to za późno, więc ich Mikołaje będą musieli zgadywać.',
-          withoutWish_other: '{{count}} osoby nie napisały jeszcze listu: {{names}}. Po losowaniu będzie na to za późno, więc ich Mikołaje będą musieli zgadywać.',
+          withoutWish_one:
+            'Jedna osoba nie napisała jeszcze listu: {{names}}. Po losowaniu będzie na to za późno, więc jej Mikołaj będzie musiał zgadywać.',
+          withoutWish_few:
+            '{{count}} osoby nie napisały jeszcze listu: {{names}}. Po losowaniu będzie na to za późno, więc ich Mikołaje będą musieli zgadywać.',
+          withoutWish_many:
+            '{{count}} osób nie napisało jeszcze listu: {{names}}. Po losowaniu będzie na to za późno, więc ich Mikołaje będą musieli zgadywać.',
+          withoutWish_other:
+            '{{count}} osoby nie napisały jeszcze listu: {{names}}. Po losowaniu będzie na to za późno, więc ich Mikołaje będą musieli zgadywać.',
         },
         startDrawButton: 'Rozpocznij losowanie',
         title: 'Losowanie',
         winnerSection: {
           budget: 'Budżet: do {{budget}} {{currency}}',
           keepSecret: 'Ciii… To tajemnica – nie zdradzaj nikomu tego wyniku.',
-          noWishProvided: 'Ta osoba nie napisała listu przed losowaniem. Czas na trafny strzał!',
+          noWishProvided:
+            'Ta osoba nie napisała listu przed losowaniem. Czas na trafny strzał!',
           theirLetter: '{{name}} pisze do Mikołaja:',
           openEnvelope: 'Otwórz kopertę z wynikiem losowania',
           sealedTo: 'Do: {{name}}',
@@ -651,7 +696,8 @@ const resources = {
           saveSuccess: 'List zapisany. Twój Mikołaj go przeczyta.',
           title: 'Twój list do Mikołaja',
           wishLabel: 'Co chcesz dostać?',
-          wishPlaceholder: 'Np. ciepłe skarpetki w renifery, książka o górach… Im konkretniej, tym łatwiej.',
+          wishPlaceholder:
+            'Np. ciepłe skarpetki w renifery, książka o górach… Im konkretniej, tym łatwiej.',
           discardConfirm: 'Odrzuć',
           discardText: 'Zmiany w liście nie zostały zapisane.',
           discardTitle: 'Odrzucić zmiany?',
@@ -675,13 +721,16 @@ const resources = {
         emptyTitle: 'Nie masz jeszcze żadnego losowania',
         noDraws:
           'Załóż własne losowanie albo poproś organizatora o link z zaproszeniem.',
-        stats: 'Losowania w aplikacji: {{count}} · Osoby z kopertą: {{winnersCount}}',
+        stats:
+          'Losowania w aplikacji: {{count}} · Osoby z kopertą: {{winnersCount}}',
         title: 'Twoje losowania',
       },
       howItWorks: {
         step1: 'Organizator zakłada losowanie i wysyła wszystkim jeden link.',
-        step2: 'Osoby biorące udział dołączają i piszą listy do Mikołaja: co chcą dostać.',
-        step3: 'Organizator losuje pary. Każda osoba biorąca udział otwiera kopertę i widzi, komu kupuje prezent – nikt inny tego nie wie.',
+        step2:
+          'Osoby biorące udział dołączają i piszą listy do Mikołaja: co chcą dostać.',
+        step3:
+          'Organizator losuje pary. Każda osoba biorąca udział otwiera kopertę i widzi, komu kupuje prezent – nikt inny tego nie wie.',
         title: 'Jak to działa?',
       },
       joinPage: {
@@ -700,7 +749,8 @@ const resources = {
           joinFailed: 'Nie udało się dołączyć do losowania. Spróbuj ponownie.',
           passwordRequired: 'Wpisz hasło, żeby dołączyć do losowania',
         },
-        loginRequired: 'Masz zaproszenie do Tajemniczego Mikołaja. Zaloguj się, żeby zobaczyć, kto zaprasza, i dołączyć.',
+        loginRequired:
+          'Masz zaproszenie do Tajemniczego Mikołaja. Zaloguj się, żeby zobaczyć, kto zaprasza, i dołączyć.',
         joinButton: 'Dołącz do losowania',
         passwordHint: 'Hasło dostajesz od organizatora.',
         passwordLabel: 'Hasło do losowania',
@@ -714,7 +764,8 @@ const resources = {
           signInFailed: 'Nie udało się zalogować. Spróbuj ponownie.',
         },
         inAppBrowser: {
-          copyFailed: 'Nie udało się skopiować linku. Skopiuj ten adres: {{url}}',
+          copyFailed:
+            'Nie udało się skopiować linku. Skopiuj ten adres: {{url}}',
           copyFailedSelect:
             'Nie udało się skopiować. Zaznacz adres w polu poniżej i skopiuj go.',
           copyLink: 'Kopiuj link',
@@ -724,12 +775,14 @@ const resources = {
           linkLabel: 'Adres tej strony',
           or: 'lub',
           step1: 'Stuknij menu w rogu ekranu:',
-          step2: 'Wybierz „Otwórz w przeglądarce” (albo „Otwórz w Chrome” / „w Safari”).',
+          step2:
+            'Wybierz „Otwórz w przeglądarce” (albo „Otwórz w Chrome” / „w Safari”).',
           step3: 'Nie ma takiej opcji? Skopiuj link i wklej go w przeglądarce.',
           title: 'Otwórz tę stronę w przeglądarce',
           why: 'Jest otwarta w innej aplikacji (np. Messengerze albo Instagramie), a tam Google nie pozwala się zalogować.',
         },
-        googleNote: 'Wystarczy konto Google. Używamy imienia i zdjęcia, żeby inni wiedzieli, kto dołączył.',
+        googleNote:
+          'Wystarczy konto Google. Używamy imienia i zdjęcia, żeby inni wiedzieli, kto dołączył.',
         privacyLink: 'Jak używamy danych.',
         lead: 'Jeden link dla całej grupy. Uczestnicy losowania piszą listy do Mikołaja, a w dniu losowania otwierają koperty z imieniem osoby, dla której kupują prezent.',
         loginWithGoogle: 'Zaloguj przez Google',
@@ -765,7 +818,8 @@ const resources = {
       },
       calendar: {
         add: 'Dodaj do kalendarza',
-        description: 'Wręczenie prezentów w Tajemniczym Mikołaju. Budżet: {{budget}} {{currency}}. Twoja koperta: {{link}}',
+        description:
+          'Wręczenie prezentów w Tajemniczym Mikołaju. Budżet: {{budget}} {{currency}}. Twoja koperta: {{link}}',
         fileName: 'tajemniczy-mikolaj',
         title: 'Tajemniczy Mikołaj: {{name}}',
       },

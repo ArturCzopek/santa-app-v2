@@ -10,13 +10,14 @@ import {
   Theme,
   Typography,
 } from '@mui/material';
-import { ContentCopy, IosShare } from '@mui/icons-material';
+import { ContentCopy, Download, IosShare, QrCode2 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNotify } from '../../hooks/useNotify';
 import { useShareMessage } from '../../hooks/useShareMessage';
 import { drawService } from '../../services/DrawService';
 import { eventSummary } from './EventDetails';
 import Postcard from '../common/Postcard';
+import QrCode, { qrCodeSvg } from '../common/QrCode';
 import { Draw } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
 
@@ -36,7 +37,6 @@ export const postcardDialogSx: SxProps<Theme> = {
   },
 };
 
-
 // The invite as a postcard: a ready message with the link, the budget and
 // how to join, sent with the phone's share sheet or copied for a group chat.
 // The link carries a key that lets people in without the password.
@@ -55,6 +55,7 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
   const [inviteKey, setInviteKey] = useState<string | null | undefined>();
   const [confirmRenew, setConfirmRenew] = useState(false);
   const [renewing, setRenewing] = useState(false);
+  const [showQr, setShowQr] = useState(false);
   const canMakeKey = isOwner && draw.status === 'WAITING_FOR_DRAW';
 
   useEffect(() => {
@@ -94,7 +95,23 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
 
   const handleClose = () => {
     setConfirmRenew(false);
+    setShowQr(false);
     onClose();
+  };
+
+  const qrLabel = t('drawPage.inviteModal.qrLabel', { name: draw.drawName });
+  const downloadQr = () => {
+    const blob = new Blob([qrCodeSvg(inviteLink, qrLabel)], {
+      type: 'image/svg+xml',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'santa-qr-' + drawId + '.svg';
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
   };
 
   const loading = inviteKey === undefined;
@@ -140,14 +157,58 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Typography>{t('drawPage.inviteModal.description')}</Typography>
 
-        <Postcard title={postcardTitle} message={loading ? null : message} />
+        {/* The code takes the postcard's place, so on a phone it shows up
+            where the person is looking instead of below the fold. */}
+        {!(showQr && !loading) && (
+          <>
+            <Postcard
+              title={postcardTitle}
+              message={loading ? null : message}
+            />
+            {!loading && (
+              <Typography sx={{ color: tokens.amber, fontWeight: 700 }}>
+                {inviteKey
+                  ? t('drawPage.inviteModal.keyWarning')
+                  : t('drawPage.inviteModal.passwordNotIncluded')}
+              </Typography>
+            )}
+          </>
+        )}
 
-        {!loading && (
-          <Typography sx={{ color: tokens.amber, fontWeight: 700 }}>
-            {inviteKey
-              ? t('drawPage.inviteModal.keyWarning')
-              : t('drawPage.inviteModal.passwordNotIncluded')}
-          </Typography>
+        {showQr && !loading && (
+          <Box
+            id="invite-qr-panel"
+            role="region"
+            aria-label={qrLabel}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
+            <QrCode text={inviteLink} size={240} label={qrLabel} />
+            <Typography sx={{ textAlign: 'center' }}>
+              {t('drawPage.inviteModal.qrCaption')}
+            </Typography>
+            <Typography
+              sx={{ color: tokens.amber, fontWeight: 700, textAlign: 'center' }}
+            >
+              {t(
+                inviteKey
+                  ? 'drawPage.inviteModal.qrWarning'
+                  : 'drawPage.inviteModal.qrPasswordWarning',
+              )}
+            </Typography>
+            <Button
+              variant="outlined"
+              startIcon={<Download />}
+              onClick={downloadQr}
+              sx={{ color: tokens.ink }}
+            >
+              {t('drawPage.inviteModal.qrDownload')}
+            </Button>
+          </Box>
         )}
 
         {/* The password is still needed to start the draw. */}
@@ -211,6 +272,18 @@ const InviteDrawModal: React.FC<InviteDrawModalProps> = ({
           sx={{ color: tokens.ink, whiteSpace: 'nowrap' }}
         >
           {t('drawPage.inviteModal.copyLink')}
+        </Button>
+        <Button
+          startIcon={<QrCode2 />}
+          disabled={loading}
+          aria-expanded={showQr}
+          aria-controls="invite-qr-panel"
+          onClick={() => setShowQr((visible) => !visible)}
+          sx={{ color: tokens.ink, whiteSpace: 'nowrap' }}
+        >
+          {showQr
+            ? t('drawPage.inviteModal.qrHide')
+            : t('drawPage.inviteModal.qrButton')}
         </Button>
         {canShare ? (
           <Button

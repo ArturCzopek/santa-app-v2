@@ -31,6 +31,13 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       ],
     },
     {
+      id: 'qr',
+      question: 'Jak użyć kodu QR zaproszenia?',
+      answer: [
+        'W zaproszeniu wybierz „Kod QR”. Pokaż go na ekranie podczas spotkania albo pobierz obrazek i wydrukuj; pozostałe osoby skanują go aparatem telefonu, żeby otworzyć link. Kod działa jak link: z kluczem zaproszenia wpuszcza bez hasła, a zwykły link wymaga hasła od organizatora. Pokazuj go tylko osobom z losowania; utworzenie nowego linku unieważnia też kod.',
+      ],
+    },
+    {
       id: 'messenger',
       question:
         'Otwieram link w Messengerze i nie mogę się zalogować. Co robić?',
@@ -109,6 +116,13 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       question: 'How do I join a draw?',
       answer: [
         'Open the invite link and sign in with Google. With the invite link, tapping "Join the draw" is enough; with a plain link you also type the password from the organizer.',
+      ],
+    },
+    {
+      id: 'qr',
+      question: 'How do I use the invite QR code?',
+      answer: [
+        'Choose "QR code" in the invite. Show it on a screen at a meeting or download and print the image; everyone else scans it with a phone camera to open the link. The code works like the link: an invite link lets people in without the password; a plain link still needs the password from the organizer. Show it only to people in the draw; making a new link retires the code too.',
       ],
     },
     {
