@@ -240,7 +240,10 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
 - [x] F6 – lista życzeń w strukturze (2026-09-27, D35; Codex, zrecenzowane przez Claude'a): „Czego chcę”
   (jedna rzecz w linii → lista, klikalne linki http/https), „Rozmiary”, „Czego nie chcę”;
   pola `sizes` / `notWanted` w dokumencie listu, sprawdzane przez reguły
-- [ ] F7 – status „prezent kupiony” / podziękowanie
+- [x] F7 – status „prezent kupiony” / podziękowanie (2026-09-27, D36; Codex, zrecenzowane przez Claude'a):
+  „Mam już prezent” przy wyniku (`giftBought` w dokumencie uczestnika, tylko po losowaniu i tylko
+  z przydziałem), postęp „Prezenty kupione: x z y” na liście; podziękowanie `thanks/{uid}` czyta
+  tylko autor i jego Mikołaj; polityka prywatności i D31 uzupełnione
 - [x] F8 – Web Share + gotowa wiadomość (R10, D23); kod QR z linkiem zaproszenia w oknie „Zaproś”
   z pobieraniem SVG do druku (2026-09-27, D33, `qrcode-generator`; Codex, zrecenzowane przez Claude'a)
 - [ ] **F9 – logowanie mailem** (Artur chce; nie wszyscy lubią Google). Rekomendacja Claude'a:

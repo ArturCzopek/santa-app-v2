@@ -34,9 +34,10 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
 }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  // Whether someone wrote a letter matters only until the draw; after it
-  // the result matters, so the list starts folded away.
+  // Letter status ends at the draw; gift status starts after it, and the
+  // participant list folds away because the result matters more.
   const showWishStatus = draw.status === 'WAITING_FOR_DRAW';
+  const showGiftStatus = draw.status === 'DRAWED';
   const [expanded, setExpanded] = useState(false);
   const listId = useId();
   const isOwner = !!user && user.uid === draw.ownerUuid;
@@ -44,6 +45,9 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
   const playerCount = players.size;
   const lettersWritten = draw.participants.filter(
     (p) => players.has(p.userUuid) && !!p.hasWish,
+  ).length;
+  const giftsBought = draw.participants.filter(
+    (p) => players.has(p.userUuid) && !!p.giftBought,
   ).length;
 
   const sortedParticipants = [...draw.participants].sort((a, b) =>
@@ -53,6 +57,7 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
   const renderParticipantRow = (participant: Participant) => {
     const isCurrentUser = user && participant.userUuid === user.uid;
     const hasWish = !!participant.hasWish;
+    const giftBought = !!participant.giftBought;
     const canRemove =
       !!onRemove && showWishStatus && participant.userUuid !== draw.ownerUuid;
 
@@ -87,8 +92,8 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
           </Typography>
           {/* Only the organizer's role says something; "Uczestnik" on every
               row was noise. */}
-          {participant.userUuid === draw.ownerUuid && (
-            draw.ownerPlays === false ? (
+          {participant.userUuid === draw.ownerUuid &&
+            (draw.ownerPlays === false ? (
               <Chip
                 size="small"
                 variant="outlined"
@@ -98,31 +103,37 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
               <Typography variant="body2" color="text.secondary">
                 {t('drawPage.participantsSection.owner')}
               </Typography>
-            )
-          )}
+            ))}
         </Box>
-        {showWishStatus && players.has(participant.userUuid) && (
-          <Typography
-            variant="body2"
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.5,
-              flexShrink: 0,
-              fontWeight: 700,
-              color: hasWish ? tokens.pine : tokens.amber,
-            }}
-          >
-            {hasWish ? (
-              <CheckCircle fontSize="small" />
-            ) : (
-              <HourglassEmpty fontSize="small" />
-            )}
-            {hasWish
-              ? t('drawPage.participantsSection.wishProvided')
-              : t('drawPage.participantsSection.noWish')}
-          </Typography>
-        )}
+        {(showWishStatus || showGiftStatus) &&
+          players.has(participant.userUuid) && (
+            <Typography
+              variant="body2"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                flexShrink: 0,
+                fontWeight: 700,
+                color: (showWishStatus ? hasWish : giftBought)
+                  ? tokens.pine
+                  : tokens.amber,
+              }}
+            >
+              {(showWishStatus ? hasWish : giftBought) ? (
+                <CheckCircle fontSize="small" />
+              ) : (
+                <HourglassEmpty fontSize="small" />
+              )}
+              {showWishStatus
+                ? hasWish
+                  ? t('drawPage.participantsSection.wishProvided')
+                  : t('drawPage.participantsSection.noWish')
+                : giftBought
+                  ? t('drawPage.participantsSection.giftBought')
+                  : t('drawPage.participantsSection.giftNotBought')}
+            </Typography>
+          )}
         {canRemove && (
           <IconButton
             aria-label={t('drawPage.remove.button', {
@@ -148,7 +159,7 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
 
   const list = (
     <PaperCard sx={{ gap: 0, py: { xs: 1.5, sm: 2 } }}>
-      {showWishStatus && isOwner && (
+      {(showWishStatus || showGiftStatus) && isOwner && (
         <Box
           sx={{
             pb: 1.5,
@@ -157,16 +168,23 @@ const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({
           }}
         >
           <Typography sx={{ fontWeight: 700, mb: 1 }}>
-            {t('drawPage.participantsSection.lettersProgress', {
-              done: lettersWritten,
-              total: playerCount,
-            })}
+            {t(
+              showWishStatus
+                ? 'drawPage.participantsSection.lettersProgress'
+                : 'drawPage.participantsSection.giftsProgress',
+              {
+                done: showWishStatus ? lettersWritten : giftsBought,
+                total: playerCount,
+              },
+            )}
           </Typography>
           <LinearProgress
             variant="determinate"
             color="secondary"
             value={
-              (lettersWritten / Math.max(playerCount, 1)) * 100
+              ((showWishStatus ? lettersWritten : giftsBought) /
+                Math.max(playerCount, 1)) *
+              100
             }
             aria-hidden
             sx={{ height: 8, borderRadius: 4, bgcolor: tokens.paperShade }}

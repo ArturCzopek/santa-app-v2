@@ -32,6 +32,12 @@ describe('PrivacyPage', () => {
         /zastąpimy Twoje imię i zdjęcie napisem „Usunięta osoba”/,
       ),
     ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Podziękowanie widzisz tylko Ty i Twój Mikołaj\. Nikt inny, także organizator, nie ma do niego dostępu\. Uczestnicy widzą, czy kupiono już prezent – nie widzą, dla kogo\./,
+        { selector: 'li' },
+      ),
+    ).toBeInTheDocument();
 
     await userEvent
       .setup()

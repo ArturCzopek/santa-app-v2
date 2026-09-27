@@ -46,6 +46,16 @@ service cloud.firestore {
       return /databases/$(database)/documents/draws/$(drawId)/participants/$(uid);
     }
 
+    function assignmentPath(drawId, uid) {
+      return /databases/$(database)/documents/draws/$(drawId)/assignments/$(uid);
+    }
+
+    function isDrawPlayer(drawId, uid) {
+      let d = get(drawPath(drawId)).data;
+      return uid in d.participantUuids
+        && (d.get('ownerPlays', true) != false || uid != d.ownerUuid);
+    }
+
     // Names and photos shown to other participants must be the user's own
     // Google profile data, with the same fallbacks the client uses.
     function tokenName() {
@@ -207,9 +217,13 @@ service cloud.firestore {
         // like the letter, only before the draw.
         allow update: if signedIn()
           && request.auth.uid == uid
-          && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hasWish'])
-          && request.resource.data.hasWish == (getAfter(letterPath(drawId, uid)).data.wish.size() > 0);
+          && ((get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hasWish'])
+              && request.resource.data.hasWish == (getAfter(letterPath(drawId, uid)).data.wish.size() > 0))
+            || (get(drawPath(drawId)).data.status == 'DRAWED'
+              && exists(assignmentPath(drawId, uid))
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['giftBought'])
+              && request.resource.data.giftBought is bool));
 
         // Leaving the draw, the owner taking someone out, or the owner
         // deleting the draw.
@@ -295,6 +309,22 @@ service cloud.firestore {
             || (request.auth.uid == uid
               && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
               && !(uid in getAfter(drawPath(drawId)).data.participantUuids)));
+      }
+
+      // Thanks are written by the recipient to their unknown Santa. Only
+      // that Santa can read them after the draw; the organizer cannot.
+      match /thanks/{uid} {
+        allow get: if signedIn()
+          && (request.auth.uid == uid
+            || (get(drawPath(drawId)).data.status == 'DRAWED'
+              && get(assignmentPath(drawId, request.auth.uid)).data.toUuid == uid));
+
+        allow create, update: if signedIn()
+          && request.auth.uid == uid
+          && get(drawPath(drawId)).data.status == 'DRAWED'
+          && isDrawPlayer(drawId, uid)
+          && request.resource.data.keys().hasOnly(['text'])
+          && isString(request.resource.data.text, 500);
       }
 
       // Pairs of participants who must not draw each other (e.g. a couple).

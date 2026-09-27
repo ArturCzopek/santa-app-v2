@@ -3,19 +3,21 @@ import { Timestamp } from 'firebase/firestore';
 // Stored in draws/{drawId}/participants/{userUuid}, readable by participants
 // of the draw. The letter itself is in draws/{drawId}/letters/{userUuid},
 // readable only by its author and, after the draw, their Santa; hasWish
-// says only whether it is written.
+// says only whether it is written. giftBought is the giver's public status.
 export type Participant = {
   userName: string;
   userUuid: string;
   userPhotoUrl: string;
   entryDate: Date | Timestamp;
   hasWish?: boolean;
+  giftBought?: boolean;
 };
 
 // Same limit as in firestore.rules.
 export const WISH_MAX_LENGTH = 2000;
 export const LETTER_SIZES_MAX_LENGTH = 200;
 export const LETTER_NOT_WANTED_MAX_LENGTH = 500;
+export const THANKS_MAX_LENGTH = 500;
 
 export type Letter = {
   wish: string;

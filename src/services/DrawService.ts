@@ -48,6 +48,10 @@ class DrawService {
     return doc(this.drawsCollection, drawId, 'letters', userId);
   }
 
+  private thanksRef(drawId: string, userId: string) {
+    return doc(this.drawsCollection, drawId, 'thanks', userId);
+  }
+
   private exclusionsCollection(drawId: string) {
     return collection(this.drawsCollection, drawId, 'exclusions');
   }
@@ -229,6 +233,29 @@ class DrawService {
       sizes: (data.sizes as string | undefined) ?? '',
       notWanted: (data.notWanted as string | undefined) ?? '',
     };
+  }
+
+  async updateGiftBought(
+    drawId: string,
+    userId: string,
+    giftBought: boolean,
+  ): Promise<void> {
+    await updateDoc(doc(this.participantsCollection(drawId), userId), {
+      giftBought,
+    });
+  }
+
+  async getThanks(drawId: string, userId: string): Promise<string> {
+    const snapshot = await getDoc(this.thanksRef(drawId, userId));
+    return snapshot.exists() ? (snapshot.data().text as string) : '';
+  }
+
+  async saveThanks(
+    drawId: string,
+    userId: string,
+    text: string,
+  ): Promise<void> {
+    await setDoc(this.thanksRef(drawId, userId), { text });
   }
 
   // Owner only, before the draw: the draw and everything under it go in one

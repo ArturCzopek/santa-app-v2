@@ -405,7 +405,19 @@ const DrawPage = () => {
           (isNonPlayingOwner ? (
             <Typography>{t('drawPage.noEnvelope')}</Typography>
           ) : (
-            <WinnerSection draw={draw} />
+            <WinnerSection
+              draw={draw}
+              onGiftBoughtChange={(giftBought) => {
+                setDraw({
+                  ...draw,
+                  participants: draw.participants.map((participant) =>
+                    participant.userUuid === user?.uid
+                      ? { ...participant, giftBought }
+                      : participant,
+                  ),
+                });
+              }}
+            />
           ))}
 
         {isNonPlayingOwner ? (

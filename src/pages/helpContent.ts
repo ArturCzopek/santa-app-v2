@@ -70,6 +70,13 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       ],
     },
     {
+      id: 'gift',
+      question: 'Co zrobić po kupieniu prezentu?',
+      answer: [
+        'Po zakupie zaznacz „Mam już prezent” przy swoim wyniku. Uczestnicy zobaczą status zakupu, ale nie dowiedzą się, dla kogo kupujesz prezent. Możesz też wysłać podziękowanie swojemu Mikołajowi – tylko on zobaczy je przy swoim wyniku.',
+      ],
+    },
+    {
       id: 'exclusions',
       question: 'Co to znaczy, że para się nie wylosuje?',
       answer: [
@@ -165,6 +172,13 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       question: 'When does the draw happen?',
       answer: [
         'The organizer starts the draw, usually once everyone has joined and written a letter. They then get a ready "The envelopes are here!" message to send to everyone. The draw page always says what it is waiting for.',
+      ],
+    },
+    {
+      id: 'gift',
+      question: 'What can I do after buying a gift?',
+      answer: [
+        'After you buy it, mark “I have the gift” next to your result. Participants see the gift status, but not who you are buying for. You can also send a thank-you to your Santa; only they see it next to their result.',
       ],
     },
     {

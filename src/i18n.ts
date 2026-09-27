@@ -127,6 +127,9 @@ const resources = {
           startDrawFailed:
             'Failed to start the draw. Refresh the page and try again.',
           wishUpdateFailed: 'Failed to update your wish. Please try again.',
+          giftBoughtUpdateFailed:
+            'Could not update your gift status. Please try again.',
+          thanksSaveFailed: 'Could not send your thanks. Please try again.',
         },
         delete: {
           confirm: 'Delete',
@@ -225,6 +228,9 @@ const resources = {
         },
         organizer: 'Organizer: {{name}}',
         participantsSection: {
+          giftBought: 'Gift bought',
+          giftNotBought: 'Still looking for a gift',
+          giftsProgress: 'Gifts bought: {{done}} of {{total}}',
           noWish: 'No letter yet',
           owner: 'Organizer',
           ownerNotDrawing: 'Organizer · not drawing',
@@ -253,6 +259,7 @@ const resources = {
         title: 'Draw',
         winnerSection: {
           budget: 'Budget: up to {{budget}} {{currency}}',
+          giftBoughtToggle: 'I have the gift',
           keepSecret: 'Shh… it is a secret – do not tell anyone who you drew.',
           noWishProvided:
             'This person did not write a letter before the draw. Time for a good guess!',
@@ -261,6 +268,13 @@ const resources = {
           sealedTo: 'To: {{name}}',
           tapToOpen: 'Tap to open',
           title: 'Your draw result',
+          thanksFrom: 'Thanks from {{name}}',
+          thanksHelper:
+            'Your Santa will see this next to their result. You do not know who it is – and it stays that way.',
+          thanksLabel: 'Your thank-you note',
+          thanksSaved: 'Thanks sent.',
+          thanksTitle: 'Thank your Santa',
+          sendThanks: 'Send thanks',
           youBuyFor: 'You are buying a gift for',
         },
         wishSection: {
@@ -551,6 +565,10 @@ const resources = {
           startDrawFailed:
             'Nie udało się przeprowadzić losowania. Odśwież stronę i spróbuj ponownie.',
           wishUpdateFailed: 'Nie udało się zapisać listu. Spróbuj ponownie.',
+          giftBoughtUpdateFailed:
+            'Nie udało się zapisać statusu prezentu. Spróbuj ponownie.',
+          thanksSaveFailed:
+            'Nie udało się wysłać podziękowania. Spróbuj ponownie.',
         },
         delete: {
           confirm: 'Usuń',
@@ -649,6 +667,9 @@ const resources = {
         },
         organizer: 'Organizator: {{name}}',
         participantsSection: {
+          giftBought: 'Prezent kupiony',
+          giftNotBought: 'Jeszcze szuka prezentu',
+          giftsProgress: 'Prezenty kupione: {{done}} z {{total}}',
           noWish: 'Bez listu',
           owner: 'Organizator',
           ownerNotDrawing: 'Organizator · nie losuje',
@@ -681,6 +702,7 @@ const resources = {
         title: 'Losowanie',
         winnerSection: {
           budget: 'Budżet: do {{budget}} {{currency}}',
+          giftBoughtToggle: 'Mam już prezent',
           keepSecret: 'Ciii… To tajemnica – nie zdradzaj nikomu tego wyniku.',
           noWishProvided:
             'Ta osoba nie napisała listu przed losowaniem. Czas na trafny strzał!',
@@ -689,6 +711,13 @@ const resources = {
           sealedTo: 'Do: {{name}}',
           tapToOpen: 'Stuknij, aby otworzyć',
           title: 'Twój wynik losowania',
+          thanksFrom: 'Podziękowanie od {{name}}',
+          thanksHelper:
+            'Twój Mikołaj zobaczy to przy swoim wyniku. Nie wiesz, kto to – i tak zostanie.',
+          thanksLabel: 'Twoje podziękowanie',
+          thanksSaved: 'Podziękowanie wysłane.',
+          thanksTitle: 'Podziękuj swojemu Mikołajowi',
+          sendThanks: 'Wyślij podziękowanie',
           youBuyFor: 'Kupujesz prezent dla',
         },
         wishSection: {

@@ -31,7 +31,10 @@ vi.mock('../../src/services/DrawService', () => ({
     removeParticipant: vi.fn(),
     renewInviteKey: vi.fn(),
     updateLetter: vi.fn(),
+    updateGiftBought: vi.fn(),
     getLetter: vi.fn(),
+    getThanks: vi.fn(),
+    saveThanks: vi.fn(),
     startDraw: vi.fn(),
     getMyAssignment: vi.fn(),
   },
@@ -47,7 +50,12 @@ import { drawService } from '../../src/services/DrawService';
 let letters: Record<string, Letter> = {};
 const emptyLetter: Letter = { wish: '', sizes: '', notWanted: '' };
 
-const participant = (uid: string, userName: string, wish = ''): Participant => {
+const participant = (
+  uid: string,
+  userName: string,
+  wish = '',
+  giftBought = false,
+): Participant => {
   letters[uid] = { ...emptyLetter, wish };
   return {
     userUuid: uid,
@@ -55,6 +63,7 @@ const participant = (uid: string, userName: string, wish = ''): Participant => {
     userPhotoUrl: '',
     entryDate: new Date(),
     hasWish: wish !== '',
+    giftBought,
   };
 };
 
@@ -95,6 +104,9 @@ beforeEach(() => {
   vi.mocked(drawService.getLetter).mockImplementation(
     async (_, uid) => letters[uid] ?? emptyLetter,
   );
+  vi.mocked(drawService.getThanks).mockResolvedValue('');
+  vi.mocked(drawService.updateGiftBought).mockResolvedValue();
+  vi.mocked(drawService.saveThanks).mockResolvedValue();
   auth.user = fakeUser('owner', 'Olga Owner');
   vi.mocked(drawService.getDraw).mockResolvedValue(waitingDraw);
   vi.mocked(drawService.getParticipants).mockResolvedValue([
@@ -263,7 +275,10 @@ describe('DrawPage', () => {
       await screen.findByText('List nie został napisany przed losowaniem.'),
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Napisz list' })).toBeNull();
-    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.queryByLabelText('Czego chcę')).toBeNull();
+    expect(
+      await screen.findByLabelText('Twoje podziękowanie'),
+    ).toBeInTheDocument();
   });
 
   it('does not start the draw with a wrong password', async () => {
@@ -503,6 +518,103 @@ describe('DrawPage', () => {
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await user.click(toggle);
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('lets a player mark their gift as bought after opening the envelope', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await openEnvelope(user);
+    await user.click(
+      await screen.findByRole('checkbox', { name: 'Mam już prezent' }),
+    );
+
+    expect(drawService.updateGiftBought).toHaveBeenCalledWith(
+      'd1',
+      'owner',
+      true,
+    );
+    await user.click(screen.getByRole('button', { name: 'Uczestnicy (2)' }));
+    expect(screen.getByText('Prezent kupiony')).toBeInTheDocument();
+    expect(screen.getByText('Prezenty kupione: 1 z 2')).toBeInTheDocument();
+  });
+
+  it('shows gift status and bought progress among players after the draw', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawService.getParticipants).mockResolvedValue([
+      participant('owner', 'Olga Owner', '', true),
+      participant('alice', 'Ania Test'),
+    ]);
+    renderDrawPage();
+
+    await userEvent
+      .setup()
+      .click(await screen.findByRole('button', { name: 'Uczestnicy (2)' }));
+
+    expect(screen.getByText('Prezent kupiony')).toBeInTheDocument();
+    expect(screen.getByText('Jeszcze szuka prezentu')).toBeInTheDocument();
+    expect(screen.getByText('Prezenty kupione: 1 z 2')).toBeInTheDocument();
+  });
+
+  it('saves the player’s thank-you note', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
+    const user = userEvent.setup();
+    renderDrawPage();
+
+    await user.type(
+      await screen.findByLabelText('Twoje podziękowanie'),
+      'Dziękuję za prezent!',
+    );
+    await user.click(
+      screen.getByRole('button', { name: 'Wyślij podziękowanie' }),
+    );
+
+    expect(drawService.saveThanks).toHaveBeenCalledWith(
+      'd1',
+      'owner',
+      'Dziękuję za prezent!',
+    );
+  });
+
+  it('shows the recipient’s thank-you next to their letter', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
+    vi.mocked(drawService.getThanks).mockImplementation(async (_, uid) =>
+      uid === 'alice' ? 'Dziękuję za prezent!' : '',
+    );
+    renderDrawPage();
+
+    await openEnvelope();
+
+    expect(
+      await screen.findByText('Podziękowanie od Ania Test'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Dziękuję za prezent!')).toBeInTheDocument();
   });
 
   it('shows the owner how many letters are written before the draw', async () => {

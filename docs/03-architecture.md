@@ -48,8 +48,9 @@ it has different readers:
 | Path | Holds | Who reads it |
 |---|---|---|
 | `draws/{id}` | Name, description, budget, currency, date, place, owner, optional `ownerPlays` (missing means true), `participantUuids`, status, draw date | Anyone signed in who knows the id |
-| `…/participants/{uid}` | Name and photo (must match the Google profile), `hasWish` | Participants |
+| `…/participants/{uid}` | Name and photo (must match the Google profile), `hasWish`, optional `giftBought` (missing means false) | Participants |
 | `…/letters/{uid}` | `wish` (up to 2000 characters), optional `sizes` (up to 200 characters) and `notWanted` (up to 500 characters); written by its author before the draw only | The author; after the draw also the one person who drew the author |
+| `…/thanks/{uid}` | `text` (up to 500 characters), written by the recipient after the draw | The author and, after the draw, the person who drew the author |
 | `…/exclusions/{a}_{b}` | A pair who must not draw each other (`a < b`) | The owner, before the draw |
 | `…/assignments/{uid}` | `toUuid`: whom `uid` buys for | Only `uid` |
 | `…/joinKeys/{key}` | Proof of the password or of the invite link's key (a hash, never the secret) | The owner, to confirm the password when starting the draw; before the draw the owner may add keys and remove any but the current invite link's |
@@ -58,12 +59,13 @@ it has different readers:
 | `messages/{uid}_{date}` | Messages to the author, one per person per day | The author of the message (the app owner reads them in the Firebase console) |
 
 Before the draw the owner can edit or delete it and take someone out, and participants can
-leave; after it, the rules freeze the draw so every result stays valid.
+leave. After it, the draw, assignments and letters stay fixed; the post-draw gift status and
+thanks can change as described below.
 
 ## Rules the data follows
 
 - A draw name is at most 80 characters and its description at most 1000; a wish is at most
-  2000 characters, sizes 200 and `notWanted` 500; a feedback message at most 1000. Older
+  2000 characters, sizes 200, `notWanted` and a thank-you 500; a feedback message at most 1000. Older
   letters without the optional fields read as empty strings.
 - A draw supports up to 100 participants and currencies `PLN`, `EUR`, `USD`, or `GBP`.
 - The password form requires at least 6 characters. The owner stays a participant for management access, and `ownerPlays` decides whether they are included among the players; missing means `true` for older draws.
@@ -110,6 +112,13 @@ so whoever has the link still cannot start the draw). Then the owner's browser:
    player, readable only by that giver.
 
 From then on no browser holds the whole result.
+
+**Marking a gift and thanking a Santa** (`WinnerSection`, `ParticipantsSection`). A player
+updates only `giftBought` on their own participant document after the draw and only if they
+have an assignment. Participants see that status and the organizer sees a count among
+players; neither reveals whom the giver drew. A player writes `thanks/{uid}` for themselves.
+Only they and the person whose assignment points to them can read the note; the organizer
+cannot unless they are that person's Santa.
 
 **Setting a new password** (`SetPasswordModal` -> `DrawService.setDrawPassword`). In one batch
 the owner removes every join key except the current invite link's and adds the key of the

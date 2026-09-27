@@ -125,6 +125,16 @@ describe('DrawService against the emulator', () => {
     }
     expect(isValidDraw(pairs, [owner.uid, alice.uid, bob.uid])).toBe(true);
 
+    await drawService.updateGiftBought(drawId, bob.uid, true);
+    expect(
+      (await drawService.getParticipants(drawId)).find(
+        (participant) => participant.userUuid === bob.uid,
+      )?.giftBought,
+    ).toBe(true);
+    expect(await drawService.getThanks(drawId, bob.uid)).toBe('');
+    await drawService.saveThanks(drawId, bob.uid, 'Thank you!');
+    expect(await drawService.getThanks(drawId, bob.uid)).toBe('Thank you!');
+
     expect(await appDataService.getAppData()).toEqual({
       drawsCount: 1,
       winnersCount: 3,

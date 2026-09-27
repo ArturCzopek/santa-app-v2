@@ -192,7 +192,7 @@ changes nothing (D30), so a request to delete personal data is done by the autho
 Firebase console, within a month, and answered when done. The request comes through "Zostaw
 wiadomość" (the message carries the sender's uid) or by email from the address of the Google
 account, which the author checks in Firebase Authentication. For that person:
-- in every finished draw they took part in: delete `letters/{uid}`; in `participants/{uid}` set
+- in every finished draw they took part in: delete `letters/{uid}` and `thanks/{uid}`; in `participants/{uid}` set
   `userName` to "Usunięta osoba", `userPhotoUrl` to "" and `hasWish` to false; if they are the
   organizer, do the same with `ownerName` / `ownerPhotoUrl` in the draw document. The uid stays
   in `participantUuids` and the assignments, so everyone else's result keeps working; once the
@@ -233,3 +233,11 @@ no migration. The author can include product links; the reader links only explic
 URLs and renders all other text normally. `hasWish` still tracks only whether `wish` is
 non-empty, and the entire letter remains frozen after the draw (D30). Drafts store all three
 fields as JSON while continuing to load older plain-text drafts as the wish.
+
+## D36. Gift progress and private thanks, Accepted
+After the draw, a player can mark `giftBought` on their own participant document; missing
+means false. Participants see who has bought a gift and a count among players, never whom
+anyone is buying for. A recipient can write up to 500 characters in `thanks/{uid}` for their
+unknown Santa. Only its author and the Santa whose assignment points to them can read it;
+the organizer cannot unless they are that Santa. The note can be edited after sending, and
+there is no app delete. These changes do not alter assignments or letters.

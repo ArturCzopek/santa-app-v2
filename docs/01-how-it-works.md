@@ -162,9 +162,15 @@ seal and *Stuknij, aby otworzyć*. Tapping breaks the seal and the letter slides
 - the recipient's letter to Santa,
 - *Ciii… To tajemnica*.
 
+After opening the envelope, mark *Mam już prezent* when you have bought the gift.
+Everyone can see which players have bought theirs, but not whom each person is buying for.
+You can also write *Podziękuj swojemu Mikołajowi*; only your unknown Santa sees the note
+next to their result, and the organizer cannot read it.
+
 The envelope stays open on later visits on the same device (another phone shows it sealed
-again, which is fine). After the draw the participants list folds away: the result matters
-now, not who wrote a letter.
+again, which is fine). After the draw the participants list folds away initially; when
+opened, it shows gift status instead of letter status. The organizer sees the number of
+players who have bought their gifts.
 
 **Nobody sees any pair other than their own**, the organizer included (with one known
 caveat for a technically skilled organizer, see [D3](04-decisions.md#d3-the-pairs-are-drawn-in-the-organizers-browser-accepted)). An organizer who opted out has no envelope.
