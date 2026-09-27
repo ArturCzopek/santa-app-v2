@@ -245,3 +245,11 @@ anyone is buying for. A recipient can write up to 500 characters in `thanks/{uid
 unknown Santa. Only its author and the Santa whose assignment points to them can read it;
 the organizer cannot unless they are that Santa. The note can be edited after sending, and
 there is no app delete. These changes do not alter assignments or letters.
+
+## D37. The verified admin reads messages in the app, Accepted (refines D20)
+The signed-in account with the verified token email `arturcz32@gmail.com` can list and read
+all messages. Firestore rules enforce this; the same address in the client only controls
+whether the page and navbar link are shown. Authors can still read only their own message,
+and messages remain create-only for everyone: the page is read-only and has no read flag.
+The page loads newest first in batches of 20. This changes where the author reads messages,
+not who reads them, so the privacy policy stays as it is.

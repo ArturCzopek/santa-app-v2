@@ -16,6 +16,8 @@ import CreatePage from './pages/CreatePage';
 import DrawPage from './pages/DrawPage';
 import PrivacyPage from './pages/PrivacyPage';
 import HelpPage from './pages/HelpPage';
+import AdminMessagesPage from './pages/AdminMessagesPage';
+import { ADMIN_EMAIL } from './admin';
 
 // A new page starts at the top, not where the previous one was scrolled.
 const ScrollToTop = () => {
@@ -33,7 +35,11 @@ const RequireAuth: React.FC<{ children: React.ReactElement }> = ({
   const { user } = useAuth();
   const location = useLocation();
 
-  return user ? children : <Navigate to="/" replace state={{ from: location }} />;
+  return user ? (
+    children
+  ) : (
+    <Navigate to="/" replace state={{ from: location }} />
+  );
 };
 
 const AppRoutes = () => {
@@ -67,6 +73,10 @@ const AppRoutes = () => {
 
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/help" element={<HelpPage />} />
+
+        {user?.email === ADMIN_EMAIL && user.emailVerified && (
+          <Route path="/admin/messages" element={<AdminMessagesPage />} />
+        )}
 
         {/*redirection done on page*/}
         <Route path="/join/:drawId" element={<JoinToDrawPage />} />

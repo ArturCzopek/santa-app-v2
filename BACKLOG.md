@@ -278,7 +278,10 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
   wymuszają jednak kompletnego bijektywnego wyniku od zmodyfikowanego klienta, a organizator
   widzi wszystkie pary w swojej przeglądarce. Rozważyć Cloud Function i serwerową walidację;
   wymaga decyzji o planie Firebase, koszcie i modelu zaufania.
-- [ ] **F15 – panel admina: wiadomości od użytkowników w GUI** (pomysł Artura, 2026-09-25, na przyszłość).
+- [x] **F15 – panel admina: wiadomości od użytkowników w GUI** (pomysł Artura, 2026-09-25; zrobione 2026-09-27,
+  D37, Codex, zrecenzowane przez Claude'a): `#/admin/messages` + „Wiadomości” w menu konta; admin = zweryfikowany
+  e-mail `arturcz32@gmail.com` w regułach; od najnowszych, po 20, „Pokaż starsze”. Bez oznaczania
+  przeczytanych i licznika (świadomie pominięte). Pierwotny plan:
   Dziś wiadomości z „Zostaw wiadomość” są w kolekcji `messages` (`{uid}_{rok}-{mies}-{dzień}`,
   pola `userUid`, `userName`, `message`, `date`) i czyta się je tylko w Firebase console.
   Do zrobienia:

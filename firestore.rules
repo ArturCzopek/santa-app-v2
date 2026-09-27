@@ -10,6 +10,12 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.get('email', '') == 'arturcz32@gmail.com'
+        && request.auth.token.get('email_verified', false) == true;
+    }
+
     function drawPath(drawId) {
       return /databases/$(database)/documents/draws/$(drawId);
     }
@@ -406,8 +412,10 @@ service cloud.firestore {
 
     // Messages to the author. One document per user per UTC day
     // ({uid}_{year}-{month}-{day}), create-only: this is the daily limit.
-    // Only the author reads them (in the Firebase console).
+    // Only the author reads their own message, and the verified admin reads
+    // all messages in the app.
     match /messages/{messageId} {
+      allow list, get: if isAdmin();
       allow get: if signedIn()
         && messageId.matches(request.auth.uid + '_[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}');
 

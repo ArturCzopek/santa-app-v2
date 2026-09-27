@@ -407,9 +407,18 @@ const resources = {
         accountMenu: 'Account menu: {{name}}',
         leaveMessage: 'Leave a message!',
         logout: 'Log out',
+        messages: 'Messages',
         yourDraws: 'Your draws',
         showSanta: 'Show Santa!',
         title: 'Santa App',
+      },
+      adminMessages: {
+        empty: 'No messages yet.',
+        errors: {
+          loadFailed: 'Failed to load messages. Please try again.',
+        },
+        showOlder: 'Show older',
+        title: 'Messages from users',
       },
       calendar: {
         add: 'Add to calendar',
@@ -851,9 +860,18 @@ const resources = {
         accountMenu: 'Menu konta: {{name}}',
         leaveMessage: 'Zostaw wiadomość!',
         logout: 'Wyloguj',
+        messages: 'Wiadomości',
         yourDraws: 'Twoje losowania',
         showSanta: 'Pokaż Mikołaja!',
         title: 'Santa App',
+      },
+      adminMessages: {
+        empty: 'Nie ma jeszcze wiadomości.',
+        errors: {
+          loadFailed: 'Nie udało się pobrać wiadomości. Spróbuj ponownie.',
+        },
+        showOlder: 'Pokaż starsze',
+        title: 'Wiadomości od użytkowników',
       },
       calendar: {
         add: 'Dodaj do kalendarza',

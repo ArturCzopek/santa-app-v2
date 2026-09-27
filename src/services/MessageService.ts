@@ -3,13 +3,26 @@ import {
   doc,
   FirestoreError,
   getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  QueryConstraint,
+  QueryDocumentSnapshot,
+  query,
   serverTimestamp,
   setDoc,
+  startAfter,
 } from 'firebase/firestore';
 import { db } from './FirebaseConfig';
-import { MessageData } from '../models/Message';
+import { MessageData, MessageDocument } from '../models/Message';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+export type MessagePage = {
+  messages: MessageDocument[];
+  lastDocument?: QueryDocumentSnapshot;
+  hasMore: boolean;
+};
 
 export class MessageService {
   private messagesCollection = collection(db, 'messages');
@@ -59,6 +72,29 @@ export class MessageService {
       console.error('Error checking if user can send message:', error);
       return false;
     }
+  }
+
+  async getMessages(
+    pageSize = 20,
+    after?: QueryDocumentSnapshot,
+  ): Promise<MessagePage> {
+    const constraints: QueryConstraint[] = [
+      orderBy('date', 'desc'),
+      limit(pageSize),
+    ];
+    if (after) constraints.push(startAfter(after));
+
+    const snapshot = await getDocs(
+      query(this.messagesCollection, ...constraints),
+    );
+    return {
+      messages: snapshot.docs.map(
+        (messageDoc) =>
+          ({ id: messageDoc.id, ...messageDoc.data() }) as MessageDocument,
+      ),
+      lastDocument: snapshot.docs[snapshot.docs.length - 1],
+      hasMore: snapshot.docs.length === pageSize,
+    };
   }
 }
 

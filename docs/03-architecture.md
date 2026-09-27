@@ -39,6 +39,7 @@ once), and why they have the largest test suite (`tests/rules`).
 | `#/draw/:drawId` | Waiting-stage management or a participant's result; requires sign-in. |
 | `#/help` | Public help page. |
 | `#/privacy` | Public privacy page. |
+| `#/admin/messages` | Read user messages; requires the verified admin account. |
 
 ## Data
 
@@ -56,7 +57,7 @@ it has different readers:
 | `…/joinKeys/{key}` | Proof of the password or of the invite link's key (a hash, never the secret) | The owner, to confirm the password when starting the draw; before the draw the owner may add keys and remove any but the current invite link's |
 | `…/invite/link` | The invite link's key | Participants |
 | `appData/stats` | App-wide counters of draws and results | Everyone signed in |
-| `messages/{uid}_{date}` | Messages to the author, one per person per day | The author of the message (the app owner reads them in the Firebase console) |
+| `messages/{uid}_{date}` | Messages to the author, one per person per day | The author (their own message) and the verified admin account (in the app) |
 
 Before the draw the owner can edit or delete it and take someone out, and participants can
 leave. After it, the draw, assignments and letters stay fixed; the post-draw gift status and

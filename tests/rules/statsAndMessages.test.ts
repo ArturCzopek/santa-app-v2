@@ -6,12 +6,14 @@ import {
 } from '@firebase/rules-unit-testing';
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
   increment,
   serverTimestamp,
   setDoc,
+  updateDoc,
   writeBatch,
 } from 'firebase/firestore';
 import {
@@ -43,7 +45,10 @@ const createDrawCounting = (drawId: string, by: number) => {
   const db = authed(env, OWNER);
   const batch = writeBatch(db);
   batch.set(doc(db, `draws/${drawId}`), newDraw(OWNER));
-  batch.set(doc(db, `draws/${drawId}/participants/${OWNER}`), newParticipant(OWNER));
+  batch.set(
+    doc(db, `draws/${drawId}/participants/${OWNER}`),
+    newParticipant(OWNER),
+  );
   batch.set(doc(db, `draws/${drawId}/joinKeys/${JOIN_KEY}`), {
     createdDate: serverTimestamp(),
   });
@@ -141,21 +146,32 @@ const message = (uid: string, overrides: Record<string, unknown> = {}) => ({
 describe('messages', () => {
   it('user can send one message today', async () => {
     const db = authed(env, ALICE);
-    await assertSucceeds(setDoc(doc(db, `messages/${todayId(ALICE)}`), message(ALICE)));
-    await assertFails(setDoc(doc(db, `messages/${todayId(ALICE)}`), message(ALICE)));
+    await assertSucceeds(
+      setDoc(doc(db, `messages/${todayId(ALICE)}`), message(ALICE)),
+    );
+    await assertFails(
+      setDoc(doc(db, `messages/${todayId(ALICE)}`), message(ALICE)),
+    );
   });
 
   it('cannot use another day or another user id', async () => {
     const db = authed(env, ALICE);
-    await assertFails(setDoc(doc(db, `messages/${ALICE}_2000-1-1`), message(ALICE)));
-    await assertFails(setDoc(doc(db, `messages/${todayId(BOB)}`), message(BOB)));
+    await assertFails(
+      setDoc(doc(db, `messages/${ALICE}_2000-1-1`), message(ALICE)),
+    );
+    await assertFails(
+      setDoc(doc(db, `messages/${todayId(BOB)}`), message(BOB)),
+    );
     await assertFails(setDoc(doc(db, 'messages/random-id'), message(ALICE)));
   });
 
   it('cannot spoof the name or send huge messages', async () => {
     const db = authed(env, ALICE);
     await assertFails(
-      setDoc(doc(db, `messages/${todayId(ALICE)}`), message(ALICE, { userName: 'Santa' })),
+      setDoc(
+        doc(db, `messages/${todayId(ALICE)}`),
+        message(ALICE, { userName: 'Santa' }),
+      ),
     );
     await assertFails(
       setDoc(
@@ -165,11 +181,83 @@ describe('messages', () => {
     );
   });
 
-  it('users can check only their own message and nobody can list them', async () => {
-    await setDoc(doc(authed(env, ALICE), `messages/${todayId(ALICE)}`), message(ALICE));
+  it('the verified admin can list and get every message', async () => {
+    await setDoc(
+      doc(authed(env, ALICE), `messages/${todayId(ALICE)}`),
+      message(ALICE),
+    );
+    await setDoc(
+      doc(authed(env, BOB), `messages/${todayId(BOB)}`),
+      message(BOB),
+    );
 
-    await assertSucceeds(getDoc(doc(authed(env, ALICE), `messages/${todayId(ALICE)}`)));
-    await assertFails(getDoc(doc(authed(env, BOB), `messages/${todayId(ALICE)}`)));
+    const admin = env
+      .authenticatedContext('admin-uid', {
+        email: 'arturcz32@gmail.com',
+        email_verified: true,
+      })
+      .firestore();
+    const messages = await assertSucceeds(
+      getDocs(collection(admin, 'messages')),
+    );
+    if (messages.size !== 2)
+      throw new Error('Expected admin to list both messages');
+    await assertSucceeds(getDoc(doc(admin, `messages/${todayId(ALICE)}`)));
+  });
+
+  it('requires a verified email for admin access', async () => {
+    await setDoc(
+      doc(authed(env, ALICE), `messages/${todayId(ALICE)}`),
+      message(ALICE),
+    );
+    const unverifiedAdmin = env
+      .authenticatedContext('unverified-admin', {
+        email: 'arturcz32@gmail.com',
+        email_verified: false,
+      })
+      .firestore();
+
+    await assertFails(getDocs(collection(unverifiedAdmin, 'messages')));
+    await assertFails(
+      getDoc(doc(unverifiedAdmin, `messages/${todayId(ALICE)}`)),
+    );
+  });
+
+  it('ordinary users can get only their own message and cannot list', async () => {
+    await setDoc(
+      doc(authed(env, ALICE), `messages/${todayId(ALICE)}`),
+      message(ALICE),
+    );
+    await setDoc(
+      doc(authed(env, BOB), `messages/${todayId(BOB)}`),
+      message(BOB),
+    );
+
+    await assertSucceeds(
+      getDoc(doc(authed(env, ALICE), `messages/${todayId(ALICE)}`)),
+    );
+    await assertFails(
+      getDoc(doc(authed(env, BOB), `messages/${todayId(ALICE)}`)),
+    );
     await assertFails(getDocs(collection(authed(env, ALICE), 'messages')));
+  });
+
+  it('nobody can update or delete a message', async () => {
+    await setDoc(
+      doc(authed(env, ALICE), `messages/${todayId(ALICE)}`),
+      message(ALICE),
+    );
+    const admin = env
+      .authenticatedContext('admin-uid', {
+        email: 'arturcz32@gmail.com',
+        email_verified: true,
+      })
+      .firestore();
+
+    for (const db of [admin, authed(env, ALICE), authed(env, BOB)]) {
+      const messageRef = doc(db, `messages/${todayId(ALICE)}`);
+      await assertFails(updateDoc(messageRef, { message: 'Changed' }));
+      await assertFails(deleteDoc(messageRef));
+    }
   });
 });

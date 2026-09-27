@@ -21,12 +21,16 @@ import { Letter, Pair } from '../../src/models/Draw';
 import { createTestEnv, PROJECT_ID } from '../rules/setup';
 
 // Signs in against the Auth emulator, which accepts unsigned Google tokens.
-const signInAs = async (sub: string, name: string): Promise<User> => {
+const signInAs = async (
+  sub: string,
+  name: string,
+  email = `${sub}@example.com`,
+): Promise<User> => {
   await signOut(auth);
   const credential = GoogleAuthProvider.credential(
     JSON.stringify({
       sub,
-      email: `${sub}@example.com`,
+      email,
       email_verified: true,
       name,
     }),
@@ -447,5 +451,39 @@ describe('MessageService against the emulator', () => {
 
     // Stored under the server's today, so the daily limit still holds.
     expect(await messageService.canUserSendMessageToday(user.uid)).toBe(false);
+  });
+
+  it('pages messages newest first for the verified admin', async () => {
+    const older = await signInAs('older-writer', 'Older Writer');
+    await messageService.sendMessage({
+      userUid: older.uid,
+      userName: 'Older Writer',
+      message: 'Older message',
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    const newer = await signInAs('newer-writer', 'Newer Writer');
+    await messageService.sendMessage({
+      userUid: newer.uid,
+      userName: 'Newer Writer',
+      message: 'Newer message',
+    });
+
+    await signInAs('admin', 'Artur', 'arturcz32@gmail.com');
+    const firstPage = await messageService.getMessages(1);
+    expect(firstPage.messages.map((message) => message.userName)).toEqual([
+      'Newer Writer',
+    ]);
+    expect(firstPage.hasMore).toBe(true);
+
+    const secondPage = await messageService.getMessages(
+      1,
+      firstPage.lastDocument,
+    );
+    expect(secondPage.messages.map((message) => message.userName)).toEqual([
+      'Older Writer',
+    ]);
+    // Other tests in this file leave messages too, so whether more pages
+    // follow is not asserted here (AdminMessagesPage.test covers the end).
   });
 });

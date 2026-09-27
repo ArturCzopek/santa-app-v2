@@ -27,6 +27,7 @@ import {
 } from '../../styles/navbarStyles';
 import MessageModal from '../MessageModal';
 import ShowSantaModal from '../ShowSantaModal';
+import { ADMIN_EMAIL } from '../../admin';
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
@@ -50,6 +51,7 @@ const Navbar = () => {
   };
 
   const userName = user?.displayName || '';
+  const canReadMessages = user?.email === ADMIN_EMAIL && user.emailVerified;
 
   return (
     <>
@@ -160,6 +162,18 @@ const Navbar = () => {
                   </ListItemIcon>
                   {t('navbar.leaveMessage')}
                 </MenuItem>
+                {canReadMessages && (
+                  <MenuItem
+                    component={RouterLink}
+                    to="/admin/messages"
+                    onClick={() => setMenuAnchor(null)}
+                  >
+                    <ListItemIcon>
+                      <FeedbackOutlined fontSize="small" />
+                    </ListItemIcon>
+                    {t('navbar.messages')}
+                  </MenuItem>
+                )}
                 <MenuItem onClick={handleLogOut}>
                   <ListItemIcon>
                     <ExitToApp fontSize="small" />
