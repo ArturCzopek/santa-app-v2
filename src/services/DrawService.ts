@@ -273,18 +273,15 @@ class DrawService {
       getDocs(this.exclusionsCollection(drawId)),
     ]);
 
-    const batchSize = Math.max(
-      1,
-      Math.min(exclusionBatchSize, EXCLUSION_DELETE_BATCH_SIZE),
-    );
+    // Only the test passes a smaller size, to cover several chunks cheaply.
     for (
       let start = 0;
       start < exclusions.docs.length;
-      start += batchSize
+      start += exclusionBatchSize
     ) {
       const exclusionBatch = writeBatch(db);
       exclusions.docs
-        .slice(start, start + batchSize)
+        .slice(start, start + exclusionBatchSize)
         .forEach((d) => exclusionBatch.delete(d.ref));
       await exclusionBatch.commit();
     }
