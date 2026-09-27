@@ -218,7 +218,7 @@ Zakończenie (wymóg kontraktu Impeccable)
 niezrobiony punkt z tej listy (przed startem sprawdzić jego stan w kodzie):
 1. **Przed sezonem:** F9 (logowanie linkiem z maila).
 2. **Warte zrobienia, bez Blaze:** F5 → F6 → F7 → F8 (kod QR) → F11 (PWA) – zrobione 2026-09-27; F12 odrzucone.
-3. **Bez Blaze, przed Blaze (decyzja Artura 2026-09-27):** F15, F17.
+3. **Bez Blaze, przed Blaze (decyzja Artura 2026-09-27):** F15.
 4. **Wymagają Blaze (F0) – na sam koniec:** F2, F3 (przypomnienia), F13.
 
 Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, \$8 po analizie sezonu.
@@ -297,10 +297,9 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
   hasło. Jeśli usunięta osoba znała hasło, organizator powinien również ustawić nowe hasło, aby
   uniemożliwić ponowne dołączenie. Nie zmieniać danych/credentiali automatycznie. Dodać test
   tekstu i zachowania okna potwierdzenia.
-- [ ] **F17 – usuwanie dużego oczekującego losowania [P3]:** reguły ograniczają grupę do 100 osób,
-  a usunięcie jest dozwolone tylko przed losowaniem. Przy bardzo gęstym zestawie wykluczeń
-  pojedynczy batch może przekroczyć 500 zapisów. Niski priorytet; rozważyć tylko jeśli duże
-  grupy są celem produktu, bo usuwanie partiami wymaga zmiany reguł i semantyki atomowości.
+- [x] **F17 – usuwanie dużego oczekującego losowania [P3]** (2026-09-27, Codex): wykluczenia
+  są usuwane najpierw osobnymi batchami po 450 zapisów, a pozostałe dokumenty losowania
+  w jednym batchu; reguły Firestore i dane pozostają bez zmian.
 
 ## 7. Monetyzacja
 

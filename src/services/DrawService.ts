@@ -31,6 +31,9 @@ import { PasswordUtils } from './PasswordUtils';
 import { Exclusion, generatePairs } from './pairs';
 import { appDataService } from './AppDataService';
 
+// Keep each exclusion batch below Firestore's 500-write limit.
+const EXCLUSION_DELETE_BATCH_SIZE = 450;
+
 class DrawService {
   private drawsCollection = collection(db, 'draws');
 
@@ -257,17 +260,37 @@ class DrawService {
     await setDoc(this.thanksRef(drawId, userId), { text });
   }
 
-  // Owner only, before the draw: the draw and everything under it go in one
-  // batch, so nothing is left behind half-deleted.
-  async deleteDraw(drawId: string): Promise<void> {
+  // Owner only, before the draw. If a chunk fails, only exclusions are gone;
+  // the draw remains.
+  async deleteDraw(
+    drawId: string,
+    exclusionBatchSize = EXCLUSION_DELETE_BATCH_SIZE,
+  ): Promise<void> {
     const drawRef = doc(this.drawsCollection, drawId);
-    const subcollections = await Promise.all([
+    const [participants, joinKeys, exclusions] = await Promise.all([
       getDocs(this.participantsCollection(drawId)),
       getDocs(collection(drawRef, 'joinKeys')),
       getDocs(this.exclusionsCollection(drawId)),
     ]);
+
+    const batchSize = Math.max(
+      1,
+      Math.min(exclusionBatchSize, EXCLUSION_DELETE_BATCH_SIZE),
+    );
+    for (
+      let start = 0;
+      start < exclusions.docs.length;
+      start += batchSize
+    ) {
+      const exclusionBatch = writeBatch(db);
+      exclusions.docs
+        .slice(start, start + batchSize)
+        .forEach((d) => exclusionBatch.delete(d.ref));
+      await exclusionBatch.commit();
+    }
+
     const batch = writeBatch(db);
-    subcollections.forEach((snapshot) =>
+    [participants, joinKeys].forEach((snapshot) =>
       snapshot.docs.forEach((d) => batch.delete(d.ref)),
     );
     // Nobody may list letters, but there is at most one per participant.

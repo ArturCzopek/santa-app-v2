@@ -5,14 +5,20 @@ import {
   signOut,
   User,
 } from 'firebase/auth';
-import { terminate } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  terminate,
+} from 'firebase/firestore';
 import { auth, db } from '../../src/services/FirebaseConfig';
 import { drawService } from '../../src/services/DrawService';
 import { messageService } from '../../src/services/MessageService';
 import { appDataService } from '../../src/services/AppDataService';
 import { isValidDraw } from '../../src/services/pairs';
 import { Letter, Pair } from '../../src/models/Draw';
-import { PROJECT_ID } from '../rules/setup';
+import { createTestEnv, PROJECT_ID } from '../rules/setup';
 
 // Signs in against the Auth emulator, which accepts unsigned Google tokens.
 const signInAs = async (sub: string, name: string): Promise<User> => {
@@ -249,6 +255,66 @@ describe('DrawService against the emulator', () => {
     await drawService.deleteDraw(drawId);
     await expect(drawService.getDraw(drawId)).rejects.toThrow('Draw not found');
     expect(await drawService.getDrawPreviews(owner.uid)).toEqual([]);
+  });
+
+  it('deletes exclusions in chunks before deleting the rest of a waiting draw', async () => {
+    const owner = await signInAs('owner', 'Olga Owner');
+    const drawId = await drawService.createDraw(newDrawForm, owner);
+    const alice = await signInAs('alice', 'Ania Test');
+    await drawService.joinToDraw(drawId, alice, 'secret1');
+    await drawService.updateLetter(drawId, alice.uid, letter('Socks'));
+    const bob = await signInAs('bob', 'Bob Test');
+    await drawService.joinToDraw(drawId, bob, 'secret1');
+    await drawService.updateLetter(drawId, bob.uid, letter('Book'));
+    const celina = await signInAs('celina', 'Celina Test');
+    await drawService.joinToDraw(drawId, celina, 'secret1');
+    await drawService.updateLetter(drawId, celina.uid, letter('Mug'));
+
+    await signInAs('owner', 'Olga Owner');
+    await drawService.updateLetter(drawId, owner.uid, letter('Tea'));
+    const exclusions = [
+      [owner.uid, alice.uid],
+      [owner.uid, bob.uid],
+      [owner.uid, celina.uid],
+      [alice.uid, bob.uid],
+      [alice.uid, celina.uid],
+    ] as const;
+    for (const exclusion of exclusions) {
+      await drawService.addExclusion(drawId, [...exclusion]);
+    }
+    expect(await drawService.getExclusions(drawId)).toHaveLength(5);
+    expect(await drawService.getInviteKey(drawId)).not.toBeNull();
+
+    await drawService.deleteDraw(drawId, 2);
+
+    const env = await createTestEnv();
+    try {
+      await env.withSecurityRulesDisabled(async (context) => {
+        const adminDb = context.firestore();
+        for (const subcollection of [
+          'participants',
+          'letters',
+          'exclusions',
+          'joinKeys',
+        ]) {
+          expect(
+            (
+              await getDocs(
+                collection(adminDb, `draws/${drawId}/${subcollection}`),
+              )
+            ).size,
+          ).toBe(0);
+        }
+        expect(
+          (await getDoc(doc(adminDb, `draws/${drawId}/invite/link`))).exists(),
+        ).toBe(false);
+        expect((await getDoc(doc(adminDb, `draws/${drawId}`))).exists()).toBe(
+          false,
+        );
+      });
+    } finally {
+      await env.cleanup();
+    }
   });
 
   it('lets the owner take someone out, with their letter and pairs', async () => {

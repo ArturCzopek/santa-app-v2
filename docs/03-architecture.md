@@ -138,7 +138,7 @@ written until it is saved (`services/letterDraft.ts`).
 
 - The organizer's browser temporarily holds every pair ([D3](04-decisions.md#d3-the-pairs-are-drawn-in-the-organizers-browser-accepted)).
 - Rules check assignment documents individually and do not prove the full result is a complete one-to-one matching ([F13](../BACKLOG.md)).
-- Deleting a large waiting draw with many exclusions may exceed the 500-write batch limit ([F17](../BACKLOG.md)).
+- Large waiting-draw deletion handles many exclusions by deleting them in chunks first ([F17](../BACKLOG.md)).
 - Reads cast documents to types without runtime validation; schema changes needing migrations require a versioned script and compatibility tests with that change ([S9](../BACKLOG.md)).
 
 ## Where things are in the code
