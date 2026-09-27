@@ -100,11 +100,11 @@ failing there.
 
 ### 4. Players write a letter to Santa
 
-The letter (*Twój list do Mikołaja*, starting with "Drogi Mikołaju,") has three parts:
-what you would like to get (up to 2000 characters, one item per line, with optional product
-links), your sizes (up to 200 characters), and what you do not want (up to 500 characters).
-Only one other person will ever read it, the one who draws you, and only after the draw. An
-organizer who opted out sees a note that they do not write a letter.
+The letter (*Twój list do Mikołaja*, starting with "Drogi Mikołaju,") has two parts:
+up to 10 short items (100 characters each, with optional product links) and an optional
+comment of up to 1000 characters for sizes, colours and other useful details. Only one other
+person will ever read it, the one who draws you, and only after the draw. An organizer who
+opted out sees a note that they do not write a letter.
 
 - Before the draw the participants list shows who has a letter ready (*List gotowy*) and who
   does not (*Bez listu*). The organizer also sees the count: *Napisane listy: 4 z 6*.

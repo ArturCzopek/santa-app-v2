@@ -286,36 +286,29 @@ describe('draws', () => {
       await assertFails(writeLetter(authed(env, MALLORY), 'd1', MALLORY, 'Hi'));
     });
 
-    it('accepts the optional fields and validates their size and shape', async () => {
+    it('accepts a comment and validates its size and shape', async () => {
       await assertSucceeds(
         writeLetter(authed(env, ALICE), 'd1', ALICE, {
           wish: 'Socks',
+          comment: 'Blue, please',
+        }),
+      );
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: 'Socks',
+          comment: 'x'.repeat(1001),
+        }),
+      );
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: 'Socks',
+          comment: false,
+        }),
+      );
+      await assertFails(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: 'Socks',
           sizes: 'M / 39',
-          notWanted: 'Scented candles',
-        }),
-      );
-      await assertFails(
-        writeLetter(authed(env, ALICE), 'd1', ALICE, {
-          wish: 'Socks',
-          sizes: 'x'.repeat(201),
-        }),
-      );
-      await assertFails(
-        writeLetter(authed(env, ALICE), 'd1', ALICE, {
-          wish: 'Socks',
-          sizes: 39,
-        }),
-      );
-      await assertFails(
-        writeLetter(authed(env, ALICE), 'd1', ALICE, {
-          wish: 'Socks',
-          notWanted: 'x'.repeat(501),
-        }),
-      );
-      await assertFails(
-        writeLetter(authed(env, ALICE), 'd1', ALICE, {
-          wish: 'Socks',
-          notWanted: false,
         }),
       );
       await assertFails(
@@ -323,6 +316,24 @@ describe('draws', () => {
           wish: 'Socks',
           surprise: 'unknown field',
         }),
+      );
+    });
+
+    it('counts a comment-only letter as written and refuses a mismatched mark', async () => {
+      await assertSucceeds(
+        writeLetter(authed(env, ALICE), 'd1', ALICE, {
+          wish: '',
+          comment: 'Please choose a colour I like',
+        }),
+      );
+      await assertFails(
+        writeLetter(
+          authed(env, ALICE),
+          'd1',
+          ALICE,
+          { wish: '', comment: 'Please choose a colour I like' },
+          false,
+        ),
       );
     });
 
@@ -371,7 +382,7 @@ describe('draws', () => {
       await assertFails(
         writeLetter(authed(env, ALICE), 'd1', ALICE, {
           wish: 'Socks',
-          sizes: 'XL',
+          comment: 'A changed note after the draw',
         }),
       );
       await assertFails(writeLetter(authed(env, ALICE), 'd1', ALICE, ''));

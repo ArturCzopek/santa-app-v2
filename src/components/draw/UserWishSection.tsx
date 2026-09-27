@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Typography, TextField, Button } from '@mui/material';
-import { Edit } from '@mui/icons-material';
+import { Add, DeleteOutlined, Edit } from '@mui/icons-material';
+import { Box, Button, IconButton, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
   Draw,
   Letter,
-  LETTER_NOT_WANTED_MAX_LENGTH,
-  LETTER_SIZES_MAX_LENGTH,
-  WISH_MAX_LENGTH,
+  LETTER_COMMENT_MAX_LENGTH,
+  WISH_ITEM_MAX_LENGTH,
+  WISH_MAX_ITEMS,
 } from '../../models/Draw';
 import { drawService } from '../../services/DrawService';
 import { useAuth } from '../../hooks/useAuth';
@@ -18,6 +18,7 @@ import ConfirmDialog from '../common/ConfirmDialog';
 import { letterDraft } from '../../services/letterDraft';
 import { handFont, tokens } from '../../styles/theme';
 import LetterView from './LetterView';
+import { itemsToWish, wishToItems } from './letterText';
 
 interface UserWishSectionProps {
   draw: Draw;
@@ -33,6 +34,9 @@ interface UserWishSectionProps {
 }
 
 export const LETTER_SECTION_ID = 'your-letter';
+
+const editableItems = (wish: string) =>
+  wishToItems(wish).length ? wishToItems(wish) : [''];
 
 const UserWishSection: React.FC<UserWishSectionProps> = ({
   draw,
@@ -50,11 +54,9 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     (p) => p.userUuid === user?.uid,
   );
 
-  const hasWish = savedLetter.wish !== '';
   const hasLetterContent =
-    hasWish ||
-    savedLetter.sizes.trim() !== '' ||
-    savedLetter.notWanted.trim() !== '';
+    wishToItems(savedLetter.wish).length > 0 ||
+    savedLetter.comment.trim() !== '';
   // The Santa reads the letter as it was at the draw, so it cannot change
   // afterwards.
   const isLocked = draw.status !== 'WAITING_FOR_DRAW';
@@ -69,12 +71,17 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
   };
 
   // Draft edited in the fields; the saved letter comes from the page.
-  const [letter, setLetter] = useState(
-    () => (isEditing && keptDraft()) || savedLetter,
+  const [initialLetter] = useState<Letter>(
+    () => (isEditing ? keptDraft() : null) ?? savedLetter,
   );
+  const [items, setItems] = useState(() => editableItems(initialLetter.wish));
+  // The field that takes the cursor when it appears: the first one, or a
+  // thing just added.
+  const [focusIndex, setFocusIndex] = useState(0);
+  const [comment, setComment] = useState(() => initialLetter.comment);
   // Whether the editor opened with a draft from an earlier visit.
   const [restoredDraft, setRestoredDraft] = useState(
-    () => isEditing && keptDraft() !== null,
+    () => isEditing && !sameLetter(initialLetter, savedLetter),
   );
   const [isSaving, setIsSaving] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
@@ -85,16 +92,45 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
     setWasEditing(isEditing);
     if (isEditing) {
       const kept = keptDraft();
-      setLetter(kept ?? savedLetter);
+      setItems(editableItems(kept?.wish ?? savedLetter.wish));
+      setComment(kept?.comment ?? savedLetter.comment);
       setRestoredDraft(kept !== null);
     }
   }
 
-  const handleChange = (field: keyof Letter, text: string) => {
-    const updated = { ...letter, [field]: text };
-    setLetter(updated);
+  const saveDraft = (nextItems: string[], nextComment: string) => {
+    draft.write({ wish: nextItems.join('\n'), comment: nextComment });
+  };
+
+  const handleItemChange = (index: number, text: string) => {
+    const updated = [...items];
+    updated[index] = text.replace(/[\r\n]/g, '').slice(0, WISH_ITEM_MAX_LENGTH);
+    setItems(updated);
     setRestoredDraft(false);
-    draft.write(updated);
+    saveDraft(updated, comment);
+  };
+
+  const handleCommentChange = (text: string) => {
+    setComment(text);
+    setRestoredDraft(false);
+    saveDraft(items, text);
+  };
+
+  const handleAddItem = () => {
+    if (items.length >= WISH_MAX_ITEMS) return;
+    const updated = [...items, ''];
+    setFocusIndex(updated.length - 1);
+    setItems(updated);
+    setRestoredDraft(false);
+    saveDraft(updated, comment);
+  };
+
+  const handleRemoveItem = (index: number) => {
+    if (items.length <= 1) return;
+    const updated = items.filter((_, itemIndex) => itemIndex !== index);
+    setItems(updated);
+    setRestoredDraft(false);
+    saveDraft(updated, comment);
   };
 
   const closeEditor = () => {
@@ -104,8 +140,11 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
 
   // Changes that were not saved are not thrown away without asking.
   const handleCancel = () => {
-    if (!sameLetter(trimLetter(letter), savedLetter)) setConfirmDiscard(true);
-    else closeEditor();
+    if (
+      !sameLetter(trimLetter({ wish: items.join('\n'), comment }), savedLetter)
+    ) {
+      setConfirmDiscard(true);
+    } else closeEditor();
   };
 
   const handleSave = async (event: React.FormEvent) => {
@@ -114,7 +153,7 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
 
     setIsSaving(true);
     try {
-      const updated = trimLetter(letter);
+      const updated = trimLetter({ wish: items.join('\n'), comment });
       await drawService.updateLetter(draw.id || '', user.uid, updated);
 
       closeEditor();
@@ -143,36 +182,74 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
 
         {isEditing ? (
           <Box sx={{ display: 'grid', gap: 2 }}>
+            <Typography sx={{ fontWeight: 700 }}>
+              {t('drawPage.wishSection.itemsHeading')}
+            </Typography>
+            {items.map((item, index) => (
+              <Box
+                key={index}
+                sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+              >
+                <TextField
+                  value={item}
+                  onChange={(event) =>
+                    handleItemChange(index, event.target.value)
+                  }
+                  onKeyDown={(event) => {
+                    // Enter starts the next thing, like a list on paper.
+                    if (event.key !== 'Enter') return;
+                    event.preventDefault();
+                    if (item.trim() !== '' && index === items.length - 1)
+                      handleAddItem();
+                  }}
+                  fullWidth
+                  autoFocus={index === focusIndex}
+                  placeholder={t('drawPage.wishSection.itemPlaceholder')}
+                  slotProps={{
+                    htmlInput: {
+                      'aria-label': `${t('drawPage.wishSection.itemsHeading')} ${index + 1}`,
+                      maxLength: WISH_ITEM_MAX_LENGTH,
+                    },
+                  }}
+                  helperText={
+                    index === 0 && restoredDraft
+                      ? t('drawPage.wishSection.draftRestored')
+                      : undefined
+                  }
+                />
+                {items.length > 1 && (
+                  <IconButton
+                    type="button"
+                    aria-label={t('drawPage.wishSection.removeItem', { item })}
+                    onClick={() => handleRemoveItem(index)}
+                    sx={{ color: tokens.ink, minWidth: 44, minHeight: 44 }}
+                  >
+                    <DeleteOutlined />
+                  </IconButton>
+                )}
+              </Box>
+            ))}
+            <Box>
+              <Button
+                type="button"
+                onClick={handleAddItem}
+                disabled={items.length >= WISH_MAX_ITEMS}
+                startIcon={<Add />}
+                sx={{ color: tokens.ink }}
+              >
+                {t('drawPage.wishSection.addItem')}
+              </Button>
+            </Box>
             <TextField
-              label={t('drawPage.wishSection.wishLabel')}
+              label={t('drawPage.wishSection.commentLabel')}
               multiline
-              minRows={4}
-              autoFocus
-              value={letter.wish}
-              onChange={(e) => handleChange('wish', e.target.value)}
+              minRows={3}
+              value={comment}
+              onChange={(event) => handleCommentChange(event.target.value)}
               fullWidth
-              placeholder={t('drawPage.wishSection.wishPlaceholder')}
-              helperText={`${restoredDraft ? `${t('drawPage.wishSection.draftRestored')} · ` : ''}${t('drawPage.wishSection.wishHelper')} · ${letter.wish.length} / ${WISH_MAX_LENGTH}`}
-              slotProps={{ htmlInput: { maxLength: WISH_MAX_LENGTH } }}
-            />
-            <TextField
-              label={t('drawPage.wishSection.sizesLabel')}
-              value={letter.sizes}
-              onChange={(e) => handleChange('sizes', e.target.value)}
-              fullWidth
+              helperText={t('drawPage.wishSection.commentHelper')}
               slotProps={{
-                htmlInput: { maxLength: LETTER_SIZES_MAX_LENGTH },
-              }}
-            />
-            <TextField
-              label={t('drawPage.wishSection.notWantedLabel')}
-              multiline
-              minRows={2}
-              value={letter.notWanted}
-              onChange={(e) => handleChange('notWanted', e.target.value)}
-              fullWidth
-              slotProps={{
-                htmlInput: { maxLength: LETTER_NOT_WANTED_MAX_LENGTH },
+                htmlInput: { maxLength: LETTER_COMMENT_MAX_LENGTH },
               }}
             />
           </Box>
@@ -255,14 +332,11 @@ const UserWishSection: React.FC<UserWishSectionProps> = ({
 };
 
 const sameLetter = (first: Letter, second: Letter) =>
-  first.wish === second.wish &&
-  first.sizes === second.sizes &&
-  first.notWanted === second.notWanted;
+  first.wish === second.wish && first.comment === second.comment;
 
 const trimLetter = (letter: Letter): Letter => ({
-  wish: letter.wish.trim(),
-  sizes: letter.sizes.trim(),
-  notWanted: letter.notWanted.trim(),
+  wish: itemsToWish(wishToItems(letter.wish)),
+  comment: letter.comment.trim(),
 });
 
 export default UserWishSection;

@@ -211,7 +211,7 @@ class DrawService {
     const batch = writeBatch(db);
     batch.set(this.letterRef(drawId, userId), letter);
     batch.update(doc(this.participantsCollection(drawId), userId), {
-      hasWish: letter.wish.length > 0,
+      hasWish: letter.wish.length > 0 || letter.comment.length > 0,
     });
     await batch.commit();
   }
@@ -225,13 +225,12 @@ class DrawService {
   // person they give a gift to. Missing documents and optional fields are empty.
   async getLetter(drawId: string, userId: string): Promise<Letter> {
     const snapshot = await getDoc(this.letterRef(drawId, userId));
-    if (!snapshot.exists()) return { wish: '', sizes: '', notWanted: '' };
+    if (!snapshot.exists()) return { wish: '', comment: '' };
 
     const data = snapshot.data();
     return {
       wish: data.wish as string,
-      sizes: (data.sizes as string | undefined) ?? '',
-      notWanted: (data.notWanted as string | undefined) ?? '',
+      comment: (data.comment as string | undefined) ?? '',
     };
   }
 

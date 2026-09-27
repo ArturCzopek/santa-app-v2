@@ -9,13 +9,29 @@ interface LetterViewProps {
   letter: Letter;
 }
 
+const linkedText = (line: string) =>
+  splitWishLine(line).map((part, partIndex) =>
+    part.type === 'link' ? (
+      <a
+        key={partIndex}
+        href={part.value}
+        target="_blank"
+        rel="noopener noreferrer nofollow"
+        style={{ color: 'inherit' }}
+      >
+        {part.value}
+      </a>
+    ) : (
+      <React.Fragment key={partIndex}>{part.value}</React.Fragment>
+    ),
+  );
+
 const LetterView: React.FC<LetterViewProps> = ({ letter }) => {
   const { t } = useTranslation();
-  const lines = splitWishIntoLines(letter.wish);
-  const hasSizes = letter.sizes.trim() !== '';
-  const hasNotWanted = letter.notWanted.trim() !== '';
+  const items = splitWishIntoLines(letter.wish);
+  const hasComment = letter.comment.trim() !== '';
 
-  if (lines.length === 0 && !hasSizes && !hasNotWanted) {
+  if (items.length === 0 && !hasComment) {
     return (
       <Typography color="text.secondary">
         {t('drawPage.winnerSection.noWishProvided')}
@@ -25,55 +41,33 @@ const LetterView: React.FC<LetterViewProps> = ({ letter }) => {
 
   return (
     <Box sx={{ display: 'grid', gap: 1.5, color: tokens.ink }}>
-      {lines.length > 0 && (
+      {items.length > 0 && (
         <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
-          {lines.map((line, lineIndex) => (
-            <Box component="li" key={`${lineIndex}-${line}`} sx={{ mb: 0.5 }}>
+          {items.map((item, itemIndex) => (
+            <Box component="li" key={`${itemIndex}-${item}`} sx={{ mb: 0.5 }}>
               <Typography
                 component="span"
                 sx={{ fontSize: '1.125rem', lineHeight: 1.6 }}
               >
-                {splitWishLine(line).map((part, partIndex) =>
-                  part.type === 'link' ? (
-                    <a
-                      key={partIndex}
-                      href={part.value}
-                      target="_blank"
-                      rel="noopener noreferrer nofollow"
-                      style={{ color: 'inherit' }}
-                    >
-                      {part.value}
-                    </a>
-                  ) : (
-                    <React.Fragment key={partIndex}>
-                      {part.value}
-                    </React.Fragment>
-                  ),
-                )}
+                {linkedText(item)}
               </Typography>
             </Box>
           ))}
         </Box>
       )}
 
-      {hasSizes && (
+      {hasComment && (
         <Box>
           <Typography sx={{ fontWeight: 700 }}>
-            {t('drawPage.wishSection.sizesHeading')}
+            {t('drawPage.wishSection.commentHeading')}
           </Typography>
           <Typography sx={{ whiteSpace: 'pre-wrap' }}>
-            {letter.sizes}
-          </Typography>
-        </Box>
-      )}
-
-      {hasNotWanted && (
-        <Box>
-          <Typography sx={{ fontWeight: 700 }}>
-            {t('drawPage.wishSection.notWantedHeading')}
-          </Typography>
-          <Typography sx={{ whiteSpace: 'pre-wrap' }}>
-            {letter.notWanted}
+            {letter.comment.split(/\r?\n/).map((line, lineIndex) => (
+              <React.Fragment key={lineIndex}>
+                {lineIndex > 0 && '\n'}
+                {linkedText(line)}
+              </React.Fragment>
+            ))}
           </Typography>
         </Box>
       )}

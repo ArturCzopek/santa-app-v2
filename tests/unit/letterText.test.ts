@@ -1,10 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
+  itemsToWish,
   splitWishIntoLines,
   splitWishLine,
+  wishToItems,
 } from '../../src/components/draw/letterText';
 
 describe('letter text', () => {
+  it('converts between newline storage and trimmed non-empty items', () => {
+    expect(wishToItems('Book\r\n\n Map \n')).toEqual(['Book', 'Map']);
+    expect(itemsToWish([' Book ', '', 'Map\n', '  '])).toBe('Book\nMap');
+  });
+
   it('splits wish lines and only turns explicit HTTP(S) URLs into links', () => {
     expect(
       splitWishIntoLines(

@@ -49,7 +49,7 @@ it has different readers:
 |---|---|---|
 | `draws/{id}` | Name, description, budget, currency, date, place, owner, optional `ownerPlays` (missing means true), `participantUuids`, status, draw date | Anyone signed in who knows the id |
 | `…/participants/{uid}` | Name and photo (must match the Google profile), `hasWish`, optional `giftBought` (missing means false) | Participants |
-| `…/letters/{uid}` | `wish` (up to 2000 characters), optional `sizes` (up to 200 characters) and `notWanted` (up to 500 characters); written by its author before the draw only | The author; after the draw also the one person who drew the author |
+| `…/letters/{uid}` | `wish` (items joined by newlines; at most 10 items of 100 characters in the app), optional `comment` (up to 1000 characters); written by its author before the draw only | The author; after the draw also the one person who drew the author |
 | `…/thanks/{uid}` | `text` (up to 500 characters), written by the recipient after the draw | The author and, after the draw, the person who drew the author |
 | `…/exclusions/{a}_{b}` | A pair who must not draw each other (`a < b`) | The owner, before the draw |
 | `…/assignments/{uid}` | `toUuid`: whom `uid` buys for | Only `uid` |
@@ -64,9 +64,10 @@ thanks can change as described below.
 
 ## Rules the data follows
 
-- A draw name is at most 80 characters and its description at most 1000; a wish is at most
-  2000 characters, sizes 200, `notWanted` and a thank-you 500; a feedback message at most 1000. Older
-  letters without the optional fields read as empty strings.
+- A draw name is at most 80 characters and its description at most 1000; `wish` is at most
+  2000 characters and `comment` at most 1000; a thank-you is at most 500 and a feedback
+  message at most 1000. In the app a wish has at most 10 items of 100 characters each. Older
+  letters without `comment` read as an empty string, and existing wish lines load as items.
 - A draw supports up to 100 participants and currencies `PLN`, `EUR`, `USD`, or `GBP`.
 - The password form requires at least 6 characters. The owner stays a participant for management access, and `ownerPlays` decides whether they are included among the players; missing means `true` for older draws.
 - Draw status moves from `WAITING_FOR_DRAW` to `DRAWED`; `DRAWED` is terminal.
@@ -88,8 +89,9 @@ document (carrying that join key) and its uid into `participantUuids`. The rules
 batch only if `joinKeys/{thatKey}` exists, so a wrong password shows up as a refused write.
 
 **Writing a letter** (`UserWishSection`). A player writes `letters/{uid}` and, in the same
-batch, `hasWish` in their participant document; the rules check that the two match. Other
-participants see only "List gotowy" / "Bez listu", never the text.
+batch, `hasWish` in their participant document; the rules check that it matches whether the
+letter has any items or a comment. Other participants see only "List gotowy" / "Bez listu",
+never the text.
 
 **Exclusions** (`ExclusionsSection`). The pair's id is the two uids sorted and joined with
 `_`, so A-B and B-A are the same document; the rules require `a < b` and refuse writing an

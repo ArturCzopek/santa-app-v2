@@ -30,7 +30,7 @@ const openResult = async (page: Page) => {
 };
 
 const writeLetter = async (page: Page, wish: string) => {
-  await page.getByLabel('Czego chcę').fill(wish);
+  await page.getByLabel('Rzeczy, które chcesz dostać 1').fill(wish);
   await page.getByRole('button', { name: 'Zapisz list' }).click();
   await expect(page.getByText(/List zapisany/)).toBeVisible();
 };

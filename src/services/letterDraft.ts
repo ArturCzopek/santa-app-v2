@@ -21,13 +21,9 @@ export const letterDraft = (drawId: string, uid: string) => {
         ) {
           return {
             wish: parsed.wish,
-            sizes:
-              'sizes' in parsed && typeof parsed.sizes === 'string'
-                ? parsed.sizes
-                : '',
-            notWanted:
-              'notWanted' in parsed && typeof parsed.notWanted === 'string'
-                ? parsed.notWanted
+            comment:
+              'comment' in parsed && typeof parsed.comment === 'string'
+                ? parsed.comment
                 : '',
           };
         }
@@ -35,7 +31,7 @@ export const letterDraft = (drawId: string, uid: string) => {
         // Existing drafts were plain wish text.
       }
 
-      return { wish: draft, sizes: '', notWanted: '' };
+      return { wish: draft, comment: '' };
     },
     write: (letter: Letter) => storage.set(key, JSON.stringify(letter)),
     clear: () => storage.remove(key),

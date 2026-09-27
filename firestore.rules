@@ -219,7 +219,9 @@ service cloud.firestore {
           && request.auth.uid == uid
           && ((get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
               && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hasWish'])
-              && request.resource.data.hasWish == (getAfter(letterPath(drawId, uid)).data.wish.size() > 0))
+              && request.resource.data.hasWish == (
+                getAfter(letterPath(drawId, uid)).data.wish.size() > 0
+                || getAfter(letterPath(drawId, uid)).data.get('comment', '').size() > 0))
             || (get(drawPath(drawId)).data.status == 'DRAWED'
               && exists(assignmentPath(drawId, uid))
               && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['giftBought'])
@@ -295,11 +297,12 @@ service cloud.firestore {
           && request.auth.uid == uid
           && request.auth.uid in get(drawPath(drawId)).data.participantUuids
           && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
-          && request.resource.data.keys().hasOnly(['wish', 'sizes', 'notWanted'])
+          && request.resource.data.keys().hasOnly(['wish', 'comment'])
           && isString(request.resource.data.wish, 2000)
-          && isString(request.resource.data.get('sizes', ''), 200)
-          && isString(request.resource.data.get('notWanted', ''), 500)
-          && getAfter(participantPath(drawId, uid)).data.hasWish == (request.resource.data.wish.size() > 0);
+          && isString(request.resource.data.get('comment', ''), 1000)
+          && getAfter(participantPath(drawId, uid)).data.hasWish == (
+            request.resource.data.wish.size() > 0
+            || request.resource.data.get('comment', '').size() > 0);
 
         // Leaving the draw, the owner taking someone out (the letter goes
         // unread), or the owner deleting the draw.

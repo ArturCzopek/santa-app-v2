@@ -48,7 +48,7 @@ import { drawService } from '../../src/services/DrawService';
 
 // Letters live apart from participants; getLetter below serves them.
 let letters: Record<string, Letter> = {};
-const emptyLetter: Letter = { wish: '', sizes: '', notWanted: '' };
+const emptyLetter: Letter = { wish: '', comment: '' };
 
 const participant = (
   uid: string,
@@ -200,7 +200,9 @@ describe('DrawPage', () => {
       await screen.findByText('Office party');
       expect(containedButtons()).toEqual(['Napisz list']);
       await user.click(screen.getByRole('button', { name: 'Napisz list' }));
-      expect(await screen.findByLabelText('Czego chcę')).toHaveFocus();
+      expect(
+        await screen.findByLabelText('Rzeczy, które chcesz dostać 1'),
+      ).toHaveFocus();
       expect(containedButtons()).toEqual(['Zapisz list']);
     });
 
@@ -275,7 +277,7 @@ describe('DrawPage', () => {
       await screen.findByText('List nie został napisany przed losowaniem.'),
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Napisz list' })).toBeNull();
-    expect(screen.queryByLabelText('Czego chcę')).toBeNull();
+    expect(screen.queryByLabelText('Rzeczy, które chcesz dostać 1')).toBeNull();
     expect(
       await screen.findByLabelText('Twoje podziękowanie'),
     ).toBeInTheDocument();
@@ -343,20 +345,18 @@ describe('DrawPage', () => {
     expect(drawService.getParticipants).not.toHaveBeenCalled();
   });
 
-  it('lets a participant edit, cancel and save their wish', async () => {
+  it('lets a participant edit, cancel and save items with a comment', async () => {
     vi.mocked(drawService.updateLetter).mockResolvedValue();
     const user = userEvent.setup();
     renderDrawPage();
 
     expect(await screen.findByText('Mountain book')).toBeInTheDocument();
-    expect(screen.queryByLabelText('Czego chcę')).toBeNull();
+    expect(screen.queryByLabelText('Rzeczy, które chcesz dostać 1')).toBeNull();
 
     await user.click(screen.getByRole('button', { name: 'Edytuj list' }));
-    let wishField = screen.getByLabelText('Czego chcę');
+    let wishField = screen.getByLabelText('Rzeczy, które chcesz dostać 1');
     expect(wishField).toHaveValue('Mountain book');
-    // Same limit as the rules, so a long wish cannot fail on save.
-    expect(wishField).toHaveAttribute('maxLength', '2000');
-    expect(screen.getByText(/13 \/ 2000/)).toBeInTheDocument();
+    expect(wishField).toHaveAttribute('maxLength', '100');
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
     // Unsaved changes are not thrown away without asking.
@@ -365,35 +365,102 @@ describe('DrawPage', () => {
       name: 'Odrzucić zmiany?',
     });
     await user.click(within(discard).getByRole('button', { name: 'Anuluj' }));
-    expect(screen.getByLabelText('Czego chcę')).toHaveValue('Coffee');
+    expect(screen.getByLabelText('Rzeczy, które chcesz dostać 1')).toHaveValue(
+      'Coffee',
+    );
     await user.click(screen.getByRole('button', { name: 'Anuluj' }));
     await user.click(
       within(
         await screen.findByRole('dialog', { name: 'Odrzucić zmiany?' }),
       ).getByRole('button', { name: 'Odrzuć' }),
     );
-    expect(screen.queryByLabelText('Czego chcę')).toBeNull();
+    expect(screen.queryByLabelText('Rzeczy, które chcesz dostać 1')).toBeNull();
     expect(screen.getByText('Mountain book')).toBeInTheDocument();
 
     await user.click(
       await screen.findByRole('button', { name: 'Edytuj list' }),
     );
-    wishField = screen.getByLabelText('Czego chcę');
+    wishField = screen.getByLabelText('Rzeczy, które chcesz dostać 1');
     // The discarded draft does not come back.
     expect(wishField).toHaveValue('Mountain book');
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
-    await user.type(screen.getByLabelText('Rozmiary (ubrania, buty…)'), '39');
-    await user.type(screen.getByLabelText('Czego nie chcę'), 'Coal');
+    await user.click(
+      screen.getByRole('button', { name: 'Dodaj kolejną rzecz' }),
+    );
+    await user.click(
+      screen.getByRole('button', { name: 'Dodaj kolejną rzecz' }),
+    );
+    await user.type(
+      screen.getByLabelText('Rzeczy, które chcesz dostać 3'),
+      'A map',
+    );
+    await user.type(
+      screen.getByLabelText('Komentarz dla Mikołaja (opcjonalnie)'),
+      'Blue, size M',
+    );
     await user.click(screen.getByRole('button', { name: 'Zapisz list' }));
 
     expect(await screen.findByText(/List zapisany/)).toBeInTheDocument();
     expect(drawService.updateLetter).toHaveBeenCalledWith('d1', 'owner', {
-      wish: 'Coffee',
-      sizes: '39',
-      notWanted: 'Coal',
+      wish: 'Coffee\nA map',
+      comment: 'Blue, size M',
     });
     expect(screen.getByText('Coffee')).toBeInTheDocument();
+  });
+
+  it('puts the cursor in a new thing and starts the next one on Enter', async () => {
+    const user = userEvent.setup();
+    renderDrawPage();
+    await user.click(
+      await screen.findByRole('button', { name: 'Edytuj list' }),
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: 'Dodaj kolejną rzecz' }),
+    );
+    expect(
+      screen.getByLabelText('Rzeczy, które chcesz dostać 2'),
+    ).toHaveFocus();
+
+    await user.keyboard('Mug{Enter}');
+    expect(screen.getByLabelText('Rzeczy, które chcesz dostać 2')).toHaveValue(
+      'Mug',
+    );
+    expect(
+      screen.getByLabelText('Rzeczy, które chcesz dostać 3'),
+    ).toHaveFocus();
+  });
+
+  it('adds and removes items and stops at ten', async () => {
+    const user = userEvent.setup();
+    renderDrawPage();
+    await user.click(
+      await screen.findByRole('button', { name: 'Edytuj list' }),
+    );
+
+    const addButton = screen.getByRole('button', {
+      name: 'Dodaj kolejną rzecz',
+    });
+    for (let count = 1; count < 10; count++) await user.click(addButton);
+
+    const itemFields = () =>
+      screen
+        .getAllByRole('textbox')
+        .filter((field) =>
+          field
+            .getAttribute('aria-label')
+            ?.startsWith('Rzeczy, które chcesz dostać '),
+        );
+    expect(itemFields()).toHaveLength(10);
+    expect(addButton).toBeDisabled();
+
+    await user.type(
+      screen.getByLabelText('Rzeczy, które chcesz dostać 10'),
+      'Temporary',
+    );
+    await user.click(screen.getByRole('button', { name: 'Usuń: Temporary' }));
+    expect(itemFields()).toHaveLength(9);
   });
 
   it('brings back an unsaved letter after a reload', async () => {
@@ -407,7 +474,7 @@ describe('DrawPage', () => {
     await user.click(
       await screen.findByRole('button', { name: 'Edytuj list' }),
     );
-    expect(screen.getByLabelText('Czego chcę')).toHaveValue(
+    expect(screen.getByLabelText('Rzeczy, które chcesz dostać 1')).toHaveValue(
       'Mountain book and a map',
     );
     expect(
@@ -423,7 +490,7 @@ describe('DrawPage', () => {
     await user.click(
       await screen.findByRole('button', { name: 'Edytuj list' }),
     );
-    const wishField = screen.getByLabelText('Czego chcę');
+    const wishField = screen.getByLabelText('Rzeczy, które chcesz dostać 1');
     await user.clear(wishField);
     await user.type(wishField, 'Coffee');
     await user.click(screen.getByRole('button', { name: 'Zapisz list' }));
@@ -462,11 +529,10 @@ describe('DrawPage', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows the Santa the wish list, safe links, sizes and things not wanted', async () => {
+  it('shows the Santa the items and linked note without the retired blocks', async () => {
     letters.alice = {
       wish: 'Socks\n\nA book at https://x.pl/a?b=1 please',
-      sizes: 'M / 39',
-      notWanted: 'Scented candles',
+      comment: 'Please choose blue. See https://x.pl/blue for an example.',
     };
     vi.mocked(drawService.getDraw).mockResolvedValue({
       ...waitingDraw,
@@ -494,10 +560,14 @@ describe('DrawPage', () => {
     expect(link).toHaveAttribute('href', 'https://x.pl/a?b=1');
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', 'noopener noreferrer nofollow');
-    expect(screen.getByText('Rozmiary')).toBeInTheDocument();
-    expect(screen.getByText('M / 39')).toBeInTheDocument();
-    expect(screen.getByText('Czego nie chcę')).toBeInTheDocument();
-    expect(screen.getByText('Scented candles')).toBeInTheDocument();
+    expect(screen.getByText('Komentarz')).toBeInTheDocument();
+    const noteLink = screen.getByRole('link', { name: 'https://x.pl/blue' });
+    expect(noteLink).toHaveAttribute('href', 'https://x.pl/blue');
+    expect(noteLink.parentElement).toHaveTextContent(
+      'Please choose blue. See https://x.pl/blue for an example.',
+    );
+    expect(screen.queryByText('Rozmiary')).not.toBeInTheDocument();
+    expect(screen.queryByText('Czego nie chcę')).not.toBeInTheDocument();
   });
 
   it('folds the participant list away after the draw', async () => {

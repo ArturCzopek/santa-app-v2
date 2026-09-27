@@ -227,12 +227,16 @@ storage, so people sign in again there; Google popup sign-in has not been verifi
 iPhone. If it fails, change the manifest display mode to `browser`.
 
 ## D35. A structured letter to Santa, Accepted
-The letter keeps its main `wish` field, with one item per line, and adds optional `sizes` and
-`notWanted` fields. Missing optional fields read as empty strings, so existing letters need
-no migration. The author can include product links; the reader links only explicit HTTP(S)
-URLs and renders all other text normally. `hasWish` still tracks only whether `wish` is
-non-empty, and the entire letter remains frozen after the draw (D30). Drafts store all three
-fields as JSON while continuing to load older plain-text drafts as the wish.
+The letter has short items and an optional comment. Items remain in the existing `wish` field,
+joined with newlines; the app allows at most 10 items of 100 characters each, so existing
+wish lines load as items without a migration. Empty items are dropped on save. The optional
+`comment` is up to 1000 characters; older letters without it read as empty. Readers see the
+items as a list and the comment separately, with explicit HTTP(S) URLs linked in either part.
+`hasWish` is true when there is at least one item or a comment, and the entire letter remains
+frozen after the draw (D30). Drafts use JSON `{ wish, comment }`; older plain-text drafts and
+legacy F6 JSON drafts keep their wish and ignore obsolete fields. Only the short items may
+later feed shop searches ([backlog $1](../BACKLOG.md)); the comment is never used for
+automation or monetization.
 
 ## D36. Gift progress and private thanks, Accepted
 After the draw, a player can mark `giftBought` on their own participant document; missing

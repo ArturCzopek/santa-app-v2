@@ -12,17 +12,31 @@ describe('letter draft', () => {
 
     expect(letterDraft('draw-1', 'person-1').read()).toEqual({
       wish: 'A book and a map',
-      sizes: '',
-      notWanted: '',
+      comment: '',
     });
   });
 
-  it('stores and reads all three letter fields as JSON', () => {
+  it('loads an F6 JSON draft and ignores its obsolete fields', () => {
+    localStorage.setItem(
+      draftKey,
+      JSON.stringify({
+        wish: 'A book\nA map',
+        sizes: 'M',
+        notWanted: 'Candles',
+      }),
+    );
+
+    expect(letterDraft('draw-1', 'person-1').read()).toEqual({
+      wish: 'A book\nA map',
+      comment: '',
+    });
+  });
+
+  it('stores and reads the wish and comment as JSON', () => {
     const draft = letterDraft('draw-1', 'person-1');
     const letter = {
       wish: 'A book',
-      sizes: 'M',
-      notWanted: 'Candles',
+      comment: 'Blue, please',
     };
     draft.write(letter);
 

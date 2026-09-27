@@ -217,9 +217,9 @@ Zakończenie (wymóg kontraktu Impeccable)
 **Kolejność pracy nad F (zatwierdzona przez Artura, 2026-09-26)** – następny krok to pierwszy
 niezrobiony punkt z tej listy (przed startem sprawdzić jego stan w kodzie):
 1. **Przed sezonem:** F9 (logowanie linkiem z maila).
-2. **Warte zrobienia, bez Blaze:** F5 → F6 → F7 → F8 (kod QR) → F11 (PWA) → F12.
-3. **Wymagają Blaze (F0):** F2, F3 (przypomnienia), F13.
-4. **Na później / rzadkie:** F15, F17.
+2. **Warte zrobienia, bez Blaze:** F5 → F6 → F7 → F8 (kod QR) → F11 (PWA) – zrobione 2026-09-27; F12 odrzucone.
+3. **Bez Blaze, przed Blaze (decyzja Artura 2026-09-27):** F15, F17.
+4. **Wymagają Blaze (F0) – na sam koniec:** F2, F3 (przypomnienia), F13.
 
 Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, \$8 po analizie sezonu.
 
@@ -237,9 +237,12 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
 - [x] F5 – organizator niebiorący udziału (2026-09-27, D32; Codex, zrecenzowane przez Claude'a):
   pole „Biorę udział w losowaniu” przy zakładaniu i edycji; `ownerPlays: false` – organizator
   zostaje na liście (zarządza), ale nie pisze listu i nie jest losowany; reguły to wymuszają
-- [x] F6 – lista życzeń w strukturze (2026-09-27, D35; Codex, zrecenzowane przez Claude'a): „Czego chcę”
-  (jedna rzecz w linii → lista, klikalne linki http/https), „Rozmiary”, „Czego nie chcę”;
-  pola `sizes` / `notWanted` w dokumencie listu, sprawdzane przez reguły
+- [x] F6 – lista życzeń w strukturze (2026-09-27, D35; Codex, zrecenzowane przez Claude'a): list =
+  **rzeczy** (osobne krótkie pola, do 10 × 100 znaków, klikalne linki http/https) + opcjonalny
+  **komentarz** (do 1000 znaków: rozmiary, kolory…). Rzeczy w polu `wish` (jedna w linii – stare listy
+  działają bez migracji), komentarz w `comment`. **Tylko rzeczy mogą zasilać wyszukiwanie w sklepach
+  ($1); komentarz nigdy nie służy automatyzacji ani monetyzacji.** Pierwsza wersja z „Rozmiary” i
+  „Czego nie chcę” odrzucona przez Artura („ludzie nie są złośliwi”)
 - [x] F7 – status „prezent kupiony” / podziękowanie (2026-09-27, D36; Codex, zrecenzowane przez Claude'a):
   „Mam już prezent” przy wyniku (`giftBought` w dokumencie uczestnika, tylko po losowaniu i tylko
   z przydziałem), postęp „Prezenty kupione: x z y” na liście; podziękowanie `thanks/{uid}` czyta
@@ -266,7 +269,10 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
 - [x] F11 – PWA (2026-09-27, D34; Codex + ikony Claude'a): manifest i ikony, instalacja z menu
   przeglądarki / „Do ekranu początkowego”, bez service workera. **Do sprawdzenia przez Artura na
   iPhonie:** logowanie Google w aplikacji z ekranu początkowego (jeśli nie działa → `"display": "browser"`)
-- [ ] F12 – powtórzenie losowania z zeszłego roku
+- ~~F12 – powtórzenie losowania z zeszłego roku~~ **odrzucone (Artur, 2026-09-27):** zbudowane jako
+  „Zorganizuj ponownie” (formularz wypełniony nazwą, opisem, budżetem) i wycofane przed wdrożeniem –
+  bez kopiowania uczestników oszczędza kilka sekund raz w roku, a automatyczne dopisanie ludzi
+  odpada (zgoda każdej osoby, reguły pozwalają dołączyć tylko samemu sobie). Nowe losowanie + link na czacie wystarczy.
 - [ ] **F13 – losowanie po stronie serwera / zaufany wynik (Claude-owned):** obecny `generatePairs`
   waliduje pełne przypisanie i zwraca poprawny wynik albo rzuca błąd. Reguły Firestore nie
   wymuszają jednak kompletnego bijektywnego wyniku od zmodyfikowanego klienta, a organizator
@@ -315,7 +321,7 @@ płatne duże losowania (\$8) dopiero po analizie sezonu. Aplikacja poza monetyz
   - rozliczenie przychodu z programu – pytanie do księgowego (Artur).
 - [ ] **\$1 – przyciski „Znajdź na Allegro” / „Porównaj na Ceneo” przy życzeniu obdarowanego
   (pierwsza funkcja zarabiająca):** widoczne tylko po losowaniu, u osoby, która czyta list
-  swojego obdarowanego. Wyszukiwanie z tekstu życzenia (per linia/pozycja), filtr ceny do
+  swojego obdarowanego. Wyszukiwanie z **rzeczy** z listu (każda osobno; nigdy z komentarza – D35), filtr ceny do
   budżetu losowania, link partnerski w formacie z panelu (\$0). Wymaga \$0 i \$5. Bez zmian
   w danych i regułach – linki składane w przeglądarce.
 - [ ] \$2 – przepisywanie wklejonych linków Allegro na partnerskie

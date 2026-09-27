@@ -26,3 +26,12 @@ export const splitWishLine = (line: string): LetterTextPart[] => {
 
 export const splitWishIntoLines = (wish: string): string[] =>
   wish.split(/\r?\n/).filter((line) => line.trim() !== '');
+
+export const wishToItems = (wish: string): string[] =>
+  splitWishIntoLines(wish).map((item) => item.trim());
+
+export const itemsToWish = (items: string[]): string =>
+  items
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .join('\n');

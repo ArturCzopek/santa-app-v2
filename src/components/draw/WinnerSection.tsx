@@ -49,8 +49,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({
   const [assignment, setAssignment] = useState<Assignment | null>(null);
   const [winnerLetter, setWinnerLetter] = useState<Letter>({
     wish: '',
-    sizes: '',
-    notWanted: '',
+    comment: '',
   });
   const [giftBought, setGiftBought] = useState(
     () =>
@@ -91,7 +90,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({
               thanks(user.uid),
               thanks(mine.toUuid),
             ])
-          : [{ wish: '', sizes: '', notWanted: '' }, '', ''];
+          : [{ wish: '', comment: '' }, '', ''];
         setWinnerLetter(letter);
         setThanksText(ownThanks);
         setRecipientThanks(theirThanks);

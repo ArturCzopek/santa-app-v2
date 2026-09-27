@@ -38,6 +38,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNotify } from '../hooks/useNotify';
 import UserWishSection from '../components/draw/UserWishSection';
 import { tokens } from '../styles/theme';
+import { wishToItems } from '../components/draw/letterText';
 
 const BackToDraws = () => {
   const { t } = useTranslation();
@@ -83,8 +84,7 @@ const DrawPage = () => {
   const [exclusions, setExclusions] = useState<Exclusion[]>([]);
   const [myLetter, setMyLetter] = useState<Letter>({
     wish: '',
-    sizes: '',
-    notWanted: '',
+    comment: '',
   });
   // null until someone opens or closes the letter editor; right after
   // joining it starts open.
@@ -149,7 +149,8 @@ const DrawPage = () => {
   const isPlayer = !!user && playerUuids.has(user.uid);
   const isNonPlayingOwner = !!isOwner && !isPlayer;
   const showStartButton = isOwner && isWaiting && players.length >= 2;
-  const hasLetter = myLetter.wish.trim() !== '';
+  const hasLetter =
+    wishToItems(myLetter.wish).length > 0 || myLetter.comment.trim() !== '';
   const allLettersWritten =
     !!draw &&
     draw.participants.filter((participant) =>
@@ -433,7 +434,10 @@ const DrawPage = () => {
                 ...draw,
                 participants: draw.participants.map((p) =>
                   p.userUuid === user?.uid
-                    ? { ...p, hasWish: letter.wish !== '' }
+                    ? {
+                        ...p,
+                        hasWish: letter.wish !== '' || letter.comment !== '',
+                      }
                     : p,
                 ),
               });

@@ -45,10 +45,9 @@ const newDrawForm = {
   password: 'secret1',
 };
 
-const letter = (wish: string, sizes = '', notWanted = ''): Letter => ({
+const letter = (wish: string, comment = ''): Letter => ({
   wish,
-  sizes,
-  notWanted,
+  comment,
 });
 
 beforeEach(async () => {
@@ -69,7 +68,7 @@ describe('DrawService against the emulator', () => {
     expect(await drawService.isDrawPasswordValid(drawId, 'wrong-1')).toBe(
       false,
     );
-    const ownerLetter = letter('Mountain book', 'M / 39', 'Scented candles');
+    const ownerLetter = letter('Mountain book', 'Blue, size M / 39');
     await drawService.updateLetter(drawId, owner.uid, ownerLetter);
     expect(await drawService.getLetter(drawId, owner.uid)).toEqual(ownerLetter);
 

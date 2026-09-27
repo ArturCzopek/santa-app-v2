@@ -104,10 +104,11 @@ export const writeLetter = (
 ) => {
   const data = typeof letter === 'string' ? { wish: letter } : letter;
   const wish = typeof data.wish === 'string' ? data.wish : '';
+  const comment = typeof data.comment === 'string' ? data.comment : '';
   const batch = writeBatch(db);
   batch.set(doc(db, `draws/${drawId}/letters/${uid}`), data);
   batch.update(doc(db, `draws/${drawId}/participants/${uid}`), {
-    hasWish: hasWish ?? wish.length > 0,
+    hasWish: hasWish ?? (wish.length > 0 || comment.length > 0),
   });
   return batch.commit();
 };
