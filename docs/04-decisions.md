@@ -267,8 +267,8 @@ take the name from it (`tokenName()`); the photo stays empty and the stamp shows
 The rules did not change. The privacy policy says the only email sent is the sign-in link.
 
 ## D39. Optional support through buycoffee.to, Accepted
-Santa App stays free. The footer and the dialog shown after a successful draw
-offer an optional "Buy me a coffee" link to the author's buycoffee.to profile.
+Santa App stays free. The footer and the draw page after the draw offer an
+optional link to the author's buycoffee.to profile.
 The app does not process payments or record clicks; visitors who follow the
 link leave Santa App. The privacy policy names buycoffee.to as an external service
 and no longer calls the project non-commercial.

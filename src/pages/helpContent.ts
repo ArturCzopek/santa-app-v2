@@ -117,7 +117,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       question: 'Czy to coś kosztuje?',
       answer: [
         'Nie. Santa App jest darmowa i działa w przeglądarce; dodanie jej do ekranu telefonu jest opcjonalne.',
-        'Jeśli chcesz dobrowolnie wesprzeć autora, w stopce i po udanym losowaniu znajdziesz link „Postaw kawę”. Prowadzi do zewnętrznego serwisu buycoffee.to.',
+        'Jeśli chcesz dobrowolnie wesprzeć autora, linki znajdziesz w stopce („Postaw kawę”) oraz na stronie losowania po losowaniu („Postaw mi kawę”). Prowadzą do zewnętrznego serwisu buycoffee.to.',
       ],
     },
   ],
@@ -230,7 +230,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       question: 'Does it cost anything?',
       answer: [
         'No. Santa App is free and works in the browser; adding it to your home screen is optional.',
-        'If you would like to support the author voluntarily, the footer and the screen after a draw have a “Buy me a coffee” link. It opens the external buycoffee.to service.',
+        'If you would like to support the author voluntarily, the footer and the draw page after a draw have a “Buy me a coffee” link. It opens the external buycoffee.to service.',
       ],
     },
   ],

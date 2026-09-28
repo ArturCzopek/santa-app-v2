@@ -10,6 +10,7 @@ import {
   KeyOutlined,
   Campaign,
   Logout,
+  LocalCafe,
   PlayArrow,
   PersonAdd,
 } from '@mui/icons-material';
@@ -39,6 +40,8 @@ import { useNotify } from '../hooks/useNotify';
 import UserWishSection from '../components/draw/UserWishSection';
 import { tokens } from '../styles/theme';
 import { wishToItems } from '../components/draw/letterText';
+import PaperCard from '../components/common/PaperCard';
+import { COFFEE_URL } from '../monetization/coffee';
 
 const BackToDraws = () => {
   const { t } = useTranslation();
@@ -446,6 +449,36 @@ const DrawPage = () => {
             onEditingChange={setEditingLetter}
             writeButtonInRow={isWaiting}
           />
+        )}
+
+        {draw.status === 'DRAWED' && isPlayer && (
+          <PaperCard sx={{ gap: 1.5 }}>
+            <Typography variant="h6" component="h2">
+              {t('drawPage.supportCard.heading')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t('drawPage.supportCard.text')}
+            </Typography>
+            <Button
+              component="a"
+              href={COFFEE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="contained"
+              startIcon={<LocalCafe />}
+              sx={{
+                alignSelf: { xs: 'stretch', sm: 'flex-start' },
+                backgroundColor: tokens.stampGold,
+                color: tokens.ink,
+                '&:hover': {
+                  backgroundColor: tokens.amber,
+                  color: tokens.paper,
+                },
+              }}
+            >
+              {t('drawPage.supportCard.button')}
+            </Button>
+          </PaperCard>
         )}
 
         <ParticipantsSection

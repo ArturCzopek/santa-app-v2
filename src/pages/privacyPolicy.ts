@@ -48,7 +48,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
     {
       heading: 'Dobrowolne wsparcie autora',
       paragraphs: [
-        'Link „Postaw kawę” otwiera zewnętrzną stronę buycoffee.to. Santa App nie obsługuje wpłat, nie zapisuje kliknięć tego linku i nie przekazuje do buycoffee.to danych z losowania. Po przejściu na tę stronę buycoffee.to przetwarza dane i używa plików cookie zgodnie ze swoją polityką prywatności.',
+        'Linki „Postaw kawę” w stopce i „Postaw mi kawę” na stronie losowania po losowaniu otwierają zewnętrzną stronę buycoffee.to. Santa App nie obsługuje wpłat, nie zapisuje kliknięć tych linków i nie przekazuje do buycoffee.to danych z losowania. Po przejściu na tę stronę buycoffee.to przetwarza dane i używa plików cookie zgodnie ze swoją polityką prywatności.',
       ],
     },
     {

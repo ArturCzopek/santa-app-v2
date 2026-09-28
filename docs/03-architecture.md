@@ -135,9 +135,10 @@ envelope was opened is remembered in the browser's
 `localStorage`, per draw and person (`services/envelope.ts`), and so is a letter being
 written until it is saved (`services/letterDraft.ts`).
 
-**Supporting the author** (`Footer`, `DrawDoneModal`). Both places link to the
-configured buycoffee.to profile. Payments happen entirely on that external
-site; Santa App stores no payment or click data and has no payment integration.
+**Supporting the author** (`Footer`, `DrawPage`). Both places link to the
+configured buycoffee.to profile; the draw page shows its link to participants
+after the draw. Payments happen entirely on that external site; Santa App stores
+no payment or click data and has no payment integration.
 
 ## Trade-offs and known limits
 
