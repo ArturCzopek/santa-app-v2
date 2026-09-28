@@ -308,15 +308,14 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
   są usuwane najpierw osobnymi batchami po 450 zapisów, a pozostałe dokumenty losowania
   w jednym batchu; reguły Firestore i dane pozostają bez zmian.
 - [ ] **F18 – ładniejszy i mniej „spamowy” mail z linkiem logowania** (Artur, 2026-09-27, po F9):
-  dziś generyczny mail Firebase od `noreply@…firebaseapp.com` z długim linkiem `…/__/auth/action?apiKey=…`,
-  w Gmailu trafia do spamu. Treści tego szablonu nie da się edytować w konsoli. Kroki od najtańszego:
-  - zrobione w kodzie: mail w języku aplikacji (`auth.languageCode`);
-  - Artur, konsola, za darmo: „Public-facing name” = Santa App, język szablonów polski, spróbować
-    „Customize action URL” = `https://arturczopek.github.io/santa-app-v2/` (aplikacja już obsługuje link);
-  - własna domena (~40–60 zł/rok) + „Customize domain” (SPF/DKIM) – nadawca z domeny, dużo mniej spamu;
-    przy okazji można przenieść aplikację z github.io na tę domenę;
-  - pełny własny wygląd i tekst: wysyłka przez Cloud Function (Admin SDK `generateSignInWithEmailLink`
-    + usługa pocztowa) → wymaga Blaze (F0).
+  generyczny mail Firebase od `noreply@…firebaseapp.com` z długim linkiem `…/__/auth/action?apiKey=…`,
+  w Gmailu trafia do spamu. Treści tego szablonu nie da się edytować w konsoli. Stan na 2026-09-28:
+  - zrobione: mail w języku aplikacji (`auth.languageCode`, `a9cff7d`); Artur ustawił w konsoli
+    „Public-facing name” = Santa App i polski język szablonów;
+  - „Customize action URL” = adres aplikacji: zapis w konsoli zwraca błąd – odpuszczone (niepewny zysk);
+  - własna domena + „Customize domain” (SPF/DKIM) – główne lekarstwo na spam; **Artur na razie nie chce**;
+  - **do zrobienia później (Blaze):** własny wygląd i tekst maila – Cloud Function z Admin SDK
+    `generateSignInWithEmailLink` + usługa pocztowa; bez własnej domeny nadawca nadal będzie obcy.
 
 ## 7. Monetyzacja
 
