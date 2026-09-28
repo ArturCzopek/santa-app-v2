@@ -5,6 +5,7 @@ import { GitHub, Translate } from '@mui/icons-material';
 import { setLanguage } from '../../i18n';
 import { useTranslation } from 'react-i18next';
 import { footerLinkStyles, footerStyles } from '../../styles/layoutStyles';
+import { COFFEE_URL } from '../../monetization/coffee';
 
 const Footer = () => {
   const { t, i18n } = useTranslation();
@@ -49,6 +50,15 @@ const Footer = () => {
         sx={footerLinkStyles}
       >
         {t('footer.privacy')}
+      </Link>
+      <Link
+        href={COFFEE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        color="inherit"
+        sx={footerLinkStyles}
+      >
+        {t('footer.coffee')}
       </Link>
       <Link
         href="https://github.com/ArturCzopek/santa-app-v2"

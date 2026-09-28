@@ -15,6 +15,7 @@ import { eventSummary } from './EventDetails';
 import { postcardDialogSx } from './InviteDrawModal';
 import { Draw } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
+import { COFFEE_URL } from '../../monetization/coffee';
 
 interface DrawDoneModalProps {
   open: boolean;
@@ -62,6 +63,16 @@ const DrawDoneModal: React.FC<DrawDoneModalProps> = ({
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Typography>{t('drawPage.drawDone.description')}</Typography>
         <Postcard title={postcardTitle} message={message} />
+        <Button
+          component="a"
+          href={COFFEE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="outlined"
+          sx={{ alignSelf: 'flex-start', color: tokens.ink }}
+        >
+          {t('footer.coffee')}
+        </Button>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} sx={{ color: tokens.ink }}>

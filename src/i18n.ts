@@ -432,6 +432,7 @@ const resources = {
         place: 'Place:',
       },
       footer: {
+        coffee: 'Buy me a coffee',
         help: 'Help',
         privacy: 'Privacy policy',
         sourceCode: 'Source code on GitHub',
@@ -917,6 +918,7 @@ const resources = {
         place: 'Miejsce:',
       },
       footer: {
+        coffee: 'Postaw kawę',
         help: 'Pomoc',
         privacy: 'Polityka prywatności',
         sourceCode: 'Kod aplikacji na GitHubie',

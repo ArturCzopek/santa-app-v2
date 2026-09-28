@@ -265,3 +265,10 @@ in another browser, the page asks for the address again. An account from an emai
 name, so before anything else the app asks for one and refreshes the token, because the rules
 take the name from it (`tokenName()`); the photo stays empty and the stamp shows the initial.
 The rules did not change. The privacy policy says the only email sent is the sign-in link.
+
+## D39. Optional support through buycoffee.to, Proposed for Claude review
+Santa App stays free. The footer and the dialog shown after a successful draw
+offer an optional "Buy me a coffee" link to the author's buycoffee.to profile.
+The app does not process payments or record clicks; visitors who follow the
+link leave Santa App. The privacy-policy update is a separate commit for Claude
+to review before merge.
