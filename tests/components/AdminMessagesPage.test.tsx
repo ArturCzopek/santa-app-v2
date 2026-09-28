@@ -23,10 +23,12 @@ const record = (
   id: string,
   userName: string,
   message: string,
+  userEmail?: string,
 ): MessageDocument => ({
   id,
   userUid: id,
   userName,
+  ...(userEmail === undefined ? {} : { userEmail }),
   message,
   date: Timestamp.fromDate(new Date('2026-09-27T10:00:00Z')),
 });
@@ -89,5 +91,34 @@ describe('AdminMessagesPage', () => {
     expect(
       await screen.findByText('Nie ma jeszcze wiadomości.'),
     ).toBeInTheDocument();
+  });
+
+  it('shows the account email and a reply link', async () => {
+    getMessagesMock.mockResolvedValue({
+      messages: [record('mail', 'Ania', 'Wiadomość', 'ania@example.com')],
+      lastDocument: undefined,
+      hasMore: false,
+    });
+
+    renderWithProviders(<AdminMessagesPage />);
+
+    expect(await screen.findByText('ania@example.com')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Odpisz' })).toHaveAttribute(
+      'href',
+      `mailto:ania@example.com?subject=${encodeURIComponent('Santa App – odpowiedź na Twoją wiadomość')}`,
+    );
+  });
+
+  it('does not show reply details for a legacy message without an email', async () => {
+    getMessagesMock.mockResolvedValue({
+      messages: [record('legacy', 'Ania', 'Wiadomość')],
+      lastDocument: undefined,
+      hasMore: false,
+    });
+
+    renderWithProviders(<AdminMessagesPage />);
+
+    expect(await screen.findByText('Wiadomość')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Odpisz' })).not.toBeInTheDocument();
   });
 });

@@ -36,7 +36,11 @@ export class MessageService {
     return doc(this.messagesCollection, `${userUid}_${id}`);
   }
 
-  async sendMessage(messageData: Omit<MessageData, 'date'>): Promise<void> {
+  async sendMessage(
+    messageData: Omit<MessageData, 'date' | 'userEmail'> & {
+      userEmail: string;
+    },
+  ): Promise<void> {
     // "Today" is decided by the server clock. Around midnight UTC, or with
     // the device clock a bit off, the browser may be on the other side of
     // midnight, so try the neighbouring days too. The rules still accept

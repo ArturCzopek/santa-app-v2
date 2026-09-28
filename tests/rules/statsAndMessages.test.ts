@@ -138,19 +138,51 @@ const todayId = (uid: string) => {
 const message = (uid: string, overrides: Record<string, unknown> = {}) => ({
   userUid: uid,
   userName: `${uid} name`,
+  userEmail: `${uid}@example.com`,
   message: 'Great app!',
   date: serverTimestamp(),
   ...overrides,
 });
 
 describe('messages', () => {
-  it('user can send one message today', async () => {
-    const db = authed(env, ALICE);
+  it('user can send one message today with the token email', async () => {
+    const db = authed(env, ALICE, { email: 'alice@example.com' });
     await assertSucceeds(
-      setDoc(doc(db, `messages/${todayId(ALICE)}`), message(ALICE)),
+      setDoc(
+        doc(db, `messages/${todayId(ALICE)}`),
+        message(ALICE, { userEmail: 'alice@example.com' }),
+      ),
     );
     await assertFails(
-      setDoc(doc(db, `messages/${todayId(ALICE)}`), message(ALICE)),
+      setDoc(
+        doc(db, `messages/${todayId(ALICE)}`),
+        message(ALICE, { userEmail: 'alice@example.com' }),
+      ),
+    );
+  });
+
+  it('cannot spoof or omit the token email', async () => {
+    const db = authed(env, ALICE, { email: 'alice@example.com' });
+    const { userEmail: _userEmail, ...withoutEmail } = message(ALICE);
+    void _userEmail;
+    await assertFails(
+      setDoc(
+        doc(db, `messages/${todayId(ALICE)}`),
+        message(ALICE, { userEmail: 'other@example.com' }),
+      ),
+    );
+    await assertFails(
+      setDoc(doc(db, `messages/${todayId(ALICE)}`), withoutEmail),
+    );
+  });
+
+  it('allows an empty email when the token has no email claim', async () => {
+    const db = authed(env, ALICE, {});
+    await assertSucceeds(
+      setDoc(
+        doc(db, `messages/${todayId(ALICE)}`),
+        message(ALICE, { userEmail: '' }),
+      ),
     );
   });
 

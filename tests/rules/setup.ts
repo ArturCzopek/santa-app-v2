@@ -30,9 +30,17 @@ export const MALLORY = 'mallory-uid';
 
 export const JOIN_KEY = 'a'.repeat(64);
 
-export const authed = (env: RulesTestEnvironment, uid: string) =>
+export const authed = (
+  env: RulesTestEnvironment,
+  uid: string,
+  claims: Record<string, unknown> = { email: `${uid}@example.com` },
+) =>
   env
-    .authenticatedContext(uid, { name: `${uid} name`, picture: '' })
+    .authenticatedContext(uid, {
+      name: `${uid} name`,
+      picture: '',
+      ...claims,
+    })
     .firestore();
 
 type Db = ReturnType<typeof authed>;

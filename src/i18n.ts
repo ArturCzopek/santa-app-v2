@@ -426,7 +426,7 @@ const resources = {
         alreadySentToday:
           "You've already sent a message today. You can send another message tomorrow.",
         description:
-          'Do you have any feedback? Is something not working? Or maybe you just want to get in touch? This is a good place, you can type and send me a message. I promise to reply :)',
+          "Do you have any feedback? Is something not working? Or maybe you just want to get in touch? This is a good place, you can type and send me a message. I promise to reply to your account's email address.",
         messageLabel: 'Message',
         send: 'Send',
         sendError: 'Error sending message. Please try again.',
@@ -456,6 +456,8 @@ const resources = {
         errors: {
           loadFailed: 'Failed to load messages. Please try again.',
         },
+        reply: 'Reply',
+        replySubject: 'Santa App – reply to your message',
         showOlder: 'Show older',
         title: 'Messages from users',
       },
@@ -917,7 +919,7 @@ const resources = {
         alreadySentToday:
           'Dzisiejsza wiadomość już do mnie dotarła. Kolejną możesz wysłać jutro.',
         description:
-          'Masz jakiś feedback? Coś nie działa? A może po prostu chcesz się skontaktować? To jest dobre miejsce, możesz wpisać i wysłać do mnie wiadomość. Obiecuję, że odpiszę :)',
+          'Masz jakiś feedback? Coś nie działa? A może po prostu chcesz się skontaktować? To jest dobre miejsce, możesz wpisać i wysłać do mnie wiadomość. Obiecuję, że odpiszę na adres e-mail Twojego konta.',
         messageLabel: 'Wiadomość',
         send: 'Wyślij',
         sendError: 'Błąd podczas wysyłania wiadomości. Spróbuj ponownie.',
@@ -947,6 +949,8 @@ const resources = {
         errors: {
           loadFailed: 'Nie udało się pobrać wiadomości. Spróbuj ponownie.',
         },
+        reply: 'Odpisz',
+        replySubject: 'Santa App – odpowiedź na Twoją wiadomość',
         showOlder: 'Pokaż starsze',
         title: 'Wiadomości od użytkowników',
       },

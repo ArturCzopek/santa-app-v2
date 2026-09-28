@@ -419,6 +419,7 @@ describe('MessageService against the emulator', () => {
     await messageService.sendMessage({
       userUid: user.uid,
       userName: 'Writer',
+      userEmail: user.email ?? '',
       message: 'Great app',
     });
 
@@ -427,6 +428,7 @@ describe('MessageService against the emulator', () => {
       messageService.sendMessage({
         userUid: user.uid,
         userName: 'Writer',
+        userEmail: user.email ?? '',
         message: 'Spam',
       }),
     ).rejects.toThrow();
@@ -443,6 +445,7 @@ describe('MessageService against the emulator', () => {
       await messageService.sendMessage({
         userUid: user.uid,
         userName: 'Late Writer',
+        userEmail: user.email ?? '',
         message: 'Sent at 23:59:59',
       });
     } finally {
@@ -458,6 +461,7 @@ describe('MessageService against the emulator', () => {
     await messageService.sendMessage({
       userUid: older.uid,
       userName: 'Older Writer',
+      userEmail: older.email ?? '',
       message: 'Older message',
     });
 
@@ -466,6 +470,7 @@ describe('MessageService against the emulator', () => {
     await messageService.sendMessage({
       userUid: newer.uid,
       userName: 'Newer Writer',
+      userEmail: newer.email ?? '',
       message: 'Newer message',
     });
 
@@ -474,6 +479,7 @@ describe('MessageService against the emulator', () => {
     expect(firstPage.messages.map((message) => message.userName)).toEqual([
       'Newer Writer',
     ]);
+    expect(firstPage.messages[0].userEmail).toBe(newer.email);
     expect(firstPage.hasMore).toBe(true);
 
     const secondPage = await messageService.getMessages(

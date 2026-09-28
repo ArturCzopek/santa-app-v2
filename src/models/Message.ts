@@ -3,6 +3,7 @@ import { Timestamp } from 'firebase/firestore';
 export type MessageData = {
   userUid: string;
   userName: string;
+  userEmail?: string;
   message: string;
   date: Timestamp;
 };

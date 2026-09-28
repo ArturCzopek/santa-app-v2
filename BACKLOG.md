@@ -98,9 +98,8 @@
   produkcyjnym/stagingowym (`vite.config.ts`), domena auth z `VITE_FIREBASE_AUTH_DOMAIN`. Claude dopisał
   zdjęcia Google (`*.googleusercontent.com`) i sprawdził build stagingowy: czcionki, gapi, iframe logowania
   i YouTube bez naruszeń. Prawdziwego logowania popupem na produkcji nie sprawdzono – zrobić po wdrożeniu.
-- [ ] S11 – e-mail przy wiadomości do autora (Artur, 2026-09-28): okno obiecuje „odpiszę”, a wiadomość nie
-  ma adresu. Zapisywać e-mail konta z tokenu (reguły to wymuszają), na stronie „Wiadomości” link „Odpisz”
-  (`mailto:`); polityka prywatności: e-mail zapisany przy wiadomości, żeby odpisać. Codex, przegląd Claude'a.
+- [x] S11 – e-mail konta przy wiadomości do autora (2026-09-28; Codex, zrecenzowane przez Claude'a): reguły
+  wymuszają `userEmail` z tokenu, na stronie „Wiadomości” link „Odpisz” (`mailto:`), polityka uzupełniona.
 - [x] S7 – usunięty zbędny `redirect_uri` w `useAuth`
 - [ ] S8 – konto serwisowe z najmniejszymi uprawnieniami zamiast `firebase-adminsdk` (opcjonalnie)
 - [x] S9 – sprawdzone w audycie 2026-09-26: jednorazowa migracja F14 została usunięta po wdrożeniu

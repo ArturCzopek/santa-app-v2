@@ -22,8 +22,8 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
     {
       heading: 'Jakie dane przetwarzamy',
       items: [
-        'Przy logowaniu przez Google: imię i nazwisko (nazwa wyświetlana), zdjęcie profilowe, adres e-mail i identyfikator konta. Przy logowaniu linkiem z e-maila: adres e-mail, identyfikator konta i imię, które podajesz. Adres e-mail zna tylko usługa logowania – nie pokazujemy go innym osobom. Wysyłamy na niego wyłącznie link do logowania, i tylko wtedy, gdy o niego poprosisz.',
-        'To, co wpisujesz: losowania (nazwa, opis, budżet, data i miejsce wręczenia), listy do Mikołaja, podziękowania dla Mikołaja, wykluczenia par oraz wiadomości do autora.',
+        'Przy logowaniu przez Google: imię i nazwisko (nazwa wyświetlana), zdjęcie profilowe, adres e-mail i identyfikator konta. Przy logowaniu linkiem z e-maila: adres e-mail, identyfikator konta i imię, które podajesz. Nie pokazujemy adresu e-mail innym użytkownikom. Wysyłamy na niego wyłącznie link do logowania, i tylko wtedy, gdy o niego poprosisz.',
+        'To, co wpisujesz: losowania (nazwa, opis, budżet, data i miejsce wręczenia), listy do Mikołaja, podziękowania dla Mikołaja, wykluczenia par oraz wiadomości do autora. Przy wiadomości zapisujemy adres e-mail Twojego konta, żeby autor mógł odpisać.',
         'Dane potrzebne do działania losowania: lista uczestników, daty dołączenia i wynik losowania (kto komu kupuje prezent). Hasło losowania zapisujemy tylko jako skrót (hash), z którego nie da się go odczytać.',
         'Szkic listu do Mikołaja (do czasu zapisania albo odrzucenia), wybrany język, informacja o otwarciu koperty z wynikiem oraz – do czasu dokończenia logowania linkiem – adres e-mail, na który go wysłano, pozostają w przeglądarce na Twoim urządzeniu i nie są do nas wysyłane. Firebase Authentication przechowuje w przeglądarce sesję logowania aż do wylogowania. Nie używamy narzędzi analitycznych ani plików cookie do śledzenia.',
       ],
@@ -80,8 +80,8 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
     {
       heading: 'What data we process',
       items: [
-        'When you sign in with Google: your name, profile photo, email address and account id. When you sign in with an email link: your email address, account id and the name you type in. Only the sign-in service knows your email address – we do not show it to anyone. The only email we send is the sign-in link, and only when you ask for it.',
-        'What you type in: draws (name, description, budget, date and place of the gift exchange), letters to Santa, thank-you notes to your Santa, excluded pairs and messages to the author.',
+        'When you sign in with Google: your name, profile photo, email address and account id. When you sign in with an email link: your email address, account id and the name you type in. We do not show your email address to other users. The only email we send is the sign-in link, and only when you ask for it.',
+        'What you type in: draws (name, description, budget, date and place of the gift exchange), letters to Santa, thank-you notes to your Santa, excluded pairs and messages to the author. We store your account email address with a message to the author so the author can reply.',
         'What the draw needs to work: who takes part, when they joined and who drew whom. The draw password is stored only as a hash that cannot be turned back into the password.',
         'The draft of your letter to Santa (until you save or discard it), your chosen language, whether you have opened the result envelope and – until you finish signing in with an email link – the address it was sent to stay in your browser on your device and are not sent to us. Firebase Authentication keeps your sign-in session in the browser until you sign out. We use no analytics and no tracking cookies.',
       ],

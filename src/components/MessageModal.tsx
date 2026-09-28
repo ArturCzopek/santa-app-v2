@@ -78,6 +78,7 @@ const MessageModal: React.FC<MessageModalProps> = ({ open, onClose }) => {
       await messageService.sendMessage({
         userUid: user.uid,
         userName: user.displayName || user.uid,
+        userEmail: user.email || '',
         message: message.trim(),
       });
 

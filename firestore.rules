@@ -422,9 +422,10 @@ service cloud.firestore {
       allow create: if signedIn()
         && messageId == request.auth.uid + '_' + string(request.time.year())
           + '-' + string(request.time.month()) + '-' + string(request.time.day())
-        && request.resource.data.keys().hasOnly(['userUid', 'userName', 'message', 'date'])
+        && request.resource.data.keys().hasOnly(['userUid', 'userName', 'userEmail', 'message', 'date'])
         && request.resource.data.userUid == request.auth.uid
         && request.resource.data.userName == request.auth.token.get('name', request.auth.uid)
+        && request.resource.data.userEmail == request.auth.token.get('email', '')
         && isString(request.resource.data.message, 1000)
         && request.resource.data.message.size() > 0
         && request.resource.data.date == request.time;

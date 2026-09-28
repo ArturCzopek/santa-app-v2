@@ -94,6 +94,24 @@ const AdminMessagesPage = () => {
                       <Typography variant="h2" sx={{ fontSize: '1.2rem' }}>
                         {message.userName}
                       </Typography>
+                      {message.userEmail && (
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: tokens.inkMuted }}
+                          >
+                            {message.userEmail}
+                          </Typography>
+                          <Typography
+                            component="a"
+                            variant="body2"
+                            href={`mailto:${message.userEmail}?subject=${encodeURIComponent(t('adminMessages.replySubject'))}`}
+                            sx={{ color: tokens.ink }}
+                          >
+                            {t('adminMessages.reply')}
+                          </Typography>
+                        </Box>
+                      )}
                       <Typography
                         component="time"
                         dateTime={date.toISOString()}

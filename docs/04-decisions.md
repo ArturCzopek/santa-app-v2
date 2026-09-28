@@ -251,8 +251,11 @@ The signed-in account with the verified token email `arturcz32@gmail.com` can li
 all messages. Firestore rules enforce this; the same address in the client only controls
 whether the page and navbar link are shown. Authors can still read only their own message,
 and messages remain create-only for everyone: the page is read-only and has no read flag.
-The page loads newest first in batches of 20. This changes where the author reads messages,
-not who reads them, so the privacy policy stays as it is.
+The page loads newest first in batches of 20. The privacy policy explains which account
+details accompany a message and why.
+New messages also store the author's account email (`userEmail`) so the admin can reply.
+Create rules require it to match the token email, or an empty string when there is no email
+claim; older messages without the field remain valid.
 
 ## D38. Sign-in by an email link as well as Google, Accepted (supersedes D4)
 Not everyone has or wants a Google account, and Google refuses to sign in inside the browsers
