@@ -41,6 +41,17 @@ once), and why they have the largest test suite (`tests/rules`).
 | `#/privacy` | Public privacy page. |
 | `#/admin/messages` | Read user messages; requires the verified admin account. |
 
+## Search and link previews
+
+index.html contains Polish page metadata, Open Graph and Twitter tags, JSON-LD, and a short
+static introduction with FAQs inside #root. src/main.tsx mounts React with createRoot,
+which replaces that fallback when the app starts. The hash router gives search engines one
+indexable page, so its canonical URL is the GitHub Pages homepage.
+
+The social preview image is public/og-image.png. Its HTML source and Playwright renderer are
+in scripts/og-image.html and scripts/renderOgImage.mjs; regenerate it with
+node scripts/renderOgImage.mjs.
+
 ## Data
 
 Everything about one draw lives under `draws/{drawId}`. Each subcollection exists because

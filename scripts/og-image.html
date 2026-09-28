@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Santa App social preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      body {
+        color: #0e2a1e;
+        font-family: "Nunito", "Segoe UI", sans-serif;
+        background-color: #0e2a1e;
+        background-image:
+          radial-gradient(circle at 18px 22px, #f4ead04d 1.4px, transparent 1.8px),
+          radial-gradient(circle at 57px 62px, #d4aa503d 1.4px, transparent 1.8px);
+        background-size: 82px 82px;
+      }
+
+      .frame {
+        width: 1200px;
+        height: 630px;
+        display: grid;
+        place-items: center;
+        position: relative;
+      }
+
+      .frame::before {
+        content: "";
+        position: absolute;
+        inset: 18px;
+        border: 1px solid #d4aa5073;
+        border-radius: 18px;
+      }
+
+      .postcard {
+        width: 920px;
+        height: 500px;
+        display: grid;
+        grid-template-columns: 1.5fr 0.8fr;
+        align-items: center;
+        position: relative;
+        padding: 58px 70px;
+        overflow: hidden;
+        border: 1px solid #dfd2b5;
+        border-radius: 22px;
+        background: #f7f0de;
+        box-shadow: 0 22px 56px #06180f80;
+      }
+
+      .postcard::before {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        border: 1px solid #d4aa5073;
+        border-radius: 14px;
+        pointer-events: none;
+      }
+
+      .copy {
+        z-index: 1;
+        padding-bottom: 5px;
+      }
+
+      .wordmark {
+        margin: 0 0 4px;
+        color: #0e2a1e;
+        font-family: "Caveat", "Segoe Print", cursive;
+        font-size: 72px;
+        font-weight: 700;
+        letter-spacing: -2px;
+        line-height: 0.95;
+      }
+
+      .divider {
+        width: 76px;
+        height: 3px;
+        margin: 22px 0;
+        border-radius: 2px;
+        background: #b28a3e;
+      }
+
+      h1 {
+        max-width: 555px;
+        margin: 0;
+        color: #0e2a1e;
+        font-size: 39px;
+        font-weight: 800;
+        letter-spacing: -0.7px;
+        line-height: 1.12;
+      }
+
+      .tagline {
+        margin: 18px 0 0;
+        color: #713b32;
+        font-size: 21px;
+        font-weight: 700;
+      }
+
+      .supporting {
+        margin: 7px 0 0;
+        color: #59655b;
+        font-size: 17px;
+        font-weight: 600;
+      }
+
+      .art {
+        width: 250px;
+        height: 335px;
+        position: relative;
+        justify-self: end;
+      }
+
+      .stamp {
+        width: 118px;
+        height: 132px;
+        display: grid;
+        place-items: center;
+        position: absolute;
+        top: 0;
+        right: 12px;
+        transform: rotate(7deg);
+        border: 2px dashed #f5dfc7;
+        outline: 5px solid #a64c3f;
+        background: #a64c3f;
+        color: #f7f0de;
+        text-align: center;
+      }
+
+      .stamp svg {
+        width: 48px;
+        height: 48px;
+        margin-top: -8px;
+      }
+
+      .stamp-label {
+        align-self: end;
+        padding-top: 8px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.8px;
+      }
+
+      .envelope {
+        width: 224px;
+        position: absolute;
+        right: 4px;
+        bottom: 25px;
+        filter: drop-shadow(0 8px 5px #0e2a1e24);
+      }
+
+      .postmark {
+        position: absolute;
+        right: 8px;
+        bottom: 0;
+        color: #b28a3e;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="frame">
+      <article class="postcard">
+        <div class="copy">
+          <p class="wordmark">Santa App</p>
+          <div class="divider"></div>
+          <h1>Secret Santa</h1>
+          <p class="tagline">Losowanie na Mikołajki online</p>
+          <p class="supporting">Tajne pary. Listy do Mikołaja. Świąteczna radość.</p>
+        </div>
+        <div class="art" aria-hidden="true">
+          <div class="stamp">
+            <span class="stamp-label">POCZTA MIKOŁAJA</span>
+            <svg viewBox="0 0 48 48" fill="none">
+              <path
+                d="M24 4v40M6.68 14l34.64 20M6.68 34 41.32 14M18 7.2 24 13l6-5.8M18 40.8 24 35l6 5.8M7 20l8-.5.8-8M41 28l-8 .5-.8 8M7 28l8 .5.8 8M41 20l-8-.5-.8-8"
+                stroke="#F7F0DE"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+            </svg>
+          </div>
+          <svg class="envelope" viewBox="0 0 240 170" fill="none">
+            <path
+              d="M14 32c0-7.7 6.3-14 14-14h184c7.7 0 14 6.3 14 14v112c0 7.7-6.3 14-14 14H28c-7.7 0-14-6.3-14-14V32Z"
+              fill="#E6D6B6"
+              stroke="#B28A3E"
+              stroke-width="3"
+            />
+            <path d="m17 31 103 81L223 31" fill="#F7F0DE" stroke="#B28A3E" stroke-width="3" />
+            <path d="m18 148 76-62m128 62-76-62" stroke="#B28A3E" stroke-width="3" />
+            <path
+              d="M120 82c-7-12-26-5-18 8 4 7 18 16 18 16s14-9 18-16c8-13-11-20-18-8Z"
+              fill="#A64C3F"
+              stroke="#F7F0DE"
+              stroke-width="2"
+            />
+          </svg>
+          <span class="postmark">LIST DO MIKOŁAJA</span>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>

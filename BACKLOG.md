@@ -1,7 +1,7 @@
 # Santa App v2 – roadmap i backlog
 
 > Wspólny, śledzony backlog projektu. Aktualizować przy zmianie statusu zadania.
-> Ostatnia aktualizacja: 2026-09-26
+> Ostatnia aktualizacja: 2026-09-28
 > Zasady współpracy i podział odpowiedzialności: [AGENTS.md](AGENTS.md). Statusy należy
 > weryfikować względem kodu; sekcja „Zrobione” zachowuje starsze notatki kontekstowe.
 
@@ -324,6 +324,8 @@ Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), partnerskie odłożon
   - **do zrobienia później (Blaze):** własny wygląd i tekst maila – Cloud Function z Admin SDK
     `generateSignInWithEmailLink` + usługa pocztowa; bez własnej domeny nadawca nadal będzie obcy.
 
+- [x] **F19 – SEO i podgląd linku (2026-09-28):** polska treść dostępna w HTML, metadane wyszukiwarki i mediów społecznościowych oraz karta OG.
+  - **Ręcznie:** dodać meta tag Google Search Console, gdy Artur przekaże token; opcjonalnie rozważyć własną domenę .pl.
 - [x] F20 – „Secret Santa” zamiast „Tajemniczy Mikołaj” w polskich tekstach
   (2026-09-28, uwaga kolegi Artura; Codex, zrecenzowane przez Claude'a)
 
