@@ -2,7 +2,7 @@
 // it is long prose; the page picks the language like the rest of the app.
 // Update LAST_UPDATED whenever the content changes.
 
-export const LAST_UPDATED = '2026-09-27';
+export const LAST_UPDATED = '2026-09-28';
 
 export type PolicySection = {
   heading: string;
@@ -15,7 +15,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
     {
       heading: 'Kto odpowiada za dane',
       paragraphs: [
-        'Administratorem danych jest Artur Czopek, autor Santa App. To prywatny, niekomercyjny projekt: aplikacja jest bezpłatna i nie wyświetla reklam.',
+        'Administratorem danych jest Artur Czopek, autor Santa App. Aplikacja jest bezpłatna i nie wyświetla reklam. Możesz dobrowolnie wesprzeć autora przez zewnętrzny serwis buycoffee.to.',
         'Kontakt: arturcz32@gmail.com, przycisk „Zostaw wiadomość!” po zalogowaniu albo zgłoszenie w repozytorium aplikacji na GitHubie (link w stopce).',
       ],
     },
@@ -46,6 +46,12 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
       ],
     },
     {
+      heading: 'Dobrowolne wsparcie autora',
+      paragraphs: [
+        'Link „Postaw kawę” otwiera zewnętrzną stronę buycoffee.to. Santa App nie obsługuje wpłat, nie zapisuje kliknięć tego linku i nie przekazuje do buycoffee.to danych z losowania. Po przejściu na tę stronę buycoffee.to przetwarza dane i używa plików cookie zgodnie ze swoją polityką prywatności.',
+      ],
+    },
+    {
       heading: 'Jak długo',
       items: [
         'Losowanie i listy przechowujemy, dopóki losowanie istnieje – także po losowaniu, żeby uczestnicy mogli wrócić do swojego wyniku.',
@@ -67,7 +73,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
     {
       heading: 'Who is responsible for the data',
       paragraphs: [
-        'The data controller is Artur Czopek, the author of Santa App. It is a private, non-commercial project: the app is free and shows no ads.',
+        'The data controller is Artur Czopek, the author of Santa App. The app is free and shows no ads. You may voluntarily support the author through the external buycoffee.to service.',
         'Contact: arturcz32@gmail.com, the "Leave a message!" button after signing in, or an issue in the app’s GitHub repository (link in the footer).',
       ],
     },
@@ -95,6 +101,12 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
         'Only you and your Santa can read your thank-you note. Nobody else, not even the organizer, has access to it. Participants see whether a person has bought their gift – not for whom.',
         'Only you see your result (whom you give a gift to). Only the organizer sees the excluded pairs.',
         'The data is kept by the providers the app uses: Google (Firebase Authentication – sign-in, Cloud Firestore – database, Google Fonts – fonts), GitHub (GitHub Pages – the app’s website) and YouTube (videos, loaded in no-cookie mode only when they are shown). Google may also process data outside the European Economic Area, under its data protection terms.',
+      ],
+    },
+    {
+      heading: 'Voluntary support for the author',
+      paragraphs: [
+        'The “Buy me a coffee” link opens the external buycoffee.to website. Santa App does not handle payments, record clicks on this link or send draw data to buycoffee.to. After you open that website, buycoffee.to processes data and uses cookies under its own privacy policy.',
       ],
     },
     {
