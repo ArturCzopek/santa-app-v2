@@ -8,7 +8,7 @@ web
 
 ## Users
 
-The general public in Poland: anyone who organizes or joins a Secret Santa (Tajemniczy Mikołaj).
+The general public in Poland: anyone who organizes or joins a Secret Santa draw.
 The groups are unknown to us and very mixed: families across generations (including elderly
 people), friends, coworkers, school classes and teams. The previous version had about 10,000 users.
 

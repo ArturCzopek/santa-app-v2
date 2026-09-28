@@ -7,7 +7,7 @@ describe('buildIcs', () => {
       {
         uid: 'd1@santa-app',
         date: '2026-12-24',
-        title: 'Tajemniczy Mikołaj: Wigilia',
+        title: 'Secret Santa: Wigilia',
         place: 'U babci, godz. 18:00',
         description: 'Budżet: 100 PLN; link\ndruga linia',
       },
@@ -18,7 +18,7 @@ describe('buildIcs', () => {
     expect(lines).toContain('DTSTART;VALUE=DATE:20261224');
     expect(lines).toContain('DTEND;VALUE=DATE:20261225');
     expect(lines).toContain('DTSTAMP:20260926T100000Z');
-    expect(lines).toContain('SUMMARY:Tajemniczy Mikołaj: Wigilia');
+    expect(lines).toContain('SUMMARY:Secret Santa: Wigilia');
     // Commas, semicolons and line breaks are escaped.
     expect(lines).toContain('LOCATION:U babci\\, godz. 18:00');
     expect(lines).toContain('DESCRIPTION:Budżet: 100 PLN\\; link\\ndruga linia');

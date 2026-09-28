@@ -43,8 +43,9 @@ The rest follows the same thinking:
 
 **Login** (`#/`). A first-time visitor usually arrives from a link and has never heard of
 the app. Inside a chat app's browser the page first gets them out of it ("Otwórz tę stronę w
-przeglądarce"), since Google refuses to sign in there. The page answers "what is this?" before asking for anything: a plain headline
-("Tajemniczy Mikołaj bez karteczek w czapce"), three numbered steps in handwriting, and only
+przeglądarce"), since Google refuses to sign in there. The page answers "what is this?" before
+asking for anything: a plain headline ("Secret Santa") and a one-sentence explanation
+("Losowanie na Mikołajki, jak w szkole, tylko online"), then three numbered steps in handwriting, and only
 then **Zaloguj przez Google**, with a note on what the Google account is used for.
 
 **Invite** (`#/join/…`). Shows the draw before asking to join: who invites you, the name,

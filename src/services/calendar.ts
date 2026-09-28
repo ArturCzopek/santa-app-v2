@@ -31,7 +31,7 @@ export const buildIcs = (event: CalendarEvent, now = new Date()): string => {
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Santa App//Tajemniczy Mikolaj//PL',
+    'PRODID:-//Santa App//Secret Santa//PL',
     'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
     `UID:${event.uid}`,

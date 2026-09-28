@@ -11,10 +11,10 @@ const manifest = JSON.parse(
 describe('PWA manifest', () => {
   it('has the required app metadata and relative install URLs', () => {
     expect(manifest).toMatchObject({
-      name: 'Santa App – Tajemniczy Mikołaj',
+      name: 'Santa App – Secret Santa',
       short_name: 'Santa App',
       description:
-        'Losowanie Tajemniczego Mikołaja bez karteczek w czapce: jeden link dla całej grupy, listy do Mikołaja i tajne pary.',
+        'Secret Santa – losowanie na Mikołajki online, bez karteczek w czapce: jeden link dla całej grupy, listy do Mikołaja i tajne pary.',
       lang: 'pl',
       start_url: './',
       scope: './',

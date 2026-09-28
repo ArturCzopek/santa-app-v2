@@ -7,7 +7,7 @@
 
 ## Kontekst i ustalenia
 
-- **Co to jest:** Tajemniczy Mikołaj. React 19 + MUI 9 + Vite 8, Firebase 12 (Auth Google + Firestore),
+- **Co to jest:** Secret Santa. React 19 + MUI 9 + Vite 8, Firebase 12 (Auth Google + Firestore),
   hosting GitHub Pages (`https://arturczopek.github.io/santa-app-v2`). Brak backendu.
 - **Filozofia:** pet project, prosty. Utrzymanie i deploy mają być trywialne. Claude prowadzi
   decyzje; Codex realizuje jasno ograniczone zadania zgodnie z `AGENTS.md`.
@@ -323,6 +323,9 @@ Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), partnerskie odłożon
   - własna domena + „Customize domain” (SPF/DKIM) – główne lekarstwo na spam; **Artur na razie nie chce**;
   - **do zrobienia później (Blaze):** własny wygląd i tekst maila – Cloud Function z Admin SDK
     `generateSignInWithEmailLink` + usługa pocztowa; bez własnej domeny nadawca nadal będzie obcy.
+
+- [x] F20 – „Secret Santa” zamiast „Tajemniczy Mikołaj” w polskich tekstach
+  (2026-09-28, uwaga kolegi Artura; Codex, zrecenzowane przez Claude'a)
 
 ## 7. Monetyzacja
 

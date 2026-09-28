@@ -10,7 +10,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
   pl: [
     {
       id: 'what',
-      question: 'Jak działa Tajemniczy Mikołaj w Santa App?',
+      question: 'Jak działa Secret Santa w Santa App?',
       answer: [
         'Organizator zakłada losowanie i wysyła wszystkim jeden link. Osoby biorące udział dołączają ze swoich telefonów i piszą listy do Mikołaja: co chciałyby dostać.',
         'Gdy gracze są gotowi, organizator losuje pary. Każda osoba biorąca udział otwiera swoją kopertę i widzi tylko to, komu kupuje prezent, razem z listem tej osoby.',

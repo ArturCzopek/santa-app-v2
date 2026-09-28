@@ -685,7 +685,7 @@ const resources = {
           message: {
             budget: 'Budżet na prezent: {{budget}} {{currency}}.',
             event: 'Wręczenie prezentów: {{when}}.',
-            greeting: 'Dołącz do naszego Tajemniczego Mikołaja „{{name}}”!',
+            greeting: 'Dołącz do naszego losowania Secret Santa „{{name}}”!',
             howToJoin:
               'Otwórz link, zaloguj się kontem Google i napisz list do Mikołaja.',
             howToJoinWithPassword:
@@ -829,7 +829,7 @@ const resources = {
       },
       joinPage: {
         createdBy: 'Od: {{name}}',
-        invitedBy: '{{name}} zaprasza cię do Tajemniczego Mikołaja.',
+        invitedBy: '{{name}} zaprasza cię do losowania Secret Santa.',
         errors: {
           drawAlreadyStarted:
             'To losowanie już się rozpoczęło i nie można do niego dołączyć.',
@@ -844,7 +844,7 @@ const resources = {
           passwordRequired: 'Wpisz hasło, żeby dołączyć do losowania',
         },
         loginRequired:
-          'Masz zaproszenie do Tajemniczego Mikołaja. Zaloguj się, żeby zobaczyć, kto zaprasza, i dołączyć.',
+          'Masz zaproszenie do losowania Secret Santa. Zaloguj się, żeby zobaczyć, kto zaprasza, i dołączyć.',
         joinButton: 'Dołącz do losowania',
         passwordHint: 'Hasło dostajesz od organizatora.',
         passwordLabel: 'Hasło do losowania',
@@ -899,9 +899,9 @@ const resources = {
         googleNote:
           'Zaloguj się przez Google albo linkiem wysłanym na e-mail. Inni widzą Twoje imię (i zdjęcie z Google), żeby wiedzieć, kto dołączył.',
         privacyLink: 'Jak używamy danych.',
-        lead: 'Jeden link dla całej grupy. Uczestnicy losowania piszą listy do Mikołaja, a w dniu losowania otwierają koperty z imieniem osoby, dla której kupują prezent.',
+        lead: 'Losowanie na Mikołajki, jak w szkole, tylko online. Jeden link dla całej grupy. Uczestnicy piszą listy do Mikołaja, a po losowaniu otwierają koperty z imieniem osoby, dla której kupują prezent.',
         loginWithGoogle: 'Zaloguj przez Google',
-        title: 'Tajemniczy Mikołaj bez karteczek w czapce',
+        title: 'Secret Santa bez karteczek w czapce',
         videoTitle: 'Na rozgrzewkę',
       },
       namePage: {
@@ -957,12 +957,12 @@ const resources = {
       calendar: {
         add: 'Dodaj do kalendarza',
         description:
-          'Wręczenie prezentów w Tajemniczym Mikołaju. Budżet: {{budget}} {{currency}}. Twoja koperta: {{link}}',
-        fileName: 'tajemniczy-mikolaj',
-        title: 'Tajemniczy Mikołaj: {{name}}',
+          'Wręczenie prezentów – Secret Santa. Budżet: {{budget}} {{currency}}. Twoja koperta: {{link}}',
+        fileName: 'secret-santa',
+        title: 'Secret Santa: {{name}}',
       },
       help: {
-        lead: 'Najczęstsze pytania o Tajemniczego Mikołaja w Santa App.',
+        lead: 'Najczęstsze pytania o Secret Santa w Santa App.',
         links: {
           exclusions: 'Jak działają takie pary?',
           password: 'Co, jeśli zapomnę hasła?',

@@ -1,6 +1,6 @@
 # How the app works (for the people using it)
 
-Santa App runs a Secret Santa (*Tajemniczy Mikołaj*) without paper slips in a hat. Players
+Santa App runs a Secret Santa online, without paper slips in a hat. Players
 join from their own phones, write what they would like to get, and after the draw each
 player sees only whom they buy a gift for, together with that person's wish. The organizer
 can choose to play or to only manage the draw.
@@ -78,7 +78,7 @@ Any participant can open the invite and pass it on, but only the organizer can r
 
 Opening the link shows *Zaproszenie do losowania*:
 
-- Not signed in: "Masz zaproszenie do Tajemniczego Mikołaja", what Secret Santa is (*Jak to
+- Not signed in: "Masz zaproszenie do losowania Secret Santa", what the draw is (*Jak to
   działa?* in three steps), **Zaloguj przez Google** and, below it, *Nie masz konta Google?
   Zaloguj się e-mailem*: the person types an address and opens the link from the email, with no
   password (D38). Either way they come back to this same invite. A new email account first answers
