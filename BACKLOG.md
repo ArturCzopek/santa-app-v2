@@ -223,7 +223,7 @@ niezrobiony punkt z tej listy (przed startem sprawdzić jego stan w kodzie):
 3. **Bez Blaze, przed Blaze (decyzja Artura 2026-09-27):** F15.
 4. **Wymagają Blaze (F0) – na sam koniec:** F2, F3 (przypomnienia), F13, F18 (własny mail logowania).
 
-Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, \$8 po analizie sezonu.
+Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), partnerskie odłożone, \$8 po analizie sezonu.
 
 - [ ] **F0 – przejście na plan Blaze** (decyzja Artura: OK, gdy będzie potrzebny). Przy tej skali
   ~0 zł (te same darmowe limity + darmowy limit Functions), wymaga karty, brak twardego limitu –
@@ -321,10 +321,11 @@ Monetyzacja (sekcja 7) idzie osobnym torem: \$0 → \$5 → \$1, \$7 na końcu, 
 
 ## 7. Monetyzacja
 
-Kolejność (decyzja Artura, 2026-09-26): **najpierw program partnerski Allegro/Ceneo (\$0 → \$5 → \$1)**,
-potem pozostałe pomysły partnerskie; „postaw kawę” (\$7) na końcu, jako test chęci płacenia;
-płatne duże losowania (\$8) dopiero po analizie sezonu. Aplikacja poza monetyzacją jest gotowa
-(przed sezonem zalecane jeszcze F9 i S4).
+**Stan (decyzja Artura, 2026-09-28):** na ten sezon tylko „postaw kawę” (\$7, zrobione).
+Programy partnerskie (\$0–\$5) **odłożone** – kłopotliwe (konto, oznaczanie linków, zmiana polityki
+prywatności, rozliczenie); polityka prywatności ich nie opisuje, więc nic w niej nie zmieniać,
+dopóki nie wrócą. Płatne duże losowania (\$8) dopiero po analizie sezonu.
+(Wcześniej, 2026-09-26: najpierw \$0 → \$5 → \$1, \$7 na końcu.)
 
 - [ ] **\$0 – warunki wstępne programu partnerskiego (Artur + Claude), przed \$1:**
   - konto w programie partnerskim Allegro i/lub Ceneo; w panelu sprawdzić format deep-linka
@@ -348,12 +349,14 @@ płatne duże losowania (\$8) dopiero po analizie sezonu. Aplikacja poza monetyz
   „link partnerski”, `rel="sponsored noopener"`, otwieranie w nowej karcie; polityka prywatności
   z \$0; analityka kliknięć tylko za zgodą (na start brak, patrz \$0)
 - [ ] \$6 – inne: premium (wykluczenia, motywy), wersja firmowa/HR
-- [ ] **\$7 – „Postaw kawę” (buycoffee.to lub Buy Me a Coffee) – na koniec, test chęci płacenia:**
+- [x] **\$7 – „Postaw kawę” (buycoffee.to lub Buy Me a Coffee) – na koniec, test chęci płacenia:**
   zwykły link do zewnętrznego serwisu wpłat (buycoffee.to obsługuje BLIK), bez backendu i bez
   Blaze. Miejsca: okno po udanym losowaniu (moment największego zadowolenia) i stopka.
   Wymaga: konta w serwisie (Artur), wzmianki w polityce prywatności (zewnętrzny serwis wpłat),
   pytania do księgowego o rozliczenie wpłat. Po sezonie sprawdzić liczbę wpłat – to sygnał
   przed decyzją o \$8.
+  **Zrobione** (2026-09-28, D39; Codex, zrecenzowane przez Claude'a): link do `buycoffee.to/czopo`
+  w stopce i w oknie po losowaniu, pomoc i polityka prywatności uzupełnione. Księgowy odłożony (Artur).
 - [ ] **\$8 – darmowe losowania do N osób, większe za jednorazową opłatę (pomysł Artura:
   do 6 osób za darmo, powyżej 5–10 zł) – decyzja po sezonie, na danych:**
   - **Analiza po sezonie (najpierw):** rozkład wielkości grup z Firestore (`participantUuids.size()`
