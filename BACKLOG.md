@@ -91,7 +91,9 @@
   opisać jako faktu na podstawie kodu.
 - [ ] S4 – ograniczenie klucza API Firebase w Google Cloud Console (referrery HTTP:
   `arturczopek.github.io`, `localhost`) i przegląd „Authorized domains” w Firebase Auth. (ręcznie w konsoli)
-- [ ] S5 – App Check (reCAPTCHA) – opcjonalnie, utrudnia skrypty spoza aplikacji.
+- [ ] S5 – App Check (reCAPTCHA) – opcjonalnie, utrudnia skrypty spoza aplikacji. **Odłożone do grupy Blaze**
+  (Claude, 2026-09-28): reCAPTCHA to kolejny dostawca z ciasteczkami Google → zmiana polityki prywatności,
+  a przy tej skali zysk mały; ma sens razem z Cloud Functions (F13), które App Check też chroni.
 - [ ] S6 – CSP przez `<meta>` (GitHub Pages nie daje nagłówków) – ostrożnie z popupem Google i iframe YouTube.
 - [x] S7 – usunięty zbędny `redirect_uri` w `useAuth`
 - [ ] S8 – konto serwisowe z najmniejszymi uprawnieniami zamiast `firebase-adminsdk` (opcjonalnie)
