@@ -116,7 +116,7 @@ it('shows the coffee support card to a participant after the draw', async () => 
 
   expect(
     await screen.findByRole('heading', {
-      name: 'Dziękuję, że korzystasz z Santa App!',
+      name: /Dziękuję, że korzystasz z Santa App!/,
     }),
   ).toBeInTheDocument();
   const link = screen.getByRole('link', { name: 'Postaw mi kawę' });
@@ -131,7 +131,7 @@ it('does not show the coffee support card while the draw is waiting', async () =
   expect(await screen.findByText('Office party')).toBeInTheDocument();
   expect(
     screen.queryByRole('heading', {
-      name: 'Dziękuję, że korzystasz z Santa App!',
+      name: /Dziękuję, że korzystasz z Santa App!/,
     }),
   ).not.toBeInTheDocument();
 });

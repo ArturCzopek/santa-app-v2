@@ -87,8 +87,8 @@ const resources = {
         noEnvelope:
           'The draw has taken place. You are not taking part, so there is no envelope for you.',
         supportCard: {
-          heading: 'Thank you for using Santa App!',
-          text: 'The app is free, has no ads, and I build it in my spare time. If you would like to say thanks, you can buy me a coffee.',
+          heading: 'Thank you for using Santa App! 🎅',
+          text: 'The app is free, has no ads, and I build it in my spare time. If you would like to say thanks, you can buy me a coffee ☕',
           button: 'Buy me a coffee',
         },
         drawDone: {
@@ -569,8 +569,8 @@ const resources = {
         noEnvelope:
           'Losowanie się odbyło. Nie bierzesz w nim udziału, więc nie masz koperty.',
         supportCard: {
-          heading: 'Dziękuję, że korzystasz z Santa App!',
-          text: 'Aplikacja jest darmowa, bez reklam, i robię ją po godzinach. Jeśli chcesz się odwdzięczyć, możesz postawić mi kawę.',
+          heading: 'Dziękuję, że korzystasz z Santa App! 🎅',
+          text: 'Aplikacja jest darmowa, bez reklam, i robię ją po godzinach. Jeśli chcesz się odwdzięczyć, możesz postawić mi kawę ☕',
           button: 'Postaw mi kawę',
         },
         drawDone: {

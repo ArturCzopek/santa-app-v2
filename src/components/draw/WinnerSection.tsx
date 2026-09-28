@@ -26,6 +26,7 @@ import {
 } from '../../services/envelope';
 import { handFont, tokens } from '../../styles/theme';
 import LetterView from './LetterView';
+import SupportCard from './SupportCard';
 
 interface WinnerSectionProps {
   draw: Draw;
@@ -282,6 +283,10 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({
           </PaperCard>
         </Box>
       )}
+
+      <Box sx={{ mt: 2 }}>
+        <SupportCard />
+      </Box>
 
       <Box component="section" sx={{ mt: 4 }}>
         <SectionHeading>
