@@ -89,8 +89,11 @@
   języka i zapamiętanie otwarcia koperty. Nie zmieniać podstaw prawnych, retencji ani obietnic
   usunięcia bez decyzji właściciela; zgłosić Claude'owi każde miejsce, którego nie da się
   opisać jako faktu na podstawie kodu.
-- [ ] S4 – ograniczenie klucza API Firebase w Google Cloud Console (referrery HTTP:
-  `arturczopek.github.io`, `localhost`) i przegląd „Authorized domains” w Firebase Auth. (ręcznie w konsoli)
+- [x] S4 – ograniczenie klucza API Firebase (2026-09-29, Artur w konsoli): referrery
+  `https://arturczopek.github.io/*`, `http://localhost:5173/*`, `https://santa-app-v2.firebaseapp.com/*`,
+  `https://santa-app-v2.web.app/*`; API bez ograniczeń; „Authorized domains” przejrzane. **Pułapka:** bez
+  domeny `firebaseapp.com` logowanie Google kręci się bez końca (403 `API_KEY_HTTP_REFERRER_BLOCKED` z
+  okna logowania). Klucz projektu dev (staging/localhost) nie był ruszany.
 - [ ] S5 – App Check (reCAPTCHA) – opcjonalnie, utrudnia skrypty spoza aplikacji. **Odłożone do grupy Blaze**
   (Claude, 2026-09-28): reCAPTCHA to kolejny dostawca z ciasteczkami Google → zmiana polityki prywatności,
   a przy tej skali zysk mały; ma sens razem z Cloud Functions (F13), które App Check też chroni.
