@@ -1,13 +1,13 @@
 name: Deploy
 
 # Every push to master: all checks and a production build, then deploy Firestore
-# rules + indexes and publish the app to GitHub Pages. Can also create a release by hand.
+# rules + indexes and Cloud Functions, and publish the app to GitHub Pages. Can also create a release by hand.
 #
 # Needs the repository secret FIREBASE_SERVICE_ACCOUNT (service account key
 # JSON) next to the existing VITE_FIREBASE_* secrets.
 #
 # Optional staging: with FIREBASE_SERVICE_ACCOUNT_DEV (key of the dev
-# Firebase project) the same rules go to the dev project
+# Firebase project) the rules and functions go to the dev project
 # first; if that fails, production is not touched.
 on:
   push:
@@ -88,9 +88,9 @@ jobs:
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
 
-      - name: Deploy Firestore rules and indexes (staging)
+      - name: Deploy Firestore rules, indexes and Functions (staging)
         if: env.HAS_STAGING == 'true'
-        run: npx firebase deploy --only firestore --project "${{ steps.auth-staging.outputs.project_id }}" --non-interactive
+        run: npx firebase deploy --only firestore,functions --project "${{ steps.auth-staging.outputs.project_id }}" --non-interactive
 
       # Production.
       - name: Authenticate to Google Cloud
@@ -98,8 +98,8 @@ jobs:
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
-      - name: Deploy Firestore rules and indexes
-        run: npx firebase deploy --only firestore --project "${{ secrets.VITE_FIREBASE_PROJECT_ID }}" --non-interactive
+      - name: Deploy Firestore rules, indexes and Functions
+        run: npx firebase deploy --only firestore,functions --project "${{ secrets.VITE_FIREBASE_PROJECT_ID }}" --non-interactive
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

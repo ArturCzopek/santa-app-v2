@@ -275,3 +275,13 @@ optional link to the author's buycoffee.to profile.
 The app does not process payments or record clicks; visitors who follow the
 link leave Santa App. The privacy policy names buycoffee.to as an external service
 and no longer calls the project non-commercial.
+
+## D40. Blaze plan and Cloud Functions in europe-central2, Accepted
+Both Firebase projects (production and dev) use Blaze. Cloud Functions v2 run
+in europe-central2, the same region as Firestore, on the Node.js 22 runtime.
+`maxInstances: 5` caps runaway cost. Each Google Cloud project has a monthly
+budget of 5 USD, with alerts at 50%, 90% and 100%. The deploy service account
+gets Cloud Functions Admin, Service Account User, Artifact Registry Writer and
+Cloud Build Editor on top of its existing roles; narrowing these permissions is
+tracked as S8. Function code lives in `functions/` and deploys through the same
+workflow as Firestore rules.

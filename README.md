@@ -171,7 +171,9 @@ CI (`.github/workflows/ci.yml`) runs lint, typecheck, the production build,
 tests and E2E on pull requests and pushes to branches other than `master`.
 Typecheck covers source, tests, E2E files and TypeScript config; strict mode
 is on, but `noImplicitAny` is off. The emulator-based test commands use ports
-8080, 9099 and 5173, so stop manually started development emulators first.
+8080, 9099, 5001 and 5173, so stop manually started development emulators first.
+Cloud Functions v2 source lives in `functions/`; emulator-based test commands
+also start its emulator.
 
 ## Deployment
 

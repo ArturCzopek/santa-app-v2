@@ -6,7 +6,7 @@ import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 
 export default tseslint.config(
-  { ignores: ['build/', 'node_modules/', '.firebase/'] },
+  { ignores: ['build/', 'node_modules/', '.firebase/', 'functions/lib/'] },
   js.configs.recommended,
   tseslint.configs.recommended,
   {
@@ -26,6 +26,10 @@ export default tseslint.config(
   },
   {
     files: ['scripts/**/*.mjs', 'tests/**/*.{ts,tsx}', '*.config.{ts,mjs}'],
+    languageOptions: { globals: globals.node },
+  },
+  {
+    files: ['functions/**/*.ts'],
     languageOptions: { globals: globals.node },
   },
   {

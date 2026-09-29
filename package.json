@@ -18,8 +18,8 @@
     "emulators:reset": "node -e \"require('fs').rmSync('.emulator-data', { recursive: true, force: true })\"",
     "dev:emulators": "vite --mode emulators",
     "dev:staging": "vite --mode staging",
-    "test": "firebase emulators:exec --only auth,firestore --project demo-santa-app \"vitest run\"",
-    "test:e2e": "firebase emulators:exec --only auth,firestore --project demo-santa-app \"playwright test\"",
+    "test": "firebase emulators:exec --only auth,firestore,functions --project demo-santa-app \"vitest run\"",
+    "test:e2e": "firebase emulators:exec --only auth,firestore,functions --project demo-santa-app \"playwright test\"",
     "deploy:rules": "firebase deploy --only firestore"
   },
   "dependencies": {
