@@ -231,6 +231,13 @@ niezrobiony punkt z tej listy (przed startem sprawdzić jego stan w kodzie):
 3. **Bez Blaze, przed Blaze (decyzja Artura 2026-09-27):** F15.
 4. **Wymagają Blaze (F0) – na sam koniec:** F2, F3 (przypomnienia), F13, F18 (własny mail logowania).
 
+**Stan 2026-09-29:** kod na ten sezon skończony i wdrożony. Zostało (Artur, bez kodu):
+- [ ] przed sezonem uzupełnić profil `buycoffee.to/czopo` (zdjęcie, opis) – wypłaty już podpięte;
+- [ ] F21 – decyzja o domenie `.pl` (~50 zł/rok): największy zysk dla SEO i zaufania, pomaga też F18
+  (nadawca maila). Po zakupie: GitHub Pages custom domain, nowy adres w `index.html` (canonical, og:url,
+  og:image), Authorized domains, referrery klucza API (S4), ponowna weryfikacja w Search Console;
+- [ ] po sezonie: Search Console (wyświetlenia, frazy) i liczba wpłat z \$7 → wejście do decyzji o \$8.
+
 Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), partnerskie odłożone, \$8 po analizie sezonu.
 
 - [ ] **F0 – przejście na plan Blaze** (decyzja Artura: OK, gdy będzie potrzebny). Przy tej skali
