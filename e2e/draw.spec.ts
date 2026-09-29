@@ -138,6 +138,9 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
     name: 'Gotowe! Pary wylosowane',
   });
   await expect(done.getByText('Koperty już czekają!')).toBeVisible();
+  await expect(
+    done.getByRole('link', { name: 'Postaw mi kawę' }),
+  ).toHaveCount(0);
   await expectNoHorizontalScroll(owner.page);
   await done.getByRole('button', { name: 'Zamknij' }).click();
   await expect(
@@ -159,6 +162,18 @@ test('a whole Secret Santa: create, invite, join, letters, draw, results', async
     await openDraw(person.page, 'Wigilia E2E');
     const result = await openResult(person.page);
     await expectNoHorizontalScroll(person.page);
+    await expect(
+      result.getByRole('heading', {
+        name: 'Dziękuję, że korzystasz z Santa App! 🎅',
+      }),
+    ).toBeVisible();
+    const coffeeLink = result.getByRole('link', { name: 'Postaw mi kawę' });
+    await expect(coffeeLink).toHaveAttribute(
+      'href',
+      'https://buycoffee.to/czopo',
+    );
+    await expect(coffeeLink).toHaveAttribute('target', '_blank');
+    await expect(coffeeLink).toHaveAttribute('rel', 'noopener noreferrer');
     const text = await result.innerText();
     const shown = everyone.map((p) => p.name).filter((n) => text.includes(n));
     expect(shown).toHaveLength(1);
