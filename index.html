@@ -1,27 +1,215 @@
 <!doctype html>
 <html lang="pl">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39;; script-src &#39;self&#39; https://apis.google.com; style-src &#39;self&#39; &#39;unsafe-inline&#39; https://fonts.googleapis.com; font-src &#39;self&#39; https://fonts.gstatic.com; img-src &#39;self&#39; https://*.googleusercontent.com; connect-src &#39;self&#39; https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com; frame-src https://santa-app-v2.firebaseapp.com https://www.youtube-nocookie.com; object-src &#39;none&#39;; base-uri &#39;self&#39;; form-action &#39;self&#39;">
+
     <meta charset="UTF-8" />
-    <title>Santa App – Tajemniczy Mikołaj online</title>
+    <title>Secret Santa – losowanie Mikołajek online | Santa App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Losowanie Tajemniczego Mikołaja bez karteczek w czapce: jeden link dla całej grupy, listy do Mikołaja i tajne pary." />
+    <meta
+      name="description"
+      content="Secret Santa online: losowanie na Mikołajki jak w szkole, bez karteczek. Jeden link dla grupy, tajne pary i listy do Mikołaja. Za darmo."
+    />
     <meta name="theme-color" content="#0E2A1E" />
+    <link rel="canonical" href="https://arturczopek.github.io/santa-app-v2/" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="Santa App" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Santa App – List do Mikołaja" />
+    <meta property="og:title" content="Secret Santa – losowanie Mikołajek online | Santa App" />
+    <meta
+      property="og:description"
+      content="Secret Santa online: losowanie na Mikołajki jak w szkole, bez karteczek. Jeden link dla grupy, tajne pary i listy do Mikołaja. Za darmo."
+    />
+    <meta property="og:url" content="https://arturczopek.github.io/santa-app-v2/" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:locale:alternate" content="en_GB" />
+    <meta
+      property="og:image"
+      content="https://arturczopek.github.io/santa-app-v2/og-image.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Zielona kartka pocztowa Santa App z napisem Secret Santa – losowanie Mikołajek online"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Secret Santa – losowanie Mikołajek online | Santa App" />
+    <meta
+      name="twitter:description"
+      content="Secret Santa online: losowanie na Mikołajki jak w szkole, bez karteczek. Jeden link dla grupy, tajne pary i listy do Mikołaja. Za darmo."
+    />
+    <meta
+      name="twitter:image"
+      content="https://arturczopek.github.io/santa-app-v2/og-image.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Zielona kartka pocztowa Santa App z napisem Secret Santa – losowanie Mikołajek online"
+    />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="./assets/favicon-BPWd7KfX.ico">
-    <script type="module" crossorigin src="./assets/index-CEstI89e.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/x-icon" href="./assets/favicon-BPWd7KfX.ico" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "Santa App",
+            "url": "https://arturczopek.github.io/santa-app-v2/",
+            "applicationCategory": "LifestyleApplication",
+            "operatingSystem": "Web",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "PLN"
+            },
+            "inLanguage": ["pl", "en"]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Jak działa Secret Santa w Santa App?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Organizator zakłada losowanie i wysyła wszystkim jeden link. Osoby biorące udział dołączają ze swoich telefonów i piszą listy do Mikołaja: co chciałyby dostać. Gdy gracze są gotowi, organizator losuje pary. Każda osoba biorąca udział otwiera swoją kopertę i widzi tylko to, komu kupuje prezent, razem z listem tej osoby."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Jak dołączyć do losowania?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Otwórz link z zaproszenia i zaloguj się kontem Google albo linkiem wysłanym na e-mail. Z linkiem z zaproszenia wystarczy stuknąć „Dołącz do losowania”; ze zwykłym linkiem trzeba jeszcze wpisać hasło od organizatora."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Co to znaczy, że para się nie wylosuje?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Organizator może wskazać pary, które nie powinny wylosować siebie nawzajem – na przykład małżonków, którzy i tak kupują sobie prezenty. Działa to w obie strony. Aplikacja nie pozwoli dodać pary, przez którą losowanie byłoby niemożliwe."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Jak nie zapomnieć o wręczeniu prezentów?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Jeśli organizator podał datę, na stronie losowania jest przycisk „Dodaj do kalendarza”. Wydarzenie trafi do kalendarza w telefonie razem z linkiem do losowania."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Czy to coś kosztuje?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Nie. Santa App jest darmowa i działa w przeglądarce; dodanie jej do ekranu telefonu jest opcjonalne."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="./assets/index-MkkR6yk0.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-CbXtAM7H.js">
-    <link rel="modulepreload" crossorigin href="./assets/mui-CPzXDvZ8.js">
-    <link rel="modulepreload" crossorigin href="./assets/react-CDSW2fXS.js">
-    <link rel="modulepreload" crossorigin href="./assets/vendor-D6o-Hglq.js">
+    <link rel="modulepreload" crossorigin href="./assets/mui-BOUi_j-h.js">
+    <link rel="modulepreload" crossorigin href="./assets/react-OcaKV24k.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-CweFLhpZ.js">
     <link rel="modulepreload" crossorigin href="./assets/firebase-CSk7GJdG.js">
     <link rel="stylesheet" crossorigin href="./assets/index-KrfumMBl.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main class="seo-fallback">
+        <header>
+          <h1>Secret Santa – losowanie na Mikołajki online</h1>
+          <p>
+            Santa App pomaga zorganizować losowanie prezentów dla rodziny, znajomych i zespołu.
+            Jak w szkole, tylko bez karteczek: tajne pary i listy do Mikołaja.
+          </p>
+        </header>
+
+        <section aria-labelledby="seo-how-it-works">
+          <h2 id="seo-how-it-works">Jak to działa?</h2>
+          <ol>
+            <li>Załóż losowanie i ustaw jego szczegóły.</li>
+            <li>Wyślij grupie jeden link do dołączenia.</li>
+            <li>
+              Każdy dołącza, pisze list, a po losowaniu dostaje tajną parę i list do Mikołaja.
+            </li>
+          </ol>
+        </section>
+
+        <section aria-labelledby="seo-features">
+          <h2 id="seo-features">Co oferuje Santa App?</h2>
+          <ul>
+            <li>Wykluczenia par, które nie powinny wylosować siebie nawzajem.</li>
+            <li>Listy do Mikołaja z rzeczami, które uczestnicy chcą dostać.</li>
+            <li>Data i miejsce wręczenia prezentów oraz dodanie terminu do kalendarza.</li>
+            <li>Logowanie przez Google lub linkiem wysłanym na e-mail.</li>
+            <li>Obsługa języka polskiego i angielskiego.</li>
+            <li>Bezpłatnie i bez reklam.</li>
+          </ul>
+        </section>
+
+        <section class="seo-faq" aria-labelledby="seo-faq-title">
+          <h2 id="seo-faq-title">Najczęstsze pytania</h2>
+          <details class="faq-item">
+            <summary>Jak działa Secret Santa w Santa App?</summary>
+            <p>
+              Organizator zakłada losowanie i wysyła wszystkim jeden link. Osoby biorące udział
+              dołączają ze swoich telefonów i piszą listy do Mikołaja: co chciałyby dostać.
+            </p>
+            <p>
+              Gdy gracze są gotowi, organizator losuje pary. Każda osoba biorąca udział otwiera
+              swoją kopertę i widzi tylko to, komu kupuje prezent, razem z listem tej osoby.
+            </p>
+          </details>
+          <details class="faq-item">
+            <summary>Jak dołączyć do losowania?</summary>
+            <p>
+              Otwórz link z zaproszenia i zaloguj się kontem Google albo linkiem wysłanym na
+              e-mail. Z linkiem z zaproszenia wystarczy stuknąć „Dołącz do losowania”; ze zwykłym
+              linkiem trzeba jeszcze wpisać hasło od organizatora.
+            </p>
+          </details>
+          <details class="faq-item">
+            <summary>Co to znaczy, że para się nie wylosuje?</summary>
+            <p>
+              Organizator może wskazać pary, które nie powinny wylosować siebie nawzajem – na
+              przykład małżonków, którzy i tak kupują sobie prezenty. Działa to w obie strony.
+              Aplikacja nie pozwoli dodać pary, przez którą losowanie byłoby niemożliwe.
+            </p>
+          </details>
+          <details class="faq-item">
+            <summary>Jak nie zapomnieć o wręczeniu prezentów?</summary>
+            <p>
+              Jeśli organizator podał datę, na stronie losowania jest przycisk „Dodaj do
+              kalendarza”. Wydarzenie trafi do kalendarza w telefonie razem z linkiem do losowania.
+            </p>
+          </details>
+          <details class="faq-item">
+            <summary>Czy to coś kosztuje?</summary>
+            <p>
+              Nie. Santa App jest darmowa i działa w przeglądarce; dodanie jej do ekranu telefonu
+              jest opcjonalne.
+            </p>
+          </details>
+        </section>
+      </main>
+    </div>
   </body>
 </html>
