@@ -6,6 +6,7 @@
     "node": "22"
   },
   "scripts": {
+    "prebuild": "node -e \"require('fs').copyFileSync('../src/services/pairs.ts', 'src/pairs.ts')\"",
     "build": "tsc"
   },
   "dependencies": {
@@ -13,6 +14,7 @@
     "firebase-functions": "^7.4.0"
   },
   "devDependencies": {
+    "@types/node": "^22.20.4",
     "typescript": "~6.0.3"
   }
 }

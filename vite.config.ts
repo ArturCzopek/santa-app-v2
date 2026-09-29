@@ -9,7 +9,7 @@ const contentSecurityPolicy = (authDomain?: string) => {
     "font-src 'self' https://fonts.gstatic.com",
     // Google account photos (navbar avatar, participant stamps).
     "img-src 'self' https://*.googleusercontent.com",
-    "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com",
+    "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://europe-central2-*.cloudfunctions.net",
     `frame-src ${[
       authDomain && `https://${authDomain}`,
       'https://www.youtube-nocookie.com',

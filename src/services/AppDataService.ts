@@ -35,13 +35,6 @@ export class AppDataService {
     );
   }
 
-  addDrawStarted(batch: WriteBatch, drawId: string, winnersCount: number): void {
-    batch.set(
-      this.appDataDocRef,
-      { winnersCount: increment(winnersCount), lastDrawId: drawId },
-      { merge: true },
-    );
-  }
 }
 
 export const appDataService = new AppDataService();

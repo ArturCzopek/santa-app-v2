@@ -1,8 +1,11 @@
-import { Pair } from '../models/Draw';
+export type Pair = {
+  fromUuid: string;
+  toUuid: string;
+};
 
 export type RandomInt = (maxExclusive: number) => number;
 
-// Uniform random integer in [0, maxExclusive) from the browser's CSPRNG.
+// Uniform random integer in [0, maxExclusive) from the global CSPRNG.
 export const cryptoRandomInt: RandomInt = (maxExclusive) => {
   const range = 2 ** 32;
   const limit = range - (range % maxExclusive); // avoid modulo bias

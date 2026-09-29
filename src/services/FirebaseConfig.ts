@@ -1,6 +1,10 @@
 import { initializeApp } from 'firebase/app';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import {
+  connectFunctionsEmulator,
+  getFunctions,
+} from 'firebase/functions';
+import {
   connectAuthEmulator,
   getAuth,
   GoogleAuthProvider,
@@ -26,11 +30,13 @@ if (!firebaseConfig.projectId) {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const functions = getFunctions(app, 'europe-central2');
 
 // Local development and tests against the Firebase emulators
 // (npm run dev:emulators). Vite drops this block from production builds.
 if (import.meta.env.VITE_USE_EMULATORS === 'true') {
   connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  connectFunctionsEmulator(functions, '127.0.0.1', 5001);
   connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
 
   // E2E tests sign in through this: the Auth emulator accepts unsigned
@@ -55,4 +61,4 @@ if (import.meta.env.VITE_USE_EMULATORS === 'true') {
   }
 }
 
-export { auth, db };
+export { auth, db, functions };

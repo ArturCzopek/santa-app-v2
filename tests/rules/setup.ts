@@ -120,3 +120,21 @@ export const writeLetter = (
   });
   return batch.commit();
 };
+
+export const seedDrawn = (
+  env: RulesTestEnvironment,
+  drawId: string,
+  pairs: [string, string][] = [],
+) =>
+  env.withSecurityRulesDisabled(async (ctx) => {
+    const db = ctx.firestore();
+    const batch = writeBatch(db);
+    batch.update(doc(db, `draws/${drawId}`), {
+      status: 'DRAWED',
+      drawDate: serverTimestamp(),
+    });
+    pairs.forEach(([giverUid, toUuid]) =>
+      batch.set(doc(db, `draws/${drawId}/assignments/${giverUid}`), { toUuid }),
+    );
+    await batch.commit();
+  });

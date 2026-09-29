@@ -12,7 +12,8 @@ import {
   getDocs,
   terminate,
 } from 'firebase/firestore';
-import { auth, db } from '../../src/services/FirebaseConfig';
+import { httpsCallable } from 'firebase/functions';
+import { auth, db, functions } from '../../src/services/FirebaseConfig';
 import { drawService } from '../../src/services/DrawService';
 import { messageService } from '../../src/services/MessageService';
 import { appDataService } from '../../src/services/AppDataService';
@@ -54,6 +55,11 @@ const newDrawForm = {
   ownerPlays: true,
   password: 'secret1',
 };
+
+const startDrawOnServer = httpsCallable<
+  { drawId: string },
+  { drawDate: string }
+>(functions, 'startDraw');
 
 const letter = (wish: string, comment = ''): Letter => ({
   wish,
@@ -119,7 +125,12 @@ describe('DrawService against the emulator', () => {
     ]);
     const started = await drawService.startDraw(drawId, owner.uid);
     expect(started.status).toBe('DRAWED');
+    expect(started.drawDate).toBeInstanceOf(Date);
+    expect(started).not.toHaveProperty('pairs');
     await expect(drawService.startDraw(drawId, owner.uid)).rejects.toThrow();
+    await expect(startDrawOnServer({ drawId })).rejects.toMatchObject({
+      code: 'functions/failed-precondition',
+    });
 
     const pairs: Pair[] = [];
     for (const [sub, name, uid] of [
@@ -147,6 +158,61 @@ describe('DrawService against the emulator', () => {
     expect(await appDataService.getAppData()).toEqual({
       drawsCount: 1,
       winnersCount: 3,
+    });
+  });
+
+  it('draws on the server with a valid bijection that respects exclusions', async () => {
+    const owner = await signInAs('owner', 'Olga Owner');
+    const drawId = await drawService.createDraw(newDrawForm, owner);
+    const alice = await signInAs('alice', 'Ania Test');
+    await drawService.joinToDraw(drawId, alice, 'secret1');
+    const bob = await signInAs('bob', 'Bob Test');
+    await drawService.joinToDraw(drawId, bob, 'secret1');
+    const charlie = await signInAs('charlie', 'Charlie Test');
+    await drawService.joinToDraw(drawId, charlie, 'secret1');
+
+    await signInAs('owner', 'Olga Owner');
+    const exclusions: [string, string][] = [[owner.uid, alice.uid]];
+    await drawService.addExclusion(drawId, exclusions[0]);
+    const started = await drawService.startDraw(drawId, owner.uid);
+
+    const players = [owner.uid, alice.uid, bob.uid, charlie.uid];
+    const pairs: Pair[] = [];
+    for (const [sub, name, uid] of [
+      ['owner', 'Olga Owner', owner.uid],
+      ['alice', 'Ania Test', alice.uid],
+      ['bob', 'Bob Test', bob.uid],
+      ['charlie', 'Charlie Test', charlie.uid],
+    ]) {
+      await signInAs(sub, name);
+      const assignment = await drawService.getMyAssignment(drawId, uid);
+      expect(assignment).not.toBeNull();
+      pairs.push({ fromUuid: uid, toUuid: assignment!.toUuid });
+    }
+
+    expect(started.status).toBe('DRAWED');
+    expect(isValidDraw(pairs, players, exclusions)).toBe(true);
+    expect(await drawService.getDraw(drawId)).toMatchObject({
+      status: 'DRAWED',
+    });
+    expect(await appDataService.getAppData()).toMatchObject({
+      drawsCount: 1,
+      winnersCount: 4,
+    });
+  });
+
+  it('the callable rejects non-owners and draws with fewer than two players', async () => {
+    const owner = await signInAs('owner', 'Olga Owner');
+    const drawId = await drawService.createDraw(newDrawForm, owner);
+
+    await signInAs('alice', 'Ania Test');
+    await expect(startDrawOnServer({ drawId })).rejects.toMatchObject({
+      code: 'functions/permission-denied',
+    });
+
+    await signInAs('owner', 'Olga Owner');
+    await expect(startDrawOnServer({ drawId })).rejects.toMatchObject({
+      code: 'functions/failed-precondition',
     });
   });
 

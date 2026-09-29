@@ -10,22 +10,24 @@ the [README](../README.md).
  Browser (React app on GitHub Pages)
    │   Google sign-in (popup) or an email link (Firebase Auth)
    │   reads and writes directly
-   ▼
- Firestore ── firestore.rules decide every read and write
+   ├── callable startDraw ──► Cloud Functions (europe-central2)
+   ▼                             │
+ Firestore ◄─────────────────────┘
 ```
 
-There is **no server of our own** ([D1](04-decisions.md)). The browser talks to Firebase
-directly, and the security rules in [`firestore.rules`](../firestore.rules) are the only
-thing that protects the data. That is why the rules carry most of the logic that would
-normally sit in a backend (who may join, who may read a letter, that a result is written
-once), and why they have the largest test suite (`tests/rules`).
+There is **no server to manage**: Firebase hosts the app's callable Cloud Function. The
+browser reads and writes Firestore directly for ordinary operations; its security rules
+protect those requests. The draw function uses the Admin SDK, so it checks the owner, draw
+state and player count itself before generating and writing the complete result in one
+transaction.
 
 - **App:** React 19, TypeScript, MUI 9, React Router with hash routes (`#/draw/…`, see
   [D2](04-decisions.md)), i18next with Polish and English (the language switch is in the footer).
-- **Firebase:** Authentication (Google, or a sign-in link by email – [D38](04-decisions.md)) and Firestore. Free Spark plan: no Cloud
-  Functions, so nothing runs on a server or on a schedule.
+- **Firebase:** Authentication (Google, or a sign-in link by email – [D38](04-decisions.md)),
+  Firestore, and Cloud Functions v2 on the Blaze plan ([D40](04-decisions.md)). The draw
+  callable runs in `europe-central2` on Node.js 22.
 - **Hosting:** GitHub Pages. On pushes to `master`, GitHub Actions builds the app before
-  deploying Firestore rules, then publishes the built app. `public/` contains the PWA
+  deploying Firestore rules and Cloud Functions, then publishes the built app. `public/` contains the PWA
   manifest and install icons; there is no service worker.
 
 ## Routes
@@ -82,7 +84,7 @@ thanks can change as described below.
   letters without `comment` read as an empty string, and existing wish lines load as items.
 - A draw supports up to 100 participants and currencies `PLN`, `EUR`, `USD`, or `GBP`.
 - The password form requires at least 6 characters. The owner stays a participant for management access, and `ownerPlays` decides whether they are included among the players; missing means `true` for older draws.
-- Draw status moves from `WAITING_FOR_DRAW` to `DRAWED`; `DRAWED` is terminal.
+- Draw status moves from `WAITING_FOR_DRAW` to `DRAWED`; `DRAWED` is terminal. Only the server can start a draw or write assignments.
 
 ## What happens at each step
 
@@ -110,22 +112,15 @@ never the text.
 existing pair. Before saving, the app checks that a draw is still possible
 (`isDrawPossible` in [`pairs.ts`](../src/services/pairs.ts)).
 
-**Starting the draw** (`StartDrawModal` -> `DrawService.startDraw`). The owner types the
-password, which the app checks against the join key (the invite link's key does not count,
-so whoever has the link still cannot start the draw). Then the owner's browser:
-
-1. reads the exclusions (only the owner may),
-2. gets the players from `participantUuids` (excluding the owner only when `ownerPlays` is
-   false; see `getDrawPlayers` in [`Draw.ts`](../src/models/Draw.ts)), then draws the pairs
-   with `generatePairs`: first it looks for **one circle through everyone** (A -> B -> C -> A),
-   which feels most like drawing from a hat; if exclusions make that impossible, it takes
-   any valid set where everyone gives and receives exactly once. Exclusions involving a
-   non-player are ignored. It never pairs anyone with themselves or with an excluded
-   partner, and uses the browser's cryptographic random numbers,
-3. writes, in one batch, the status change and one `assignments/{giver}` document per
-   player, readable only by that giver.
-
-From then on no browser holds the whole result.
+**Starting the draw** (`StartDrawModal` -> `DrawService.startDraw` -> callable `startDraw`).
+The owner types the password, which the app checks against the join key (the invite link's
+key does not count). The client does inexpensive checks, then sends only the draw id to the
+callable. In a Firestore transaction the function checks ownership, status and the player
+count, reads the private exclusions, and calls the shared `generatePairs` algorithm. It first
+looks for **one circle through everyone** (A -> B -> C -> A); if exclusions make that
+impossible, it finds any valid one-to-one assignment. It writes the status, server timestamp,
+one `assignments/{giver}` document per player and the `winnersCount` increment together. The
+organizer's browser receives the draw date, never the pairs ([D41](04-decisions.md)).
 
 **Marking a gift and thanking a Santa** (`WinnerSection`, `ParticipantsSection`). A player
 updates only `giftBought` on their own participant document after the draw and only if they
@@ -153,8 +148,7 @@ no payment or click data and has no payment integration.
 
 ## Trade-offs and known limits
 
-- The organizer's browser temporarily holds every pair ([D3](04-decisions.md#d3-the-pairs-are-drawn-in-the-organizers-browser-accepted)).
-- Rules check assignment documents individually and do not prove the full result is a complete one-to-one matching ([F13](../BACKLOG.md)).
+- The callable uses the Admin SDK and bypasses Firestore rules, so its owner and matching checks are the trusted boundary; clients cannot start draws or write assignments ([D41](04-decisions.md)).
 - Large waiting-draw deletion handles many exclusions by deleting them in chunks first ([F17](../BACKLOG.md)).
 - Reads cast documents to types without runtime validation; schema changes needing migrations require a versioned script and compatibility tests with that change ([S9](../BACKLOG.md)).
 
@@ -167,9 +161,10 @@ no payment or click data and has no payment integration.
 | `src/components/common/` | The design's building blocks: `PaperCard`, `Postmark`, `StampAvatar`, `ConfirmDialog` |
 | `src/components/form/` | Form fields on paper, the password field, form buttons |
 | `src/services/` | Everything that talks to Firebase (`DrawService`, `MessageService`, `AppDataService`), the pairing algorithm (`pairs.ts`), password hashing, in-app browser detection |
+| `functions/src/` | Callable server functions; the build copies the shared pairing algorithm here |
 | `src/styles/theme.ts` | Colour tokens, fonts, the MUI theme, the focus ring |
 | `src/i18n.ts` | All texts, Polish and English |
-| `firestore.rules` | The security rules, i.e. the backend |
+| `firestore.rules` | Client read/write authorization and validation rules |
 | `scripts/` | Test data for the emulators (`seedEmulators.mjs`) |
 | `tests/` | `rules`, `services` (against emulators), `components` (React Testing Library), `unit` |
 | `e2e/` | Playwright: the whole Secret Santa with several people, on desktop and phone |

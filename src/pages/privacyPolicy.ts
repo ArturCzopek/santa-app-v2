@@ -2,7 +2,7 @@
 // it is long prose; the page picks the language like the rest of the app.
 // Update LAST_UPDATED whenever the content changes.
 
-export const LAST_UPDATED = '2026-09-28';
+export const LAST_UPDATED = '2026-09-29';
 
 export type PolicySection = {
   heading: string;
@@ -41,8 +41,8 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
         'Uczestnicy tego samego losowania widzą Twoje imię, zdjęcie i to, czy napiszesz list. Zalogowana osoba z linkiem do losowania widzi tylko informacje o nim samym (nazwę, opis, budżet, datę i miejsce, organizatora) – na stronie z zaproszeniem.',
         'Treść Twojego listu do Mikołaja widzisz tylko Ty i – po losowaniu – osoba, która Cię wylosuje. Nikt inny, także organizator, nie ma do niej dostępu.',
         'Podziękowanie widzisz tylko Ty i Twój Mikołaj. Nikt inny, także organizator, nie ma do niego dostępu. Uczestnicy widzą, czy kupiono już prezent – nie widzą, dla kogo.',
-        'Wynik losowania (kogo obdarowujesz) widzisz tylko Ty. Wykluczenia par widzi tylko organizator.',
-        'Dane przechowują dostawcy usług, z których korzysta aplikacja: Google (Firebase Authentication – logowanie, Cloud Firestore – baza danych, Google Fonts – czcionki), GitHub (GitHub Pages – strona aplikacji) i YouTube (filmy, ładowane w trybie bez plików cookie dopiero, gdy są widoczne). Google może przetwarzać dane także poza Europejskim Obszarem Gospodarczym, na zasadach opisanych w swoich warunkach ochrony danych.',
+        'Losowanie przeprowadza serwer Santa App (Google Cloud Functions w Warszawie). Pełnego wyniku nie widzi nikt, także organizator; Ty widzisz tylko swój wynik (kogo obdarowujesz). Wykluczenia par widzi tylko organizator.',
+        'Dane przechowują dostawcy usług, z których korzysta aplikacja: Google (Firebase Authentication – logowanie, Cloud Firestore – baza danych, Google Cloud Functions – serwer losujący w Warszawie, Google Fonts – czcionki), GitHub (GitHub Pages – strona aplikacji) i YouTube (filmy, ładowane w trybie bez plików cookie dopiero, gdy są widoczne). Google może przetwarzać dane także poza Europejskim Obszarem Gospodarczym, na zasadach opisanych w swoich warunkach ochrony danych.',
       ],
     },
     {
@@ -99,8 +99,8 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
         'Participants of the same draw see your name, photo and whether you wrote a letter. A signed-in person with the draw’s link sees only the draw itself (name, description, budget, date and place, organizer) – on the invite page.',
         'Only you and – after the draw – the person who draws you can read your letter to Santa. Nobody else, not even the organizer, has access to it.',
         'Only you and your Santa can read your thank-you note. Nobody else, not even the organizer, has access to it. Participants see whether a person has bought their gift – not for whom.',
-        'Only you see your result (whom you give a gift to). Only the organizer sees the excluded pairs.',
-        'The data is kept by the providers the app uses: Google (Firebase Authentication – sign-in, Cloud Firestore – database, Google Fonts – fonts), GitHub (GitHub Pages – the app’s website) and YouTube (videos, loaded in no-cookie mode only when they are shown). Google may also process data outside the European Economic Area, under its data protection terms.',
+        'Santa App’s server (Google Cloud Functions in Warsaw) runs the draw. Nobody, including the organizer, can see the full result; you see only your own result (whom you give a gift to). Only the organizer sees the excluded pairs.',
+        'The data is kept by the providers the app uses: Google (Firebase Authentication – sign-in, Cloud Firestore – database, Google Cloud Functions – the draw server in Warsaw, Google Fonts – fonts), GitHub (GitHub Pages – the app’s website) and YouTube (videos, loaded in no-cookie mode only when they are shown). Google may also process data outside the European Economic Area, under its data protection terms.',
       ],
     },
     {

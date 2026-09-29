@@ -149,6 +149,10 @@ only when they chose to play). The dialog shows:
 The draw makes one gift circle through everyone when it can (A -> B -> C -> A), never
 pairing anyone with themselves or with someone they are excluded with.
 
+Santa App's server runs the draw using Google Cloud Functions in Warsaw. Nobody, including
+the organizer, sees the full result; each player can open only their own envelope. See
+[D41](04-decisions.md#d41-the-draw-runs-in-a-cloud-function-accepted-supersedes-d3).
+
 Right after it the organizer gets *Gotowe! Pary wylosowane*: a postcard *Koperty już czekają!*
 with a ready message for the group (link, budget, date and place), to share or copy. Nothing
 else tells people the draw has happened, so this is the moment to send it. *Daj znać
@@ -174,8 +178,8 @@ again, which is fine). After the draw the participants list folds away initially
 opened, it shows gift status instead of letter status. The organizer sees the number of
 players who have bought their gifts.
 
-**Nobody sees any pair other than their own**, the organizer included (with one known
-caveat for a technically skilled organizer, see [D3](04-decisions.md#d3-the-pairs-are-drawn-in-the-organizers-browser-accepted)). An organizer who opted out has no envelope.
+**Nobody sees any pair other than their own**, the organizer included. An organizer who
+opted out has no envelope.
 
 ## Changing your mind
 

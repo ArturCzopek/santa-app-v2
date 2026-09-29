@@ -31,6 +31,7 @@ import {
   newDraw,
   newParticipant,
   OWNER,
+  seedDrawn,
   writeLetter,
 } from './setup';
 
@@ -203,9 +204,7 @@ describe('draws', () => {
     });
 
     it('cannot join a draw that already took place', async () => {
-      await env.withSecurityRulesDisabled((ctx) =>
-        updateDoc(doc(ctx.firestore(), 'draws/d1'), { status: 'DRAWED' }),
-      );
+      await seedDrawn(env, 'd1');
       await assertFails(joinDraw(authed(env, ALICE), 'd1', ALICE));
     });
   });
@@ -227,9 +226,15 @@ describe('draws', () => {
       await assertFails(deleteDoc(doc(db, 'draws/d1')));
     });
 
-    it('participant cannot start the draw', async () => {
+    it('neither participant nor owner can start the draw from a client', async () => {
       await assertFails(
         updateDoc(doc(authed(env, ALICE), 'draws/d1'), {
+          status: 'DRAWED',
+          drawDate: serverTimestamp(),
+        }),
+      );
+      await assertFails(
+        updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
           status: 'DRAWED',
           drawDate: serverTimestamp(),
         }),
@@ -237,9 +242,7 @@ describe('draws', () => {
     });
 
     it('owner cannot reset a finished draw', async () => {
-      await env.withSecurityRulesDisabled((ctx) =>
-        updateDoc(doc(ctx.firestore(), 'draws/d1'), { status: 'DRAWED' }),
-      );
+      await seedDrawn(env, 'd1');
       await assertFails(
         updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
           status: 'WAITING_FOR_DRAW',
@@ -350,17 +353,12 @@ describe('draws', () => {
 
     it('after the draw only the Santa reads the recipient’s letter', async () => {
       await writeLetter(authed(env, ALICE), 'd1', ALICE, 'Socks');
-      const db = authed(env, OWNER);
-      const batch = writeBatch(db);
-      batch.update(doc(db, 'draws/d1'), {
-        status: 'DRAWED',
-        drawDate: serverTimestamp(),
-      });
       // Bob gives to Alice.
-      batch.set(doc(db, `draws/d1/assignments/${BOB}`), { toUuid: ALICE });
-      batch.set(doc(db, `draws/d1/assignments/${ALICE}`), { toUuid: OWNER });
-      batch.set(doc(db, `draws/d1/assignments/${OWNER}`), { toUuid: BOB });
-      await batch.commit();
+      await seedDrawn(env, 'd1', [
+        [BOB, ALICE],
+        [ALICE, OWNER],
+        [OWNER, BOB],
+      ]);
 
       await assertSucceeds(getDoc(doc(authed(env, BOB), letter(ALICE))));
       await assertSucceeds(getDoc(doc(authed(env, ALICE), letter(ALICE))));
@@ -371,10 +369,7 @@ describe('draws', () => {
 
     it('after the draw nobody writes, changes or clears a letter', async () => {
       await writeLetter(authed(env, ALICE), 'd1', ALICE, 'Socks');
-      await updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
-        status: 'DRAWED',
-        drawDate: serverTimestamp(),
-      });
+      await seedDrawn(env, 'd1');
 
       await assertFails(
         writeLetter(authed(env, ALICE), 'd1', ALICE, 'A bike instead'),
@@ -471,10 +466,7 @@ describe('draws', () => {
         }),
       );
 
-      await updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
-        status: 'DRAWED',
-        drawDate: serverTimestamp(),
-      });
+      await seedDrawn(env, 'd1');
       await assertFails(
         setDoc(doc(authed(env, OWNER), `draws/d1/joinKeys/${'f'.repeat(64)}`), {
           createdDate: serverTimestamp(),
@@ -512,10 +504,7 @@ describe('draws', () => {
       await assertSucceeds(
         updateDoc(doc(db, 'draws/d1'), { ownerPlays: true }),
       );
-      await updateDoc(doc(db, 'draws/d1'), {
-        status: 'DRAWED',
-        drawDate: serverTimestamp(),
-      });
+      await seedDrawn(env, 'd1');
       await assertFails(updateDoc(doc(db, 'draws/d1'), { ownerPlays: false }));
     });
 
@@ -530,10 +519,7 @@ describe('draws', () => {
 
     it('nothing changes after the draw', async () => {
       const db = authed(env, OWNER);
-      await updateDoc(doc(db, 'draws/d1'), {
-        status: 'DRAWED',
-        drawDate: serverTimestamp(),
-      });
+      await seedDrawn(env, 'd1');
       await assertFails(updateDoc(doc(db, 'draws/d1'), changes));
     });
 
@@ -591,10 +577,7 @@ describe('draws', () => {
       await assertFails(deleteAll(authed(env, MALLORY)));
 
       const db = authed(env, OWNER);
-      await updateDoc(doc(db, 'draws/d1'), {
-        status: 'DRAWED',
-        drawDate: serverTimestamp(),
-      });
+      await seedDrawn(env, 'd1');
       await assertFails(deleteAll(db));
     });
 
@@ -658,10 +641,7 @@ describe('draws', () => {
         updateDoc(doc(db, 'draws/d1'), { participantUuids: arrayRemove(BOB) }),
       );
 
-      await updateDoc(doc(db, 'draws/d1'), {
-        status: 'DRAWED',
-        drawDate: serverTimestamp(),
-      });
+      await seedDrawn(env, 'd1');
       await assertFails(removeParticipant(db, ALICE));
     });
 
@@ -681,10 +661,7 @@ describe('draws', () => {
       await assertFails(leave(authed(env, BOB), ALICE));
       await assertFails(leave(authed(env, OWNER), OWNER));
 
-      await updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
-        status: 'DRAWED',
-        drawDate: serverTimestamp(),
-      });
+      await seedDrawn(env, 'd1');
       await assertFails(leave(authed(env, ALICE), ALICE));
     });
   });
@@ -749,10 +726,7 @@ describe('draws', () => {
 
     it('nothing changes after the draw', async () => {
       const db = authed(env, OWNER);
-      await updateDoc(doc(db, 'draws/d1'), {
-        status: 'DRAWED',
-        drawDate: serverTimestamp(),
-      });
+      await seedDrawn(env, 'd1');
       await assertFails(
         setDoc(doc(db, `draws/d1/exclusions/${pairId}`), { a, b }),
       );
@@ -806,10 +780,7 @@ describe('draws', () => {
       await assertFails(setInvite(authed(env, ALICE), LINK_KEY));
       await assertFails(setInvite(authed(env, MALLORY), LINK_KEY));
 
-      await updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
-        status: 'DRAWED',
-        drawDate: serverTimestamp(),
-      });
+      await seedDrawn(env, 'd1');
       await assertFails(setInvite(authed(env, OWNER), LINK_KEY));
     });
 

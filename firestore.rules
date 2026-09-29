@@ -107,17 +107,6 @@ service cloud.firestore {
         && existsAfter(participantPath(drawId, request.auth.uid));
     }
 
-    // Owner moves the draw to DRAWED; assignments are written in the same batch.
-    function isStartingDraw() {
-      return resource.data.ownerUuid == request.auth.uid
-        && resource.data.status == 'WAITING_FOR_DRAW'
-        && resource.data.participantUuids.size()
-          - (resource.data.get('ownerPlays', true) == false ? 1 : 0) >= 2
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'drawDate'])
-        && request.resource.data.status == 'DRAWED'
-        && request.resource.data.drawDate == request.time;
-    }
-
     // Owner changes the draw's own fields; after the draw nothing changes.
     function isEditingDetails() {
       return resource.data.ownerUuid == request.auth.uid
@@ -191,7 +180,7 @@ service cloud.firestore {
       allow list: if signedIn() && request.auth.uid in resource.data.participantUuids;
       allow create: if signedIn() && isValidNewDraw(drawId);
       allow update: if signedIn()
-        && (isStartingDraw() || isJoining(drawId) || isEditingDetails()
+        && (isJoining(drawId) || isEditingDetails()
           || isLeaving(drawId) || isRemovingParticipant(drawId));
       allow delete: if signedIn()
         && resource.data.ownerUuid == request.auth.uid
@@ -358,23 +347,9 @@ service cloud.firestore {
       }
 
       // Draw result: one document per giver, readable only by that giver.
-      // Written once by the owner, in the same batch that moves the draw from
-      // WAITING_FOR_DRAW to DRAWED, and never changed afterwards.
+      // The server writes assignments when it starts the draw.
       match /assignments/{giverUid} {
         allow get: if signedIn() && request.auth.uid == giverUid;
-
-        allow create: if signedIn()
-          && get(drawPath(drawId)).data.ownerUuid == request.auth.uid
-          && get(drawPath(drawId)).data.status == 'WAITING_FOR_DRAW'
-          && getAfter(drawPath(drawId)).data.status == 'DRAWED'
-          && request.resource.data.keys().hasOnly(['toUuid'])
-          && request.resource.data.toUuid is string
-          && request.resource.data.toUuid != giverUid
-          && giverUid in getAfter(drawPath(drawId)).data.participantUuids
-          && request.resource.data.toUuid in getAfter(drawPath(drawId)).data.participantUuids
-          && (get(drawPath(drawId)).data.get('ownerPlays', true) != false
-            || (giverUid != get(drawPath(drawId)).data.ownerUuid
-              && request.resource.data.toUuid != get(drawPath(drawId)).data.ownerUuid));
       }
     }
 
@@ -391,23 +366,12 @@ service cloud.firestore {
         && getAfter(drawPath(d.lastDrawId)).data.ownerUuid == request.auth.uid;
     }
 
-    // +N winners, only in the batch that starts draw lastDrawId (N players).
-    function isCountingStartedDraw() {
-      let d = request.resource.data;
-      return d.get('drawsCount', 0) == statValue('drawsCount')
-        && get(drawPath(d.lastDrawId)).data.status == 'WAITING_FOR_DRAW'
-        && getAfter(drawPath(d.lastDrawId)).data.status == 'DRAWED'
-        && d.winnersCount == statValue('winnersCount')
-          + getAfter(drawPath(d.lastDrawId)).data.participantUuids.size()
-            - (getAfter(drawPath(d.lastDrawId)).data.get('ownerPlays', true) == false ? 1 : 0);
-    }
-
     match /appData/stats {
       allow get: if signedIn();
       allow create, update: if signedIn()
         && request.resource.data.keys().hasOnly(['drawsCount', 'winnersCount', 'lastDrawId'])
         && request.resource.data.lastDrawId is string
-        && (isCountingNewDraw() || isCountingStartedDraw());
+        && isCountingNewDraw();
     }
 
     // Messages to the author. One document per user per UTC day

@@ -27,7 +27,8 @@ This README covers setting up, running, testing and deploying.
 ## Tech stack
 
 - React 19, TypeScript 6, Vite 8, MUI 9, React Router 8, i18next (Polish / English)
-- Firebase 12: Authentication (Google and email link) and Firestore - there is no own backend
+- Firebase 12: Authentication (Google and email link) and Firestore; Cloud Functions v2
+  (Node.js 22, `europe-central2`) runs the draw on the server
 - Tests: Vitest 4, React Testing Library, Playwright, Firebase emulators
 - Hosting: GitHub Pages, deployed by GitHub Actions; the PWA manifest and icons are in `public/` (no service worker)
 
@@ -59,7 +60,7 @@ npx playwright install chromium   # only needed for the E2E tests
 Two terminals:
 
 ```bash
-npm run emulators        # terminal 1: Auth + Firestore emulators
+npm run emulators        # terminal 1: builds functions, then starts Auth + Firestore + Functions
 npm run dev:emulators    # terminal 2: the app at http://localhost:5173
 ```
 
@@ -183,9 +184,9 @@ Every push to `master` runs `.github/workflows/deploy.yml` after CI passes:
 2. It checks out the repository, runs `npm ci`, then builds the app with the
    production configuration.
 3. **Staging** (only when `FIREBASE_SERVICE_ACCOUNT_DEV` is set): deploy
-   Firestore rules and indexes to the dev project.
-4. **Production:** deploy Firestore rules and indexes, then publish the
-   already-built app to GitHub Pages.
+   Firestore rules, indexes and Cloud Functions to the dev project.
+4. **Production:** deploy Firestore rules, indexes and Cloud Functions, then
+   publish the already-built app to GitHub Pages.
 
 Each step waits for the previous one to succeed. Firebase and GitHub Pages
 are separate systems, so a failure after rules deploy (for example, while
@@ -215,13 +216,11 @@ secrecy is not the data security boundary; Firestore rules protect the data.
 
 ## Security model
 
-There is no backend: the browser talks directly to Firestore, and
-[`firestore.rules`](firestore.rules) is the authorization boundary covered by
-`tests/rules`. The rules restrict draw data, letters, exclusions and
-assignments to the appropriate signed-in users. The data paths and access
-details are in [the architecture guide](docs/03-architecture.md). Known
-trade-off: the owner's browser shuffles the pairs, so a determined owner
-could inspect the result in developer tools; other participants cannot.
+There is no server to manage. The browser talks directly to Firestore for ordinary reads and
+writes, and [`firestore.rules`](firestore.rules) restrict those requests to the appropriate
+signed-in users. The `startDraw` Cloud Function validates and writes the complete result in a
+transaction; clients cannot write assignments or move a draw to `DRAWED`. The organizer's
+browser receives no pairs. The data paths and access details are in [the architecture guide](docs/03-architecture.md).
 
 ## Maintenance
 
@@ -236,7 +235,7 @@ npx firebase deploy --only firestore --project <project-id>
 
 | Command | What it does |
 |---|---|
-| `npm run emulators` | Start local Auth + Firestore emulators (data kept in `.emulator-data/`) |
+| `npm run emulators` | Build functions and start local Auth + Firestore + Functions emulators (data kept in `.emulator-data/`) |
 | `npm run emulators:seed` | Add test accounts and (re)set the two test draws in the running emulators |
 | `npm run emulators:save` | Save emulator data without stopping |
 | `npm run emulators:reset` | Delete saved emulator data |

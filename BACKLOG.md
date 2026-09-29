@@ -1,20 +1,18 @@
 # Santa App v2 – roadmap i backlog
 
 > Wspólny, śledzony backlog projektu. Aktualizować przy zmianie statusu zadania.
-> Ostatnia aktualizacja: 2026-09-28
+> Ostatnia aktualizacja: 2026-09-29
 > Zasady współpracy i podział odpowiedzialności: [AGENTS.md](AGENTS.md). Statusy należy
 > weryfikować względem kodu; sekcja „Zrobione” zachowuje starsze notatki kontekstowe.
 
 ## Kontekst i ustalenia
 
 - **Co to jest:** Secret Santa. React 19 + MUI 9 + Vite 8, Firebase 12 (Auth Google + Firestore),
-  hosting GitHub Pages (`https://arturczopek.github.io/santa-app-v2`). Brak backendu.
+  Cloud Functions do losowania, hosting GitHub Pages (`https://arturczopek.github.io/santa-app-v2`).
 - **Filozofia:** pet project, prosty. Utrzymanie i deploy mają być trywialne. Claude prowadzi
   decyzje; Codex realizuje jasno ograniczone zadania zgodnie z `AGENTS.md`.
-- **Architektura:** na razie sam Firebase (plan Spark, bez Cloud Functions).
-  Bezpieczeństwo = `firestore.rules` + testy w emulatorze.
-  - Świadomy kompromis: pary losuje przeglądarka właściciela → zdeterminowany właściciel
-    mógłby podejrzeć/ustawić wynik w DevTools. Uczestnicy nie mogą.
+- **Architektura:** Firebase Auth, Firestore i Cloud Functions na planie Blaze. Zwykłe operacje
+  chronią `firestore.rules`; serwerowa funkcja losowania zapisuje pełny wynik w transakcji.
 - **Sposób pracy:** zadania mają opis zachowania, właściciela decyzji i walidacji. Push na
   `master` uruchamia CI, a następnie obecny deploy: opcjonalne staging rules → produkcyjne
   rules → build → GitHub Pages. Build następuje po deployu reguł; kolejność wymaga poprawy
@@ -229,9 +227,9 @@ niezrobiony punkt z tej listy (przed startem sprawdzić jego stan w kodzie):
 1. **Przed sezonem:** F9 (logowanie linkiem z maila) – zrobione 2026-09-27.
 2. **Warte zrobienia, bez Blaze:** F5 → F6 → F7 → F8 (kod QR) → F11 (PWA) – zrobione 2026-09-27; F12 odrzucone.
 3. **Bez Blaze, przed Blaze (decyzja Artura 2026-09-27):** F15.
-4. **Wymagają Blaze (F0) – na sam koniec:** F2, F3 (przypomnienia), F13, F18 (własny mail logowania).
+4. **Wymagają Blaze:** F2, F3 (przypomnienia), F18 (własny mail logowania). F13 zrobione.
 
-**Stan 2026-09-29:** kod na ten sezon skończony i wdrożony. Zostało (Artur, bez kodu):
+**Stan 2026-09-29:** kod na ten sezon skończony. Zostało (Artur, bez kodu):
 - [ ] przed sezonem uzupełnić profil `buycoffee.to/czopo` (zdjęcie, opis) – wypłaty już podpięte;
 - [ ] F21 – decyzja o domenie `.pl` (~50 zł/rok): największy zysk dla SEO i zaufania, pomaga też F18
   (nadawca maila). Po zakupie: GitHub Pages custom domain, nowy adres w `index.html` (canonical, og:url,
@@ -240,10 +238,8 @@ niezrobiony punkt z tej listy (przed startem sprawdzić jego stan w kodzie):
 
 Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), partnerskie odłożone, \$8 po analizie sezonu.
 
-- [ ] **F0 – przejście na plan Blaze** (decyzja Artura: OK, gdy będzie potrzebny). Przy tej skali
-  ~0 zł (te same darmowe limity + darmowy limit Functions), wymaga karty, brak twardego limitu –
-  ustawić alert budżetowy (np. 5 zł). Potrzebny dla: F3, \$4, losowania po stronie serwera.
-  Zmiana: Firebase console → Upgrade (Artur, ręcznie). Po przejściu: Cloud Functions + deploy w workflow.
+- [x] **F0 – plan Blaze i Cloud Functions** (2026-09-29, D40): produkcja i dev są na Blaze,
+  funkcje v2 działają w `europe-central2`, limity i alerty budżetowe są ustawione.
 - [x] F1 – wykluczenia par (2026-09-24/25). Zostało: unikanie par z zeszłego roku (trudne: wyniki zna tylko
   obdarowujący, organizator ich nie widzi – D3/D8)
 - [ ] F2 – anonimowy czat obdarowujący ↔ obdarowany
@@ -294,11 +290,9 @@ Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), partnerskie odłożon
   „Zorganizuj ponownie” (formularz wypełniony nazwą, opisem, budżetem) i wycofane przed wdrożeniem –
   bez kopiowania uczestników oszczędza kilka sekund raz w roku, a automatyczne dopisanie ludzi
   odpada (zgoda każdej osoby, reguły pozwalają dołączyć tylko samemu sobie). Nowe losowanie + link na czacie wystarczy.
-- [ ] **F13 – losowanie po stronie serwera / zaufany wynik (Claude-owned):** obecny `generatePairs`
-  waliduje pełne przypisanie i zwraca poprawny wynik albo rzuca błąd. Reguły Firestore nie
-  wymuszają jednak kompletnego bijektywnego wyniku od zmodyfikowanego klienta, a organizator
-  widzi wszystkie pary w swojej przeglądarce. Rozważyć Cloud Function i serwerową walidację;
-  wymaga decyzji o planie Firebase, koszcie i modelu zaufania.
+- [x] **F13 – losowanie po stronie serwera / zaufany wynik** (2026-09-29, D41): callable `startDraw`
+  zapisuje status, assignments i licznik zwycięzców w jednej transakcji; reguły blokują zapisy
+  klienta, a przeglądarka organizatora nie otrzymuje par.
 - [x] **F15 – panel admina: wiadomości od użytkowników w GUI** (pomysł Artura, 2026-09-25; zrobione 2026-09-27,
   D37, Codex, zrecenzowane przez Claude'a): `#/admin/messages` + „Wiadomości” w menu konta; admin = zweryfikowany
   e-mail `arturcz32@gmail.com` w regułach; od najnowszych, po 20, „Pokaż starsze”. Bez oznaczania

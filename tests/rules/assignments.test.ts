@@ -6,6 +6,7 @@ import {
 } from '@firebase/rules-unit-testing';
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -14,7 +15,14 @@ import {
   updateDoc,
   writeBatch,
 } from 'firebase/firestore';
-import { ALICE, authed, BOB, createTestEnv, OWNER } from './setup';
+import {
+  ALICE,
+  authed,
+  BOB,
+  createTestEnv,
+  OWNER,
+  seedDrawn,
+} from './setup';
 
 let env: RulesTestEnvironment;
 
@@ -28,32 +36,14 @@ afterAll(async () => {
 
 beforeEach(async () => {
   await env.clearFirestore();
-  await env.withSecurityRulesDisabled(async (ctx) => {
-    await setDoc(doc(ctx.firestore(), 'draws/d1'), {
+  await env.withSecurityRulesDisabled((ctx) =>
+    setDoc(doc(ctx.firestore(), 'draws/d1'), {
       ownerUuid: OWNER,
       participantUuids: [OWNER, ALICE, BOB],
       status: 'WAITING_FOR_DRAW',
-    });
-  });
+    }),
+  );
 });
-
-const startDraw = (uid: string, pairs: [string, string][]) => {
-  const db = authed(env, uid);
-  const batch = writeBatch(db);
-  batch.update(doc(db, 'draws/d1'), {
-    status: 'DRAWED',
-    drawDate: serverTimestamp(),
-  });
-  pairs.forEach(([from, to]) =>
-    batch.set(doc(db, `draws/d1/assignments/${from}`), { toUuid: to }),
-  );
-  return batch.commit();
-};
-
-const setNonPlayingOwner = () =>
-  env.withSecurityRulesDisabled((ctx) =>
-    updateDoc(doc(ctx.firestore(), 'draws/d1'), { ownerPlays: false }),
-  );
 
 const VALID_PAIRS: [string, string][] = [
   [OWNER, ALICE],
@@ -61,89 +51,38 @@ const VALID_PAIRS: [string, string][] = [
   [BOB, OWNER],
 ];
 
+const clientStartBatch = (uid: string) => {
+  const db = authed(env, uid);
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'draws/d1'), {
+    status: 'DRAWED',
+    drawDate: serverTimestamp(),
+  });
+  VALID_PAIRS.forEach(([giverUid, toUuid]) =>
+    batch.set(doc(db, `draws/d1/assignments/${giverUid}`), { toUuid }),
+  );
+  return batch.commit();
+};
+
 describe('assignments', () => {
-  it('owner can write assignments together with starting the draw', async () => {
-    await assertSucceeds(startDraw(OWNER, VALID_PAIRS));
-  });
-
-  it('requires two players when the owner does not play', async () => {
-    await setNonPlayingOwner();
-    await env.withSecurityRulesDisabled((ctx) =>
-      updateDoc(doc(ctx.firestore(), 'draws/d1'), {
-        participantUuids: [OWNER, ALICE],
+  it('clients cannot create assignments, even in the owner start batch', async () => {
+    await assertFails(clientStartBatch(OWNER));
+    await assertFails(clientStartBatch(ALICE));
+    await assertFails(
+      setDoc(doc(authed(env, OWNER), `draws/d1/assignments/${OWNER}`), {
+        toUuid: ALICE,
       }),
     );
-    await assertFails(startDraw(OWNER, [[ALICE, OWNER]]));
-
-    await env.withSecurityRulesDisabled((ctx) =>
-      updateDoc(doc(ctx.firestore(), 'draws/d1'), {
-        participantUuids: [OWNER, ALICE, BOB],
-      }),
-    );
-    await assertSucceeds(
-      startDraw(OWNER, [
-        [ALICE, BOB],
-        [BOB, ALICE],
-      ]),
-    );
   });
 
-  it('does not allow assignments from or to a non-playing owner', async () => {
-    await setNonPlayingOwner();
-    await assertFails(
-      startDraw(OWNER, [
-        [OWNER, ALICE],
-        [ALICE, BOB],
-        [BOB, ALICE],
-      ]),
-    );
-    await assertFails(startDraw(OWNER, [[ALICE, OWNER]]));
-  });
-
-  it('non-owner cannot start the draw with assignments', async () => {
-    await assertFails(startDraw(ALICE, VALID_PAIRS));
-  });
-
-  it('assignments cannot be written without the status transition', async () => {
-    const db = authed(env, OWNER);
-    await assertFails(
-      setDoc(doc(db, `draws/d1/assignments/${OWNER}`), { toUuid: ALICE }),
-    );
-  });
-
-  it('assignments cannot be rewritten after the draw', async () => {
-    await startDraw(OWNER, VALID_PAIRS);
-    const db = authed(env, OWNER);
-    await assertFails(
-      setDoc(doc(db, `draws/d1/assignments/${ALICE}`), { toUuid: OWNER }),
-    );
-  });
-
-  it('a draw can be started only once, even concurrently', async () => {
-    const results = await Promise.allSettled([
-      startDraw(OWNER, VALID_PAIRS),
-      startDraw(OWNER, [
-        [OWNER, BOB],
-        [BOB, ALICE],
-        [ALICE, OWNER],
-      ]),
-    ]);
-    const succeeded = results.filter((r) => r.status === 'fulfilled').length;
-    if (succeeded !== 1) {
-      throw new Error(`Expected exactly one start to succeed, got ${succeeded}`);
-    }
-  });
-
-  it('rejects self-assignment and outsiders', async () => {
-    await assertFails(startDraw(OWNER, [[OWNER, OWNER]]));
-    await assertFails(startDraw(OWNER, [[OWNER, 'stranger-uid']]));
-  });
-
-  it('only the giver can read their assignment', async () => {
-    await startDraw(OWNER, VALID_PAIRS);
+  it('only the giver can get their assignment', async () => {
+    await seedDrawn(env, 'd1', VALID_PAIRS);
 
     await assertSucceeds(
       getDoc(doc(authed(env, ALICE), `draws/d1/assignments/${ALICE}`)),
+    );
+    await assertSucceeds(
+      getDoc(doc(authed(env, OWNER), `draws/d1/assignments/${OWNER}`)),
     );
     await assertFails(
       getDoc(doc(authed(env, BOB), `draws/d1/assignments/${ALICE}`)),
@@ -153,8 +92,19 @@ describe('assignments', () => {
     );
   });
 
+  it('clients cannot change or delete assignments', async () => {
+    await seedDrawn(env, 'd1', VALID_PAIRS);
+    const giver = authed(env, ALICE);
+    await assertFails(
+      updateDoc(doc(giver, `draws/d1/assignments/${ALICE}`), {
+        toUuid: OWNER,
+      }),
+    );
+    await assertFails(deleteDoc(doc(giver, `draws/d1/assignments/${ALICE}`)));
+  });
+
   it('nobody can list all assignments', async () => {
-    await startDraw(OWNER, VALID_PAIRS);
+    await seedDrawn(env, 'd1', VALID_PAIRS);
     await assertFails(
       getDocs(collection(authed(env, OWNER), 'draws/d1/assignments')),
     );

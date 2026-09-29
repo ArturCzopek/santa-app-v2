@@ -16,7 +16,7 @@ import {
   FirestoreError,
   WriteBatch,
 } from 'firebase/firestore';
-import { db } from './FirebaseConfig';
+import { db, functions } from './FirebaseConfig';
 import {
   Assignment,
   Draw,
@@ -27,8 +27,9 @@ import {
   getDrawPlayers,
 } from '../models/Draw';
 import { User } from 'firebase/auth';
+import { httpsCallable } from 'firebase/functions';
 import { PasswordUtils } from './PasswordUtils';
-import { Exclusion, generatePairs } from './pairs';
+import { Exclusion } from './pairs';
 import { appDataService } from './AppDataService';
 
 // Keep each exclusion batch below Firestore's 500-write limit.
@@ -452,22 +453,16 @@ class DrawService {
       throw new Error('Draw cannot be started');
     }
 
-    // Read with the owner's rights: exclusions are visible only to them.
-    const pairs = generatePairs(players, await this.getExclusions(drawId));
+    const result = await httpsCallable<
+      { drawId: string },
+      { drawDate: string }
+    >(functions, 'startDraw')({ drawId });
 
-    // Each pair goes to its own document that only the giver can read, so the
-    // full result never reaches any browser after this one.
-    const drawRef = doc(this.drawsCollection, drawId);
-    const batch = writeBatch(db);
-    batch.update(drawRef, { status: 'DRAWED', drawDate: serverTimestamp() });
-    pairs.forEach((pair) => {
-      const assignment: Assignment = { toUuid: pair.toUuid };
-      batch.set(doc(drawRef, 'assignments', pair.fromUuid), assignment);
-    });
-    appDataService.addDrawStarted(batch, drawId, pairs.length);
-    await batch.commit();
-
-    return { ...draw, status: 'DRAWED', drawDate: new Date() };
+    return {
+      ...draw,
+      status: 'DRAWED',
+      drawDate: new Date(result.data.drawDate),
+    };
   }
 
   async getMyAssignment(

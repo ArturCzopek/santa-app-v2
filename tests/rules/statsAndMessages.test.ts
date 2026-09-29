@@ -89,19 +89,17 @@ describe('stats', () => {
     );
   });
 
-  describe('winners', () => {
-    beforeEach(async () => {
-      await env.withSecurityRulesDisabled((ctx) =>
-        setDoc(doc(ctx.firestore(), 'draws/d1'), {
-          ownerUuid: OWNER,
-          ownerPlays: false,
-          participantUuids: [OWNER, ALICE, BOB],
-          status: 'WAITING_FOR_DRAW',
-        }),
-      );
-    });
+  it('clients cannot bump winnersCount when starting a draw', async () => {
+    await env.withSecurityRulesDisabled((ctx) =>
+      setDoc(doc(ctx.firestore(), 'draws/d1'), {
+        ownerUuid: OWNER,
+        ownerPlays: false,
+        participantUuids: [OWNER, ALICE, BOB],
+        status: 'WAITING_FOR_DRAW',
+      }),
+    );
 
-    const startCounting = (winners: number) => {
+    const startCounting = () => {
       const db = authed(env, OWNER);
       const batch = writeBatch(db);
       batch.update(doc(db, 'draws/d1'), {
@@ -110,23 +108,13 @@ describe('stats', () => {
       });
       batch.set(
         doc(db, 'appData/stats'),
-        { winnersCount: increment(winners), lastDrawId: 'd1' },
+        { winnersCount: increment(2), lastDrawId: 'd1' },
         { merge: true },
       );
       return batch.commit();
     };
 
-    it('counts players in the batch that starts the draw', async () => {
-      await assertSucceeds(startCounting(2));
-    });
-
-    it('does not count the non-playing owner', async () => {
-      await assertFails(startCounting(3));
-    });
-
-    it('cannot count more winners than players', async () => {
-      await assertFails(startCounting(10));
-    });
+    await assertFails(startCounting());
   });
 });
 

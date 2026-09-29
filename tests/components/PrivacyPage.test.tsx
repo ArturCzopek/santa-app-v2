@@ -38,6 +38,12 @@ describe('PrivacyPage', () => {
         { selector: 'li' },
       ),
     ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Losowanie przeprowadza serwer Santa App \(Google Cloud Functions w Warszawie\)\. Pełnego wyniku nie widzi nikt, także organizator/,
+        { selector: 'li' },
+      ),
+    ).toBeInTheDocument();
 
     await userEvent
       .setup()
@@ -46,6 +52,12 @@ describe('PrivacyPage', () => {
     expect(
       await screen.findByText(
         /draft of your letter to Santa.*chosen language.*are not sent to us/,
+        { selector: 'li' },
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Santa App’s server \(Google Cloud Functions in Warsaw\) runs the draw\. Nobody, including the organizer, can see the full result/,
         { selector: 'li' },
       ),
     ).toBeInTheDocument();

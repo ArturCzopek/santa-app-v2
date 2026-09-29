@@ -15,7 +15,7 @@ GitHub Pages serves static files only and answers unknown paths with 404, so a r
 shared link to `/draw/123` would break. With `#/draw/123` the server always serves
 `index.html`. A useful side effect: the invite key after `#` never reaches any server (D7).
 
-## D3. The pairs are drawn in the organizer's browser, Accepted
+## D3. The pairs are drawn in the organizer's browser, Superseded by D41
 Without a server something has to shuffle, and the organizer's browser is the only one
 allowed to start the draw. It writes each result into a document only the giver can read,
 so after the draw no browser can see the whole result.
@@ -285,3 +285,17 @@ gets Cloud Functions Admin, Service Account User, Artifact Registry Writer and
 Cloud Build Editor on top of its existing roles; narrowing these permissions is
 tracked as S8. Function code lives in `functions/` and deploys through the same
 workflow as Firestore rules.
+
+## D41. The draw runs in a Cloud Function, Accepted (supersedes D3)
+The callable `startDraw` runs in `europe-central2`. In one Firestore transaction it checks
+the draw and its players, reads the exclusions, generates a complete valid result, marks the
+draw `DRAWED`, writes each giver's assignment, and increments `winnersCount`. Firestore
+rules forbid clients from writing assignments or starting a draw. The organizer's browser
+receives only the draw date, never the pairs.
+
+The client and function use the same `generatePairs` source: `src/services/pairs.ts`. The
+functions build copies it to the ignored generated file `functions/src/pairs.ts`, so the
+browser can check whether exclusions make a draw possible and the server can generate the
+result. No data migration is needed because the data model is unchanged. During a deploy, an
+old cached client may be unable to start a draw for a few minutes while the function and app
+versions are being updated.
