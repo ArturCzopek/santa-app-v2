@@ -31,6 +31,8 @@ This repository is public and the app is used by real people. Keep out of it: se
 
 Ask Claude to decide before changing architecture, dependencies or hosting; authentication or authorization; Firestore rules or data shape; domain invariants or draw behavior; security/privacy promises; cross-boundary flows; or significant UX/product direction. Claude also owns difficult incidents and compatibility or migration decisions. Codex may implement an approved plan in a defined scope.
 
+Before any change to live Firebase or Google Cloud settings, Claude checks it against the official docs and states the rollback. API key HTTP referrer restrictions must allow both `<project>.web.app` and `<project>.firebaseapp.com` (auth runs on the latter; leaving it out once broke production login).
+
 Codex must not independently change live Firebase settings, secrets, deployment behavior, or publish/deploy. Do not commit or push unless the task explicitly authorizes it.
 
 **Deploys are on Artur's call only (D42).** A push to `master` runs CI and deploys nothing. Neither agent starts the Deploy workflow; Artur runs it from the Actions tab to release.
