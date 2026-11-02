@@ -1,12 +1,11 @@
 name: CI
 
 # Lint, typecheck, build, unit/rules/service/component tests and E2E.
-# Runs on pull requests and on pushes to branches other than master;
-# the deploy workflow calls it for master before deploying.
+# Runs on pull requests and on every push, master included; the deploy
+# workflow, started by hand, calls it again before deploying (D42).
 on:
   pull_request:
   push:
-    branches-ignore: [master]
   workflow_call:
 
 permissions:

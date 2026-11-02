@@ -26,7 +26,7 @@ transaction.
 - **Firebase:** Authentication (Google, or a sign-in link by email – [D38](04-decisions.md)),
   Firestore, and Cloud Functions v2 on the Blaze plan ([D40](04-decisions.md)). The draw
   callable runs in `europe-central2` on Node.js 22.
-- **Hosting:** GitHub Pages. On pushes to `master`, GitHub Actions builds the app before
+- **Hosting:** GitHub Pages. When a deploy is started by hand from `master` (D42), GitHub Actions builds the app before
   deploying Firestore rules and Cloud Functions, then publishes the built app. `public/` contains the PWA
   manifest and install icons; there is no service worker.
 

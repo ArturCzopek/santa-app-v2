@@ -33,6 +33,8 @@ Ask Claude to decide before changing architecture, dependencies or hosting; auth
 
 Codex must not independently change live Firebase settings, secrets, deployment behavior, or publish/deploy. Do not commit or push unless the task explicitly authorizes it.
 
+**Deploys are on Artur's call only (D42).** A push to `master` runs CI and deploys nothing. Neither agent starts the Deploy workflow; Artur runs it from the Actions tab to release.
+
 ## Before implementing a backlog item
 
 Before any code changes, tell Artur what the item is: a short description of the feature or problem in plain words (what the user sees today, what changes, why), then the plan (files to touch, tests, what stays out of scope). Only then implement.

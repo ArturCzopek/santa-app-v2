@@ -103,7 +103,7 @@ The users are Polish and very mixed, so the UI avoids forms that assume a gender
 translations exist, but there is no language switch yet. Code, commits and documentation are
 in English.
 
-## D18. Every push to `master` deploys, staging first, Accepted
+## D18. Every push to `master` deploys, staging first, Superseded by D42
 Deploys should be boring. The workflow runs all tests, then updates the dev project's rules
 and data (staging), then production's rules and data, and only then publishes the app, so
 the app never runs against rules older than itself. Work that should not go live yet stays
@@ -299,3 +299,12 @@ browser can check whether exclusions make a draw possible and the server can gen
 result. No data migration is needed because the data model is unchanged. During a deploy, an
 old cached client may be unable to start a draw for a few minutes while the function and app
 versions are being updated.
+
+## D42. Deploys happen only on Artur's call, Accepted (supersedes D18)
+The app is public and used by real people, mostly in November and December, and Firebase
+and GitHub Pages do not change atomically. Deploying every push also shipped notes-only
+commits to production. A push to `master` now only runs CI. The Deploy workflow runs only
+when Artur starts it by hand from `master` (Actions -> Deploy -> Run workflow); a run on
+another branch checks but does not deploy. Target `production` keeps the D18 order (checks,
+build, staging, production rules and functions, then Pages); target `staging` stops after
+the dev project. Agents may merge to `master` but never start a deploy themselves.

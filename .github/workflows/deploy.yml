@@ -1,7 +1,9 @@
 name: Deploy
 
-# Every push to master: all checks and a production build, then deploy Firestore
-# rules + indexes and Cloud Functions, and publish the app to GitHub Pages. Can also create a release by hand.
+# Deploys only when Artur starts it by hand (Actions -> Deploy -> Run workflow, branch master); a push
+# to master only runs CI (D42). Runs all checks and a production build, then deploys Firestore rules +
+# indexes and Cloud Functions, and publishes the app to GitHub Pages. Can also create a release.
+# Target "staging" stops after the dev project: no production, no Pages.
 #
 # Needs the repository secret FIREBASE_SERVICE_ACCOUNT (service account key
 # JSON) next to the existing VITE_FIREBASE_* secrets.
@@ -10,10 +12,13 @@ name: Deploy
 # Firebase project) the rules and functions go to the dev project
 # first; if that fails, production is not touched.
 on:
-  push:
-    branches: [master]
   workflow_dispatch:
     inputs:
+      target:
+        description: 'Where to deploy: production (staging first) or staging only'
+        type: choice
+        options: [production, staging]
+        default: production
       version:
         description: 'Optional release tag, e.g. v2.1.0'
         required: false
@@ -36,10 +41,19 @@ jobs:
 
   deploy:
     needs: checks
+    # Only master is deployed, whichever branch the run was started on.
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     env:
       HAS_STAGING: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV != '' }}
+      PRODUCTION: ${{ inputs.target == 'production' }}
     steps:
+      - name: Check staging target
+        if: inputs.target == 'staging' && env.HAS_STAGING != 'true'
+        run: |
+          echo "::error::Target staging needs the FIREBASE_SERVICE_ACCOUNT_DEV secret"
+          exit 1
+
       - name: Check deployment secrets
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
@@ -94,21 +108,24 @@ jobs:
 
       # Production.
       - name: Authenticate to Google Cloud
+        if: env.PRODUCTION == 'true'
         uses: google-github-actions/auth@v3
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Deploy Firestore rules, indexes and Functions
+        if: env.PRODUCTION == 'true'
         run: npx firebase deploy --only firestore,functions --project "${{ secrets.VITE_FIREBASE_PROJECT_ID }}" --non-interactive
 
       - name: Deploy to GitHub Pages
+        if: env.PRODUCTION == 'true'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: build
           branch: gh-pages
 
       - name: Create release
-        if: github.event_name == 'workflow_dispatch' && inputs.version != ''
+        if: env.PRODUCTION == 'true' && inputs.version != ''
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ inputs.version }}

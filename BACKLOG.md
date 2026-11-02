@@ -14,9 +14,9 @@
 - **Architektura:** Firebase Auth, Firestore i Cloud Functions na planie Blaze. Zwykłe operacje
   chronią `firestore.rules`; serwerowa funkcja losowania zapisuje pełny wynik w transakcji.
 - **Sposób pracy:** zadania mają opis zachowania, właściciela decyzji i walidacji. Push na
-  `master` uruchamia CI, a następnie obecny deploy: opcjonalne staging rules → produkcyjne
-  rules → build → GitHub Pages. Build następuje po deployu reguł; kolejność wymaga poprawy
-  (O1 w sekcji wdrożenia).
+  `master` uruchamia tylko CI. Deploy wyłącznie na polecenie Artura (D42): Actions → Deploy →
+  Run workflow z `master`; cel `production` (CI → build → staging → produkcja → GitHub Pages)
+  albo `staging` (tylko projekt dev).
 - **Zasada wersji:** najnowsza stabilna linia, która jest na rynku od kilku miesięcy i ma poprawki
   (nie świeże x.0).
 - **Kolejność prac:** obecne funkcje, testy, stos i redesign są w repo. Następne: pilne
@@ -50,7 +50,7 @@
 
 - [x] Produkcja wdrożona 2026-09-24 (sekret `FIREBASE_SERVICE_ACCOUNT`, konto `firebase-adminsdk-…`
   z rolami „Firebase Admin” + „Service Usage Consumer”; po dodaniu ról trzeba było odczekać kilka minut).
-  Od teraz push na `master` = automatyczny deploy.
+  Od 2026-11 deploy już nie po pushu, tylko na polecenie Artura (D42).
 - [x] Staging wdrożony 2026-09-24 (5. podejście – role IAM w projekcie dev długo się propagowały;
   przy problemach z uprawnieniami po prostu odczekać i „Re-run failed jobs”).
 - [x] **Staging na projekcie dev – kroki (zrobione, zostawione dla przypomnienia):**
