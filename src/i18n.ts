@@ -279,6 +279,21 @@ const resources = {
           sealedTo: 'To: {{name}}',
           tapToOpen: 'Tap to open',
           title: 'Your draw result',
+          chat: {
+            titleSanta: 'Anonymous chat with {{name}}',
+            titleRecipient: 'Anonymous chat with your Santa',
+            helperSanta:
+              'Ask {{name}} about a size, a colour or a pick-up place. They will not know it is you.',
+            helperRecipient:
+              'Your Santa can ask you questions here – and you can answer. You do not know who it is, and it stays that way.',
+            empty: 'No messages yet.',
+            santa: 'Your Santa',
+            you: 'You',
+            label: 'Your message',
+            send: 'Send',
+            sendFailed: 'Could not send the message. Please try again.',
+            loadFailed: 'Could not load the chat.',
+          },
           thanksFrom: 'Thanks from {{name}}',
           thanksHelper:
             'Your Santa will see this next to their result. You do not know who it is – and it stays that way.',
@@ -779,6 +794,21 @@ const resources = {
           sealedTo: 'Do: {{name}}',
           tapToOpen: 'Stuknij, aby otworzyć',
           title: 'Twój wynik losowania',
+          chat: {
+            titleSanta: 'Anonimowy czat z {{name}}',
+            titleRecipient: 'Anonimowy czat z Twoim Mikołajem',
+            helperSanta:
+              'Dopytaj {{name}} o rozmiar, kolor albo miejsce odbioru. Ta osoba nie dowie się, że to Ty.',
+            helperRecipient:
+              'Tu Twój Mikołaj może zadać Ci pytanie – a Ty możesz odpowiedzieć. Nie wiesz, kto to – i tak zostanie.',
+            empty: 'Brak wiadomości.',
+            santa: 'Twój Mikołaj',
+            you: 'Ty',
+            label: 'Twoja wiadomość',
+            send: 'Wyślij',
+            sendFailed: 'Nie udało się wysłać wiadomości. Spróbuj ponownie.',
+            loadFailed: 'Nie udało się wczytać czatu.',
+          },
           thanksFrom: 'Podziękowanie od {{name}}',
           thanksHelper:
             'Twój Mikołaj zobaczy to przy swoim wyniku. Nie wiesz, kto to – i tak zostanie.',

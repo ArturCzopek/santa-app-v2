@@ -27,6 +27,7 @@ import {
 import { handFont, tokens } from '../../styles/theme';
 import LetterView from './LetterView';
 import SupportCard from './SupportCard';
+import ChatSection from './ChatSection';
 
 interface WinnerSectionProps {
   draw: Draw;
@@ -282,6 +283,22 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({
             </Typography>
           </PaperCard>
         </Box>
+      )}
+
+      {draw.id && user && (
+        <>
+          <ChatSection
+            drawId={draw.id}
+            recipientUid={assignment.toUuid}
+            role="santa"
+            otherName={winner.userName}
+          />
+          <ChatSection
+            drawId={draw.id}
+            recipientUid={user.uid}
+            role="recipient"
+          />
+        </>
       )}
 
       <Box sx={{ mt: 2 }}>

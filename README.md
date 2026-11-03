@@ -210,15 +210,31 @@ Repository secrets (Settings -> Secrets and variables -> Actions):
 | Secret | Purpose |
 |---|---|
 | `VITE_FIREBASE_*`, `VITE_APP_URL` | Production web app config, built into the app |
+| `VITE_APP_CHECK_SITE_KEY` | Optional. reCAPTCHA Enterprise site key; without it the app sends no App Check tokens (D44) |
 | `FIREBASE_SERVICE_ACCOUNT` | Service account key JSON of the production project |
 | `FIREBASE_SERVICE_ACCOUNT_DEV` | Service account key JSON of the dev project (enables staging) |
 
-A key comes from Firebase console -> Project settings -> Service accounts ->
-Generate new private key. The `firebase-adminsdk-...` account it belongs to
-needs the **Firebase Admin** and **Service Usage Consumer** roles
-(Google Cloud console -> IAM) to deploy rules; new roles can take a few
-minutes to start working. Delete the downloaded key file after adding it as a
-secret and never commit it.
+Use a dedicated service account for each project, not the default
+`firebase-adminsdk-...` one, and give it only the roles a deploy needs
+(Google Cloud console -> IAM; new roles can take a few minutes to start working):
+
+| Role | Why |
+|---|---|
+| Firebase Rules Admin | deploy Firestore rules |
+| Cloud Datastore Index Admin | deploy Firestore indexes |
+| Cloud Functions Admin | deploy Cloud Functions |
+| Service Account User | let the deploy attach the runtime account to functions |
+| Cloud Build Editor, Artifact Registry Writer | build and store the function image |
+| Service Usage Consumer, Firebase Viewer | let the Firebase CLI read project info and use the project quota |
+
+Create its key in Google Cloud console -> IAM -> Service accounts -> Keys ->
+Add key. Try a new set of roles with target `staging` first; if the deploy
+reports a missing permission, add the role that grants it and wait a few
+minutes. Delete the downloaded key file after adding it as a secret, never
+commit it, and delete the key of the old account once the new one works.
+
+Repository variables `ENFORCE_APP_CHECK` and `ENFORCE_APP_CHECK_DEV` (`true`) make `startDraw` in the
+production/dev project reject calls without an App Check token; unset means off (D44).
 
 `VITE_FIREBASE_*` web configuration is embedded in the browser bundle, so its
 secrecy is not the data security boundary; Firestore rules protect the data.
