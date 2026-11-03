@@ -85,7 +85,8 @@ i narzędzi agentów nie trafiają do repo.
 - [x] S11 – e-mail konta przy wiadomości do autora (2026-09-28; Codex, zrecenzowane przez Claude'a): reguły
   wymuszają `userEmail` z tokenu, na stronie „Wiadomości” link „Odpisz” (`mailto:`), polityka uzupełniona.
 - [x] S7 – usunięty zbędny `redirect_uri` w `useAuth`
-- [ ] S8 – konto serwisowe z najmniejszymi uprawnieniami zamiast `firebase-adminsdk` (opcjonalnie)
+- [ ] S8 – konto serwisowe z najmniejszymi uprawnieniami zamiast `firebase-adminsdk`: lista ról w README
+  (sekcja o sekretach), wymiana kluczy po stronie Artura; zamknąć po udanym deployu na staging i na produkcję.
 - [x] S9 – sprawdzone w audycie 2026-09-26: jednorazowa migracja F14 została usunięta po wdrożeniu
   w commicie `458ba21`; aktualny `.github/workflows/deploy.yml` nie ma kroku migracji. Przy każdej
   kolejnej zmianie schematu wymagającej migracji dodać wersjonowany skrypt i testy do repo.
