@@ -75,9 +75,9 @@ i narzędzi agentów nie trafiają do repo.
 - [x] S4 – ograniczenie klucza API Firebase do domen aplikacji (2026-09-29, Artur w konsoli). **Pułapka:**
   lista referrerów musi zawierać domenę `firebaseapp.com` projektu, inaczej logowanie Google kręci się bez
   końca (403 `API_KEY_HTTP_REFERRER_BLOCKED`).
-- [ ] S5 – App Check (reCAPTCHA) – opcjonalnie, utrudnia skrypty spoza aplikacji. **Odłożone do grupy Blaze**
-  (Claude, 2026-09-28): reCAPTCHA to kolejny dostawca z ciasteczkami Google → zmiana polityki prywatności,
-  a przy tej skali zysk mały; ma sens razem z Cloud Functions (F13), które App Check też chroni.
+- [~] S5 – App Check (reCAPTCHA Enterprise), D43. Kod gotowy (klient, CSP, `enforceAppCheck` na `startDraw`,
+  polityka prywatności); zostają kroki w konsoli i wdrożenie etapami: klient z tokenami → metryki → egzekwowanie
+  na `startDraw` i w Firestore. Wdrożenie tylko na polecenie Artura.
 - [x] S6 – CSP przez `<meta>` (2026-09-28, `a07d26e`; Codex, zrecenzowane przez Claude'a): tylko w buildzie
   produkcyjnym/stagingowym (`vite.config.ts`), domena auth z `VITE_FIREBASE_AUTH_DOMAIN`. Claude dopisał
   zdjęcia Google (`*.googleusercontent.com`) i sprawdził build stagingowy: czcionki, gapi, iframe logowania
