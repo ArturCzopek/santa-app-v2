@@ -20,6 +20,7 @@ vi.mock('../../src/hooks/useAuth', () => ({
   }),
 }));
 vi.mock('../../src/services/emailLink', () => ({
+  TooManyLinksError: class TooManyLinksError extends Error {},
   sendLoginLink: vi.fn(),
   isLoginLink: vi.fn(() => false),
   pendingLoginEmail: vi.fn(() => ''),

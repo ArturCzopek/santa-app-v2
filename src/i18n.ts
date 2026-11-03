@@ -394,6 +394,8 @@ const resources = {
           open: 'No Google account? Sign in with email',
           send: 'Send the sign-in link',
           sendFailed: 'Could not send the link. Please try again.',
+          tooMany:
+            'A link was just sent to this address. Check your inbox (and spam) or try again in a few minutes.',
           sent: 'We sent a sign-in link to {{email}}. Open it on this device (check spam too).',
           sentTitle: 'Check your inbox',
           signingIn: 'Signing in…',
@@ -908,6 +910,8 @@ const resources = {
           open: 'Nie masz konta Google? Zaloguj się e-mailem',
           send: 'Wyślij link do logowania',
           sendFailed: 'Nie udało się wysłać linku. Spróbuj ponownie.',
+          tooMany:
+            'Link został właśnie wysłany na ten adres. Sprawdź skrzynkę (także spam) albo spróbuj za kilka minut.',
           sent: 'Wysłaliśmy link do logowania na {{email}}. Otwórz go na tym urządzeniu (zajrzyj też do spamu).',
           sentTitle: 'Sprawdź skrzynkę',
           signingIn: 'Logowanie…',

@@ -3,7 +3,8 @@ import {
   sendSignInLinkToEmail,
   signInWithEmailLink,
 } from 'firebase/auth';
-import { auth } from './FirebaseConfig';
+import { httpsCallable } from 'firebase/functions';
+import { auth, functions } from './FirebaseConfig';
 import { storage } from './storage';
 import i18n from '../i18n';
 
@@ -25,13 +26,35 @@ const readPending = (): Pending | null => {
   }
 };
 
+// Raised when this address already got several links a moment ago.
+export class TooManyLinksError extends Error {}
+
 export const sendLoginLink = async (email: string, returnTo: string) => {
-  // Firebase writes the email in this language: the one the person uses here.
-  auth.languageCode = i18n.language;
-  await sendSignInLinkToEmail(auth, email, {
-    url: appUrl(),
-    handleCodeInApp: true,
-  });
+  // Our own mail (F18, D47). If it cannot be sent for any reason except
+  // the per-address limit, Firebase's plain mail goes out instead, so a
+  // broken mailer never locks people out.
+  try {
+    await httpsCallable(
+      functions,
+      'sendLoginLink',
+    )({
+      email,
+      url: appUrl(),
+      lang: i18n.language,
+    });
+  } catch (error) {
+    const { code, message } = error as { code?: string; message?: string };
+    if (code === 'functions/resource-exhausted' && message === 'address') {
+      throw new TooManyLinksError();
+    }
+    console.warn('Own sign-in mail failed, using the Firebase one:', error);
+    // Firebase writes the email in this language: the one used here.
+    auth.languageCode = i18n.language;
+    await sendSignInLinkToEmail(auth, email, {
+      url: appUrl(),
+      handleCodeInApp: true,
+    });
+  }
   storage.set(KEY, JSON.stringify({ email, returnTo }));
 };
 

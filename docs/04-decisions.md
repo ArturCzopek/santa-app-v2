@@ -363,3 +363,20 @@ is waiting for Artur's confirmation.
 
 Before the first deploy that includes this function, the two secrets must exist
 (`firebase functions:secrets:set`), otherwise the functions deploy fails.
+
+## D47. Own sign-in email through the shared mailer, Proposed
+The Firebase sign-in mail (generic text, link through `<project>.firebaseapp.com/__/auth/action`)
+lands in spam and its text cannot be edited. The callable `sendLoginLink` (europe-central2, open to
+people who are not signed in) builds the same one-time link with the Admin SDK
+(`generateSignInWithEmailLink`), rewrites it to point straight at the app address with the same
+`apiKey`, `oobCode` and `mode=signIn` parameters (the app already finishes sign-in from them), and
+sends a Polish or English mail through `functions/src/mailer.ts` (D46: `MAIL_USER`,
+`MAIL_APP_PASSWORD`). It needs no domain; the sender is still the shared Gmail account, so this
+improves the look and the link, not the sender reputation. That is for the domain (F21).
+
+Because anyone can call it, it checks the address and only accepts the app's own address (and
+localhost) as the link target, and counts sends in `loginLinkLimits` (no client access, addresses
+only as hashes): 3 per address per 10 minutes and 300 per day overall, to leave room in the Gmail
+quota for reminders. The client falls back to the plain Firebase mail when the function fails or the
+daily cap is spent, so sign-in never depends on it; only the per-address cap is shown to the person.
+No new secrets beyond D46. The privacy policy names the Gmail sender and the counters.
