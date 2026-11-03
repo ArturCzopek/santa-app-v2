@@ -283,7 +283,7 @@ in europe-central2, the same region as Firestore, on the Node.js 22 runtime.
 budget of 5 USD, with alerts at 50%, 90% and 100%. The deploy service account
 gets Cloud Functions Admin, Service Account User, Artifact Registry Writer and
 Cloud Build Editor on top of its existing roles; narrowing these permissions is
-tracked as S8. Function code lives in `functions/` and deploys through the same
+tracked as S8 (see D43). Function code lives in `functions/` and deploys through the same
 workflow as Firestore rules.
 
 ## D41. The draw runs in a Cloud Function, Accepted (supersedes D3)
@@ -309,6 +309,30 @@ another branch checks but does not deploy. Target `production` keeps the D18 ord
 build, staging, production rules and functions, then Pages); target `staging` stops after
 the dev project. Agents may merge to `master` but never start a deploy themselves.
 
+## D43. Deploy runs as a dedicated service account with narrow roles, Proposed
+The deploy used the default `firebase-adminsdk-...` account with the broad Firebase Admin
+role. Each project now gets a dedicated deploy account holding only the roles listed in the
+README: rules, index and function deployment, plus the roles those need to build and attach
+the runtime account. The workflow is unchanged (same secrets, key-based auth), so the switch
+is a secret swap. The set is verified with target `staging` before production; the old key is
+deleted afterwards. Keyless Workload Identity Federation would remove the stored key and
+the workflow already has `id-token: write`, but it is left for a later change.
+
+## D44. App Check with reCAPTCHA Enterprise, rolled out in stages, Accepted
+App Check makes Firebase accept requests only from the real app, which stops simple
+scripts that call Firestore or `startDraw` directly with a stolen API key. It supersedes
+the deferral of S5: Cloud Functions (D41) now exist, and the privacy policy names the new
+provider. The app initializes App Check only when `VITE_APP_CHECK_SITE_KEY` is set and
+never against the emulators, so tests and local work are unchanged. The production CSP
+allows the reCAPTCHA hosts only when the key is set. `startDraw` has `enforceAppCheck`
+controlled by the `ENFORCE_APP_CHECK` variable, default off.
+
+Rollout order, each step on Artur's call: (1) deploy a client that sends tokens, with
+enforcement off; (2) watch the App Check request metrics until nearly all traffic is
+verified; (3) enforce on `startDraw`, then on Firestore (and Authentication) in the
+Firebase console. Enforcing earlier would lock out users whose cached app is older.
+Turning enforcement off again is a console switch and a variable, no code change.
+
 ## D45. Anonymous chat between a Santa and their recipient, Accepted
 After the draw, every player has two chats on the draw page: one with the person they
 give a gift to, and one with their own (unknown) Santa. Messages live in
@@ -322,4 +346,3 @@ edits or deletes them. The organizer and other players have no access. The priva
 describe the chat. Not included: e-mail notifications about new messages (to be done with
 F3) and reporting or moderation; the chat exists only inside one group of acquaintances
 and a 500-character limit per message.
-

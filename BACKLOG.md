@@ -75,9 +75,9 @@ i narzędzi agentów nie trafiają do repo.
 - [x] S4 – ograniczenie klucza API Firebase do domen aplikacji (2026-09-29, Artur w konsoli). **Pułapka:**
   lista referrerów musi zawierać domenę `firebaseapp.com` projektu, inaczej logowanie Google kręci się bez
   końca (403 `API_KEY_HTTP_REFERRER_BLOCKED`).
-- [ ] S5 – App Check (reCAPTCHA) – opcjonalnie, utrudnia skrypty spoza aplikacji. **Odłożone do grupy Blaze**
-  (Claude, 2026-09-28): reCAPTCHA to kolejny dostawca z ciasteczkami Google → zmiana polityki prywatności,
-  a przy tej skali zysk mały; ma sens razem z Cloud Functions (F13), które App Check też chroni.
+- [~] S5 – App Check (reCAPTCHA Enterprise), D44. Kod gotowy (klient, CSP, `enforceAppCheck` na `startDraw`,
+  polityka prywatności); zostają kroki w konsoli i wdrożenie etapami: klient z tokenami → metryki → egzekwowanie
+  na `startDraw` i w Firestore. Wdrożenie tylko na polecenie Artura.
 - [x] S6 – CSP przez `<meta>` (2026-09-28, `a07d26e`; Codex, zrecenzowane przez Claude'a): tylko w buildzie
   produkcyjnym/stagingowym (`vite.config.ts`), domena auth z `VITE_FIREBASE_AUTH_DOMAIN`. Claude dopisał
   zdjęcia Google (`*.googleusercontent.com`) i sprawdził build stagingowy: czcionki, gapi, iframe logowania
@@ -85,7 +85,8 @@ i narzędzi agentów nie trafiają do repo.
 - [x] S11 – e-mail konta przy wiadomości do autora (2026-09-28; Codex, zrecenzowane przez Claude'a): reguły
   wymuszają `userEmail` z tokenu, na stronie „Wiadomości” link „Odpisz” (`mailto:`), polityka uzupełniona.
 - [x] S7 – usunięty zbędny `redirect_uri` w `useAuth`
-- [ ] S8 – konto serwisowe z najmniejszymi uprawnieniami zamiast `firebase-adminsdk` (opcjonalnie)
+- [ ] S8 – konto serwisowe z najmniejszymi uprawnieniami zamiast `firebase-adminsdk`: lista ról w README
+  (sekcja o sekretach), wymiana kluczy po stronie Artura; zamknąć po udanym deployu na staging i na produkcję.
 - [x] S9 – sprawdzone w audycie 2026-09-26: jednorazowa migracja F14 została usunięta po wdrożeniu
   w commicie `458ba21`; aktualny `.github/workflows/deploy.yml` nie ma kroku migracji. Przy każdej
   kolejnej zmianie schematu wymagającej migracji dodać wersjonowany skrypt i testy do repo.

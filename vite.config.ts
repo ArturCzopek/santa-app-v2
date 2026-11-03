@@ -1,18 +1,26 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
-const contentSecurityPolicy = (authDomain?: string) => {
+const contentSecurityPolicy = (authDomain?: string, appCheck = false) => {
   const sources = [
     "default-src 'self'",
-    "script-src 'self' https://apis.google.com",
+    `script-src 'self' https://apis.google.com${
+      appCheck ? ' https://www.google.com https://www.gstatic.com' : ''
+    }`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     // Google account photos (navbar avatar, participant stamps).
     "img-src 'self' https://*.googleusercontent.com",
-    "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://europe-central2-*.cloudfunctions.net",
+    `connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://europe-central2-*.cloudfunctions.net${
+      appCheck
+        ? ' https://content-firebaseappcheck.googleapis.com https://www.google.com'
+        : ''
+    }`,
     `frame-src ${[
       authDomain && `https://${authDomain}`,
       'https://www.youtube-nocookie.com',
+      // reCAPTCHA Enterprise renders its (invisible) challenge in a frame.
+      appCheck && 'https://www.google.com',
     ]
       .filter(Boolean)
       .join(' ')}`,
@@ -48,7 +56,12 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       react(),
       ...(addProductionPolicy
-        ? [contentSecurityPolicy(env.VITE_FIREBASE_AUTH_DOMAIN)]
+        ? [
+            contentSecurityPolicy(
+              env.VITE_FIREBASE_AUTH_DOMAIN,
+              Boolean(env.VITE_APP_CHECK_SITE_KEY),
+            ),
+          ]
         : []),
     ],
     base: './',
