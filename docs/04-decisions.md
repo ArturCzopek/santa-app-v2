@@ -317,3 +317,18 @@ the runtime account. The workflow is unchanged (same secrets, key-based auth), s
 is a secret swap. The set is verified with target `staging` before production; the old key is
 deleted afterwards. Keyless Workload Identity Federation would remove the stored key and
 the workflow already has `id-token: write`, but it is left for a later change.
+
+## D44. App Check with reCAPTCHA Enterprise, rolled out in stages, Accepted
+App Check makes Firebase accept requests only from the real app, which stops simple
+scripts that call Firestore or `startDraw` directly with a stolen API key. It supersedes
+the deferral of S5: Cloud Functions (D41) now exist, and the privacy policy names the new
+provider. The app initializes App Check only when `VITE_APP_CHECK_SITE_KEY` is set and
+never against the emulators, so tests and local work are unchanged. The production CSP
+allows the reCAPTCHA hosts only when the key is set. `startDraw` has `enforceAppCheck`
+controlled by the `ENFORCE_APP_CHECK` variable, default off.
+
+Rollout order, each step on Artur's call: (1) deploy a client that sends tokens, with
+enforcement off; (2) watch the App Check request metrics until nearly all traffic is
+verified; (3) enforce on `startDraw`, then on Firestore (and Authentication) in the
+Firebase console. Enforcing earlier would lock out users whose cached app is older.
+Turning enforcement off again is a console switch and a variable, no code change.

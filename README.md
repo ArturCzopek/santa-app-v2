@@ -210,6 +210,7 @@ Repository secrets (Settings -> Secrets and variables -> Actions):
 | Secret | Purpose |
 |---|---|
 | `VITE_FIREBASE_*`, `VITE_APP_URL` | Production web app config, built into the app |
+| `VITE_APP_CHECK_SITE_KEY` | Optional. reCAPTCHA Enterprise site key; without it the app sends no App Check tokens (D44) |
 | `FIREBASE_SERVICE_ACCOUNT` | Service account key JSON of the production project |
 | `FIREBASE_SERVICE_ACCOUNT_DEV` | Service account key JSON of the dev project (enables staging) |
 
@@ -231,6 +232,9 @@ Add key. Try a new set of roles with target `staging` first; if the deploy
 reports a missing permission, add the role that grants it and wait a few
 minutes. Delete the downloaded key file after adding it as a secret, never
 commit it, and delete the key of the old account once the new one works.
+
+Repository variables `ENFORCE_APP_CHECK` and `ENFORCE_APP_CHECK_DEV` (`true`) make `startDraw` in the
+production/dev project reject calls without an App Check token; unset means off (D44).
 
 `VITE_FIREBASE_*` web configuration is embedded in the browser bundle, so its
 secrecy is not the data security boundary; Firestore rules protect the data.
