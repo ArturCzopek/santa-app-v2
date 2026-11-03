@@ -13,3 +13,6 @@ playwright-report/
 # Service account keys - never commit them
 *firebase-adminsdk*.json
 service-account*.json
+# Local, machine-specific agent setup - never commit
+CLAUDE.local.md
+AGENTS.local.md

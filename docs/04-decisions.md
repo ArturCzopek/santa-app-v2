@@ -235,7 +235,7 @@ items as a list and the comment separately, with explicit HTTP(S) URLs linked in
 `hasWish` is true when there is at least one item or a comment, and the entire letter remains
 frozen after the draw (D30). Drafts use JSON `{ wish, comment }`; older plain-text drafts and
 legacy F6 JSON drafts keep their wish and ignore obsolete fields. Only the short items may
-later feed shop searches ([backlog $1](../BACKLOG.md)); the comment is never used for
+later feed shop searches; the comment is never used for
 automation or monetization.
 
 ## D36. Gift progress and private thanks, Accepted

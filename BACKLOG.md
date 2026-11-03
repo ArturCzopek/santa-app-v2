@@ -22,27 +22,12 @@
 - **Kolejność prac:** obecne funkcje, testy, stos i redesign są w repo. Następne: pilne
   kwestie bezpieczeństwa/prywatności, odporność wdrożenia, potem jasno zatwierdzone funkcje.
   Nie zaczynać zadań z backlogu bez sprawdzenia ich statusu w kodzie.
-- **Impeccable** (skill do designu, v4.3.1) zainstalowany globalnie w `~/.claude/skills/impeccable`
-  (+ agenci w `~/.claude/agents/impeccable-*`), bez hooka. W nowej sesji: `/impeccable <komenda>`.
-  Launcher: `~\.claude\skills\impeccable\scripts\impeccable.cmd` (np. `detect --json src`).
-  Telemetria wyłączona (`IMPECCABLE_NO_TELEMETRY=1` w zmiennych użytkownika).
-  Kontekst projektu: `PRODUCT.md` (prawda o produkcie) i `.impeccable/surfaces/src.md`
-  (brief + kontrakt kierunku). Raporty critique lokalnie w `.impeccable/critique/` (poza gitem).
+- **Impeccable** (skill do designu): kontekst projektu w `PRODUCT.md` i `.impeccable/surfaces/src.md`;
+  raporty critique lokalnie w `.impeccable/critique/` (poza gitem).
 
-### Środowisko (Windows)
-- Git 2.55, Node 24 LTS (npm 11), Java (Corretto 27) do emulatorów.
-- Nowa sesja PowerShell może mieć stary PATH:
-  `$env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')`
-- PowerShell 5: w `git commit -m` nie używać cudzysłowów (psują argumenty) → komunikat z pliku (`-F`).
-  Nie używać `stash@{0}` (klamry = blok skryptu) → `'stash@{0}'`.
-- Dev bez Firebase: `npm run emulators` + `npm run dev:emulators` (http://localhost:5173).
-  Dane trwałe w `.emulator-data/` (zapis przy Ctrl+C lub `npm run emulators:save`, czyszczenie `emulators:reset`).
-  `npm run emulators:seed` → 6 kont testowych (Olga, Ania, Bartek, Celina, Darek, Ewa) + 2 losowania, hasło `test123`.
-  Logowanie w trybie emulatorów: okienko z kontami albo `await window.__santaTest.signIn('sub', 'Imię')` w konsoli.
-- Staging: `npm run dev:staging` (projekt dev Firebase, prawdziwe logowanie Google, konfiguracja w `.env.staging`).
-- Komendy: `npm run lint`, `npm run typecheck`, `npm test`, `npm run test:e2e`.
-  Testy zajmują porty 8080/9099/5173 – najpierw zatrzymać emulatory dev.
-- Pełna weryfikacja (skrypt Claude'a w scratchpadzie sesji): lint + typecheck + build + test + e2e.
+### Środowisko
+Uruchamianie, emulatory, staging i testy: [README](README.md). Ustawienia lokalnego komputera
+i narzędzi agentów nie trafiają do repo.
 
 ---
 
@@ -87,11 +72,9 @@
   języka i zapamiętanie otwarcia koperty. Nie zmieniać podstaw prawnych, retencji ani obietnic
   usunięcia bez decyzji właściciela; zgłosić Claude'owi każde miejsce, którego nie da się
   opisać jako faktu na podstawie kodu.
-- [x] S4 – ograniczenie klucza API Firebase (2026-09-29, Artur w konsoli): referrery
-  `https://arturczopek.github.io/*`, `http://localhost:5173/*`, `https://santa-app-v2.firebaseapp.com/*`,
-  `https://santa-app-v2.web.app/*`; API bez ograniczeń; „Authorized domains” przejrzane. **Pułapka:** bez
-  domeny `firebaseapp.com` logowanie Google kręci się bez końca (403 `API_KEY_HTTP_REFERRER_BLOCKED` z
-  okna logowania). Klucz projektu dev (staging/localhost) nie był ruszany.
+- [x] S4 – ograniczenie klucza API Firebase do domen aplikacji (2026-09-29, Artur w konsoli). **Pułapka:**
+  lista referrerów musi zawierać domenę `firebaseapp.com` projektu, inaczej logowanie Google kręci się bez
+  końca (403 `API_KEY_HTTP_REFERRER_BLOCKED`).
 - [ ] S5 – App Check (reCAPTCHA) – opcjonalnie, utrudnia skrypty spoza aplikacji. **Odłożone do grupy Blaze**
   (Claude, 2026-09-28): reCAPTCHA to kolejny dostawca z ciasteczkami Google → zmiana polityki prywatności,
   a przy tej skali zysk mały; ma sens razem z Cloud Functions (F13), które App Check też chroni.
@@ -234,9 +217,9 @@ niezrobiony punkt z tej listy (przed startem sprawdzić jego stan w kodzie):
 - [ ] F21 – decyzja o domenie `.pl` (~50 zł/rok): największy zysk dla SEO i zaufania, pomaga też F18
   (nadawca maila). Po zakupie: GitHub Pages custom domain, nowy adres w `index.html` (canonical, og:url,
   og:image), Authorized domains, referrery klucza API (S4), ponowna weryfikacja w Search Console;
-- [ ] po sezonie: Search Console (wyświetlenia, frazy) i liczba wpłat z \$7 → wejście do decyzji o \$8.
+- [ ] po sezonie: Search Console (wyświetlenia, frazy) i liczba wpłat z \$7 → wejście do decyzji o monetyzacji.
 
-Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), partnerskie odłożone, \$8 po analizie sezonu.
+Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), reszta po analizie sezonu.
 
 - [x] **F0 – plan Blaze i Cloud Functions** (2026-09-29, D40): produkcja i dev są na Blaze,
   funkcje v2 działają w `europe-central2`, limity i alerty budżetowe są ustawione.
@@ -253,8 +236,7 @@ Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), partnerskie odłożon
 - [x] F6 – lista życzeń w strukturze (2026-09-27, D35; Codex, zrecenzowane przez Claude'a): list =
   **rzeczy** (osobne krótkie pola, do 10 × 100 znaków, klikalne linki http/https) + opcjonalny
   **komentarz** (do 1000 znaków: rozmiary, kolory…). Rzeczy w polu `wish` (jedna w linii – stare listy
-  działają bez migracji), komentarz w `comment`. **Tylko rzeczy mogą zasilać wyszukiwanie w sklepach
-  ($1); komentarz nigdy nie służy automatyzacji ani monetyzacji.** Pierwsza wersja z „Rozmiary” i
+  działają bez migracji), komentarz w `comment`. **Tylko rzeczy mogą kiedyś zasilać wyszukiwanie w sklepach; komentarz nigdy nie służy automatyzacji ani monetyzacji.** Pierwsza wersja z „Rozmiary” i
   „Czego nie chcę” odrzucona przez Artura („ludzie nie są złośliwi”)
 - [x] F7 – status „prezent kupiony” / podziękowanie (2026-09-27, D36; Codex, zrecenzowane przez Claude'a):
   „Mam już prezent” przy wyniku (`giftBought` w dokumencie uczestnika, tylko po losowaniu i tylko
@@ -335,60 +317,11 @@ Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), partnerskie odłożon
 
 ## 7. Monetyzacja
 
-**Stan (decyzja Artura, 2026-09-28):** na ten sezon tylko „postaw kawę” (\$7, zrobione).
-Programy partnerskie (\$0–\$5) **odłożone** – kłopotliwe (konto, oznaczanie linków, zmiana polityki
-prywatności, rozliczenie); polityka prywatności ich nie opisuje, więc nic w niej nie zmieniać,
-dopóki nie wrócą. Płatne duże losowania (\$8) dopiero po analizie sezonu.
-(Wcześniej, 2026-09-26: najpierw \$0 → \$5 → \$1, \$7 na końcu.)
+**Stan:** na ten sezon tylko „Postaw kawę” (\$7, zrobione 2026-09-28, D39). Dalsze pomysły
+na monetyzację i ich analiza są prowadzone poza publicznym repo; decyzja po sezonie, na danych.
 
-- [ ] **\$0 – warunki wstępne programu partnerskiego (Artur + Claude), przed \$1:**
-  - konto w programie partnerskim Allegro i/lub Ceneo; w panelu sprawdzić format deep-linka
-    (link do wyszukiwania z frazą i filtrem ceny) i zasady oznaczania linków (Artur);
-  - polityka prywatności: dziś mówi „prywatny, niekomercyjny projekt… nie wyświetla reklam” –
-    dopisać linki partnerskie i to, co po kliknięciu trafia do Allegro/Ceneo (ich cookies,
-    ich polityki). Obietnica prywatności → tekst ustala Claude z Arturem, nie Codex;
-  - analityka kliknięć: **na start bez analityki**, wyniki tylko z panelu partnera (bez banera
-    zgody i bez nowego narzędzia). Zmienić dopiero, gdy dane z panelu nie wystarczą;
-  - regulamin: rozważyć przy zarobkowym charakterze serwisu (treść do konsultacji);
-  - rozliczenie przychodu z programu – pytanie do księgowego (Artur).
-- [ ] **\$1 – przyciski „Znajdź na Allegro” / „Porównaj na Ceneo” przy życzeniu obdarowanego
-  (pierwsza funkcja zarabiająca):** widoczne tylko po losowaniu, u osoby, która czyta list
-  swojego obdarowanego. Wyszukiwanie z **rzeczy** z listu (każda osobno; nigdy z komentarza – D35), filtr ceny do
-  budżetu losowania, link partnerski w formacie z panelu (\$0). Wymaga \$0 i \$5. Bez zmian
-  w danych i regułach – linki składane w przeglądarce.
-- [ ] \$2 – przepisywanie wklejonych linków Allegro na partnerskie
-- [ ] \$3 – „pomysły na prezent do X zł” przy pustym życzeniu (kuratorowane listy)
-- [ ] \$4 – AI: opis zainteresowań → frazy produktowe (wymaga serwera do ukrycia klucza → Blaze)
-- [ ] \$5 – wymagania dla każdego linku partnerskiego (robione razem z \$1): widoczna etykieta
-  „link partnerski”, `rel="sponsored noopener"`, otwieranie w nowej karcie; polityka prywatności
-  z \$0; analityka kliknięć tylko za zgodą (na start brak, patrz \$0)
-- [ ] \$6 – inne: premium (wykluczenia, motywy), wersja firmowa/HR
-- [x] **\$7 – „Postaw kawę” (buycoffee.to lub Buy Me a Coffee) – na koniec, test chęci płacenia:**
-  zwykły link do zewnętrznego serwisu wpłat (buycoffee.to obsługuje BLIK), bez backendu i bez
-  Blaze. Miejsca: okno po udanym losowaniu (moment największego zadowolenia) i stopka.
-  Wymaga: konta w serwisie (Artur), wzmianki w polityce prywatności (zewnętrzny serwis wpłat),
-  pytania do księgowego o rozliczenie wpłat. Po sezonie sprawdzić liczbę wpłat – to sygnał
-  przed decyzją o \$8.
-  **Zrobione** (2026-09-28, D39; Codex, zrecenzowane przez Claude'a): link do `buycoffee.to/czopo`
-  w stopce i w oknie po losowaniu, pomoc i polityka prywatności uzupełnione. Księgowy odłożony (Artur).
-- [ ] **\$8 – darmowe losowania do N osób, większe za jednorazową opłatę (pomysł Artura:
-  do 6 osób za darmo, powyżej 5–10 zł) – decyzja po sezonie, na danych:**
-  - **Analiza po sezonie (najpierw):** rozkład wielkości grup z Firestore (`participantUuids.size()`
-    każdego losowania; `appData/stats` ma tylko sumy) – skrypt tylko do odczytu z kluczem konta
-    serwisowego. Pytania: ile losowań przekracza 6 / 8 / 10 osób, ile by to dało przy danej
-    cenie i konwersji, ile wpłat dał \$7.
-  - **Ryzyko produktowe:** limit 6 tnie typowe rodziny i zespoły w pracy, a darmowa konkurencja jest
-    o kliknięcie dalej. Alternatywy do porównania: wyższy limit (np. 10), płatne dodatki zamiast
-    płatnej wielkości (\$6).
-  - **Cena:** prowizja operatora to zwykle ok. 1 zł + 1,5–2% (sprawdzić aktualne cenniki) –
-    przy 5 zł ok. 20–25% przychodu, przy 10 zł ok. 10–12%. Rekomendacja Claude'a: 9–10 zł.
-  - **Technicznie (największa zmiana w backlogu):** Blaze (F0) + Cloud Function potwierdzająca
-    płatność (Stripe lub Przelewy24, z BLIK); pole `paid` w losowaniu zapisywane tylko przez serwer;
-    reguły wpuszczają osobę ponad limit tylko przy `paid == true`; istniejące losowania bez zmian.
-    UX: płaci organizator, a na limit trafia dołączająca osoba – rozważyć wybór „duże losowanie”
-    już przy zakładaniu. Flaga ustawiana przez przeglądarkę nie wchodzi w grę (DevTools).
-  - **Formalności:** regulamin, prawo odstąpienia przy treściach cyfrowych (zgoda na natychmiastowe
-    wykonanie), rozliczenie i limit działalności nierejestrowanej – konsultacja z księgowym.
+- [x] **\$7 – „Postaw kawę”:** link do `buycoffee.to/czopo` w stopce i w oknie po losowaniu;
+  pomoc i polityka prywatności uzupełnione (D39).
 
 ---
 
