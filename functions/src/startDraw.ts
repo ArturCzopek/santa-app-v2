@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase-admin/app';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
+import { defineBoolean } from 'firebase-functions/params';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { Exclusion, generatePairs } from './pairs';
 
@@ -7,8 +8,13 @@ initializeApp();
 
 const db = getFirestore();
 
+// Rejects calls without a valid App Check token. Off by default so a deploy
+// never locks out users before the app sends tokens (D44); turned on per
+// project through the ENFORCE_APP_CHECK variable (see the Deploy workflow).
+const enforceAppCheck = defineBoolean('ENFORCE_APP_CHECK', { default: false });
+
 export const startDraw = onCall(
-  { region: 'europe-central2', maxInstances: 5 },
+  { region: 'europe-central2', maxInstances: 5, enforceAppCheck },
   async (request) => {
     if (!request.auth) {
       throw new HttpsError('unauthenticated', 'Sign-in is required.');

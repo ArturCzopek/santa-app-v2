@@ -23,6 +23,16 @@ export const WISH_ITEM_MAX_LENGTH = 100;
 export const WISH_MAX_ITEMS = 10;
 export const LETTER_COMMENT_MAX_LENGTH = 1000;
 export const THANKS_MAX_LENGTH = 500;
+export const CHAT_MESSAGE_MAX_LENGTH = 500;
+
+// draws/{drawId}/chats/{recipientUuid}/messages/{id}. Keyed by the recipient,
+// so the chat holds no id of the Santa. `from` is the writer's role.
+export type ChatMessage = {
+  id: string;
+  from: 'santa' | 'recipient';
+  text: string;
+  createdDate: Date | null;
+};
 
 export type Letter = {
   wish: string;
