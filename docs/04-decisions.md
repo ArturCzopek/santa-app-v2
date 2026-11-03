@@ -346,3 +346,20 @@ edits or deletes them. The organizer and other players have no access. The priva
 describe the chat. Not included: e-mail notifications about new messages (to be done with
 F3) and reporting or moderation; the chat exists only inside one group of acquaintances
 and a 500-character limit per message.
+
+## D46. Email reminders before the exchange, Proposed
+Each participant can switch on "Remind me by email" on the draw page (draws with an exchange
+date still ahead). The switch is two fields on their own participant document, `remindByEmail`
+and `remindLang`, which only they can write. The scheduled function `sendExchangeReminders`
+runs every day at 08:00 Europe/Warsaw, finds drawn draws whose `eventDate` is 7 or 1 days away,
+and emails the participants who opted in. Addresses are read from Firebase Auth at send time and
+are never stored in Firestore. The mark `remindersSent` is on the draw document, which clients
+cannot write, and is set before sending, so a rerun never double-sends (at most once). The email
+names no recipient of any gift; it links to the draw page. Sending goes through one module,
+`functions/src/mailer.ts`, with a Gmail SMTP sender (a dedicated account, app password in Secret
+Manager: `MAIL_USER`, `MAIL_APP_PASSWORD`; about 500 mails a day). F18 reuses it, and moving to a
+domain sender touches only that file. The privacy policy and help are updated. The provider choice
+is waiting for Artur's confirmation.
+
+Before the first deploy that includes this function, the two secrets must exist
+(`firebase functions:secrets:set`), otherwise the functions deploy fails.

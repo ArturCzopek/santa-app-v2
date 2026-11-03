@@ -224,11 +224,13 @@ Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), reszta po analizie se
 
 - [x] **F0 – plan Blaze i Cloud Functions** (2026-09-29, D40): produkcja i dev są na Blaze,
   funkcje v2 działają w `europe-central2`, limity i alerty budżetowe są ustawione.
+- [ ] **Na przyszły rok (decyzja Artura 2026-11-03, nie ten sezon):** F1 (unikanie par z zeszłego roku), F21 (domena `.pl`), monetyzacja po analizie sezonu.
 - [x] F1 – wykluczenia par (2026-09-24/25). Zostało: unikanie par z zeszłego roku (trudne: wyniki zna tylko
   obdarowujący, organizator ich nie widzi – D3/D8)
 - [x] F2 – anonimowy czat obdarowujący ↔ obdarowany (2026-11-03, D45): czat 1:1 po losowaniu, klucz = uid obdarowanego (brak uid Mikołaja w danych), `from` wymuszane regułami, wiadomości tylko create. Zostało: powiadomienia e-mail o nowej wiadomości (razem z F3), moderacja
-- [~] F3 – data i miejsce wymiany + „Dodaj do kalendarza” (.ics) zrobione (D12, D28). Zostały przypomnienia
-  e-mail/push – wymaga serwera → Blaze
+- [~] F3 – data i miejsce wymiany + „Dodaj do kalendarza” (.ics) zrobione (D12, D28). Przypomnienia e-mail
+  (7 dni i dzień przed, na zgodę uczestnika) gotowe w kodzie (D46), czekają na recenzję, sekrety
+  `MAIL_USER` i `MAIL_APP_PASSWORD` i deploy na polecenie Artura. Push odpada
 - [x] F4 – edycja, usuwanie losowania i opuszczenie (09-24), nowe hasło (09-25, D21), usuwanie uczestnika przez
   organizatora (09-26, `6109bb6`, D29). Po losowaniu stan końcowy: brak edycji/usuwania i ponownego losowania.
 - [x] F5 – organizator niebiorący udziału (2026-09-27, D32; Codex, zrecenzowane przez Claude'a):

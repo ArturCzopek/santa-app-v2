@@ -164,3 +164,50 @@ describe('thanks', () => {
     );
   });
 });
+
+describe('email reminder switch', () => {
+  it('lets a participant switch their own reminder on and off, before and after the draw', async () => {
+    for (const status of ['WAITING_FOR_DRAW', 'DRAWED'] as const) {
+      await env.clearFirestore();
+      await seedDraw(status);
+      const ref = doc(authed(env, ALICE), `draws/d1/participants/${ALICE}`);
+      await assertSucceeds(
+        updateDoc(ref, { remindByEmail: true, remindLang: 'pl' }),
+      );
+      await assertSucceeds(
+        updateDoc(ref, { remindByEmail: false, remindLang: 'en' }),
+      );
+    }
+  });
+
+  it('refuses another person, wrong types, other fields and the sent marks', async () => {
+    await seedDraw('DRAWED');
+    const db = authed(env, ALICE);
+    await assertFails(
+      updateDoc(doc(db, `draws/d1/participants/${BOB}`), {
+        remindByEmail: true,
+      }),
+    );
+    await assertFails(
+      updateDoc(doc(db, `draws/d1/participants/${ALICE}`), {
+        remindByEmail: 'yes',
+      }),
+    );
+    await assertFails(
+      updateDoc(doc(db, `draws/d1/participants/${ALICE}`), {
+        remindLang: 'de',
+      }),
+    );
+    await assertFails(
+      updateDoc(doc(db, `draws/d1/participants/${ALICE}`), {
+        remindByEmail: true,
+        userName: 'Changed name',
+      }),
+    );
+    await assertFails(
+      updateDoc(doc(authed(env, OWNER), 'draws/d1'), {
+        remindersSent: ['7d'],
+      }),
+    );
+  });
+});

@@ -1,7 +1,18 @@
+import { resolve } from 'path';
 import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  resolve: {
+    // The function sources under test import firebase-admin; use the one
+    // copy of the root package so the tests and the code share its classes.
+    alias: [
+      {
+        find: /^firebase-admin\/(.*)$/,
+        replacement: resolve(__dirname, 'node_modules/firebase-admin/lib/$1'),
+      },
+    ],
+  },
   test: {
     include: ['tests/**/*.test.{ts,tsx}'],
     environment: 'node',

@@ -248,6 +248,18 @@ class DrawService {
     });
   }
 
+  async updateEmailReminder(
+    drawId: string,
+    userId: string,
+    remindByEmail: boolean,
+    remindLang: 'pl' | 'en',
+  ): Promise<void> {
+    await updateDoc(doc(this.participantsCollection(drawId), userId), {
+      remindByEmail,
+      remindLang,
+    });
+  }
+
   async getThanks(drawId: string, userId: string): Promise<string> {
     const snapshot = await getDoc(this.thanksRef(drawId, userId));
     return snapshot.exists() ? (snapshot.data().text as string) : '';
