@@ -23,7 +23,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
       heading: 'Jakie dane przetwarzamy',
       items: [
         'Przy logowaniu przez Google: imię i nazwisko (nazwa wyświetlana), zdjęcie profilowe, adres e-mail i identyfikator konta. Przy logowaniu linkiem z e-maila: adres e-mail, identyfikator konta i imię, które podajesz. Nie pokazujemy adresu e-mail innym użytkownikom. Wysyłamy na niego wyłącznie link do logowania, i tylko wtedy, gdy o niego poprosisz.',
-        'To, co wpisujesz: losowania (nazwa, opis, budżet, data i miejsce wręczenia), listy do Mikołaja, podziękowania dla Mikołaja, wykluczenia par oraz wiadomości do autora. Przy wiadomości zapisujemy adres e-mail Twojego konta, żeby autor mógł odpisać.',
+        'To, co wpisujesz: losowania (nazwa, opis, budżet, data i miejsce wręczenia), listy do Mikołaja, podziękowania dla Mikołaja, wiadomości na czacie z Mikołajem lub obdarowanym, wykluczenia par oraz wiadomości do autora. Przy wiadomości zapisujemy adres e-mail Twojego konta, żeby autor mógł odpisać.',
         'Dane potrzebne do działania losowania: lista uczestników, daty dołączenia i wynik losowania (kto komu kupuje prezent). Hasło losowania zapisujemy tylko jako skrót (hash), z którego nie da się go odczytać.',
         'Szkic listu do Mikołaja (do czasu zapisania albo odrzucenia), wybrany język, informacja o otwarciu koperty z wynikiem oraz – do czasu dokończenia logowania linkiem – adres e-mail, na który go wysłano, pozostają w przeglądarce na Twoim urządzeniu i nie są do nas wysyłane. Firebase Authentication przechowuje w przeglądarce sesję logowania aż do wylogowania. Nie używamy narzędzi analitycznych ani plików cookie do śledzenia.',
       ],
@@ -41,6 +41,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
         'Uczestnicy tego samego losowania widzą Twoje imię, zdjęcie i to, czy napiszesz list. Zalogowana osoba z linkiem do losowania widzi tylko informacje o nim samym (nazwę, opis, budżet, datę i miejsce, organizatora) – na stronie z zaproszeniem.',
         'Treść Twojego listu do Mikołaja widzisz tylko Ty i – po losowaniu – osoba, która Cię wylosuje. Nikt inny, także organizator, nie ma do niej dostępu.',
         'Podziękowanie widzisz tylko Ty i Twój Mikołaj. Nikt inny, także organizator, nie ma do niego dostępu. Uczestnicy widzą, czy kupiono już prezent – nie widzą, dla kogo.',
+        'Czat po losowaniu jest anonimowy: czytacie go tylko Ty i druga strona pary, a aplikacja nie zapisuje w nim, kim jest Mikołaj. Nikt inny, także organizator, nie ma do niego dostępu. Wiadomości nie można edytować ani usuwać.',
         'Losowanie przeprowadza serwer Santa App (Google Cloud Functions w Warszawie). Pełnego wyniku nie widzi nikt, także organizator; Ty widzisz tylko swój wynik (kogo obdarowujesz). Wykluczenia par widzi tylko organizator.',
         'Dane przechowują dostawcy usług, z których korzysta aplikacja: Google (Firebase Authentication – logowanie, Cloud Firestore – baza danych, Google Cloud Functions – serwer losujący w Warszawie, Google Fonts – czcionki, Firebase App Check z Google reCAPTCHA Enterprise – ochrona przed użyciem bazy poza aplikacją), GitHub (GitHub Pages – strona aplikacji) i YouTube (filmy, ładowane w trybie bez plików cookie dopiero, gdy są widoczne). Google może przetwarzać dane także poza Europejskim Obszarem Gospodarczym, na zasadach opisanych w swoich warunkach ochrony danych. reCAPTCHA w tle sprawdza, czy zapytania pochodzą z prawdziwej przeglądarki (może przy tym użyć plików cookie i danych o urządzeniu, według polityki prywatności Google); nie służy nam do śledzenia.',
       ],
@@ -57,7 +58,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
         'Losowanie i listy przechowujemy, dopóki losowanie istnieje – także po losowaniu, żeby uczestnicy mogli wrócić do swojego wyniku.',
         'Przed losowaniem organizator może je usunąć razem ze wszystkimi listami, a każdy uczestnik może z niego wyjść (jego list znika).',
         'Po losowaniu nic się w nim już nie zmienia, więc prośby o usunięcie danych obsługujemy ręcznie. Na prośbę organizatora usuniemy całe zakończone losowanie – zniknie wtedy u wszystkich uczestników.',
-        'Na Twoją prośbę usuniemy Twoje konto logowania, wiadomości, listy do Mikołaja i podziękowania, a w zakończonych losowaniach zastąpimy Twoje imię i zdjęcie napisem „Usunięta osoba”, żeby wyniki pozostałych osób dalej działały.',
+        'Na Twoją prośbę usuniemy Twoje konto logowania, wiadomości, listy do Mikołaja, podziękowania i wiadomości na czacie, a w zakończonych losowaniach zastąpimy Twoje imię i zdjęcie napisem „Usunięta osoba”, żeby wyniki pozostałych osób dalej działały.',
       ],
     },
     {
@@ -81,7 +82,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
       heading: 'What data we process',
       items: [
         'When you sign in with Google: your name, profile photo, email address and account id. When you sign in with an email link: your email address, account id and the name you type in. We do not show your email address to other users. The only email we send is the sign-in link, and only when you ask for it.',
-        'What you type in: draws (name, description, budget, date and place of the gift exchange), letters to Santa, thank-you notes to your Santa, excluded pairs and messages to the author. We store your account email address with a message to the author so the author can reply.',
+        'What you type in: draws (name, description, budget, date and place of the gift exchange), letters to Santa, thank-you notes to your Santa, chat messages with your Santa or the person you give a gift to, excluded pairs and messages to the author. We store your account email address with a message to the author so the author can reply.',
         'What the draw needs to work: who takes part, when they joined and who drew whom. The draw password is stored only as a hash that cannot be turned back into the password.',
         'The draft of your letter to Santa (until you save or discard it), your chosen language, whether you have opened the result envelope and – until you finish signing in with an email link – the address it was sent to stay in your browser on your device and are not sent to us. Firebase Authentication keeps your sign-in session in the browser until you sign out. We use no analytics and no tracking cookies.',
       ],
@@ -99,6 +100,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
         'Participants of the same draw see your name, photo and whether you wrote a letter. A signed-in person with the draw’s link sees only the draw itself (name, description, budget, date and place, organizer) – on the invite page.',
         'Only you and – after the draw – the person who draws you can read your letter to Santa. Nobody else, not even the organizer, has access to it.',
         'Only you and your Santa can read your thank-you note. Nobody else, not even the organizer, has access to it. Participants see whether a person has bought their gift – not for whom.',
+        'The chat after the draw is anonymous: only you and the other side of the pair can read it, and the app stores no information about who the Santa is in it. Nobody else, not even the organizer, has access to it. Messages cannot be edited or deleted by users.',
         'Santa App’s server (Google Cloud Functions in Warsaw) runs the draw. Nobody, including the organizer, can see the full result; you see only your own result (whom you give a gift to). Only the organizer sees the excluded pairs.',
         'The data is kept by the providers the app uses: Google (Firebase Authentication – sign-in, Cloud Firestore – database, Google Cloud Functions – the draw server in Warsaw, Google Fonts – fonts, Firebase App Check with Google reCAPTCHA Enterprise – protection against use of the database from outside the app), GitHub (GitHub Pages – the app’s website) and YouTube (videos, loaded in no-cookie mode only when they are shown). Google may also process data outside the European Economic Area, under its data protection terms. In the background reCAPTCHA checks that requests come from a real browser (it may use cookies and device data for that, under Google’s privacy policy); we do not use it to track you.',
       ],
@@ -115,7 +117,7 @@ export const privacyPolicy: Record<'pl' | 'en', PolicySection[]> = {
         'We keep a draw and its letters as long as the draw exists – also after the draw, so participants can come back to their result.',
         'Before the draw the organizer can delete it with all letters, and every participant can leave it (their letter goes away).',
         'After the draw nothing in it changes any more, so requests to delete data are handled by hand. If the organizer asks, we delete the whole finished draw – it then disappears for every participant.',
-        'If you ask, we delete your sign-in account, your messages, your letters to Santa and thank-you notes, and in finished draws we replace your name and photo with "Usunięta osoba" (deleted person), so everyone else’s result keeps working.',
+        'If you ask, we delete your sign-in account, your messages, your letters to Santa, thank-you notes and chat messages, and in finished draws we replace your name and photo with "Usunięta osoba" (deleted person), so everyone else’s result keeps working.',
       ],
     },
     {

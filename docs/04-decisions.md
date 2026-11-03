@@ -332,3 +332,17 @@ enforcement off; (2) watch the App Check request metrics until nearly all traffi
 verified; (3) enforce on `startDraw`, then on Firestore (and Authentication) in the
 Firebase console. Enforcing earlier would lock out users whose cached app is older.
 Turning enforcement off again is a console switch and a variable, no code change.
+
+## D45. Anonymous chat between a Santa and their recipient, Accepted
+After the draw, every player has two chats on the draw page: one with the person they
+give a gift to, and one with their own (unknown) Santa. Messages live in
+`draws/{drawId}/chats/{recipientUid}/messages/{id}` with `from` (`santa` or `recipient`),
+`text` (1-500 characters) and `createdDate` (server time). The chat is keyed by the
+recipient, so no uid of the Santa is stored and the recipient cannot learn who writes.
+Rules: only after the draw; the recipient (`uid == recipientUid`) and the Santa (the user
+whose `assignments/{uid}.toUuid` is the recipient, checked with `get()`) may read and
+create; `from` must match the writer's real role; messages are create-only, so nobody
+edits or deletes them. The organizer and other players have no access. The privacy policy and help
+describe the chat. Not included: e-mail notifications about new messages (to be done with
+F3) and reporting or moderation; the chat exists only inside one group of acquaintances
+and a 500-character limit per message.
