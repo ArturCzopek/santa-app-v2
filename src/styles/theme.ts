@@ -129,11 +129,18 @@ const baseTheme = createTheme({
       styleOverrides: {
         root: {
           padding: '0 24px 24px',
+          // The gap spaces the buttons (no MUI margin, which would also
+          // indent a wrapped row); a row that does not fit the dialog
+          // wraps instead of spilling past its edge.
           gap: 8,
+          flexWrap: 'wrap',
+          '& > :not(style) ~ :not(style)': { marginLeft: 0 },
           '@media (max-width: 599.95px)': {
             flexDirection: 'column-reverse',
             alignItems: 'stretch',
-            '& > :not(style) ~ :not(style)': { marginLeft: 0 },
+            // One column: wrapping would size the line to its widest
+            // button and stop the others stretching to full width.
+            flexWrap: 'nowrap',
           },
         },
       },
