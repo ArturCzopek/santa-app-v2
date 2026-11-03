@@ -283,7 +283,7 @@ in europe-central2, the same region as Firestore, on the Node.js 22 runtime.
 budget of 5 USD, with alerts at 50%, 90% and 100%. The deploy service account
 gets Cloud Functions Admin, Service Account User, Artifact Registry Writer and
 Cloud Build Editor on top of its existing roles; narrowing these permissions is
-tracked as S8. Function code lives in `functions/` and deploys through the same
+tracked as S8 (see D43). Function code lives in `functions/` and deploys through the same
 workflow as Firestore rules.
 
 ## D41. The draw runs in a Cloud Function, Accepted (supersedes D3)
@@ -308,6 +308,15 @@ when Artur starts it by hand from `master` (Actions -> Deploy -> Run workflow); 
 another branch checks but does not deploy. Target `production` keeps the D18 order (checks,
 build, staging, production rules and functions, then Pages); target `staging` stops after
 the dev project. Agents may merge to `master` but never start a deploy themselves.
+
+## D43. Deploy runs as a dedicated service account with narrow roles, Proposed
+The deploy used the default `firebase-adminsdk-...` account with the broad Firebase Admin
+role. Each project now gets a dedicated deploy account holding only the roles listed in the
+README: rules, index and function deployment, plus the roles those need to build and attach
+the runtime account. The workflow is unchanged (same secrets, key-based auth), so the switch
+is a secret swap. The set is verified with target `staging` before production; the old key is
+deleted afterwards. Keyless Workload Identity Federation would remove the stored key and
+the workflow already has `id-token: write`, but it is left for a later change.
 
 ## D44. App Check with reCAPTCHA Enterprise, rolled out in stages, Accepted
 App Check makes Firebase accept requests only from the real app, which stops simple
