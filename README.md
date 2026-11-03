@@ -38,7 +38,7 @@ This README covers setting up, running, testing and deploying.
 |---|---|---|---|
 | **Local** | Firebase emulators on your computer (fake project `demo-santa-app`) | Fake Google accounts | `npm run emulators` + `npm run dev:emulators` |
 | **Staging** | Your dev Firebase project | Real Google | `npm run dev:staging` |
-| **Production** | Production Firebase project | Real Google | Push to `master` (automatic deploy) |
+| **Production** | Production Firebase project | Real Google | Deploy workflow, started by hand from `master` |
 
 Use local for everyday work and for trying things with many accounts; use
 staging to check real Google sign-in before it reaches production.
@@ -154,8 +154,8 @@ Then:
 npm run dev:staging      # the app at http://localhost:5173, using the dev project
 ```
 
-The dev project's Firestore rules, indexes and data format are updated by
-the deploy workflow on every push to `master`, before production (see
+The dev project's Firestore rules, indexes and Cloud Functions are updated by
+the deploy workflow when it is started by hand, before production (see
 Deployment). Anything you do in staging uses real accounts and real data of
 the dev project - not production.
 
@@ -169,7 +169,7 @@ npm run test:e2e    # Playwright end-to-end tests in real browsers (emulators)
 ```
 
 CI (`.github/workflows/ci.yml`) runs lint, typecheck, the production build,
-tests and E2E on pull requests and pushes to branches other than `master`.
+tests and E2E on pull requests and on every push, `master` included.
 Typecheck covers source, tests, E2E files and TypeScript config; strict mode
 is on, but `noImplicitAny` is off. The emulator-based test commands use ports
 8080, 9099, 5001 and 5173, so stop manually started development emulators first.
@@ -178,23 +178,32 @@ also start its emulator.
 
 ## Deployment
 
-Every push to `master` runs `.github/workflows/deploy.yml` after CI passes:
+Nothing deploys on its own: a push to `master` only runs CI ([D42](docs/04-decisions.md)).
+A release goes out when Artur starts it: GitHub -> Actions -> **Deploy** ->
+**Run workflow**, branch `master`, then choose:
 
-1. The deploy job checks that all required deployment secrets are set.
-2. It checks out the repository, runs `npm ci`, then builds the app with the
+- **target** `production` (default): staging first, then production and GitHub Pages;
+  `staging`: the dev project only, production and Pages untouched;
+- **version** (optional, e.g. `v1.0.5`) and **description**: create a GitHub release
+  with that tag after a production deploy.
+
+A run started on another branch runs the checks but does not deploy. The
+workflow (`.github/workflows/deploy.yml`) then does:
+
+1. All CI checks (lint, typecheck, build, tests, E2E).
+2. The deploy job checks that all required deployment secrets are set.
+3. It checks out the repository, runs `npm ci`, then builds the app with the
    production configuration.
-3. **Staging** (only when `FIREBASE_SERVICE_ACCOUNT_DEV` is set): deploy
+4. **Staging** (only when `FIREBASE_SERVICE_ACCOUNT_DEV` is set): deploy
    Firestore rules, indexes and Cloud Functions to the dev project.
-4. **Production:** deploy Firestore rules, indexes and Cloud Functions, then
-   publish the already-built app to GitHub Pages.
+5. **Production** (target `production` only): deploy Firestore rules, indexes
+   and Cloud Functions, then publish the already-built app to GitHub Pages.
 
 Each step waits for the previous one to succeed. Firebase and GitHub Pages
 are separate systems, so a failure after rules deploy (for example, while
 publishing Pages) can leave them out of step. Use expand/contract for rules
 that require a new client: first deploy rules that accept both clients and
-ship the new client, then tighten the rules in a later release. The workflow
-can also be started by hand in the Actions tab, optionally creating a release
-tag.
+ship the new client, then tighten the rules in a later release.
 
 Repository secrets (Settings -> Secrets and variables -> Actions):
 
