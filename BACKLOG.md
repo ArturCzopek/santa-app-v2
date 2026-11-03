@@ -75,7 +75,7 @@ i narzędzi agentów nie trafiają do repo.
 - [x] S4 – ograniczenie klucza API Firebase do domen aplikacji (2026-09-29, Artur w konsoli). **Pułapka:**
   lista referrerów musi zawierać domenę `firebaseapp.com` projektu, inaczej logowanie Google kręci się bez
   końca (403 `API_KEY_HTTP_REFERRER_BLOCKED`).
-- [~] S5 – App Check (reCAPTCHA Enterprise), D43. Kod gotowy (klient, CSP, `enforceAppCheck` na `startDraw`,
+- [~] S5 – App Check (reCAPTCHA Enterprise), D44. Kod gotowy (klient, CSP, `enforceAppCheck` na `startDraw`,
   polityka prywatności); zostają kroki w konsoli i wdrożenie etapami: klient z tokenami → metryki → egzekwowanie
   na `startDraw` i w Firestore. Wdrożenie tylko na polecenie Artura.
 - [x] S6 – CSP przez `<meta>` (2026-09-28, `a07d26e`; Codex, zrecenzowane przez Claude'a): tylko w buildzie

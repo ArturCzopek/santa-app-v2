@@ -8,7 +8,7 @@ name: Deploy
 # Needs the repository secret FIREBASE_SERVICE_ACCOUNT (service account key
 # JSON) next to the existing VITE_FIREBASE_* secrets.
 #
-# Optional App Check (D43): secret VITE_APP_CHECK_SITE_KEY turns on tokens in the app; repository
+# Optional App Check (D44): secret VITE_APP_CHECK_SITE_KEY turns on tokens in the app; repository
 # variables ENFORCE_APP_CHECK / ENFORCE_APP_CHECK_DEV (true) make startDraw reject calls without one.
 #
 # Optional staging: with FIREBASE_SERVICE_ACCOUNT_DEV (key of the dev
@@ -96,7 +96,7 @@ jobs:
           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
           VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
-          # Optional: without it App Check stays off in the built app (D43).
+          # Optional: without it App Check stays off in the built app (D44).
           VITE_APP_CHECK_SITE_KEY: ${{ secrets.VITE_APP_CHECK_SITE_KEY }}
 
       # Staging (dev Firebase project), only when its key is configured.

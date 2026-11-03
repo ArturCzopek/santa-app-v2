@@ -30,7 +30,7 @@ if (!firebaseConfig.projectId) {
 
 const app = initializeApp(firebaseConfig);
 
-// App Check (reCAPTCHA Enterprise, D43): proves requests come from the real app.
+// App Check (reCAPTCHA Enterprise, D44): proves requests come from the real app.
 // Off unless a site key is configured, and never against the emulators (E2E).
 // Whether Firebase rejects requests without a token is a separate switch in
 // the Firebase console (Firestore) and in the function (ENFORCE_APP_CHECK).

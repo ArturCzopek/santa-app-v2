@@ -309,7 +309,7 @@ another branch checks but does not deploy. Target `production` keeps the D18 ord
 build, staging, production rules and functions, then Pages); target `staging` stops after
 the dev project. Agents may merge to `master` but never start a deploy themselves.
 
-## D43. App Check with reCAPTCHA Enterprise, rolled out in stages, Accepted
+## D44. App Check with reCAPTCHA Enterprise, rolled out in stages, Accepted
 App Check makes Firebase accept requests only from the real app, which stops simple
 scripts that call Firestore or `startDraw` directly with a stolen API key. It supersedes
 the deferral of S5: Cloud Functions (D41) now exist, and the privacy policy names the new

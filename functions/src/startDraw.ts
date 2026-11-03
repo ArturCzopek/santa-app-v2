@@ -9,7 +9,7 @@ initializeApp();
 const db = getFirestore();
 
 // Rejects calls without a valid App Check token. Off by default so a deploy
-// never locks out users before the app sends tokens (D43); turned on per
+// never locks out users before the app sends tokens (D44); turned on per
 // project through the ENFORCE_APP_CHECK variable (see the Deploy workflow).
 const enforceAppCheck = defineBoolean('ENFORCE_APP_CHECK', { default: false });
 
