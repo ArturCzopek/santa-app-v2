@@ -5,6 +5,7 @@ import { Timestamp } from 'firebase/firestore';
 import Postmark from '../common/Postmark';
 import EventDetails, { longDate } from './EventDetails';
 import AddToCalendarButton from './AddToCalendarButton';
+import EmailReminderToggle from './EmailReminderToggle';
 import { Draw } from '../../models/Draw';
 import { tokens } from '../../styles/theme';
 
@@ -119,6 +120,7 @@ const DrawHeader: React.FC<{ draw: Draw }> = ({ draw }) => {
         eventPlace={draw.eventPlace}
       />
       <AddToCalendarButton draw={draw} onDark />
+      <EmailReminderToggle draw={draw} />
 
       {draw.description && <Description text={draw.description} />}
     </Box>

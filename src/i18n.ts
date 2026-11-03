@@ -79,6 +79,10 @@ const resources = {
         waitingStatus: 'Waiting for the draw',
       },
       drawPage: {
+        emailReminder: {
+          hint: 'One email 7 days and one the day before. Switch it off here any time.',
+          label: 'Remind me by email',
+        },
         description: { less: 'Show less', more: 'Show the whole description' },
         goToJoin: 'Join this draw',
         drawnOn: 'Drawn on {{date}}',
@@ -132,6 +136,8 @@ const resources = {
           startDrawFailed:
             'Failed to start the draw. Refresh the page and try again.',
           wishUpdateFailed: 'Failed to update your wish. Please try again.',
+          emailReminderUpdateFailed:
+            'Could not save the reminder setting. Please try again.',
           giftBoughtUpdateFailed:
             'Could not update your gift status. Please try again.',
           thanksSaveFailed: 'Could not send your thanks. Please try again.',
@@ -563,6 +569,10 @@ const resources = {
         waitingStatus: 'Oczekuje na losowanie',
       },
       drawPage: {
+        emailReminder: {
+          hint: 'Jeden e-mail 7 dni i jeden dzień przed wymianą. Wyłączysz go tutaj w każdej chwili.',
+          label: 'Przypomnij mi e-mailem',
+        },
         description: { less: 'Zwiń opis', more: 'Pokaż cały opis' },
         goToJoin: 'Dołącz do tego losowania',
         drawnOn: 'Rozlosowano {{date}}',
@@ -619,6 +629,8 @@ const resources = {
           startDrawFailed:
             'Nie udało się przeprowadzić losowania. Odśwież stronę i spróbuj ponownie.',
           wishUpdateFailed: 'Nie udało się zapisać listu. Spróbuj ponownie.',
+          emailReminderUpdateFailed:
+            'Nie udało się zapisać ustawienia przypomnień. Spróbuj ponownie.',
           giftBoughtUpdateFailed:
             'Nie udało się zapisać statusu prezentu. Spróbuj ponownie.',
           thanksSaveFailed:

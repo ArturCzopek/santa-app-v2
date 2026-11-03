@@ -16,3 +16,4 @@ service-account*.json
 # Local, machine-specific agent setup - never commit
 CLAUDE.local.md
 AGENTS.local.md
+functions/.env.local

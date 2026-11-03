@@ -11,6 +11,10 @@ export type Participant = {
   entryDate: Date | Timestamp;
   hasWish?: boolean;
   giftBought?: boolean;
+  // Own switch for email reminders before the exchange, and the language
+  // of those emails.
+  remindByEmail?: boolean;
+  remindLang?: 'pl' | 'en';
 };
 
 // Same limit as in firestore.rules.
