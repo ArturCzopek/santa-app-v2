@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { MailOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Location, useLocation } from 'react-router';
-import { sendLoginLink } from '../services/emailLink';
+import { sendLoginLink, TooManyLinksError } from '../services/emailLink';
 import { useNotify } from '../hooks/useNotify';
 import { tokens } from '../styles/theme';
 
@@ -43,7 +43,13 @@ const EmailSignIn = () => {
       setSentTo(address);
     } catch (err) {
       console.error('Error sending the sign-in link:', err);
-      notify(t('loginPage.email.sendFailed'));
+      notify(
+        t(
+          err instanceof TooManyLinksError
+            ? 'loginPage.email.tooMany'
+            : 'loginPage.email.sendFailed',
+        ),
+      );
     } finally {
       setSending(false);
     }

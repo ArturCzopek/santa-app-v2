@@ -302,14 +302,17 @@ Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), reszta po analizie se
 - [x] **F17 – usuwanie dużego oczekującego losowania [P3]** (2026-09-27, Codex): wykluczenia
   są usuwane najpierw osobnymi batchami po 450 zapisów, a pozostałe dokumenty losowania
   w jednym batchu; reguły Firestore i dane pozostają bez zmian.
-- [ ] **F18 – ładniejszy i mniej „spamowy” mail z linkiem logowania** (Artur, 2026-09-27, po F9):
+- [~] **F18 – ładniejszy i mniej „spamowy” mail z linkiem logowania** (Artur, 2026-09-27, po F9):
   generyczny mail Firebase od `noreply@…firebaseapp.com` z długim linkiem `…/__/auth/action?apiKey=…`,
   w Gmailu trafia do spamu. Treści tego szablonu nie da się edytować w konsoli. Stan na 2026-09-28:
   - zrobione: mail w języku aplikacji (`auth.languageCode`, `a9cff7d`); Artur ustawił w konsoli
     „Public-facing name” = Santa App i polski język szablonów;
   - „Customize action URL” = adres aplikacji: zapis w konsoli zwraca błąd – odpuszczone (niepewny zysk);
   - własna domena + „Customize domain” (SPF/DKIM) – główne lekarstwo na spam; **Artur na razie nie chce**;
-  - **do zrobienia później (Blaze):** własny wygląd i tekst maila – Cloud Function z Admin SDK
+  - **gotowe w kodzie (D47), czeka na recenzję i deploy na polecenie Artura:** własna funkcja `sendLoginLink`
+    przez mailer z F3 (te same sekrety), link prosto do aplikacji, limity wysyłek, fallback na mail Firebase.
+    Nadawca nadal obcy (konto Gmail) – o spamie rozstrzyga dopiero domena (F21);
+  - (pierwotny pomysł) własny wygląd i tekst maila – Cloud Function z Admin SDK
     `generateSignInWithEmailLink` + usługa pocztowa; bez własnej domeny nadawca nadal będzie obcy.
 
 - [x] **F19 – SEO i podgląd linku (2026-09-28):** polska treść dostępna w HTML, metadane wyszukiwarki i mediów społecznościowych oraz karta OG.
