@@ -309,7 +309,7 @@ another branch checks but does not deploy. Target `production` keeps the D18 ord
 build, staging, production rules and functions, then Pages); target `staging` stops after
 the dev project. Agents may merge to `master` but never start a deploy themselves.
 
-## D43. Anonymous chat between a Santa and their recipient, Accepted
+## D45. Anonymous chat between a Santa and their recipient, Accepted
 After the draw, every player has two chats on the draw page: one with the person they
 give a gift to, and one with their own (unknown) Santa. Messages live in
 `draws/{drawId}/chats/{recipientUid}/messages/{id}` with `from` (`santa` or `recipient`),
