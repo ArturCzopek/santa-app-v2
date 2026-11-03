@@ -225,7 +225,7 @@ Monetyzacja (sekcja 7): na ten sezon tylko \$7 (zrobione), reszta po analizie se
   funkcje v2 działają w `europe-central2`, limity i alerty budżetowe są ustawione.
 - [x] F1 – wykluczenia par (2026-09-24/25). Zostało: unikanie par z zeszłego roku (trudne: wyniki zna tylko
   obdarowujący, organizator ich nie widzi – D3/D8)
-- [ ] F2 – anonimowy czat obdarowujący ↔ obdarowany
+- [x] F2 – anonimowy czat obdarowujący ↔ obdarowany (2026-11-03, D43): czat 1:1 po losowaniu, klucz = uid obdarowanego (brak uid Mikołaja w danych), `from` wymuszane regułami, wiadomości tylko create. Zostało: powiadomienia e-mail o nowej wiadomości (razem z F3), moderacja
 - [~] F3 – data i miejsce wymiany + „Dodaj do kalendarza” (.ics) zrobione (D12, D28). Zostały przypomnienia
   e-mail/push – wymaga serwera → Blaze
 - [x] F4 – edycja, usuwanie losowania i opuszczenie (09-24), nowe hasło (09-25, D21), usuwanie uczestnika przez

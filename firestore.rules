@@ -56,6 +56,12 @@ service cloud.firestore {
       return /databases/$(database)/documents/draws/$(drawId)/assignments/$(uid);
     }
 
+    // True when the signed-in user is the one who draws recipientUid.
+    function isSantaOf(drawId, recipientUid) {
+      return exists(assignmentPath(drawId, request.auth.uid))
+        && get(assignmentPath(drawId, request.auth.uid)).data.toUuid == recipientUid;
+    }
+
     function isDrawPlayer(drawId, uid) {
       let d = get(drawPath(drawId)).data;
       return uid in d.participantUuids
@@ -323,6 +329,30 @@ service cloud.firestore {
           && isDrawPlayer(drawId, uid)
           && request.resource.data.keys().hasOnly(['text'])
           && isString(request.resource.data.text, 500);
+      }
+
+      // Anonymous chat between a Santa and the person they give a gift to.
+      // The chat is keyed by the recipient's uid, so no uid of the Santa is
+      // stored anywhere in it: the recipient cannot tell who writes. The
+      // Santa is whoever's assignment points at the recipient (read here
+      // with get(), which the client cannot do for other people).
+      match /chats/{toUuid}/messages/{messageId} {
+        allow get, list: if signedIn()
+          && get(drawPath(drawId)).data.status == 'DRAWED'
+          && (request.auth.uid == toUuid || isSantaOf(drawId, toUuid));
+
+        // Create only: messages are never edited or deleted. "from" must
+        // match the writer's real role, so nobody can pose as the other side.
+        allow create: if signedIn()
+          && get(drawPath(drawId)).data.status == 'DRAWED'
+          && request.resource.data.keys().hasOnly(['from', 'text', 'createdDate'])
+          && isString(request.resource.data.text, 500)
+          && request.resource.data.text.size() > 0
+          && request.resource.data.createdDate == request.time
+          && ((request.resource.data.from == 'recipient'
+              && request.auth.uid == toUuid)
+            || (request.resource.data.from == 'santa'
+              && isSantaOf(drawId, toUuid)));
       }
 
       // Pairs of participants who must not draw each other (e.g. a couple).

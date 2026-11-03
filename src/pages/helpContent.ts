@@ -80,7 +80,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'gift',
       question: 'Co zrobić po kupieniu prezentu?',
       answer: [
-        'Po zakupie zaznacz „Mam już prezent” przy swoim wyniku. Uczestnicy zobaczą status zakupu, ale nie dowiedzą się, dla kogo kupujesz prezent. Możesz też wysłać podziękowanie swojemu Mikołajowi – tylko on zobaczy je przy swoim wyniku.',
+        'Po zakupie zaznacz „Mam już prezent” przy swoim wyniku. Uczestnicy zobaczą status zakupu, ale nie dowiedzą się, dla kogo kupujesz prezent. Możesz też porozmawiać z obdarowanym na anonimowym czacie (np. dopytać o rozmiar) i wysłać podziękowanie swojemu Mikołajowi – tylko on zobaczy je przy swoim wyniku.',
       ],
     },
     {
@@ -193,7 +193,7 @@ export const helpContent: Record<'pl' | 'en', HelpEntry[]> = {
       id: 'gift',
       question: 'What can I do after buying a gift?',
       answer: [
-        'After you buy it, mark “I have the gift” next to your result. Participants see the gift status, but not who you are buying for. You can also send a thank-you to your Santa; only they see it next to their result.',
+        'After you buy it, mark “I have the gift” next to your result. Participants see the gift status, but not who you are buying for. You can also ask the recipient a question in the anonymous chat (for example about a size) and send a thank-you to your Santa; only they see it next to their result.',
       ],
     },
     {
