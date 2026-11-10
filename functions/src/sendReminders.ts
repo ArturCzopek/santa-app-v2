@@ -1,13 +1,12 @@
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
-import { defineString } from 'firebase-functions/params';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { createConfiguredMailer, mailSecrets } from './mailParams';
 import { sendDueReminders } from './reminders';
 
-const appUrl = defineString('APP_URL', {
-  default: 'https://arturczopek.github.io/santa-app-v2',
-});
+// From the environment (see mailParams.ts for why not `defineString`).
+const appUrl = () =>
+  process.env.APP_URL || 'https://arturczopek.github.io/santa-app-v2';
 
 // Every morning in Poland: the reminders 7 days and 1 day before the exchange.
 export const sendExchangeReminders = onSchedule(
@@ -25,7 +24,7 @@ export const sendExchangeReminders = onSchedule(
       getAuth(),
       createConfiguredMailer(),
       new Date(),
-      appUrl.value(),
+      appUrl(),
     );
     console.log(`Reminders: ${result.sent} sent, ${result.failed} failed.`);
   },
