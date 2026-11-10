@@ -3,7 +3,7 @@ import { Firestore } from 'firebase-admin/firestore';
 
 // Sending a mail to any address the caller names is what makes this function
 // abusable, so it is limited twice: per address (nobody gets a pile of links)
-// and per day overall (the shared Gmail sender allows about 500 a day and the
+// and per day overall (the shared free mailbox has a daily sending cap and the
 // reminders need room too). Counters live in `loginLinkLimits`, which no client
 // can read or write; addresses are stored only as hashes.
 export const PER_ADDRESS_LIMIT = 3;

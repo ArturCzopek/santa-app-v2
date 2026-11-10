@@ -5,12 +5,14 @@ import {
 } from 'firebase-functions/params';
 import { createSmtpMailer, SendMail } from './mailer';
 
-// The sending mailbox. The login and password are secrets; the server is not,
-// so it can be set in `functions/.env` (MAIL_SMTP_HOST, MAIL_SMTP_PORT) when
-// the mailbox is not Gmail.
+// The sending mailbox: a free Interia account used only for this. The login
+// and password are secrets; the server is not, and `functions/.env` can
+// override it (MAIL_SMTP_HOST, MAIL_SMTP_PORT) for another mailbox.
 export const mailUser = defineSecret('MAIL_USER');
 export const mailPassword = defineSecret('MAIL_APP_PASSWORD');
-const mailHost = defineString('MAIL_SMTP_HOST', { default: 'smtp.gmail.com' });
+const mailHost = defineString('MAIL_SMTP_HOST', {
+  default: 'poczta.interia.pl',
+});
 const mailPort = defineInt('MAIL_SMTP_PORT', { default: 465 });
 
 export const mailSecrets = [mailUser, mailPassword];

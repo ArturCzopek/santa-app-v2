@@ -384,8 +384,8 @@ No new secrets beyond D46. The privacy policy names the Gmail sender and the cou
 ## D48. The sending mailbox is any SMTP account, Accepted
 Google asks for a phone number to open a second account, so the sender no longer has to be
 Gmail. `functions/src/mailer.ts` talks plain SMTP; the server comes from the parameters
-`MAIL_SMTP_HOST` and `MAIL_SMTP_PORT` (defaults: Gmail, 465; set them in `functions/.env` for
-another mailbox), the login and password stay the secrets `MAIL_USER` and `MAIL_APP_PASSWORD`.
+`MAIL_SMTP_HOST` and `MAIL_SMTP_PORT` (defaults: Interia, `poczta.interia.pl`, 465, the mailbox
+Artur chose; set them in `functions/.env` for another one), the login and password stay the secrets `MAIL_USER` and `MAIL_APP_PASSWORD`.
 Port 465 uses TLS from the start, any other port must upgrade with STARTTLS. Free mailboxes
 have lower daily limits than Gmail and are not built for automated sending, so a domain sender
 (F21) remains the long-term answer.
