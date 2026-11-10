@@ -1,12 +1,10 @@
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
-import { defineSecret, defineString } from 'firebase-functions/params';
+import { defineString } from 'firebase-functions/params';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { createGmailMailer } from './mailer';
+import { createConfiguredMailer, mailSecrets } from './mailParams';
 import { sendDueReminders } from './reminders';
 
-const mailUser = defineSecret('MAIL_USER');
-const mailPassword = defineSecret('MAIL_APP_PASSWORD');
 const appUrl = defineString('APP_URL', {
   default: 'https://arturczopek.github.io/santa-app-v2',
 });
@@ -19,17 +17,13 @@ export const sendExchangeReminders = onSchedule(
     region: 'europe-central2',
     maxInstances: 1,
     timeoutSeconds: 540,
-    secrets: [mailUser, mailPassword],
+    secrets: mailSecrets,
   },
   async () => {
     const result = await sendDueReminders(
       getFirestore(),
       getAuth(),
-      createGmailMailer({
-        user: mailUser.value(),
-        appPassword: mailPassword.value(),
-        senderName: 'Santa App',
-      }),
+      createConfiguredMailer(),
       new Date(),
       appUrl.value(),
     );

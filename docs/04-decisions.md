@@ -380,3 +380,12 @@ only as hashes): 3 per address per 10 minutes and 300 per day overall, to leave 
 quota for reminders. The client falls back to the plain Firebase mail when the function fails or the
 daily cap is spent, so sign-in never depends on it; only the per-address cap is shown to the person.
 No new secrets beyond D46. The privacy policy names the Gmail sender and the counters.
+
+## D48. The sending mailbox is any SMTP account, Accepted
+Google asks for a phone number to open a second account, so the sender no longer has to be
+Gmail. `functions/src/mailer.ts` talks plain SMTP; the server comes from the parameters
+`MAIL_SMTP_HOST` and `MAIL_SMTP_PORT` (defaults: Gmail, 465; set them in `functions/.env` for
+another mailbox), the login and password stay the secrets `MAIL_USER` and `MAIL_APP_PASSWORD`.
+Port 465 uses TLS from the start, any other port must upgrade with STARTTLS. Free mailboxes
+have lower daily limits than Gmail and are not built for automated sending, so a domain sender
+(F21) remains the long-term answer.

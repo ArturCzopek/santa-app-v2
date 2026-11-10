@@ -1,6 +1,5 @@
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
-import { defineSecret } from 'firebase-functions/params';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { LimitExceeded, takeLoginLinkSlot } from './loginLimits';
 import {
@@ -10,10 +9,12 @@ import {
   toAppLink,
   toLanguage,
 } from './loginMail';
-import { createGmailMailer } from './mailer';
-
-const mailUser = defineSecret('MAIL_USER');
-const mailPassword = defineSecret('MAIL_APP_PASSWORD');
+import {
+  createConfiguredMailer,
+  mailPassword,
+  mailSecrets,
+  mailUser,
+} from './mailParams';
 
 // The sign-in mail (F18, D47): the same link Firebase would send, in our own
 // wording and with a link straight to the app. Open to people who are not
@@ -23,7 +24,7 @@ export const sendLoginLink = onCall(
   {
     region: 'europe-central2',
     maxInstances: 5,
-    secrets: [mailUser, mailPassword],
+    secrets: mailSecrets,
   },
   async (request) => {
     const { email, url, lang } = request.data ?? {};
@@ -52,11 +53,7 @@ export const sendLoginLink = onCall(
     const link = toAppLink(firebaseLink, url, language);
 
     try {
-      await createGmailMailer({
-        user: mailUser.value(),
-        appPassword: mailPassword.value(),
-        senderName: 'Santa App',
-      })(buildLoginMail(email, link, language));
+      await createConfiguredMailer()(buildLoginMail(email, link, language));
     } catch (error) {
       console.error('Sending the sign-in mail failed:', error);
       throw new HttpsError('unavailable', 'The mail could not be sent.');

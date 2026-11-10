@@ -14,16 +14,24 @@ export type Mail = {
 export type SendMail = (mail: Mail) => Promise<void>;
 
 export type MailConfig = {
-  // Gmail account used only for sending, with an app password.
+  // Any mailbox that allows SMTP with a password: the server, and an account
+  // used only for sending (for Gmail the password is an app password).
+  host: string;
+  port: number;
   user: string;
-  appPassword: string;
+  password: string;
   senderName: string;
 };
 
-export const createGmailMailer = (config: MailConfig): SendMail => {
+export const createSmtpMailer = (config: MailConfig): SendMail => {
   const transport = createTransport({
-    service: 'gmail',
-    auth: { user: config.user, pass: config.appPassword },
+    host: config.host,
+    port: config.port,
+    // 465 speaks TLS from the start; other ports (587) upgrade with STARTTLS,
+    // which is then required so the password never travels in the clear.
+    secure: config.port === 465,
+    requireTLS: config.port !== 465,
+    auth: { user: config.user, pass: config.password },
   });
   return async (mail) => {
     await transport.sendMail({
