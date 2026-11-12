@@ -226,6 +226,8 @@ Use a dedicated service account for each project, not the default
 | Service Account User | let the deploy attach the runtime account to functions |
 | Cloud Build Editor, Artifact Registry Writer | build and store the function image |
 | Service Usage Consumer, Firebase Viewer | let the Firebase CLI read project info and use the project quota |
+| Cloud Scheduler Admin | create the daily job of the reminder function (the Cloud Scheduler API must be enabled in the project by its owner first) |
+| Secret Manager Admin | let the deploy give the functions access to their secrets (`MAIL_USER`, `MAIL_APP_PASSWORD`) |
 
 Create its key in Google Cloud console -> IAM -> Service accounts -> Keys ->
 Add key. Try a new set of roles with target `staging` first; if the deploy
