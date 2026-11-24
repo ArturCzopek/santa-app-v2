@@ -229,6 +229,17 @@ Use a dedicated service account for each project, not the default
 | Cloud Scheduler Admin | create the daily job of the reminder function (the Cloud Scheduler API must be enabled in the project by its owner first) |
 | Secret Manager Admin | let the deploy give the functions access to their secrets (`MAIL_USER`, `MAIL_APP_PASSWORD`) |
 
+The Firestore trigger `notifyNewMessage` (D50) runs through Eventarc, which needs three
+project-level grants to Google's own accounts. The deploy account cannot grant them, so the
+project owner runs this once per project (Cloud Shell; `NUMBER` is the project number from
+Firebase console -> Project settings):
+
+```bash
+gcloud projects add-iam-policy-binding PROJECT_ID --member=serviceAccount:service-NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com --role=roles/iam.serviceAccountTokenCreator
+gcloud projects add-iam-policy-binding PROJECT_ID --member=serviceAccount:NUMBER-compute@developer.gserviceaccount.com --role=roles/run.invoker
+gcloud projects add-iam-policy-binding PROJECT_ID --member=serviceAccount:NUMBER-compute@developer.gserviceaccount.com --role=roles/eventarc.eventReceiver
+```
+
 Create its key in Google Cloud console -> IAM -> Service accounts -> Keys ->
 Add key. Try a new set of roles with target `staging` first; if the deploy
 reports a missing permission, add the role that grants it and wait a few
