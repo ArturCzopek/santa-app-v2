@@ -389,3 +389,13 @@ Artur chose; set them in `functions/.env` for another one), the login and passwo
 Port 465 uses TLS from the start, any other port must upgrade with STARTTLS. Free mailboxes
 have lower daily limits than Gmail and are not built for automated sending, so a domain sender
 (F21) remains the long-term answer.
+
+## D50. The admin gets an email for every new message, Accepted (refines D37)
+Messages from "Leave a message!" were only visible in the admin page, so one waited four days.
+The Firestore trigger `notifyNewMessage` (europe-central2) emails each new `messages` document
+to the admin address of D37 (`ADMIN_EMAIL` overrides it) through the shared mailer (D46, D48):
+author name, account email, the full text and a link to `#/admin/messages`. Reply-To is the
+author's address when it is valid, so a reply goes straight to them. Retries are off: a failed
+send is logged (the SMTP error, never the text) and the message stays readable in the app.
+The daily one-message limit per user (D20) also bounds the mails. The privacy policy says that
+messages are forwarded by email and names Interia as the sending mailbox.

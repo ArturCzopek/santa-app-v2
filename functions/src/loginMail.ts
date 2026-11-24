@@ -1,6 +1,7 @@
 // Pure parts of the sign-in email (F18, D47): the link, the text, the checks
 // on the request. No Firebase here, so the root tests can import this file.
 import { Mail } from './mailer';
+import { escapeHtml } from './html';
 
 export type LoginLanguage = 'pl' | 'en';
 
@@ -57,13 +58,6 @@ export const toAppLink = (
   link.searchParams.set('lang', language);
   return link.toString();
 };
-
-const escapeHtml = (text: string) =>
-  text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 
 const TEXTS = {
   pl: {

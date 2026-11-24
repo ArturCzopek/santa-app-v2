@@ -1,5 +1,6 @@
 // Pure parts of the exchange reminders: which days send one and what the
 // email says. No Firebase here, so the root tests can import this file.
+import { escapeHtml } from './html';
 
 export type ReminderLanguage = 'pl' | 'en';
 
@@ -51,13 +52,6 @@ const longDate = (day: string, language: ReminderLanguage): string => {
     { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' },
   );
 };
-
-const escapeHtml = (text: string): string =>
-  text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 
 export type ReminderEmail = { subject: string; text: string; html: string };
 

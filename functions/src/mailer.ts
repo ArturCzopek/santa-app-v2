@@ -9,6 +9,7 @@ export type Mail = {
   subject: string;
   text: string;
   html: string;
+  replyTo?: string;
 };
 
 export type SendMail = (mail: Mail) => Promise<void>;
@@ -40,6 +41,7 @@ export const createSmtpMailer = (config: MailConfig): SendMail => {
       subject: mail.subject,
       text: mail.text,
       html: mail.html,
+      ...(mail.replyTo === undefined ? {} : { replyTo: mail.replyTo }),
     });
   };
 };
