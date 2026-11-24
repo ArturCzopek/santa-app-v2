@@ -1,7 +1,11 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
-const contentSecurityPolicy = (authDomain?: string, appCheck = false) => {
+export const contentSecurityPolicy = (
+  projectId: string | undefined,
+  authDomain?: string,
+  appCheck = false,
+) => {
   const sources = [
     "default-src 'self'",
     `script-src 'self' https://apis.google.com${
@@ -11,7 +15,10 @@ const contentSecurityPolicy = (authDomain?: string, appCheck = false) => {
     "font-src 'self' https://fonts.gstatic.com",
     // Google account photos (navbar avatar, participant stamps).
     "img-src 'self' https://*.googleusercontent.com",
-    `connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://europe-central2-*.cloudfunctions.net${
+    // CSP allows `*` only as a whole leftmost label, so the functions host
+    // is spelled out: `europe-central2-*.cloudfunctions.net` matched nothing
+    // and blocked every draw in production.
+    `connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://europe-central2-${projectId}.cloudfunctions.net${
       appCheck
         ? ' https://content-firebaseappcheck.googleapis.com https://www.google.com'
         : ''
@@ -58,6 +65,7 @@ export default defineConfig(({ command, mode }) => {
       ...(addProductionPolicy
         ? [
             contentSecurityPolicy(
+              env.VITE_FIREBASE_PROJECT_ID,
               env.VITE_FIREBASE_AUTH_DOMAIN,
               Boolean(env.VITE_APP_CHECK_SITE_KEY),
             ),
