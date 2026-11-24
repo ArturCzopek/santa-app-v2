@@ -154,6 +154,11 @@ describe('DrawService against the emulator', () => {
     expect(await drawService.getThanks(drawId, bob.uid)).toBe('');
     await drawService.saveThanks(drawId, bob.uid, 'Thank you!');
     expect(await drawService.getThanks(drawId, bob.uid)).toBe('Thank you!');
+    // Thanks are sent once: a second write is refused and nothing changes.
+    await expect(
+      drawService.saveThanks(drawId, bob.uid, 'Changed my mind'),
+    ).rejects.toThrow();
+    expect(await drawService.getThanks(drawId, bob.uid)).toBe('Thank you!');
 
     expect(await appDataService.getAppData()).toEqual({
       drawsCount: 1,

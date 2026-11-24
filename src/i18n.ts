@@ -295,8 +295,9 @@ const resources = {
             loadFailed: 'Could not load the chat.',
           },
           thanksFrom: 'Thanks from {{name}}',
+          thanksSent: 'Already sent',
           thanksHelper:
-            'Your Santa will see this next to their result. You do not know who it is – and it stays that way.',
+            'You can send it only once. Your Santa will see it next to their result. You do not know who it is – and it stays that way.',
           thanksLabel: 'Your thank-you note',
           thanksSaved: 'Thanks sent.',
           thanksTitle: 'Thank your Santa',
@@ -810,8 +811,9 @@ const resources = {
             loadFailed: 'Nie udało się wczytać czatu.',
           },
           thanksFrom: 'Podziękowanie od {{name}}',
+          thanksSent: 'Już wysłane',
           thanksHelper:
-            'Twój Mikołaj zobaczy to przy swoim wyniku. Nie wiesz, kto to – i tak zostanie.',
+            'Możesz wysłać je tylko raz. Twój Mikołaj zobaczy je przy swoim wyniku. Nie wiesz, kto to – i tak zostanie.',
           thanksLabel: 'Twoje podziękowanie',
           thanksSaved: 'Podziękowanie wysłane.',
           thanksTitle: 'Podziękuj swojemu Mikołajowi',

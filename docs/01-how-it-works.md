@@ -171,7 +171,7 @@ seal and *Stuknij, aby otworzyć*. Tapping breaks the seal and the letter slides
 After opening the envelope, mark *Mam już prezent* when you have bought the gift.
 Everyone can see which players have bought theirs, but not whom each person is buying for.
 You can also write *Podziękuj swojemu Mikołajowi*; only your unknown Santa sees the note
-next to their result, and the organizer cannot read it.
+next to their result, and the organizer cannot read it. You can send it only once.
 
 The envelope stays open on later visits on the same device (another phone shows it sealed
 again, which is fine). After the draw the participants list folds away initially; when

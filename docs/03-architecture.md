@@ -64,7 +64,7 @@ it has different readers:
 | `draws/{id}` | Name, description, budget, currency, date, place, owner, optional `ownerPlays` (missing means true), `participantUuids`, status, draw date | Anyone signed in who knows the id |
 | `…/participants/{uid}` | Name and photo (must match the Google profile), `hasWish`, optional `giftBought` (missing means false) | Participants |
 | `…/letters/{uid}` | `wish` (items joined by newlines; at most 10 items of 100 characters in the app), optional `comment` (up to 1000 characters); written by its author before the draw only | The author; after the draw also the one person who drew the author |
-| `…/thanks/{uid}` | `text` (up to 500 characters), written by the recipient after the draw | The author and, after the draw, the person who drew the author |
+| `…/thanks/{uid}` | `text` (up to 500 characters), written once by the recipient after the draw, never changed (D49) | The author and, after the draw, the person who drew the author |
 | `…/exclusions/{a}_{b}` | A pair who must not draw each other (`a < b`) | The owner, before the draw |
 | `…/assignments/{uid}` | `toUuid`: whom `uid` buys for | Only `uid` |
 | `…/joinKeys/{key}` | Proof of the password or of the invite link's key (a hash, never the secret) | The owner, to confirm the password when starting the draw; before the draw the owner may add keys and remove any but the current invite link's |

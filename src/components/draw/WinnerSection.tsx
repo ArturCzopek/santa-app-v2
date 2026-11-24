@@ -61,6 +61,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({
   );
   const [savingGiftBought, setSavingGiftBought] = useState(false);
   const [thanksText, setThanksText] = useState('');
+  const [sentThanks, setSentThanks] = useState('');
   const [recipientThanks, setRecipientThanks] = useState('');
   const [savingThanks, setSavingThanks] = useState(false);
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)', {
@@ -95,6 +96,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({
           : [{ wish: '', comment: '' }, '', ''];
         setWinnerLetter(letter);
         setThanksText(ownThanks);
+        setSentThanks(ownThanks);
         setRecipientThanks(theirThanks);
         setAssignment(mine);
       } catch (error) {
@@ -150,6 +152,7 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({
     setSavingThanks(true);
     try {
       await drawService.saveThanks(draw.id, user.uid, thanksText);
+      setSentThanks(thanksText);
       notify(t('drawPage.winnerSection.thanksSaved'), 'success');
     } catch (error) {
       console.error('Error saving thanks:', error);
@@ -309,33 +312,46 @@ const WinnerSection: React.FC<WinnerSectionProps> = ({
         <SectionHeading>
           {t('drawPage.winnerSection.thanksTitle')}
         </SectionHeading>
-        <PaperCard onSubmit={handleSaveThanks}>
-          <Typography variant="body2" color="text.secondary">
-            {t('drawPage.winnerSection.thanksHelper')}
-          </Typography>
-          <TextField
-            label={t('drawPage.winnerSection.thanksLabel')}
-            multiline
-            minRows={3}
-            value={thanksText}
-            onChange={(event) => setThanksText(event.target.value)}
-            fullWidth
-            helperText={`${thanksText.length} / ${THANKS_MAX_LENGTH}`}
-            slotProps={{ htmlInput: { maxLength: THANKS_MAX_LENGTH } }}
-          />
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            {/* Not wax: the page keeps one red main action (D15). */}
-            <Button
-              type="submit"
-              variant="outlined"
-              color="inherit"
-              disabled={savingThanks}
-              sx={{ color: tokens.ink }}
+        {sentThanks !== '' ? (
+          <PaperCard>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ fontWeight: 700 }}
             >
-              {t('drawPage.winnerSection.sendThanks')}
-            </Button>
-          </Box>
-        </PaperCard>
+              {t('drawPage.winnerSection.thanksSent')}
+            </Typography>
+            <Typography sx={{ whiteSpace: 'pre-wrap' }}>{sentThanks}</Typography>
+          </PaperCard>
+        ) : (
+          <PaperCard onSubmit={handleSaveThanks}>
+            <Typography variant="body2" color="text.secondary">
+              {t('drawPage.winnerSection.thanksHelper')}
+            </Typography>
+            <TextField
+              label={t('drawPage.winnerSection.thanksLabel')}
+              multiline
+              minRows={3}
+              value={thanksText}
+              onChange={(event) => setThanksText(event.target.value)}
+              fullWidth
+              helperText={`${thanksText.length} / ${THANKS_MAX_LENGTH}`}
+              slotProps={{ htmlInput: { maxLength: THANKS_MAX_LENGTH } }}
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              {/* Not wax: the page keeps one red main action (D15). */}
+              <Button
+                type="submit"
+                variant="outlined"
+                color="inherit"
+                disabled={savingThanks || !thanksText.trim()}
+                sx={{ color: tokens.ink }}
+              >
+                {t('drawPage.winnerSection.sendThanks')}
+              </Button>
+            </Box>
+          </PaperCard>
+        )}
       </Box>
     </Box>
   );

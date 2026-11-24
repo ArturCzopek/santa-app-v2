@@ -322,15 +322,15 @@ service cloud.firestore {
               && !(uid in getAfter(drawPath(drawId)).data.participantUuids)));
       }
 
-      // Thanks are written by the recipient to their unknown Santa. Only
-      // that Santa can read them after the draw; the organizer cannot.
+      // A recipient can send one thanks note to their unknown Santa. Only
+      // that Santa can read it after the draw; the organizer cannot.
       match /thanks/{uid} {
         allow get: if signedIn()
           && (request.auth.uid == uid
             || (get(drawPath(drawId)).data.status == 'DRAWED'
               && get(assignmentPath(drawId, request.auth.uid)).data.toUuid == uid));
 
-        allow create, update: if signedIn()
+        allow create: if signedIn()
           && request.auth.uid == uid
           && get(drawPath(drawId)).data.status == 'DRAWED'
           && isDrawPlayer(drawId, uid)

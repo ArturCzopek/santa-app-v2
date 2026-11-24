@@ -238,12 +238,12 @@ legacy F6 JSON drafts keep their wish and ignore obsolete fields. Only the short
 later feed shop searches; the comment is never used for
 automation or monetization.
 
-## D36. Gift progress and private thanks, Accepted
+## D36. Gift progress and private thanks, Accepted (edit part changed by D49)
 After the draw, a player can mark `giftBought` on their own participant document; missing
 means false. Participants see who has bought a gift and a count among players, never whom
 anyone is buying for. A recipient can write up to 500 characters in `thanks/{uid}` for their
 unknown Santa. Only its author and the Santa whose assignment points to them can read it;
-the organizer cannot unless they are that Santa. The note can be edited after sending, and
+the organizer cannot unless they are that Santa. The note cannot be edited after sending (D49), and
 there is no app delete. These changes do not alter assignments or letters.
 
 ## D37. The verified admin reads messages in the app, Accepted (refines D20)
@@ -389,6 +389,12 @@ Artur chose; set them in `functions/.env` for another one), the login and passwo
 Port 465 uses TLS from the start, any other port must upgrade with STARTTLS. Free mailboxes
 have lower daily limits than Gmail and are not built for automated sending, so a domain sender
 (F21) remains the long-term answer.
+
+## D49. Thanks are sent once, Accepted (refines D36)
+A recipient can send one thanks note to their unknown Santa and cannot change it afterwards.
+The rules allow `create` on `thanks/{uid}` and no `update`; the app shows the sent note
+read-only instead of the form. A note that could be rewritten without limit was an abuse
+vector (endless writes), and one note is enough. There is still no delete in the app.
 
 ## D50. The admin gets an email for every new message, Accepted (refines D37)
 Messages from "Leave a message!" were only visible in the admin page, so one waited four days.

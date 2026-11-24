@@ -665,6 +665,27 @@ describe('DrawPage', () => {
     );
   });
 
+  it('shows a sent thank-you read-only, without the form', async () => {
+    vi.mocked(drawService.getDraw).mockResolvedValue({
+      ...waitingDraw,
+      status: 'DRAWED',
+      drawDate: new Date(),
+    });
+    vi.mocked(drawService.getMyAssignment).mockResolvedValue({
+      toUuid: 'alice',
+    });
+    vi.mocked(drawService.getThanks).mockImplementation(async (_, uid) =>
+      uid === 'owner' ? 'Dziękuję za prezent!' : '',
+    );
+    renderDrawPage();
+
+    expect(await screen.findByText('Już wysłane')).toBeInTheDocument();
+    expect(screen.getByText('Dziękuję za prezent!')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Wyślij podziękowanie' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('shows the recipient’s thank-you next to their letter', async () => {
     vi.mocked(drawService.getDraw).mockResolvedValue({
       ...waitingDraw,

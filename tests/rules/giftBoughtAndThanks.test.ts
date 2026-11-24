@@ -106,11 +106,12 @@ describe('gift bought', () => {
 });
 
 describe('thanks', () => {
-  it('lets the author create and update a thank-you after the draw', async () => {
+  it('lets the author send one thank-you after the draw, and never rewrite it', async () => {
     await seedDraw('DRAWED');
     const ref = doc(authed(env, ALICE), `draws/d1/thanks/${ALICE}`);
     await assertSucceeds(setDoc(ref, { text: 'Thank you!' }));
-    await assertSucceeds(setDoc(ref, { text: 'Thank you very much!' }));
+    await assertFails(setDoc(ref, { text: 'Thank you very much!' }));
+    await assertFails(updateDoc(ref, { text: 'Changed my mind' }));
   });
 
   it('refuses thanks before the draw, over 500 characters, and writes by another user', async () => {
